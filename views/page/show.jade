@@ -1,0 +1,22 @@
+extends ../layout
+
+block caption
+    h1= doc.name[locals.lang || "ru"]
+block content
+    each block in JSON.parse(doc.body[locals.lang || "ru"]).data
+        case block.type
+            when "heading"
+                h2 #{block.data.text}
+            when "video"
+                case block.data.source
+                    when "vimeo"
+                        iframe(src="http://player.vimeo.com/video/#{block.data.remote_id}?title=0&byline=0", frameborder="0", width="620", height="400")
+                    when "youtube"
+                        iframe(src="http://www.youtube.com/embed/#{block.data.remote_id}", frameborder="0", width="620", height="400")
+
+            when "list"
+                ul!= block.data.text.replace(/^ - (.+)$/mg,"<li>$1</li>").replace(/\n/mg, "")
+            when "text"
+                p #{block.data.text}
+            when "image"
+                img(src="#{block.data.file.dUrl}", alt="#{doc.name[locals.lang || 'ru']}", class="image-#{block.data.file.imageType}")

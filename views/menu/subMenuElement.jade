@@ -1,0 +1,5 @@
+li
+    if locals.lang
+        a(href= '/' + lang + m.path)= m.name + '00'
+    else 
+        a(href= m.path)= m.name + '99'

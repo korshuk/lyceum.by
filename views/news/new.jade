@@ -1,0 +1,26 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Новая новость
+    form.form-horizontal.panel(method='post', action='/news')
+        
+        options = [{'name': 'новость', 'value': 'false'}, {'name': 'поздравление', 'value': 'true'}]
+
+        +field('select', 'isCongratulation', 'Новость или поздравление', options)
+
+        +field('checkbox', 'prime', 'Главная новость')
+
+        +field('text', 'title', 'Название новости')
+        
+        +field('file', 'image', 'Картинка к новости')#fileupload(data-url='/images/upload')
+
+        +field('textarea', 'teaser', 'Текст на главную')#teaser
+
+        +field('textarea', 'body', 'Содержание')#body
+        
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock

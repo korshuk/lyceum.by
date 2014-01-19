@@ -1,0 +1,15 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список пользователей
+        a.btn.btn-primary(href='/admin/users/create') Добавить нового
+    table.table.table-hover
+      - each u in users
+          tr
+            td= u.name
+            td
+              a(href="/admin/users/"+u.id.toHexString()+"/edit") Edit
+            td
+              a(href="/admin/users/"+u.id.toHexString()+"/delete") Delete me 
+            td= u.createdAt

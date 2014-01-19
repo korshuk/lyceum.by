@@ -1,0 +1,32 @@
+doctype 5
+html
+  head
+    title title
+    
+    link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    link(rel='stylesheet', href='/stylesheets/adminStyle.css')
+    link(rel='stylesheet', href='/stylesheets/sir-trevor.css')
+    link(rel='stylesheet', href='/stylesheets/sir-trevor-icons.css')
+  body
+    div.navbar.navbar-inverse.navbar-fixed-top.bs-docs-nav
+      div.container
+        a.navbar-brand(href="/admin")Админка
+        - if (locals.logged == 'logged')
+            div.nav-collapse.collapse.bs-navbar-collapse
+              ul.nav.navbar-nav
+                li.active
+                  a(href="/news") News
+                li
+                  a(href="/admin/users") Users
+                li
+                  a(href="/admin/pages") Pages
+            p.navbar-text.pull-right
+                a.navbar-link(href="/logout") Logout
+    div.container
+      div.row
+        div.col.col-lg-12!= locals.message
+      div.row
+        div.col.col-lg-12
+          block content
+    footer
+    block scripts

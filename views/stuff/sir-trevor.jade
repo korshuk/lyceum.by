@@ -1,0 +1,14 @@
+script
+    SirTrevor.setDefaults({
+      uploadUrl: "/images/upload",
+      blockTypes: ["Heading", "Text", "List", "Image", "Video"]
+    });
+    new SirTrevor.Editor({
+        el: $('#body-ru')
+    });
+    new SirTrevor.Editor({
+        el: $('#body-by')
+    });
+    new SirTrevor.Editor({
+        el: $('#body-en')
+    });

@@ -1,0 +1,22 @@
+script
+    $(function () {
+        var fileUploadDiv = $('#fileupload').parent();
+        $('#fileupload').fileupload({
+            dataType: 'json',
+            add: function (e, data) {
+                data.submit();
+                fileUploadDiv.find('img').remove();
+                fileUploadDiv.append('<div id="progressbar" class="progress progress-striped">'+
+                    '<div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%">'+
+                    '</div></div>');
+            },
+            done: function (e, data) {
+                $('#progressbar').remove();
+                $('<img src="' + data.result.path + '">').appendTo(fileUploadDiv);
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progressbar .progress-bar').css('width', progress + '%');
+            }
+        });
+    });

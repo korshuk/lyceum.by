@@ -1,0 +1,23 @@
+mixin field(type, name, label, options)
+  .row
+    case type
+        when 'textarea'
+            label.col #{label}:
+            .col.col-lg-12
+                textarea(name='#{name}', attributes)
+                    block
+        when 'select'
+            label.col #{label}:
+            .col.col-lg-12
+                select(name='#{name}', attributes)
+                    each obj in options
+                        option(value="#{obj.value}") #{obj.name}
+        default
+            label.col #{label}:
+            .col.col-lg-12
+                input(type='#{type}', name='#{name}', attributes)
+
+mixin buttonSet
+    div.row
+        div.col.col-lg-12
+            input.btn.btn-default(type='submit', value='Save')

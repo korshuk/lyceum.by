@@ -1,0 +1,15 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список новостей
+        a.btn.btn-primary(href='/news/create') Добавить новую
+    table.table.table-hover
+      - each n in docs
+          tr
+            td= n.title
+            td
+              a(href="/news/"+n.id+"/edit") Edit
+            td
+              a(href="/news/"+n.id+"/delete") Delete 
+            td= n.visualDate

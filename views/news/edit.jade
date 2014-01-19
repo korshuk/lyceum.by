@@ -1,0 +1,23 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Редактировать новость
+    form.form-horizontal.panel(method='post', action='/news/' + n.id)
+        input(name='n[id]', value=n.id, type='hidden')
+        input(name='_method', value='PUT', type='hidden')
+        
+        div.row
+            label.col.col-lg-2.control-label Название:
+            div.col.col-lg-10
+                input(type="text", name='title', value= n.title || '')
+        div.row
+            label.col.col-lg-2.control-label Содержание:
+            div.col.col-lg-10
+                textarea(name='body')= n.body || ''
+        div.row
+            div.col.col-lg-10.col-offset-2
+                input.btn.btn-default(type='submit', value='Обновить')
+
+block scripts
+    include ../stuff/adminScriptBlock

@@ -1,0 +1,83 @@
+script
+    $(function () {
+        tinymce.init({
+            mode: 'exact',
+            elements: 'body,body-ru,body-by,body-en',
+            toolbar: "undo redo | cut copy paste | styleselect | bold italic underline superscript subscript | table link image | visualblocks code",
+            menubar: false,
+            plugins: [
+                "autolink lists link image charmap preview anchor",
+                "searchreplace visualblocks code",
+                "insertdatetime media table contextmenu paste"
+            ],
+            language : 'ru',
+            relative_urls : false,
+            remove_script_host : false,
+            //forced_root_block : false,
+            document_base_url : "http://localhost:3000",
+            file_browser_callback: function(field_name, url, type, win) { 
+                $('body').append('<div class="modal" id="myModal">'+
+                    '<div class="modal-dialog">'+
+                    '<div class="modal-content">'+
+                    '<div class="modal-header">'+
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+                    '<h4 class="modal-title" id="status">Choose file</h4>'+
+                    '</div>'+
+                    '<div class="modal-body">'+
+                    '<form id="uploadForm" enctype="multipart/form-data" action="/images/upload" method="post">'+
+                    '<input type="file" id="imageInput" name="image" />'+
+                    '<input type="text" id="fileUrl" style="display: none;"/>'+
+                    '</form>'+
+                    '</div>'+
+                    '<div class="modal-footer">'+
+                    '<a href="#" id="closeButton" class="btn btn-default">Close</a>'+
+                    '<a id="uploadButton" href="#" class="btn btn-primary">Upload</a>'+
+                    '</div></div></div></div>'
+                );
+                var imageInputDiv = $('#imageInput').parent();
+                $('#imageInput').fileupload({
+                    dataType: 'json',
+                    add: function (e, data) {
+                        data.submit();
+                        imageInputDiv.find('img').remove();
+                        imageInputDiv.append('<div id="progressbar" class="progress progress-striped">'+
+                            '<div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%">'+
+                            '</div></div>');
+                    },
+                    done: function (e, data) {
+                        $('#progressbar').remove();
+                        $('<img src="' + data.result.path + '">').appendTo(imageInputDiv);
+                        $('#fileUrl').val(data.result.path);
+                    },
+                    progressall: function (e, data) {
+                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        $('#progressbar .progress-bar').css('width', progress + '%');
+                    }
+                });
+                $('#myModal').show().css({'z-index': '650000'});
+                $('#uploadButton').on('click', function(){
+                    win.document.getElementById(field_name).value = $('#fileUrl').val();
+                    $('#myModal').hide();
+                });
+                $('#closeButton').on('click', function(e){
+                    $('#myModal').hide();
+                });
+            }
+        });
+        tinymce.init({
+            mode: 'exact',
+            elements: 'teaser',
+            toolbar: "undo redo | cut copy paste | bold italic underline superscript subscript | visualblocks code",
+            menubar: false,
+            //forced_root_block : false,
+            plugins: [
+                "autolink lists link charmap preview anchor",
+                "searchreplace visualblocks code",
+                "insertdatetime media table contextmenu paste"
+            ],
+            language : 'ru',
+            relative_urls : false,
+            remove_script_host : false,
+            document_base_url : "http://localhost:3000",
+        });
+    });

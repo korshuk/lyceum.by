@@ -1,0 +1,9 @@
+div
+  label Title:
+  input(name='n[title]', value=n.title || '')
+div
+  label Text:
+  div
+    textarea(name='n[body]')= n.body
+div
+  input(type='submit', value='Save')
