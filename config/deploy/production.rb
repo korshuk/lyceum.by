@@ -35,7 +35,7 @@ server '178.159.244.43', user: 'lyceum', roles: %w{web app}, my_property: :my_va
 #     user: 'user_name', # overrides user setting above
 #     keys: %w(/home/user_name/.ssh/id_rsa),
      forward_agent: true,
-     auth_methods: %w(publickey password),
-     password: 'waraxe2014'
+     auth_methods: %w(publickey password)
+#     password: 'waraxe2014'
    }
 # setting per server overrides global ssh_options
