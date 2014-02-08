@@ -2,6 +2,7 @@ var model = require('../models/menu'),
     localization = require('../modules/localization').localization,
     sortBY = require('../modules/sort').sortBy,
     pathArray = {},
+    newsPathArray = {},
     MainMenu = [],
     subMenusArray = {},
     breadcrumbsArray = {},
@@ -32,8 +33,32 @@ var menuHelper = function (req, res, next) {
   }
 };
 
-MenuController = function (controller, app) {
-    this.controller = controller;
+var newsMenuHelper = function (req, res, next) {
+  var id;
+  if (newsPathArray[req.path]) {
+    id = newsPathArray[req.path].id;
+    req.params.id = id;
+    res.locals.subMenu = [];
+    //TODO news type
+    res.locals.breadcrumbs = [{
+        name: { 
+          en: 'cvxmx m', 
+          by: 'fvfvf', 
+          ru: 'sdfsdf' 
+        },
+        path: '/sdfsdf.html' 
+      }];
+    res.locals.MainMenu = MainMenu;
+    res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length-1].name;
+    next();
+  }
+  else {
+    req.session.error = new Error('такой страницы не существует');
+    res.redirect('404.html');
+  }
+}
+
+MenuController = function (app) {
 
     this.JSON = {children: []};
 
@@ -128,14 +153,25 @@ MenuController = function (controller, app) {
 
     this.setRouts = function () {
       var self = this;
-      for (var i = 0; i < self.routes.length; i++) {
-        app.get(self.routes[i], [localization, menuHelper], function(req, res) {
-          self.controller.show(req,res);
-        });
+
+      for (var i = self.routes.length - 1; i >= 0 ; i--) {
+        console.log(self.routes[i]);
+        
         app.get('/:lang' + self.routes[i], [localization, menuHelper], function(req, res) {
-          self.controller.show(req,res);
+          console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+          app.pageController.show(req, res);
         });
+
+
+        app.get(self.routes[i], [localization, menuHelper], function(req, res) {
+          console.log('@pppppppppppppppppppppppppppppppppppppppp');
+          app.pageController.show(req, res);
+        });
+        
       };
+      app.get('*', function(req, res) {
+        res.redirect('404.html');
+      });
     };
 
     this.map = function (obj, path) {
@@ -170,6 +206,9 @@ MenuController = function (controller, app) {
         MainMenu = this.JSON.children;
     };
 
+    this.getMainMenu = function () {
+      return MainMenu
+    }
     this.generateBreadcrumbs = function (obj) {
         var that = this;
         var array = [];

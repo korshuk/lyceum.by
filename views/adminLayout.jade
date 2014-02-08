@@ -7,19 +7,28 @@ html
     link(rel='stylesheet', href='/stylesheets/adminStyle.css')
     link(rel='stylesheet', href='/stylesheets/sir-trevor.css')
     link(rel='stylesheet', href='/stylesheets/sir-trevor-icons.css')
+    link(rel="stylesheet", href="/stylesheets/jquery.datetimepicker.css")
+
   body
     div.navbar.navbar-inverse.navbar-fixed-top.bs-docs-nav
       div.container
         a.navbar-brand(href="/admin")Админка
-        - if (locals.logged == 'logged')
+        -// if (locals.logged == 'logged')
             div.nav-collapse.collapse.bs-navbar-collapse
               ul.nav.navbar-nav
-                li.active
-                  a(href="/news") News
                 li
-                  a(href="/admin/users") Users
+                  a(href="/admin/news") Новости
                 li
-                  a(href="/admin/pages") Pages
+                  a(href="/admin/congratulations") Поздравления
+                li
+                  a(href="/admin/media") Лицей в СМИ
+                li
+                  a(href="/admin/pages") Страницы
+                li
+                  a(href="/admin/contacts") Контакты
+                li
+                  a(href="/admin/users") Пользователи
+                
             p.navbar-text.pull-right
                 a.navbar-link(href="/logout") Logout
     div.container

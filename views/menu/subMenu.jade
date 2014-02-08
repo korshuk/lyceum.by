@@ -1,4 +1,4 @@
-h2 submenu
-ul
-    each m in subMenu
-        include subMenuElement
+if locals.subMenu
+    ul.sub-menu
+        each m in locals.subMenu
+            include subMenuElement

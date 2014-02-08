@@ -1,1 +1,32 @@
-h1 NOT
+include layout/header404
+    block content
+            a(href='#')#logo
+                img(src="img/logo404.png")
+                h1!= translate('Лицей Белорусского Государственного университета').split(' ').join('<br>')
+            - var first = Math.floor((Math.random()*2))
+            - var a1, a2, a3, a4, a5, sign;
+            if (first === 1)
+                - a1 = Math.floor((Math.random()*10)+1)
+                - a2 = Math.floor((Math.random()*100)+1)
+            else
+                - a1 = Math.floor((Math.random()*100)+1)
+                - a2 = Math.floor((Math.random()*10)+1) 
+            - a3 = Math.floor((Math.random()*100)+1)
+            - a4 = Math.floor((Math.random()*100)+1)
+            - a5 = 404 - a1 * a2 - a3 - a4
+            if a5 < 0 
+                - sign = '-'
+                - a5 = -a5
+            else 
+                - sign = '+'
+            h2
+                != a1 + '&#215;' + a2 + '+' + a3 + sign + a5 + '+' + a4 + '='
+                span 404
+            p.message= translate('Страница не найдена') + '!'
+            - var href
+            if (locals.lang)
+                - href = beforeUrl + "/index.html"
+            else
+                - href = "/"
+            p= translate('Попробуйте начать с') + ' ' 
+                a(href=href, title= translate('На главную'))= translate('главной страницы')

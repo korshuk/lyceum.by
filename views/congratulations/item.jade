@@ -1,0 +1,14 @@
+div.news-item
+    if (locals.lang) 
+        - var ahref = '/' + locals.lang + '/congratulations/' + d.pathAlias + '.html';
+    else
+        - var ahref = '/congratulations/' + d.pathAlias + '.html';
+    span.time= d.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
+    //- var block = JSON.parse(d.teaser[locals.lang || 'ru']).data[0];
+    a(href= ahref).to-full-page
+        h3= d.name[locals.lang || 'ru']
+    if d.image
+        - var image = JSON.parse(d.image).data[0].data;
+        img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
+    div.teaser.clearfix
+        //-= block.data.text

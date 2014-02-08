@@ -1,0 +1,5 @@
+case block.data.source
+    when "vimeo"
+        iframe(src="http://player.vimeo.com/video/#{block.data.remote_id}?title=0&byline=0", frameborder="0", width="620", height="400")
+    when "youtube"
+        iframe(src="http://www.youtube.com/embed/#{block.data.remote_id}", frameborder="0", width="620", height="400")

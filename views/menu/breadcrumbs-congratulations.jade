@@ -1,0 +1,9 @@
+ol.breadcrumb
+	include breadcrumbHome
+	if (locals.breadcrumbs)
+		li
+			a(href="")= translate('Поздравления')
+		li.active!= translateObj(locals.breadcrumbs.name)
+	else
+		li.active= translate('Поздравления')
+		

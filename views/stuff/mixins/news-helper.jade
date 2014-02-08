@@ -1,0 +1,26 @@
+mixin twoColumnList(docs)
+    - var counter = 0;
+    - var mod = docs.length % 2;
+    - var height;
+    - var d;
+    - if (mod === 0) {
+    -    height = docs.length / 2;
+    -    tail = height;
+    -}
+    -else {
+    -   height = (docs.length - mod) / 2;
+    -   height = height + 1;
+    -}
+    div.col-1
+        - for (var i=0; i < height; i++) {
+        -   d = docs[counter];
+        -   counter++;
+            if (counter <= docs.length)
+                include ../../+'media'+/item
+        -}
+    div.col-1
+        - for (var i=0; counter < docs.length; counter++) {
+        -   d = docs[counter];
+            if (counter <= docs.length)
+                include item
+        -}

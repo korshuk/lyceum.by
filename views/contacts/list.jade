@@ -1,0 +1,27 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список контактов
+        a.btn.btn-primary(href='/admin/contacts/create') Добавить контакт
+    table.table.table-hover
+      tr
+        th Имя
+        th Должность
+        th Порядок
+        th Кабинет
+        th Телефон
+        th Почта
+        th
+      - each doc in docs
+          tr
+            td= doc.name.ru
+            td= doc.occupation.ru
+            td= doc.order || 0
+            td= doc.place
+            td= doc.phone
+            td= doc.email
+            td
+              a(href="/admin/contacts/"+doc.id+"/edit") Редактировать 
+              br
+              a(href="/admin/contacts/"+doc.id+"/delete") Удалить

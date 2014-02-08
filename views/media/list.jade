@@ -1,0 +1,24 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Список новостей про Лицей в СМИ
+        a.btn.btn-primary(href='/admin/media/create') Добавить новую
+    table.table.table-hover
+      tr
+        th Название источника
+        th Название статьи
+        th Создана
+        th Обновлена
+        th
+      each n in docs
+          tr
+            td= n.name.ru
+            td= n.body.ru
+            td= n.createdAt.format('dd-MM-yyyy hh:mm:ss')
+            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+            td  
+              a(href="/admin/media/"+n.id+"/edit") Редактировать
+              br
+              a(href="/admin/media/"+n.id+"/delete") Удалить 
+            

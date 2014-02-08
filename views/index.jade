@@ -1,4 +1,11 @@
-h1 ggg
-h1!= translate("Привет2")
-h1= lang
-pre!= translate
+include layout/header
+
+	block content
+		div#main.index
+			-var docs = ndocs;
+			include news/index
+			-docs = cdocs;
+			include congratulations/index
+			-docs = mdocs;
+			include media/index
+include layout/footer

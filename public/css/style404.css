@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'GothamPro';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/gothaprobol.eot');
+    src: url('../fonts/gothaprobol.eot') format('embedded-opentype'),
+         url('../fonts/gothaprobol.woff') format('woff'),
+         url('../fonts/gothaprobol.ttf') format('truetype'),
+         url('../fonts/gothaprobol.svg#GothamProBold') format('svg');
+}
+/*
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PT Sans'), local('PTSans-Regular'), url(../fonts/ptsansn.woff) format('woff');
+}
+*/
+body {
+  background: url(../img/404bg.gif);
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+h1 {
+  font-family: 'PT Sans Caption', sans-serif;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0px -1px 0 rgba(20, 55, 36, 1);
+  font-weight: 400;
+  line-height: 16px;
+  margin-top: 1px;
+  margin-bottom: 0;
+}
+#logo{
+  text-decoration: none;
+}
+h2 {
+  color: #8cb09d;
+  font-family: 'GothamPro';
+  font-weight: 700;
+  font-size: 56px;
+  text-shadow: 0px 1px 0 rgba(20, 55, 36, 1);
+  margin-top: 45px;
+  margin-bottom: 47px;
+}
+h2 span {
+  color: #fff;
+  text-decoration: underline;
+}
+img {
+  margin-top: 115px;
+}
+p {
+  margin-top: 0;
+  font-family: 'PT Sans', sans-serif;
+  font-weight: 400;
+  color: #8cb19d;
+  font-size: 16px;
+  text-shadow: 0px -1px 0 rgba(20, 55, 36, 1);
+}
+p a {
+  color: #fff;
+}
+p.message {
+  margin-bottom: 11px;
+  font-family: 'GothamPro';
+  font-weight: 700;
+  color: #fff;
+  font-size: 20px;
+  text-shadow: 0px -1px 0 rgba(20, 55, 36, 1);
+}

@@ -388,7 +388,7 @@ footer
                         float: left;
                         margin-bottom: 5px;
                     } 
-                    .news-item img.diplom {
+                    .news-item img.narrow {
                         width: 100px;
                         padding-right: 20px;
                     }
@@ -492,6 +492,9 @@ footer {
 }
 .olympic span:first-child{
     margin-left: 2px;
+}
+.sharearea {
+    width: 100%;
 }
 .o-g{
     z-index: 4;
@@ -602,6 +605,15 @@ and (max-width : 1224px) {
     .table td {
         display: block;
     }
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
 }
 
 @media only screen

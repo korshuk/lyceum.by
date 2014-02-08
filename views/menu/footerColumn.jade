@@ -1,0 +1,12 @@
+div.col-1
+    nav(role="navigation")
+        ul
+            - for (var i=0; i < height; i++) {
+            -   m = MainMenu[counter];
+            -   counter++;
+                if (counter <= MainMenu.length)
+                    include footerMenuElement
+                if (counter === MainMenu.length)
+                    li
+                        a(href= beforeUrl + '/contacts.html', title=translate('Контакты'))= translate('Контакты')
+            -}

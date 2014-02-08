@@ -7,7 +7,9 @@ block content
             h1 Редактирование страницы
         else
             h1 Новая страница
-    form.form-horizontal(method='post', action='/admin/pages')
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/pages/' + doc.id : '/admin/pages' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
         div.row
             div.panel.panel-default
                 ul.nav.nav-tabs#tabNav
@@ -22,7 +24,7 @@ block content
                     div.tab-pane.fade.in.active#ru
                         +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
                         +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15') 
-                            !=doc.body.ru || ''
+                            != JSON.stringify(doc.body.ru)
                         +field('textarea', "keywords.ru", 'Ключевые слова')(rows='2')
                             != doc.keywords.ru || ''
                         +field('textarea', "description.ru", 'Описание')(rows='2')
@@ -30,7 +32,7 @@ block content
                     div.tab-pane.fade#by
                         +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
                         +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
-                            !=doc.body.by || ''
+                            != JSON.stringify(doc.body.by)
                         +field('textarea', "keywords.by", 'Ключевые слова')(rows='2')
                             != doc.keywords.by || ''
                         +field('textarea', "description.by", 'Описание')(rows='2')
@@ -38,7 +40,7 @@ block content
                     div.tab-pane.fade#en
                         +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
                         +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
-                            !=doc.body.by || ''
+                            != JSON.stringify(doc.body.en)
                         +field('textarea', "keywords.en", 'Ключевые слова')(rows='2')
                             != doc.keywords.en || ''
                         +field('textarea', "description.en", 'Описание')(rows='2')

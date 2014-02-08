@@ -1,0 +1,14 @@
+aside(class= locals.type === 'table' ? 'col-3' : 'col-1').style-grey
+    h2= translate('Лицей в социальных сетях')
+    hr.colored
+    ul.large
+        li#fb-widget
+            h3#facebook Facebook
+            include social/fb-likebox
+        li#vk-widget
+            h3#vk Вконтакте
+            include social/vk-groups
+        li#yt-widget
+            h3#twitter Twitter
+            include social/twitter-follow-button
+            include social/youtube

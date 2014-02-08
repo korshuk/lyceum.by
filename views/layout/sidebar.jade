@@ -1,0 +1,12 @@
+div#sidebar
+	header
+		- var href
+		if (locals.lang)
+			- href = beforeUrl + "/index.html"
+		else
+			- href = "/"
+		a(href=href, title= translate('На главную'))
+			img(src="/img/logo.png", alt= translate('Лицей Белорусского Государственного университета'))#logo 
+			h1!= translate('Лицей Белорусского Государственного университета').split(' ').join('<br>')
+		include langpicker
+		include ../menu/mainMenu

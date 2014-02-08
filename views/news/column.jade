@@ -1,0 +1,7 @@
+div(class= locals.ajax ? 'ajax' : '').col-1
+    - for (var i=0; i < height; i++) {
+    -   d = docs[counter];
+    -   counter++;
+        if (counter <= docs.length)
+            include item
+    -}

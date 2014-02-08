@@ -513,3 +513,26 @@ ul.st-text-block {
 
 .st-format-btn--Unlink {
   text-decoration: line-through; }
+/*table*/
+.st-text-block table {
+  width: 100%;
+  position: relative;
+  border-collapse: collapse;
+  margin: 1em 0; }
+.st-text-block table caption {
+    width: 25%;
+    min-width: 25%;
+    max-width: 100%;
+    background: #f3f3f3;
+    text-align: left; }
+.st-text-block table td, .st-text-block table th {
+    min-width: 30px;
+    border: 1px solid black !important; }
+.st-text-block table td {
+    border: 1px solid #ddd !important; }
+.st-text-block table th {
+    border: 1px solid black !important; }
+.st-text-block table thead tr {
+    border: 1px solid black !important; }
+.st-text-block table tbody tr {
+    border: 1px solid #ddd !important; }

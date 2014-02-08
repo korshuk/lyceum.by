@@ -1,0 +1,11 @@
+aside.sharearea.style-grey
+    hr.dotted
+    h2= translate('Поделиться')
+    ul.small
+        li#fb-like
+            div.fb-share-button(data-href="http://developers.facebook.com/docs/plugins/", data-type="button")
+        li#vk-like
+            script
+                document.write(VK.Share.button(false,{type: "round_nocount", text: "Сохранить"}))      
+        li#tw-like
+            a(href="http://twitter.com/share", data-lang=locals.lang || "ru").twitter-share-button" Tweet

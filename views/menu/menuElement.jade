@@ -1,12 +1,5 @@
--var cl = ''
--var l = 'ru'
--var ahref = ''
--if (locals.lang) {
--	l = locals.lang
--	ahref = '/' + l
--}
--if (activepage[l] === m.name[l]) {
--	cl = 'active'
--}
-li(class= cl)
-    a(href= ahref + m.path, title=m.name[l])= m.name[l]
+if (locals.activepage && translateObj(locals.activepage) === translateObj(m.name))
+	li.active= translateObj(m.name)
+else
+	li
+		a(href= beforeUrl + m.path, title= translateObj(m.name))= translateObj(m.name)

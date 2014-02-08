@@ -1,0 +1,8 @@
+div.news-item
+    span.time= d.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
+    div.preview
+        - var image = JSON.parse(d.image).data[0].data;
+        img(src= image.file.mUrl, alt= d.body[locals.lang || 'ru'])
+        span= translateObj(d.name)
+    a(href= d.link, title= d.body[locals.lang || 'ru'] ).to-full-page
+        h3= translateObj(d.body)

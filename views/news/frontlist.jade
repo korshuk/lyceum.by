@@ -1,0 +1,12 @@
+include ../layout/header
+    block content
+        div#main.index
+            section#content.style-blue.col-2
+                include ../menu/breadcrumbs-news
+                hr.colored
+                if main
+                    include mainItem
+                include indexlist
+                include moreLink
+            include ../layout/aside
+include ../layout/footer

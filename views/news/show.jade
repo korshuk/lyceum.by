@@ -1,2 +1,36 @@
-h1= n.title
-div=n.body
+include ../layout/header
+    block content
+        div#main.page
+            include ../menu/breadcrumbs-news
+            hr.colored
+            if translateObj(doc.name)
+                h1= translateObj(doc.name)
+            -locals.type = '';
+            -locals.olympic = '';
+            -if (translateObj(doc.type) === 'table') 
+                - locals.type = 'table'
+            -if (translateObj(doc.type) === 'table olimp')
+                - locals.type = 'table'
+                - locals.olympic = 'olympic'
+            section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+                if translateObj(doc.body)
+                    - blocks = translateObj(doc.body).data
+                else
+                    - blocks = translateObj(doc.teaser).data
+                each block in blocks
+                    case block.type
+                        when "heading"
+                            include ../stuff/sir/sirheading
+                        when "video"
+                            include ../stuff/sir/sirvideo
+                        when "list"
+                            include ../stuff/sir/sirlist
+                        when "table"
+                            include ../stuff/sir/sirtable 
+                        when "text"
+                            include ../stuff/sir/sirtext
+                        when "image"
+                            include ../stuff/sir/sirimage
+                include ../layout/asidesmall
+            include ../layout/aside
+include ../layout/footer

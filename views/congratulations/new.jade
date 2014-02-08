@@ -1,0 +1,52 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        if method === 'put'
+            h1 Редактирование поздравления
+        else
+            h1 Новое поздравление
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/congratulations/' + doc.id : '/admin/congratulations' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")   
+
+            +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker 
+
+        div.row
+            div.panel.panel-default
+                ul.nav.nav-tabs#tabNav
+                    li.active 
+                        a(href='#ru', data-toggle="tab") RU
+                    li 
+                        a(href='#by', data-toggle="tab") BY
+                    li 
+                        a(href='#en', data-toggle="tab") EN
+                br
+                div.tab-content
+                    div.tab-pane.fade.in.active#ru
+                        +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
+                        +field('textarea', 'teaser.ru', 'Текст на главную')#teaser-ru
+                            !=JSON.stringify(doc.teaser.ru)
+                        +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15') 
+                            !=JSON.stringify(doc.body.ru)
+                    div.tab-pane.fade#by
+                        +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
+                        +field('textarea', 'teaser.by', 'Текст на главную')#teaser-by
+                            !=JSON.stringify(doc.teaser.by)
+                        +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
+                            !=JSON.stringify(doc.body.by)
+                    div.tab-pane.fade#en
+                        +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
+                        +field('textarea', 'teaser.en', 'Текст на главную')#teaser-en
+                            !=JSON.stringify(doc.teaser.en)
+                        +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
+                            !=JSON.stringify(doc.body.en)
+
+        +field('textarea', 'image', 'Картинка к поздравлению')#image
+            !=doc.image || ''
+
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock

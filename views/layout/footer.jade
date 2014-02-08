@@ -1,0 +1,25 @@
+footer
+	- var href
+	if (locals.lang)
+		- href = beforeUrl + "/index.html"
+	else
+		- href = "/"
+	a(href=href, title= translate('На главную'))#footer-logo
+		img(src="/img/footer-logo.png")
+	div.col-1.first
+		p 
+			| © #{translate("2001-2014 Лицей БГУ")} 
+			br
+			| #{translate('Все права защищены.')}
+			br
+		small
+			| #{translate("Беларусь, 220030, Минск, Ульяновская, 8")}
+			br
+			| #{translate("телефон приёмной: 2095265, факс: 2260050")}
+			br
+			| e-mail: 
+			a(href="mailto:info@lyceum.by") info@lyceum.by
+	include ../menu/footerMenu
+//-script(src='http://code.jquery.com/jquery-1.11.0.min.js')
+script(src='/javascripts/jquery.js')
+script(src='/javascripts/main.js')

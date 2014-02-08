@@ -1,17 +1,17 @@
 var express = require('express'),
     mongoose = require('mongoose'),
-    fs = require('fs'),
-    gm = require('gm'),
     winston = require('winston'),
-
-  
- //   localization = require('./controllers/localization').localization,
+    url = require('url'),
     NewsController = require('./controllers/news').NewsController,
+    MediaController = require('./controllers/media').MediaController,
+    CongratulationsController = require('./controllers/congratulations').CongratulationsController,
     UserController = require('./controllers/user').UserController,
     PageController = require('./controllers/page').PageController,
+    MenuController = require('./controllers/menu').MenuController,
+    ContactsController = require('./controllers/contacts').ContactsController,
     db;
 
-require('./modules/date.js');
+    require('./modules/date.js');
 
 var app = express();
 
@@ -25,8 +25,8 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
-  app.use(express.directory(__dirname + '/public'));
+  //app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+ 
   app.use(express.static(__dirname + '/public'));
 
   app.set('db-uri', 'mongodb://localhost/nodeblog');
@@ -57,112 +57,19 @@ app.use(function(req, res, next){
   next();
 });
 
-//var localization = new LocalizationController();
+app.newsController = new NewsController(mongoose);
+app.mediaController = new MediaController(mongoose);
+app.congratulationsController = new CongratulationsController(mongoose);
+app.contactsController = new ContactsController(mongoose, app);
 
-var newsController = new NewsController(mongoose);
+require('./routes/frontRoutes')(app);
+
+app.menuController = new MenuController(app);
 app.userController = new UserController(mongoose);
 app.pageController = new PageController(mongoose, app);
 
-function menu(req, res, next){
-  res.menu.html = pageController.menuHTML;
-  next();
-}
-winston.log('info', 'Hello distributed log files!');
-  winston.info('Hello again distributed logs');
+require('./routes/adminRoutes')(app);
 
-app.get('/404.html', function(req, res){
-   res.render('404.jade', { locals: { 
-                  title : '404 - Not Found'
-                 ,description: ''
-                 ,author: ''
-                 ,analyticssiteid: 'XXXXXXX' 
-                },status: 404 });
-});
-/*
-app.get('/:lang/index.html', localization, function(req, res){
-  res.render('index.jade');
-});*/
-/*
-app.get('/:w.html', localization, function(req, res){
-  pageController.show(req, res);
-});
-
-app.get('/:lang/:w.html', localization, function(req, res){
-  pageController.show(req, res);
-});
-*/
-
-app.get('/news', function(req, res) {newsController.list(req, res);});
-app.get('/news/create', function(req, res) {newsController.create(req, res);});
-app.get('/news/:id', function(req, res) {newsController.show(req, res);});
-app.get('/news/:id/edit', function(req, res) {newsController.edit(req, res);});
-app.post('/news', function(req, res) {newsController.save(req, res);});
-app.put('/news/:id', function(req, res) {newsController.update(req, res);});
-
-
-
-require('./routes/adminLogin')(app);
-require('./routes/adminUsers')(app);
-require('./routes/adminPages')(app);
-
-
-
-
-app.post('/images/upload', function(req, res) {
-  console.log('image upload');
-  console.log(req.body.attachment);
-  var serverPath = '/images/' + req.files.attachment.file.name; //req.files.image.name;
-
-  var desktopPath = '/images/desktop/' + req.files.attachment.file.name;
-  var mobilePath = '/images/mobile/' + req.files.attachment.file.name;
-  var dwidth;
-  var mwidth;
-  var imageType;
-  console.log(req.files.attachment.file);
-  var image = gm(req.files.attachment.file.path);
-
-  image.size(function (err, size) {
-    if (!err) {
-
-      if (size.width > size.height) {
-        dwidth = 620;
-        mwidth = 300;
-        imageType = 'wide';
-      }
-      else {
-        dwidth = 300;
-        mwidth = 100;
-        imageType = 'narrow';
-      }
-
-      image.resize(dwidth).write('./public' + desktopPath, function(err) {
-        if (!err) {
-          image.resize(mwidth).write('./public' + mobilePath, function(err) {
-            if (!err) {
-              res.send({
-                file: {
-                  url: desktopPath,
-                  dUrl: desktopPath,
-                  mUrl: mobilePath,
-                  imageType: imageType
-                }
-              });
-            }
-            else console.log(err);
-            });
-        }
-        else console.log(err);
-      });
-
-    }
-    else console.log(err);
-  });
-});
-/*
-app.get('*', function(req, res) {
-  res.redirect('404.html');
-});
-*/
 if (!module.parent) {
   app.listen(3000);
   console.log('started');

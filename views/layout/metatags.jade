@@ -1,0 +1,11 @@
+if (locals.metatags)
+    if locals.metatags.index
+        title= translate("Лицей БГУ - Официальный сайт")
+    if locals.metatags.title
+        title= translate("Лицей БГУ") + " | " + translate(locals.metatags.title)
+    meta(name='keywords', content= translate(locals.metatags.keywords))
+    meta(name='description', content= translate(locals.metatags.description))
+else
+    title= translate("Лицей БГУ") + " | " + translateObj(doc.name)
+    meta(name='keywords', content= translateObj(doc.keywords))
+    meta(name='description', content= translateObj(doc.description))

@@ -3,23 +3,51 @@ extends ../adminLayout
 
 block content
     div.page-header
-        h1: Новая новость
-    form.form-horizontal.panel(method='post', action='/news')
-        
-        options = [{'name': 'новость', 'value': 'false'}, {'name': 'поздравление', 'value': 'true'}]
+        if method === 'put'
+            h1 Редактирование новости
+        else
+            h1 Новая новость
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/news/' + doc.id : '/admin/news' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
 
-        +field('select', 'isCongratulation', 'Новость или поздравление', options)
+            +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker    
 
-        +field('checkbox', 'prime', 'Главная новость')
+        +field('checkbox', 'isMain', 'Главная новость')(checked= doc.isMain || false)
 
-        +field('text', 'title', 'Название новости')
-        
-        +field('file', 'image', 'Картинка к новости')#fileupload(data-url='/images/upload')
+        div.row
+            div.panel.panel-default
+                ul.nav.nav-tabs#tabNav
+                    li.active 
+                        a(href='#ru', data-toggle="tab") RU
+                    li 
+                        a(href='#by', data-toggle="tab") BY
+                    li 
+                        a(href='#en', data-toggle="tab") EN
+                br
+                div.tab-content
+                    div.tab-pane.fade.in.active#ru
+                        +field('text', "name.ru", 'Название новости')(value= doc.name.ru || '')
+                        +field('textarea', 'teaser.ru', 'Текст на главную')#teaser-ru
+                            !=JSON.stringify(doc.teaser.ru)
+                        +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15') 
+                            !=JSON.stringify(doc.body.ru)
+                    div.tab-pane.fade#by
+                        +field('text', "name.by", 'Название новости')(value= doc.name['by'] || '')
+                        +field('textarea', 'teaser.by', 'Текст на главную')#teaser-by
+                            !=JSON.stringify(doc.teaser.by)
+                        +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
+                            !=JSON.stringify(doc.body.by)
+                    div.tab-pane.fade#en
+                        +field('text', "name.en", 'Название новости')(value= doc.name['en'] || '')
+                        +field('textarea', 'teaser.en', 'Текст на главную')#teaser-en
+                            !=JSON.stringify(doc.teaser.en)
+                        +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
+                            !=JSON.stringify(doc.body.en)
 
-        +field('textarea', 'teaser', 'Текст на главную')#teaser
+        +field('textarea', 'image', 'Картинка к новости')#image
+            !=doc.image || ''
 
-        +field('textarea', 'body', 'Содержание')#body
-        
         +buttonSet
 
 block scripts

@@ -130,6 +130,7 @@ h2 {
 .news-item h3 {
 	font-size: 20px;
 	line-height: 25px;
+	word-wrap: break-word;
 }
 .more-link {
 	font-size: 11px;

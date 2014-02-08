@@ -1,0 +1,24 @@
+include ../layout/header
+    block content
+        div#main.index
+            section#content.style-yellow.col-2
+                include ../menu/breadcrumbs-media
+                hr.colored
+                - var counter = 0;
+                - var mod = docs.length % 2;
+                - var height;
+                - var d;
+                - if (mod === 0) {
+                -    height = docs.length / 2;
+                -}
+                -else {
+                -   height = (docs.length - mod) / 2;
+                -   height = height + 1;
+                -}
+                if counter < docs.length
+                    include column
+                if counter < docs.length
+                    include column
+                include moreLink
+            include ../layout/aside
+include ../layout/footer

@@ -6,13 +6,13 @@ function define(mongoose, fn) {
   PageSchema = new Schema({
    	'name':{
       'ru': {type: String, index: true, required: true},
-      'en': {type: String, index: true, required: true},
-      'by': {type: String, index: true, required: true},
+      'en': {type: String, index: true},//, required: true},
+      'by': {type: String, index: true},//, required: true},
     }, 
     'body': {
-      'ru': {type: String, required: true},
-      'en': {type: String, required: true},
-      'by': {type: String, required: true},
+      'ru.data': {type: Array, required: true},
+      'en.data': {type: Array},//, required: true}},
+      'by.data': {type: Array},//, required: true}},
     },
     'description': {
       'ru': {type: String},
@@ -29,7 +29,12 @@ function define(mongoose, fn) {
     'order': Number,
     'createdBy': {type: String},
     'createdAt': {type: Date, default: Date.now},
-    'updatedAt': {type: Date, default: Date.now}
+    'updatedAt': {type: Date, default: Date.now},
+    'type': {
+      'ru': String,
+      'by': String,
+      'en': String,
+    }
   });
   PageSchema.virtual('id').get(function() {
    	return this._id.toHexString();

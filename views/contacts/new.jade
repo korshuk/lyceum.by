@@ -1,0 +1,43 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        if doc.name.ru
+            h1 Редактирование контакта
+        else
+            h1 Новый контакт
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/contacts/' + doc.id : '/admin/contacts' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+        div.row
+            div.panel.panel-default
+                ul.nav.nav-tabs#tabNav
+                    li.active 
+                        a(href='#ru', data-toggle="tab") RU
+                    li 
+                        a(href='#by', data-toggle="tab") BY
+                    li 
+                        a(href='#en', data-toggle="tab") EN
+                br
+                div.tab-content
+                    div.tab-pane.fade.in.active#ru
+                        +field('text', "name.ru", 'ФИО')(value= doc.name.ru || '')
+                        +field('text', "occupation.ru", 'Должность')(value= doc.occupation.ru || '')
+                    div.tab-pane.fade#by
+                        +field('text', "name.by", 'ФИО')(value= doc.name.by || '')
+                        +field('text', "occupation.by", 'Должность')(value= doc.occupation.by || '')
+                    div.tab-pane.fade#en
+                        +field('text', "name.en", 'ФИО')(value= doc.name.en || '')
+                        +field('text', "occupation.en", 'Должность')(value= doc.occupation.en || '')
+            
+       
+        +field('number', 'phone', 'Телефон')(value= doc.phone || 0000000)
+        +field('number', 'place', 'Кабинет')(value= doc.place || 000)
+        +field('text', 'email', 'email')(value= doc.email || '')
+        +field('number', 'order', 'Order')(value= doc.order || 0)
+        
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock

@@ -1,0 +1,7 @@
+- var href
+if (locals.lang)
+	- href = beforeUrl + "/index.html"
+else
+	- href = "/"
+li
+	a(href=href, title= translate('На главную'))= translate('Главная')

@@ -1,14 +1,61 @@
 script
     SirTrevor.setDefaults({
       uploadUrl: "/images/upload",
-      blockTypes: ["Heading", "Text", "List", "Image", "Video"]
+      blockTypes: ["Heading", "Text", "List", "Table", "Image", "Video"]
     });
-    new SirTrevor.Editor({
-        el: $('#body-ru')
-    });
-    new SirTrevor.Editor({
-        el: $('#body-by')
-    });
-    new SirTrevor.Editor({
-        el: $('#body-en')
-    });
+    if ($('#body-ru').length) {
+        new SirTrevor.Editor({
+            el: $('#body-ru')
+        });
+        new SirTrevor.Editor({
+            el: $('#body-by')
+        });
+        new SirTrevor.Editor({
+            el: $('#body-en')
+        });
+    }
+    if ($('#teaser-ru').length) {
+        new SirTrevor.Editor({
+            el: $('#teaser-ru'),
+            blockTypes: ["Text"],
+            blockTypeLimits: {
+                "Text": 1
+            }
+        });
+        new SirTrevor.Editor({
+            el: $('#teaser-by'),
+            blockTypes: ["Text"],
+            blockTypeLimits: {
+                "Text": 1
+            }
+        });
+        new SirTrevor.Editor({
+            el: $('#teaser-en'),
+            blockTypes: ["Text"],
+            blockTypeLimits: {
+                "Text": 1
+            }
+        });
+    }
+    if ($('#image').length){
+        new SirTrevor.Editor({
+            el: $('#image'),
+            blockTypes: ["Image"],
+            blockTypeLimits: {
+                "Image": 1
+            }
+        });
+    }
+    if ($('#mediaimage').length){
+        SirTrevor.setDefaults({
+            uploadUrl: "/images/mediaupload",
+        });
+        new SirTrevor.Editor({
+            el: $('#mediaimage'),
+            blockTypes: ["Image"],
+            blockTypeLimits: {
+                "Image": 1
+            }
+        });
+
+    }

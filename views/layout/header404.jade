@@ -1,0 +1,27 @@
+- var beforeUrl = "";
+if locals.lang 
+    - beforeUrl = "/" + locals.lang;
+doctype 5
+html(lang= locals.lang || "ru")
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1")
+    
+        //- if (locals.metatags)
+        //-     if locals.metatags.index
+        //-         title= translate("Лицей БГУ - Официальный сайт")
+        //-     if locals.metatags.title
+        //-         title= translate("Лицей БГУ") + " | " + locals.metatags.title[locals.lang || "ru"]
+        //-     meta(name='keywords', content= locals.metatags.keywords[locals.lang || "ru"] || '')
+        //-    meta(name='description', content= locals.metatags.description[locals.lang || "ru"] || '')
+        link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
+        link(rel="icon", href="/favicon.ico", type="image/x-icon")    
+        
+        link(href='http://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
+        //-link(href='http://fonts.googleapis.com/css?family=PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
+        //-link(href='http://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700&subset=latin,cyrillic', rel='stylesheet', type='text/css')
+        link(rel='stylesheet', href='/css/style404.css')
+    body
+        div#container
+            block content

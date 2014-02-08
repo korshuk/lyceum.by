@@ -1,0 +1,5 @@
+extends ../layout
+
+block caption
+    h1= doc.name[locals.lang || "ru"]
+    div= doc.body
