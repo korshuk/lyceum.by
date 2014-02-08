@@ -40,7 +40,7 @@ namespace :deploy do
   desc "Install node modules non-globally"
   task :npm_install do
     on roles(:app) do
-      execute "cd #{current_path} && sudo /usr/local/lib/node_modules/npm/bin/npm install"
+      execute "cd #{current_path} && npm install"
     end
   end
  
