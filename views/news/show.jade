@@ -13,6 +13,9 @@ include ../layout/header
                 - locals.type = 'table'
                 - locals.olympic = 'olympic'
             section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+                if doc.image
+                    - var image = JSON.parse(doc.image).data[0].data;
+                    img(src= image.file.dUrl, class= image.file.imageType)
                 if translateObj(doc.body)
                     - blocks = translateObj(doc.body).data
                 else

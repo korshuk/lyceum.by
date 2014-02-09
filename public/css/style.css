@@ -249,6 +249,7 @@ section,
 section.col-2{padding-top:8px;margin-left:-20px;}
 section.col-2,
 .index section#content.col-2{width:640px;}
+#content img.narrow{margin-right: 30px;float:left;}
 section#content.col-2{width:620px;}
 .index section#content{margin-left:-20px;}
 .index section > h2,
@@ -270,8 +271,9 @@ section#content.col-2{width:620px;}
 .news-item.no-header .time{margin-bottom:12px;}
 .news-item h3{margin:0 0 18px 0;}
 .style-yellow .news-item h3{margin:0;}
+.imagelink:hover img{opacity: 0.8;}
 .news-item img{width:300px;float:left;margin-bottom:5px;}
-.news-item img.narrow{width:100px;padding-right:20px;}
+.news-item img.narrow{width:100px;margin-right:20px;}
 .preview{position:relative;}
 .preview span{position:absolute;background:#f1cc32;}
 .news-item .preview img{float:none;}
@@ -280,9 +282,13 @@ aside{padding-top:8px;}
 aside.col-3{margin-left:0;}
 aside li *{box-sizing:content-box;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;}
 aside ul{list-style-type:none;margin-left:0;padding-left:0;}
-aside .small{margin-top:0;margin-bottom:0;}
-aside .small li{height:30px;}
-#fb-like{margin-top:-6px;}
+.small{margin-top:0;margin-bottom:0;}
+.small li{height:30px;}
+.small li a {display: block;height: 21px;text-indent: -9999px;}
+.small li a:hover {opacity: 0.8}
+li#fb-like a {width: 91px;background: url(../img/social.png) 0 0 no-repeat;}
+li#vk-like a {width: 83px;background: url(../img/social.png) -91px 0 no-repeat;}
+li#tw-like a {width: 60px;background: url(../img/social.png) -173px 0 no-repeat;}
 aside .large li{width:300px;height:343px;}
 aside .large #fb-widget{height:314px}
 aside .large #yt-widget{height:240px}
@@ -306,7 +312,7 @@ footer nav{margin-top:6px;}
 .table.contacts td{border-left:none;}
 .olympic span{position:relative;display:block;float:left;margin-left:-4px;height:29px;width:26px;}
 .olympic span:first-child{margin-left:2px;}
-.sharearea{width:100%;}
+.sharearea{width:100%;clear:both;}
 .o-g{z-index:4;background:url(../img/olympic.png) 0 0 no-repeat;}
 .o-s{z-index:3;background:url(../img/olympic.png) -26px 0 no-repeat;}
 .o-b{z-index:2;background:url(../img/olympic.png) -52px 0 no-repeat;}

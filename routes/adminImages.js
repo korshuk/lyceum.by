@@ -25,9 +25,9 @@ module.exports = function(app) {
 	        imageType = 'narrow';
 	      }
 
-	      gm(req.files.attachment.file.path).resize(dwidth).write('./public' + desktopPath, function(err) {
+	      gm(req.files.attachment.file.path).quality(100).resize(dwidth).write('./public' + desktopPath, function(err) {
 	        if (!err) {
-	          gm(req.files.attachment.file.path).resize(mwidth).write('./public' + mobilePath, function(err) {
+	          gm(req.files.attachment.file.path).quality(100).resize(mwidth).write('./public' + mobilePath, function(err) {
 	            if (!err) {
 	              res.send({
 	                file: {

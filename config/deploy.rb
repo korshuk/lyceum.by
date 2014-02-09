@@ -33,7 +33,11 @@ namespace :deploy do
   desc "Stop Forever"
   task :started do
     on roles(:app) do
-      execute "forever stopall" 
+      begin
+        execute "forever stopall"
+      rescue
+        info "no forever script"
+      end 
     end
   end
  

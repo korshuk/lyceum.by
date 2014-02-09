@@ -3,9 +3,11 @@ aside.sharearea.style-grey
     h2= translate('Поделиться')
     ul.small
         li#fb-like
-            div.fb-share-button(data-href="http://developers.facebook.com/docs/plugins/", data-type="button")
+            a(href="https://www.facebook.com/sharer.php?u=" + locals.fullUrl, 
+                target="_blank", alt=translate('Поделиться'))=translate('Поделиться')
         li#vk-like
-            script
-                document.write(VK.Share.button(false,{type: "round_nocount", text: "Сохранить"}))      
+            a(href="http://vk.com/share.php?url=" + locals.fullUrl, 
+                target="_blank", alt=translate('Сохранить'))=translate('Сохранить')
         li#tw-like
-            a(href="http://twitter.com/share", data-lang=locals.lang || "ru").twitter-share-button" Tweet
+            a(href="https://twitter.com/intent/tweet?original_referer=" + locals.fullUrl + "text=" + '' +"&tw_p=tweetbutton&url=" + locals.fullUrl + "&via=" + 'lyceumBSU', 
+                target="_blank", alt=translate('Tweet'))=translate('Tweet')

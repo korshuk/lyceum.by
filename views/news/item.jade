@@ -4,17 +4,19 @@ div(class= d.name[locals.lang || 'ru'] !== '' ? 'news-item' : 'news-item no-head
     else
         - var ahref = '/news/' + d.pathAlias + '.html';
     span.time= d.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
-    //- var block = d.teaser[locals.lang || 'ru'].data[0];
+    - var block = translateObj(d.teaser).data[0];
     if translateObj(d.name) !== ''
         a(href= ahref).to-full-page
             h3= translateObj(d.name)
         if d.image
             - var image = JSON.parse(d.image).data[0].data;
-            //-img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-        //-div.teaser.clearfix= block.data.text 
+            a(href= ahref, title= block.data.text).imagelink
+                img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
+        div.teaser.clearfix= block.data.text 
     else
         if d.image
             - var image = JSON.parse(d.image).data[0].data;
-            //-img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
+            a(href= ahref, title= block.data.text).imagelink
+                img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
         div.teaser.clearfix
-            //-a(href= ahref).to-full-page= block.data.text
+            a(href= ahref, title= block.data.text).to-full-page= block.data.text

@@ -4,18 +4,14 @@ div(class= main.name[locals.lang || 'ru'] !== '' ? 'news-item' : 'news-item no-h
     else
         - var ahref = '/news/' + main.pathAlias + '.html';
     span.time= main.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
-    //- var block = d.teaser[locals.lang || 'ru'].data[0];
+    - var block = translateObj(main.teaser).data[0];
     if translateObj(main.name) !== ''
         a(href= ahref).to-full-page
             h3= translateObj(main.name)
-        if main.image
-            - var image = JSON.parse(main.image).data[0].data;
-            //-img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-        div.teaser.clearfix
-            a(href="#", title= translate("Читать всю новость")).more-link= translate('Читать всю новость') 
-    else
-        if main.image
-            - var image = JSON.parse(main.image).data[0].data;
-            //-img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-        div.teaser.clearfix
-            //-a(href= ahref).to-full-page= block.data.text
+    if main.image
+        - var image = JSON.parse(main.image).data[0].data;
+        a(href= ahref, title=block.data.text).imagelink
+            img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
+    div.teaser.clearfix
+        = block.data.text
+        a(href="#", title= translate("Читать всю новость")).more-link= translate('Читать всю новость')

@@ -2,7 +2,7 @@ ol.breadcrumb
 	include breadcrumbHome
 	if (locals.breadcrumbs)
 		li
-			a(href="")= translate('Новости')
+			a(href=beforeUrl + '/news.html', title=translate('Новости'))= translate('Новости')
 		li.active!=translateObj(locals.breadcrumbs.name)
 	else
 		li.active= translate('Новости')
