@@ -58,6 +58,8 @@ namespace :deploy do
 	execute "cd #{current_path} && sudo forever start app.js"
     end
   end
- 
-  before :restart, 'deploy:npm_install'
+  
+  after :started, 'deploy:npm_install'
+  after :npm_install, 'deploy:restart'
+
 end
