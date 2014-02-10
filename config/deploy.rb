@@ -59,7 +59,7 @@ namespace :deploy do
     end
   end
   
-  after :started, 'deploy:npm_install'
+  after :finished, 'deploy:npm_install'
   after :npm_install, 'deploy:restart'
 
 end

@@ -31,8 +31,8 @@ app.configure(function(){
   app.set('db-uri', 'mongodb://localhost/lyceum');
   db = mongoose.connect(app.set('db-uri'));
 
-  app.use(express.cookieParser('shhhh, very secret'));
-  app.use(express.session());
+  app.use('/admin', express.cookieParser('shhhh, very secret'));
+  app.use('/admin', express.session());
 });
 
 app.configure('development', function(){
@@ -44,8 +44,11 @@ app.configure('production', function(){
 });
 
 app.use(function(req, res, next){
-  var port = req.app.settings.port || '3000';
   res.locals.fullUrl = req.protocol + '://' + req.host  + req.path;
+  next();
+});
+
+app.use('/admin', function(req, res, next){
   var err = req.session.error,
       msg = req.session.success;
   delete req.session.error;
