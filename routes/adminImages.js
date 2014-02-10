@@ -9,8 +9,9 @@ module.exports = function(app) {
 	  var dwidth;
 	  var mwidth;
 	  var imageType;
-	  
-	  
+	  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+	  console.log(req.files.attachment.file.path);
 	  gm(req.files.attachment.file.path).size(function (err, size) {
 	    if (!err) {
 
@@ -38,17 +39,17 @@ module.exports = function(app) {
 	                }
 	              });
 	              fs.unlink(req.files.attachment.file.path, function (err) {
-	                if (err) console.log(err);
+	                if (err) console.log('unlink error ' + err);
 	              });
 	            }
-	            else console.log(err);
+	            else console.log('mobile error '+  err);
 	            });
 	        }
-	        else console.log(err);
+	        else console.log('desktop error '+  err);
 	      });
 
 	    }
-	    else console.log(err);
+	    else console.log('size error '+  err);
 	  });
 	});
 

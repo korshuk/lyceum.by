@@ -65,9 +65,9 @@ namespace :deploy do
       info "Creates symbolic links to configuration files and other dependencies after deployment."
       begin
         #execute "mkdir -p /public/images/desktop && chmod g+w /public/images/desktop"
-        execute "ln -nfs #{shared_path}/public/images/desktop #{release_path}/public/images/desktop"
+        execute "ln -nfs #{shared_path}/desktop #{release_path}/public/images/desktop"
         #execute "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
-        execute "ln -nfs #{shared_path}/public/images/mobile #{release_path}/public/images/mobile"
+        execute "ln -nfs #{shared_path}/mobile #{release_path}/public/images/mobile"
       rescue
         info "done?!"
       end 
