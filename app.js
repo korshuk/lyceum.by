@@ -1,6 +1,7 @@
 var express = require('express'),
     mongoose = require('mongoose'),
     url = require('url'),
+    fs = require('fs'),
     NewsController = require('./controllers/news').NewsController,
     MediaController = require('./controllers/media').MediaController,
     CongratulationsController = require('./controllers/congratulations').CongratulationsController,
