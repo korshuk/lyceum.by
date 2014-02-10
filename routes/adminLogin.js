@@ -8,7 +8,7 @@ module.exports = function(app) {
 	  app.userController.authenticate(req.body.username, req.body.password, req, res);
 	});
 	
-	app.get('admin/logout', function(req, res){
+	app.get('/admin/logout', function(req, res){
 	  app.userController.logout(req, res);
 	});
 }
