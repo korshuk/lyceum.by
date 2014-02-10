@@ -2915,7 +2915,7 @@
   
       onNewBlockCreated: function(block) {
         this.hideBlockControls();
-        this.scrollTo(block.$el);
+        //this.scrollTo(block.$el);
       },
   
       scrollTo: function(element) {
