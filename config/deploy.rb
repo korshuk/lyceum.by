@@ -58,7 +58,19 @@ namespace :deploy do
 	execute "cd #{current_path} && forever start app.js"
     end
   end
+
+  desc <<-DESC
+    Creates symbolic links to configuration files and other dependencies
+    after deployment.
+  DESC
+  task :link_dependencies do
+    run "mkdir -p /public/images/desktop && chmod g+w /public/images/desktop"
+    run "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
+    run "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
+    run "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
+  end
   
+  after :deploy, 'deploy:link_dependencies'
   after :finished, 'deploy:npm_install'
   after :npm_install, 'deploy:restart'
 
