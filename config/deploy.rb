@@ -62,10 +62,15 @@ namespace :deploy do
   desc 'Creates symbolic links to configuration files and other dependencies after deployment.'
   task :link_dependencies do
     on roles(:app), in: :sequence, wait: 5 do
-      execute "mkdir -p /public/images/desktop && chmod g+w /public/images/desktop"
-      execute "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
-      execute "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
-      execute "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
+      info "Creates symbolic links to configuration files and other dependencies after deployment."
+      begin
+        execute "mkdir -p /public/images/desktop && chmod g+w /public/images/desktop"
+        execute "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
+        execute "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
+        execute "ln -nfs #{shared_path}/public/images #{release_path}/public/images"
+      rescue
+        info "done?!"
+      end 
     end
   end
   
