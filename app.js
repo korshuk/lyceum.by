@@ -1,6 +1,5 @@
 var express = require('express'),
     mongoose = require('mongoose'),
-    winston = require('winston'),
     url = require('url'),
     NewsController = require('./controllers/news').NewsController,
     MediaController = require('./controllers/media').MediaController,
@@ -14,22 +13,21 @@ var express = require('express'),
     require('./modules/date.js');
 
 var app = express();
+var logfile = fs.createWriteStream('./logfile.log', {flags: 'a'});
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {pretty: true});
 
-  app.use(express.logger());
+  app.use(express.logger({stream: logfile}));
   
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   
-  //app.use(require('stylus').middleware({ src: __dirname + '/public' }));
- 
   app.use(express.static(__dirname + '/public'));
 
-  app.set('db-uri', 'mongodb://localhost/nodeblog');
+  app.set('db-uri', 'mongodb://localhost/lyceum');
   db = mongoose.connect(app.set('db-uri'));
 
   app.use(express.cookieParser('shhhh, very secret'));
@@ -47,7 +45,6 @@ app.configure('production', function(){
 app.use(function(req, res, next){
   var port = req.app.settings.port || '3000';
   res.locals.fullUrl = req.protocol + '://' + req.host  + ( port == 80 || port == 443 ? '' : ':'+port ) + req.path;
-  console.log(res.locals.fullUrl);
   var err = req.session.error,
       msg = req.session.success;
   delete req.session.error;

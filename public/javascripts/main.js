@@ -32,8 +32,6 @@ $(function () {
             if (position > bottomStop) {
                 $element.addClass('bottom');
             }
-            //  if ($element.hasClass('bottom')) {
-            //  }
         } else {
             if (position <= scrollTop) {
                 $element.addClass('fixed');
