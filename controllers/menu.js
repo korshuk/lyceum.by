@@ -86,6 +86,7 @@ MenuController = function (app) {
     this.generate = function (collection) {
       var self = this;
       self.clear();
+      console.log('MenuController generate');
       collection.find().sort('createdAt').exec(function(err, docs) {
         for (var i = 0; i < docs.length; i++) {
           self.saveItem(docs[i]);
@@ -153,7 +154,7 @@ MenuController = function (app) {
 
     this.setRouts = function () {
       var self = this;
-
+      app.routes.get.splice(app.routes.get.length - 1, 1);
       for (var i = self.routes.length - 1; i >= 0 ; i--) {
         console.log(self.routes[i]);
         
