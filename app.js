@@ -45,7 +45,7 @@ app.configure('production', function(){
 
 app.use(function(req, res, next){
   var port = req.app.settings.port || '3000';
-  res.locals.fullUrl = req.protocol + '://' + req.host  + ( port == 80 || port == 443 ? '' : ':'+port ) + req.path;
+  res.locals.fullUrl = req.protocol + '://' + req.host  + req.path;
   var err = req.session.error,
       msg = req.session.success;
   delete req.session.error;
