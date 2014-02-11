@@ -14,12 +14,12 @@ UserController = function(mongoose) {
 };
 
 UserController.prototype.Pass = function (req, res, next) {
- // if (req.session.user) {
+  if (req.session.user) {
     next();
- // } else {
-  //  req.session.error = 'Access denied!';
-   // res.redirect('/admin');
- // }
+  } else {
+    req.session.error = 'Access denied!';
+    res.redirect('/admin');
+  }
 };
 
 UserController.prototype.createHash = function (pwd, fn) {
