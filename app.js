@@ -48,6 +48,18 @@ app.use(function(req, res, next){
   next();
 });
 
+app.use('/admin', function(req, res, next){
+  var err = req.session.error,
+      msg = req.session.success;
+  delete req.session.error;
+  delete req.session.success;
+  res.locals.logged = 'not logged';
+  res.locals.message = '';
+  if (err) res.locals.message = '<div class="alert alert-danger">' + err + '</div>';
+  if (msg) res.locals.message = '<div class="alert alert-success">' + msg + '</div>';
+  if (req.session.user) res.locals.logged = 'logged';
+  next();
+});
 
 app.newsController = new NewsController(mongoose);
 app.mediaController = new MediaController(mongoose);
@@ -62,18 +74,7 @@ app.pageController = new PageController(mongoose, app);
 
 require('./routes/adminRoutes')(app);
 
-app.use('/admin', app.userController.Pass, function(req, res, next){
-  var err = req.session.error,
-      msg = req.session.success;
-  delete req.session.error;
-  delete req.session.success;
-  res.locals.logged = 'not logged';
-  res.locals.message = '';
-  if (err) res.locals.message = '<div class="alert alert-danger">' + err + '</div>';
-  if (msg) res.locals.message = '<div class="alert alert-success">' + msg + '</div>';
-  if (req.session.user) res.locals.logged = 'logged';
-  next();
-});
+
 
 
 

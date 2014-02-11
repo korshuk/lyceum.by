@@ -1,6 +1,6 @@
 module.exports = function(app) {
 	
-	app.get('/admin/pages', function(req, res){
+	app.get('/admin/pages', app.userController.Pass, function(req, res){
 	  app.pageController.list(req, res);
 	});
 	
