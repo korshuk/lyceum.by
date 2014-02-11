@@ -48,7 +48,7 @@ app.use(function(req, res, next){
   next();
 });
 
-app.use('/admin', function(req, res, next){
+app.use('/admin', app.userController.Pass, function(req, res, next){
   var err = req.session.error,
       msg = req.session.success;
   delete req.session.error;

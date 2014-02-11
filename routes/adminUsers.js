@@ -1,6 +1,6 @@
 module.exports = function(app) {
 	
-	app.get('/admin/users', app.userController.Pass, function(req, res){
+	app.get('/admin/users', function(req, res){
 	  app.userController.list(req, res);
 	});
 
