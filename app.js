@@ -2,6 +2,7 @@ var express = require('express'),
     mongoose = require('mongoose'),
     url = require('url'),
     fs = require('fs'),
+    MongoStore = require('connect-mongo')(express),
     NewsController = require('./controllers/news').NewsController,
     MediaController = require('./controllers/media').MediaController,
     CongratulationsController = require('./controllers/congratulations').CongratulationsController,
@@ -32,7 +33,12 @@ app.configure(function(){
   db = mongoose.connect(app.set('db-uri'));
 
   app.use('/admin', express.cookieParser('shhhh, very secret'));
-  app.use('/admin', express.session());
+  app.use('/admin', express.session({
+    store: new MongoStore({
+        url: 'mongodb://localhost/lyceum'
+    }),
+    secret: 'secret secret'
+  }));
 });
 
 app.configure('development', function(){

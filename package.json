@@ -12,6 +12,7 @@
     "mongoose": "*",
     "gm": "*",
     "localize": "*",
-    "winston": "*"
+    "winston": "*",
+    "connect-mongo" : "0.3.x"
   }
 }
