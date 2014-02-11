@@ -417,8 +417,12 @@ ul.st-text-block {
   border-right: 0;
   border-bottom: 0;
   margin-bottom: 0;
-  cursor: pointer; }
-
+  cursor: pointer; 
+  text-decoration: none;
+}
+.st-block-ui-btn:hover {
+  text-decoration: none;
+}
 .st-block-control-ui-btn {
   width: 2em;
   height: 1.75em;
@@ -457,7 +461,9 @@ ul.st-text-block {
   text-align: center;
   background: #fff;
   color: #d70014;
-  padding: 0.4em 0; }
+  padding: 0.4em 0; 
+  margin-bottom: none;
+}
 
 .st-format-bar {
   position: absolute;

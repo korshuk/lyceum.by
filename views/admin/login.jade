@@ -1,17 +1,21 @@
 extends ../adminLayout
 
 block content
-    div.page-header
-        h1: Введите имя и пароль
-    form.form-horizontal.well(method='post', action='/admin')
-        div.row
-            label.col.col-lg-2.control-label Username:
-            div.col.col-lg-10
-                input(type="text", name='username')
-        div.row
-            label.col.col-lg-2.control-label Password:
-            div.col.col-lg-10
-                input(type="password", name='password')
-        div.row
-            div.col.col-lg-10.col-offset-2
-                input.btn.btn-default(type='submit', value='Login')
+    if (locals.logged == 'logged')
+        div.page-header
+            h1 Ура!
+    else
+        div.page-header
+            h1 Введите имя и пароль
+        form.form-horizontal.well(method='post', action='/admin')
+            div.row
+                label.col.col-lg-2.control-label Username:
+                div.col.col-lg-10
+                    input(type="text", name='username')
+            div.row
+                label.col.col-lg-2.control-label Password:
+                div.col.col-lg-10
+                    input(type="password", name='password')
+            div.row
+                div.col.col-lg-10.col-offset-2
+                    input.btn.btn-default(type='submit', value='Login')
