@@ -55,7 +55,11 @@ namespace :deploy do
       # This assumes you are using upstart to startup your application 
       # - be sure that your upstart script runs as the 'deploy' user
       #execute "sudo start node-upstart-script", raise_on_non_zero_exit: false
-	execute "cd #{current_path} && forever start app.js"
+	     execute "cd #{current_path}"
+       execute "forever start app.js 3000"
+       execute "forever start app.js 3001"
+       execute "forever start app.js 3002"
+       execute "forever start app.js 3003"
     end
   end
 

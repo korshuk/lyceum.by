@@ -45,6 +45,8 @@ app.configure('production', function(){
 
 app.use(function(req, res, next){
   res.locals.fullUrl = req.protocol + '://' + req.host  + req.path;
+
+  res.locals.port = app.usedport;
   next();
 });
 
@@ -79,6 +81,9 @@ require('./routes/adminRoutes')(app);
 
 
 if (!module.parent) {
-  app.listen(3000);
+  var port = process.argv[process.argv.length-1];
+  app.usedport = port;
+  app.listen(port);
   console.log('started');
+  console.log(process.argv);
 }
