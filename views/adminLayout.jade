@@ -13,8 +13,8 @@ html
     div.navbar.navbar-inverse.navbar-fixed-top.bs-docs-nav
       div.container
         a.navbar-brand(href="/admin")Админка
-          if (locals.logged == 'logged')
-            div.nav-collapse.collapse.bs-navbar-collapse
+          div.nav-collapse.collapse.bs-navbar-collapse
+            if (locals.logged == 'logged')
               ul.nav.navbar-nav
                 li
                   a(href="/admin/news") Новости
@@ -28,8 +28,7 @@ html
                   a(href="/admin/contacts") Контакты
                 li
                   a(href="/admin/users") Пользователи
-                
-            p.navbar-text.pull-right
+              p.navbar-text.pull-right
                 a.navbar-link(href="/admin/logout") Logout
     div.container
       div.row
@@ -38,4 +37,7 @@ html
         div.col.col-lg-12
           block content
     footer
+      p 
+        br
+        br
     block scripts
