@@ -462,7 +462,7 @@ ul.st-text-block {
   background: #fff;
   color: #d70014;
   padding: 0.4em 0; 
-  margin-bottom: none;
+  margin-bottom: 0;
 }
 
 .st-format-bar {
