@@ -287,7 +287,13 @@
           'key_missing': "An Embedly API key must be present"
         },
         heading: {
-          'title': "Heading"
+          'title': "H2"
+        },
+        heading3: {
+          'title': "H3"
+        },
+        heading4: {
+          'title': "H4"
         },
         table: {
           'title': "Table"
@@ -1887,6 +1893,36 @@
     title: function(){ return i18n.t('blocks:heading:title'); },
   
     editorHTML: '<div class="st-required st-text-block st-text-block--heading" contenteditable="true"></div>',
+  
+    icon_name: 'header',
+  
+    loadData: function(data){
+      this.getTextBlock().html(SirTrevor.toHTML(data.text, this.type));
+    }
+  });
+
+  SirTrevor.Blocks.Heading3 = SirTrevor.Block.extend({
+  
+    type: 'Heading3',
+  
+    title: function(){ return i18n.t('blocks:heading3:title'); },
+  
+    editorHTML: '<div class="st-required st-text-block st-text-block--heading3" contenteditable="true"></div>',
+  
+    icon_name: 'header',
+  
+    loadData: function(data){
+      this.getTextBlock().html(SirTrevor.toHTML(data.text, this.type));
+    }
+  });
+
+  SirTrevor.Blocks.Heading4 = SirTrevor.Block.extend({
+  
+    type: 'Heading4',
+  
+    title: function(){ return i18n.t('blocks:heading4:title'); },
+  
+    editorHTML: '<div class="st-required st-text-block st-text-block--heading4" contenteditable="true"></div>',
   
     icon_name: 'header',
   
