@@ -156,27 +156,18 @@ MenuController = function (app) {
 
     this.setRouts = function () {
       var self = this;
-      
       app.routes.get.splice(app.routes.get.length - 1, 1);
       for (var i = self.routes.length - 1; i >= 0 ; i--) {
-        console.log(self.routes[i]);
-        
         app.get('/:lang' + self.routes[i], [localization, menuHelper], function(req, res) {
-          console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
           app.pageController.show(req, res);
         });
-
-
         app.get(self.routes[i], [localization, menuHelper], function(req, res) {
-          console.log('@pppppppppppppppppppppppppppppppppppppppp');
           app.pageController.show(req, res);
         });
-        
       };
       app.get('*', function(req, res) {
         res.redirect('404.html');
       });
-      console.log(app.routes.get);
     };
 
     this.map = function (obj, path) {

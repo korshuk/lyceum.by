@@ -13,6 +13,7 @@ include ../layout/header
                 - locals.type = 'table'
                 - locals.olympic = 'olympic'
             section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+                include ../stuff/sir/sirparser 
                 each block in translateObj(doc.body).data
                     case block.type
                         when "heading"

@@ -1685,7 +1685,6 @@
   
       _handleContentPaste: function(ev) {
         var target = $(ev.currentTarget);
-  
         _.delay(_.bind(this.onContentPasted, this, ev, target), 0);
       },
   
@@ -2320,7 +2319,12 @@
         var editor_template = '<div class="st-text-block">' + template + '</div>';
          return _.template(editor_template, this);
        },
-   
+      onContentPasted: function(event, target){
+       // console.log(event);
+       // console.log(this.pastedMarkdownToHTML(target[0].innerHTML));
+        //target.html(this.pastedMarkdownToHTML(target[0].innerHTML));
+        //th//is.getTextBlock().caretToEnd();
+      },
       onBlockRender: function() {
         this.$table = this.getTextBlock().find('table');
        },
@@ -2334,10 +2338,10 @@
           var cells = $(row).children(),
               md = cells.map(function() { return $(this).text(); })
                    .get().join(" | ");
-          if (cells[0].tagName === 'TH') {
-            md += "\n";
-             md += cells.map(function() { return "---"; }).get().join(" | ");
-           }
+            if (cells[0].tagName === 'TH') {
+              md += "\n";
+               md += cells.map(function() { return "---"; }).get().join(" | ");
+             }
            return md;
          }
    

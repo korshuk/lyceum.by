@@ -3,7 +3,7 @@
 - var lines = markdown.split("\n");
 - var caption_re = /\[(.*)\]/;
 - var lastline;
-        
+      
 - lastline = lines[lines.length-1];
 if lastline.match(caption_re)
     //- html += '<caption>' + lastline.match(caption_re)[1] + '</caption>';
@@ -11,7 +11,7 @@ if lastline.match(caption_re)
 - html += '<thead><tr>';
 - var captioncells = lines[0].split(" | ");
 each content in captioncells
-    - html += '<th>' + content + '</th>';
+    - html += '<th>' + parse(content) + '</th>';
 - html += '</tr></thead>';
 
 - html +='<tbody>';
@@ -21,8 +21,11 @@ each content in captioncells
         -   var row = '<tr>';
         -   var rowcells = line.split(" | ");
         each content in rowcells //(line.split(" | "), function(content) {
-            - row += '<td>' + content + '</th>';
+            - row += '<td>' + parse(content) + '</th>';
         -   row += '</tr>';
         -   html += row;
 - html += '</tbody>';
-table(class = locals.type + ' ' + locals.olympic)!= html
+if locals.type
+    table(class = locals.type + ' ' + locals.olympic)!= html
+else
+    table!= html
