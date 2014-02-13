@@ -306,7 +306,7 @@ footer nav{margin-top:6px;}
 .table.contacts td{border-left:none;}
 .olympic span{position:relative;display:block;float:left;margin-left:-4px;height:29px;width:26px;}
 .olympic span:first-child{margin-left:2px;}
-.sharearea{width:100%;clear:both;}
+.sharearea{width:100%;clear:both;padding-top:0;}
 .o-g{z-index:4;background:url(../img/olympic.png) 0 0 no-repeat;}
 .o-s{z-index:3;background:url(../img/olympic.png) -26px 0 no-repeat;}
 .o-b{z-index:2;background:url(../img/olympic.png) -52px 0 no-repeat;}
