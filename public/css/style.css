@@ -14,11 +14,8 @@ main,
 nav,
 section,
 summary{display:block;}
-audio,
 canvas,
 video{display:inline-block;*display:inline;*zoom:1;}
-audio:not([controls]){display:none;height:0;}
-[hidden]{display:none;}
 html{background:#fff;color:#000;font-size:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
 body{margin:0;background:#f1f1f1;font-family:'PT Sans', Helvetica, Arial, sans-serif;font-size:14px;line-height:1.4;color:#111;}
 a:focus{outline:thin dotted;}
@@ -26,9 +23,8 @@ a:active,
 a:hover{outline:0;}
 h2{margin:12px 0;}
 h3{line-height:20px;font-size:20px;margin:0 0 5px 0;}
-h4{margin:1.33em 0;}
-h5{margin:1.67em 0;}
-h6{margin:2.33em 0;}
+#content h3 {margin-bottom: 20px;}
+h4{margin:0 0 15px 0;}
 abbr[title]{border-bottom:1px dotted;}
 b,
 strong{font-weight:bold;}
@@ -49,10 +45,6 @@ dd{margin:0 0 0 40px;}
 nav ul,
 nav ol{list-style:none;list-style-image:none;}
 img{border:0;-ms-interpolation-mode:bicubic;}
-svg:not(:root){overflow:hidden;}
-figure{margin:0;}
-fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em;}
-legend{border:0;padding:0;white-space:normal;*margin-left:-7px;}
 button,
 input,
 select,
@@ -67,8 +59,6 @@ input[type="reset"],
 input[type="submit"]{-webkit-appearance:button;cursor:pointer;*overflow:visible;}
 button[disabled],
 html input[disabled]{cursor:default;}
-input[type="checkbox"],
-input[type="radio"]{box-sizing:border-box;padding:0;*height:13px;*width:13px;}
 input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;}
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration{-webkit-appearance:none;}
@@ -80,8 +70,6 @@ h1,
 h2,
 h3,
 h4,
-h5,
-h6,
 nav,
 .more-link,
 .preview span,
@@ -224,6 +212,7 @@ section h2.caption{margin-bottom:15px;}
 .style-yellow h2, .style-yellow a{color:#f1cc32;}
 .style-yellow hr{background:#f1cc32;}
 .style-yellow .to-full-page *:hover, .style-yellow .to-full-page:hover, a.more-link:hover.style-yellow{color:#f1cc32;}
+aside.front h2 {margin-top: -2px}
 aside.style-grey h2, .style-grey a{color:#898989;padding-bottom:0;}
 .style-grey hr.colored{background:#898989;}
 .style-grey .to-full-page *:hover, .style-grey .to-full-page:hover, a.more-link:hover.style-grey{color:#282828;}
@@ -237,16 +226,15 @@ a.to-full-page, a.more-link{color:#111;}
 .section-bottom .more-link{position:relative;padding-left:31px;}
 .section-bottom .more-link span{display:block;position:absolute;top:9px;left:0;height:20px;width:20px;}
 #content{margin-left:0;}
-#content h2{}
 #content p,
 #content img,
 #content table,
 #content iframe{padding-top:0;margin:0 0 30px 0;}
-#content h2{padding-top:0;margin:-8px 0 10px 0;}
-#content .sharearea h2{margin-bottom:27px; padding-top: 12px;}
+#content h2{font-size: 30px; padding-top:0;margin:0 0 22px 0;}
+#content .sharearea h2{margin-bottom:27px; margin-top: -8px; padding-top: 12px; font-size: 13px}
 section{margin-bottom:22px;}
 section,
-section.col-2{padding-top:8px;margin-left:-20px;}
+section.col-2{/*padding-top:8px;*/padding-top:0;margin-left:-20px;}
 section.col-2,
 .index section#content.col-2{width:640px;}
 #content img.narrow{margin-right: 30px;float:left;}
@@ -292,7 +280,10 @@ li#tw-like a {width: 60px;background: url(../img/social.png) -173px 0 no-repeat;
 aside .large li{width:300px;height:343px;}
 aside .large #fb-widget{height:314px}
 aside .large #yt-widget{height:240px}
+aside.inner .large #fb-widget {height: 270px;}
+aside.inner .large #vk-widget {height: 300px;}
 aside h2{padding-bottom:12px;}
+aside.inner h2 {margin-top: -5px; margin-bottom: 26px;}
 aside .small li{padding-right:30px;}
 aside.col-1 li{margin-bottom:30px;}
 aside.col-3 li + li{margin-left:19px;}

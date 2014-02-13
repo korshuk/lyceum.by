@@ -1,4 +1,4 @@
-aside(class= locals.type === 'table' ? 'col-3' : 'col-1').style-grey
+aside(class= locals.type === 'table' ? 'col-3' : 'col-1').style-grey.inner
     h2= translate('Присоединяйтесь к нам')
     ul.large
         li#fb-widget
@@ -7,5 +7,5 @@ aside(class= locals.type === 'table' ? 'col-3' : 'col-1').style-grey
             include social/vk-groups
         li
             include social/twitter-follow-button
-            hr.dotted
+            //-hr.dotted
             include social/youtube
