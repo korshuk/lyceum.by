@@ -69,14 +69,16 @@ MenuController = function (app) {
     this.clear = function () {
         var self = this;
         this.JSON = { children: [] };
+        console.log('clearing routs');
         for (var i = 0; i < self.routes.length; i++) {
             for (k in app.routes.get) {
-                if (app.routes.get[k].path === self.routes[i]) {
+                if (app.routes.get[k].path === self.routes[i] || app.routes.get[k].path === '/:lang' + self.routes[i]) {
                     app.routes.get.splice(k,1);
-                    break;
+                    console.log(self.routes[i]);
                 }
             }
         };
+        console.log('clearing routs stop');
         this.routes = [];
         this.List = [];
         pathArray = {};
@@ -154,6 +156,7 @@ MenuController = function (app) {
 
     this.setRouts = function () {
       var self = this;
+      
       app.routes.get.splice(app.routes.get.length - 1, 1);
       for (var i = self.routes.length - 1; i >= 0 ; i--) {
         console.log(self.routes[i]);
@@ -173,6 +176,7 @@ MenuController = function (app) {
       app.get('*', function(req, res) {
         res.redirect('404.html');
       });
+      console.log(app.routes.get);
     };
 
     this.map = function (obj, path) {
