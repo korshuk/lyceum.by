@@ -7,7 +7,7 @@
       
 - lastline = lines[lines.length-1];
 if lastline.match(caption_re)
-    - clss += lastline.match(caption_re)[1];
+    - clss = lastline.match(caption_re)[1];
     - lines = lines.slice(0, lines.length-1);
 - html += '<thead><tr>';
 - var captioncells = lines[0].split(" | ");
