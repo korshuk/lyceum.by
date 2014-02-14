@@ -17,6 +17,8 @@ var express = require('express'),
 var app = express();
 var logfile = fs.createWriteStream('./logfile.log', {flags: 'a'});
 
+app.disable('x-powered-by');
+
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
