@@ -119,15 +119,17 @@ h3#youtube span{color:#ed1c24;}
 .style-green .breadcrumb > li{color:#82d120;}
 .style-yellow .breadcrumb > li{color:#f1cc32;}
 section h2 > a:hover{text-decoration:underline;}
-#content{font-size:16px;line-height:26px;}
+#content{font-size:16px;line-height:26px;margin-left:0;}
 .top-news.news-item h3{font-size:40px;line-height:44px;}
 footer p{font-size:15px;line-height:23px;color:#363636;}
 footer small{font-size:12px;line-height:20px;color:#898989;}
 footer p a:hover{color:#a4a4a4;}
 table th{text-align:left;}
 .table th,
+table th,
 .table tr td:first-child{font-family:Arial, sans-serif;font-size:13px;font-weight:bold;}
 .table td,
+table td,
 .table th:first-child,
 .table.contacts th{font-family:Arial, sans-serif;font-size:13px;font-weight:normal;color:#898989;}
 .table.contacts td{vertical-align:top;height:65px;color:#111;padding-top:18px;line-height:15px;}
@@ -185,7 +187,6 @@ nav li{display:block;margin-bottom:15px;}
 nav li.active{margin-left:-5px;margin-bottom:12px;padding:3px 5px 1px 5px;background:#df3b49; color:#fff;}
 nav li a:hover{color:#939393;}
 #menu ul{margin:0 0 25px 0;}
-#sub-sites{}
 #sub-sites span{width:28px;margin:0;height:28px;display:block;float:left;}
 #sub-sites .e-icon{background:url('../img/site-icons.png') 0 -26px no-repeat;}
 #sub-sites .ct-icon{background:url('../img/site-icons.png') 0 0px no-repeat;}
@@ -225,7 +226,6 @@ a.to-full-page, a.more-link{color:#111;}
 .section-bottom{text-align:center;width:100%;margin:22px 0 17px 0;}
 .section-bottom .more-link{position:relative;padding-left:31px;}
 .section-bottom .more-link span{display:block;position:absolute;top:9px;left:0;height:20px;width:20px;}
-#content{margin-left:0;}
 #content p,
 #content img,
 #content table,
@@ -239,9 +239,9 @@ section.col-2{padding-top:8px;margin-left:-20px;}
 .page section,
 .page section.col-2{padding-top:0;}
 section.col-2,
-.index section#content.col-2{width:640px;}
+.index #content.col-2{width:640px;}
 #content img.narrow{margin-right: 30px;float:left;}
-section#content.col-2{width:620px;}
+#content.col-2{width:620px;}
 .index section#content{margin-left:-20px;}
 .index section > h2,
 .index section > hr{margin-left:20px;}
@@ -269,7 +269,7 @@ section#content.col-2{width:620px;}
 .preview span{position:absolute;background:#f1cc32;}
 .news-item .preview img{float:none;}
 .preview span{bottom:15px;left:0;position:absolute;padding:11px 15px 7px 15px;background:#f1cc32;}
-aside{padding-top:8px;}
+aside{margin-top:8px;}
 aside.col-3{margin-left:0;}
 aside li *{box-sizing:content-box;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;}
 aside ul{list-style-type:none;margin-left:0;padding-left:0;}
@@ -277,17 +277,17 @@ aside ul{list-style-type:none;margin-left:0;padding-left:0;}
 .small li{height:30px;}
 .small li a {display: block;height: 21px;text-indent: -9999px;}
 .small li a:hover {opacity: 0.8}
-li#fb-like a {width: 91px;background: url(../img/social.png) 0 0 no-repeat;}
-li#vk-like a {width: 83px;background: url(../img/social.png) -91px 0 no-repeat;}
-li#tw-like a {width: 60px;background: url(../img/social.png) -173px 0 no-repeat;}
-aside .large li{width:300px;height:343px;}
-aside .large #fb-widget{height:314px}
-aside .large #yt-widget{height:240px}
-aside.inner .large #fb-widget {height: 270px;}
-aside.inner .large #vk-widget {height: 300px;}
+#fb-like a {width: 91px;background: url(../img/social.png) 0 0 no-repeat;}
+#vk-like a {width: 83px;background: url(../img/social.png) -91px 0 no-repeat;}
+#tw-like a {width: 60px;background: url(../img/social.png) -173px 0 no-repeat;}
+.large li{width:300px;height:343px;}
+.large #fb-widget{height:314px}
+.large #yt-widget{height:240px}
+.inner .large #fb-widget {height: 270px;}
+.inner .large #vk-widget {height: 300px;}
 aside h2{padding-bottom:12px;}
 aside.inner h2 {margin-top: -1px; margin-bottom: 26px;}
-aside .small li{padding-right:30px;}
+.small li{padding-right:30px;}
 aside.col-1 li{margin-bottom:30px;}
 aside.col-3 li + li{margin-left:19px;}
 aside.col-3 h2{margin-top:50px;}
@@ -296,7 +296,7 @@ footer{margin-top:6px;padding:36px 0 17px 0;}
 footer p{padding:5px 0 21px 0;margin:0;}
 footer .col-1.first{margin-left:0;}
 footer nav{margin-top:6px;}
-.table{width:100%}
+.table, table{width:100%}
 .table tr{border-bottom:1px solid #e6e6e6;}
 .table td,
 .table th{height:50px;padding-left:10px;border-left:1px solid #e6e6e6;}
