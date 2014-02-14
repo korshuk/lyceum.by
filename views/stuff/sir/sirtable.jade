@@ -3,10 +3,11 @@
 - var lines = markdown.split("\n");
 - var caption_re = /\[(.*)\]/;
 - var lastline;
+- var clss;
       
 - lastline = lines[lines.length-1];
 if lastline.match(caption_re)
-    //- html += '<caption>' + lastline.match(caption_re)[1] + '</caption>';
+    - clss += lastline.match(caption_re)[1];
     - lines = lines.slice(0, lines.length-1);
 - html += '<thead><tr>';
 - var captioncells = lines[0].split(" | ");
@@ -28,4 +29,4 @@ each content in captioncells
 if locals.type
     table(class = locals.type + ' ' + locals.olympic)!= html
 else
-    table!= html
+    table(class= clss)!= html

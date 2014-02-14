@@ -300,6 +300,7 @@ table{width:100%}
 tr{border-bottom:1px solid #e6e6e6;}
 td,
 th{height:50px;padding-left:10px;border-left:1px solid #e6e6e6;}
+.priem td:first-child{width:30%;}
 td:first-child,
 th:first-child{height:50px;padding-left:0;border-left:none;}
 .table.contacts th,
