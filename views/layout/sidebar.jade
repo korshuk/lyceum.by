@@ -6,7 +6,7 @@ div#sidebar
 		else
 			- href = "/"
 		a(href=href, title= translate('На главную'))
-			img(src="/img/logo.png", alt= translate('Лицей Белорусского государственного университета'))#logo 
-			h1!= translate('Лицей Белорусского государственного университета').split(' ').join('<br>')
+			img(itemprop="image", src="/img/logo.png", alt= translate('Лицей Белорусского государственного университета'))#logo 
+			h1(itemprop="name")!= translate('Лицей Белорусского государственного университета').split(' ').join('<br>')
 		include langpicker
 		include ../menu/mainMenu
