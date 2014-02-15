@@ -94,7 +94,7 @@ nav a, nav li.active{font-size:13px;font-weight:bold;text-transform:uppercase;}
 .sub-menu a{text-decoration:none;font-size:14px;line-height:35px;color:#111;}
 .page h1{font-size:49px;line-height:49px;text-transform:none;}
 .page h2{font-size:20px;line-height:36px;text-transform:none;}
-.page h2 a{color:#111;}
+.page h2 a, .page h3 a{color:#111;}
 aside h2,
 .page aside h2{margin-bottom:8px;font-size:13px;text-transform:uppercase;color:#898989;}
 h2{font-size:14px;line-height:14px;text-transform:uppercase;}
@@ -118,7 +118,7 @@ h3#youtube span{color:#ed1c24;}
 .breadcrumb > li{font-size:14px;line-height:14px;text-transform:uppercase;color:#2dc6f4;}
 .style-green .breadcrumb > li{color:#82d120;}
 .style-yellow .breadcrumb > li{color:#f1cc32;}
-section h2 > a:hover{text-decoration:underline;}
+section h2 > a:hover, section h3 > a:hover{text-decoration:underline;}
 #content{font-size:16px;line-height:26px;margin-left:0;}
 .top-news.news-item h3{font-size:40px;line-height:44px;}
 footer p{font-size:15px;line-height:23px;color:#363636;}
@@ -226,6 +226,7 @@ a.to-full-page, a.more-link{color:#111;}
 .section-bottom{text-align:center;width:100%;margin:22px 0 17px 0;}
 .section-bottom .more-link{position:relative;padding-left:31px;}
 .section-bottom .more-link span{display:block;position:absolute;top:9px;left:0;height:20px;width:20px;}
+#content li {margin-left: 20px;}
 #content p,
 #content img,
 #content table,
