@@ -1,1 +1,1 @@
-ul!= block.data.text.replace(/^ - (.+)$/mg,"<li>$1</li>").replace(/\n/mg, "")
+ul!= parse(block.data.text.replace(/^ - (.+)$/mg,"<li>$1</li>"))

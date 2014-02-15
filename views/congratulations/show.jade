@@ -18,7 +18,7 @@ include ../layout/header
                     - blocks = doc.body[locals.lang || "ru"].data
                 else
                     - blocks = doc.teaser[locals.lang || "ru"].data
-
+                include ../stuff/sir/sirparser
                 each block in blocks
                     case block.type
                         when "heading"

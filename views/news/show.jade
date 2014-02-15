@@ -20,6 +20,7 @@ include ../layout/header
                     - blocks = translateObj(doc.body).data
                 else
                     - blocks = translateObj(doc.teaser).data
+                include ../stuff/sir/sirparser
                 each block in blocks
                     case block.type
                         when "heading"
