@@ -12,25 +12,24 @@ footer
 			br
 			| #{translate('Все права защищены.')}
 			br
-		small
-			span(itemprop="address", itemscope, itemtype="http://schema.org/PostalAddress")
-				span(itemprop="addressCountry")= translate("Беларусь")
-				, 
-				span(itemprop="postalCode")= '220030'
-				, 
-				span(itemprop="addressLocality")= translate("Минск")
-				, 
-				span(itemprop="streetAddress")= translate("Ульяновская, 8")
-				br
-				| #{translate("телефон приёмной:")} 
-				span(itemprop="telephone")= "2095265"
-				, 
-				| #{translate("факс:")} 2260050
-				br
-				| e-mail: 
+		small(itemprop="address", itemscope, itemtype="http://schema.org/PostalAddress")
+			span(itemprop="addressCountry")= translate("Беларусь")
+			, 
+			span(itemprop="postalCode")= '220030'
+			, 
+			span(itemprop="addressLocality")= translate("Минск")
+			, 
+			span(itemprop="streetAddress")= translate("Ульяновская, 8")
+			br
+			| #{translate("телефон приёмной:")} 
+			span(itemprop="telephone")= "2095265"
+			, 
+			| #{translate("факс:")} 2260050
+			br
+			| e-mail: 
 				a(href="mailto:info@lyceum.by") 
-						meta(itemprop="email", content="info@lyceum.by")
-						| info@lyceum.by
+					meta(itemprop="email", content="info@lyceum.by")
+					| info@lyceum.by
 	include ../menu/footerMenu
 script(src='http://code.jquery.com/jquery-1.11.0.min.js')
 //-script(src='/javascripts/jquery.js')

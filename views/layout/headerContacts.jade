@@ -38,7 +38,6 @@ html(lang= locals.lang || "ru")
             google.maps.event.addDomListener(window, 'load', initialize);
     body
         //div#flash
-        span(itemscope, itemtype="http://schema.org/LocalBusiness")
-            div#container
-                include sidebar
-                block content
+        div(itemscope, itemtype="http://schema.org/LocalBusiness")#container
+            include sidebar
+            block content

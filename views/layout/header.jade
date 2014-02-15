@@ -21,7 +21,6 @@ html(lang= locals.lang || "ru")
     body
         div#fb-root
         //div#flash
-        span(itemscope, itemtype="http://schema.org/LocalBusiness")
-            div#container
-                include sidebar
-                block content
+        div(itemscope, itemtype="http://schema.org/LocalBusiness")#container
+            include sidebar
+            block content
