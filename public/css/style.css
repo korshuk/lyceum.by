@@ -196,6 +196,7 @@ nav li a:hover{color:#939393;}
 #main{padding-top:8px;}
 .breadcrumb{list-style:none;margin:8px 0 15px 0;line-height:14px;}
 .breadcrumb > li + li:before{padding:0 5px;color:#cccccc;content:"\2192";}
+.breadcrumb > li + li a {margin-left: -4px;}
 section .breadcrumb{margin-top:0;}
 .index .breadcrumb{margin-left:20px;}
 .sub-menu{margin:0 0 40px -20px;padding-left:0;}
@@ -242,7 +243,7 @@ section.col-2{padding-top:8px;margin-left:-20px;}
 .page section.col-2{padding-top:0;}
 section.col-2,
 .index #content.col-2{width:640px;}
-#content img.narrow{margin-right: 30px;float:left;}
+#content .image-narrow{margin-right: 30px;float:left;}
 #content.col-2{width:620px;}
 .index section#content{margin-left:-20px;}
 .index section > h2,
@@ -266,7 +267,7 @@ section.col-2,
 .style-yellow .news-item h3{margin:0;}
 .imagelink:hover img{opacity: 0.8;}
 .news-item img{width:300px;float:left;margin-bottom:5px;}
-.news-item img.narrow{width:100px;margin-right:20px;}
+.news-item .image-narrow{width:100px;margin-right:20px;}
 .preview{position:relative;}
 .preview span{position:absolute;background:#f1cc32;}
 .news-item .preview img{float:none;}
