@@ -184,7 +184,7 @@ nav{width:170px;}
 nav.fixed{position:fixed;top:0;}
 nav.fixed.bottom{position:absolute;top:auto;bottom:0;}
 nav li{display:block;margin-bottom:15px;}
-nav li.active{margin-left:-5px;margin-bottom:12px;padding:3px 5px 1px 5px;background:#df3b49; color:#fff;}
+nav li.active{margin-left:-5px;margin-bottom:12px;margin-right:-5px;padding:3px 5px 1px 5px;background:#df3b49; color:#fff;}
 nav li a:hover{color:#939393;}
 #menu ul{margin:0 0 25px 0;}
 #sub-sites span{width:28px;margin:0;height:28px;display:block;float:left;}
