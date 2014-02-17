@@ -278,7 +278,7 @@ aside li *{box-sizing:content-box;-moz-box-sizing:content-box;-webkit-box-sizing
 aside ul{list-style-type:none;margin-left:0;padding-left:0;}
 .small{margin-top:0;margin-bottom:0;}
 .small li{height:30px;}
-.small li a {display: block;height: 21px;text-indent: -9999px;}
+.small li a {display:block;height:21px;text-indent:-9999px;}
 .small li a:hover {opacity: 0.8}
 #fb-like a {width: 91px;background: url(../img/social.png) 0 0 no-repeat;}
 #vk-like a {width: 83px;background: url(../img/social.png) -91px 0 no-repeat;}
