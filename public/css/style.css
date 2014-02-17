@@ -94,7 +94,7 @@ nav a, nav li.active{font-size:13px;font-weight:bold;text-transform:uppercase;}
 .sub-menu a{text-decoration:none;font-size:14px;line-height:35px;color:#111;}
 .page h1{font-size:49px;line-height:49px;text-transform:none;}
 .page h2{font-size:20px;line-height:36px;text-transform:none;}
-.page h2 a, .page h3 a{color:#111;text-decoration:none;}
+.page h2 a, .page h3 a, .page h4 a{color:#111;text-decoration:none;}
 aside h2,
 .page aside h2{margin-bottom:8px;font-size:13px;text-transform:uppercase;color:#898989;}
 h2{font-size:14px;line-height:14px;text-transform:uppercase;}
