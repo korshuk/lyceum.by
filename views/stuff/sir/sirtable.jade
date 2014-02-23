@@ -34,7 +34,15 @@ each content in captioncells
                 else
                     - medals = cellcontent.split(' ');
                     if medals.length === 4
-                        - cellcontent = '<span class="o-g">' + medals[0] + '</span><span class="o-s">' + medals[1] + '</span><span class="o-b">' + medals[2] + '</span><span class="o-d">' + medals[3] + '</span>';
+                        - cellcontent = '';
+                        if medals[0] != 0
+                            - cellcontent += '<span class="o-g">' + medals[0] + '</span>';
+                        if medals[1] != 0
+                            - cellcontent += '<span class="o-s">' + medals[1] + '</span>';
+                        if medals[2] != 0
+                            - cellcontent += '<span class="o-b">' + medals[2] + '</span>';
+                        if medals[3] != 0
+                            - cellcontent += '<span class="o-d">' + medals[3] + '</span>';
             - row += '<td>' + cellcontent + '</th>';
         - row += '</tr>';
         - html += row;
