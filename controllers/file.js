@@ -15,7 +15,7 @@ FileController.prototype.list = function(req, res) {
 	fs.readdir('./public/files', function(err, data){
 		for (var i = 0; i < data.length; i++) {
 			if (!isUnixHiddenPath(data[i])) {
-				if(fs.statSync(../data[i]).isFile()) {
+				if(fs.statSync('../' + data[i]).isFile()) {
 					files.push(data[i]);
 				}
 			};
