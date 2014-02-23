@@ -70,6 +70,7 @@ app.use('/admin', function(req, res, next){
   next();
 });
 app.fileController = new FileController(app);
+
 app.newsController = new NewsController(mongoose);
 app.mediaController = new MediaController(mongoose);
 app.congratulationsController = new CongratulationsController(mongoose);
