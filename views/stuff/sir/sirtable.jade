@@ -7,6 +7,7 @@
 - var row;
 - var rowcells;
 - var cellcontent;
+- var medals;
       
 - lastline = lines[lines.length-1];
 if lastline.match(caption_re)
@@ -27,8 +28,13 @@ each content in captioncells
         each content in rowcells //(line.split(" | "), function(content) {
             - cellcontent = parse(content);
             if locals.olympic
+                - medals = [];
                 if cellcontent === 'n'
                     - cellcontent = '<span class="o-n"></span>';
+                else
+                    - medals = cellcontent.split(' ');
+                    if medals.length
+                        - cellcontent = '<span class="o-g">' + medals[0] + '</span><span class="o-s">' + medals[1] + '</span><span class="o-b">' + medals[2] + '</span><span class="o-d">' + medals[3] + '</span>';
             - row += '<td>' + cellcontent + '</th>';
         - row += '</tr>';
         - html += row;
