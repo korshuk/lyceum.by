@@ -7,11 +7,9 @@ include ../layout/header
             include ../menu/subMenu
             -locals.type = '';
             -locals.olympic = '';
-            p!= doc.type
-            p!= translateObj(doc.type)
             if (doc.type === 'table') 
                 - locals.type = 'table'
-            if (doc.type === 'table olimp')
+            if (doc.type === 'olymp')
                 - locals.type = 'table'
                 - locals.olympic = 'olympic'
             section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content

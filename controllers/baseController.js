@@ -58,7 +58,7 @@ BaseController.prototype.checkWidth = function(doc) {
           lines = block.data.text.split("\n");
           lastline = lines[lines.length-1];
           if (lastline.match(caption_re)) {
-            if (lastline.match(caption_re)[1] === 'table' || lastline.match(caption_re)[1] === 'table olimp') {
+            if (lastline.match(caption_re)[1] === 'table' || lastline.match(caption_re)[1] === 'olymp') {
               doc.type[lang] = lastline.match(caption_re)[1];
             }
           }
