@@ -14,7 +14,11 @@ FileController.prototype.list = function(req, res) {
 	var files = [];
 	fs.readdir('./public/files', function(err, data){
 		for (var i = 0; i < data.length; i++) {
-			if (!isUnixHiddenPath(data[i])) files.push(data[i]);
+			if (!isUnixHiddenPath(data[i])) {
+				if(fs.statSync(data[i]).isFile()) {
+					files.push(data[i]);
+				}
+			};
 		};
 		res.render(self.viewPath + 'list.jade', {docs: files});
 	});
@@ -32,18 +36,23 @@ FileController.prototype.remove = function(req, res) {
 
 FileController.prototype.upload = function(req, res) {
   	var self = this;
-  	var filename = req.files.fileupload.name;
+  	if (req.files.fileupload.name) {
+	  	var filename = req.files.fileupload.name;
 
-  	var is = fs.createReadStream(req.files.fileupload.path);
-	var os = fs.createWriteStream('./public/files/' + filename);
+	  	var is = fs.createReadStream(req.files.fileupload.path);
+		var os = fs.createWriteStream('./public/files/' + filename);
 
-	is.pipe(os);
-	is.on('end',function() {
-	    fs.unlinkSync(req.files.fileupload.path);
-	    req.session.success = 'Файл <strong>' + filename + '</strong> загружен';
+		is.pipe(os);
+		is.on('end',function() {
+		    fs.unlinkSync(req.files.fileupload.path);
+		    req.session.success = 'Файл <strong>' + filename + '</strong> загружен';
 
-  		res.redirect(self.path);
-	});
+	  		res.redirect(self.path);
+		});
+	}
+	else {
+		res.redirect(self.path);
+	}
 
 };
 exports.FileController = FileController;
