@@ -13,8 +13,8 @@ module.exports = function(app) {
              app.congratulationsController.getList(0, function(err, cdocs) {
                 res.locals.metatags = {
                   index: 'true',
-                  keywords: 'Главная',
-                  description: 'Главная',
+                  keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Лицей, официальный сайт Лицея БГУ',
+                  description: 'Официальный сайт Лицея БГУ',
                 };
                 res.render('index.jade', {ndocs: ndocs, cdocs: cdocs, mdocs: mdocs, main: main});
              });

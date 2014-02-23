@@ -5,8 +5,8 @@ module.exports = function(app) {
   var metatags = function(res) {
      res.locals.metatags = {
       title: 'Поздравления',
-      keywords: 'Поздравления',
-      description: 'Поздравления'
+      keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
+      description: 'Успехи и победы лицеистов'
     };
   };
 

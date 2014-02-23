@@ -5,8 +5,8 @@ module.exports = function(app) {
   var metatags = function(res) {
     res.locals.metatags = {
       title: 'Контакты',
-      keywords: 'Контакты',
-      description: 'Контакты'
+      keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Контакты, Адрес, Телефон',
+      description: 'Контактная информация'
     };
   };
 

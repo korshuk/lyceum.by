@@ -4,8 +4,8 @@ module.exports = function(app) {
   var metatags = function(res) {
      res.locals.metatags = {
       title: 'Лицей в СМИ',
-      keywords: 'Лицей в СМИ',
-      description: 'Лицей в СМИ'
+      keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
+      description: 'Сообщения в СМИ о Лицее'
     };
   };
 
