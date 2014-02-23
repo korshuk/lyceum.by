@@ -18,7 +18,7 @@ module.exports = function(app) {
   });
   app.get('/:lang/news.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
-    res.locals.path = '/news.html';
+    res.locals.path = '/' + req.params.lang + '/news.html';
     metatags(res);
     app.newsController.showList(req, res);
   });
@@ -35,7 +35,7 @@ module.exports = function(app) {
       res.locals.MainMenu = app.menuController.getMainMenu();
       res.locals.newsType = 'news';
       req.params.newsType = 'news';
-      req.params.path = req.params.w;
+      req.params.path = '/news/' + req.params.w + '.html';
       metatags(res);
       app.newsController.show(req, res);
   });
@@ -43,7 +43,7 @@ module.exports = function(app) {
       res.locals.MainMenu = app.menuController.getMainMenu();
       res.locals.newsType = 'news';
       req.params.newsType = 'news';
-      req.params.path = req.params.w;
+      req.params.path = '/' + req.params.lang + '/news/' + req.params.w + '.html';
       metatags(res);
       app.newsController.show(req, res);
   });

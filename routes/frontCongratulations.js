@@ -18,7 +18,7 @@ module.exports = function(app) {
   });
   app.get('/:lang/congratulations.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
-    res.locals.path = '/congratulations.html';
+    res.locals.path = '/' + req.params.lang + '/congratulations.html';
     metatags(res);
     app.congratulationsController.showList(req, res);
   });
@@ -27,7 +27,7 @@ module.exports = function(app) {
       res.locals.MainMenu = app.menuController.getMainMenu();
       res.locals.congratulationsType = 'congratulations';
       req.params.congratulationsType = 'congratulations';
-      req.params.path = req.params.w;
+      req.params.path ='/congratulations/' + req.params.w + '.html';
       metatags(res);
       app.congratulationsController.show(req, res);
   });
@@ -35,7 +35,7 @@ module.exports = function(app) {
       res.locals.MainMenu = app.menuController.getMainMenu();
       res.locals.congratulationsType = 'congratulations';
       req.params.congratulationsType = 'congratulations';
-      req.params.path = req.params.w;
+      req.params.path = '/' + req.params.lang + '/congratulations/' + req.params.w + '.html';
       metatags(res);
       app.congratulationsController.show(req, res);
   });
