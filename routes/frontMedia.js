@@ -17,7 +17,7 @@ module.exports = function(app) {
   });
   app.get('/:lang/media.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
-    res.locals.path = '/media.html';
+    res.locals.path = '/' + res.locals.lang + '/media.html';
     metatags(res);
     app.mediaController.showList(req, res);
   });
