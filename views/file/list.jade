@@ -1,0 +1,19 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список файлов
+        form(action="/admin/files", method="post", enctype="multipart/form-data")
+          input(type="file", name="fileupload")
+          input(type="submit", value="Загрузить файл").btn.btn-primary
+    table.table.table-hover
+      tr
+        th Имя
+        th Ссылка
+        th
+      - each doc in docs
+          tr
+            td= doc
+            td= "/files/"+doc
+            td 
+              a(href="/admin/files/"+doc+"/delete") Удалить

@@ -1,5 +1,5 @@
 var     fs = require('fs'),
-    	gm = require('gm')
+    	gm = require('gm');
 
 
 module.exports = function(app) {

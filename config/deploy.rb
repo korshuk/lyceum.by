@@ -73,6 +73,8 @@ namespace :deploy do
         execute "ln -nfs #{shared_path}/desktop #{release_path}/public/images/desktop"
         #execute "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
         execute "ln -nfs #{shared_path}/mobile #{release_path}/public/images/mobile"
+
+        execute "ln -nfs #{shared_path}/files #{release_path}/public/files"
       rescue
         info "done?!"
       end 

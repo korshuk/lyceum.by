@@ -10,6 +10,7 @@ var express = require('express'),
     PageController = require('./controllers/page').PageController,
     MenuController = require('./controllers/menu').MenuController,
     ContactsController = require('./controllers/contacts').ContactsController,
+    FileController = require('./controllers/file').FileController,
     db;
 
     require('./modules/date.js');
@@ -68,7 +69,7 @@ app.use('/admin', function(req, res, next){
   if (req.session.user) res.locals.logged = 'logged';
   next();
 });
-
+app.fileController = new FileController(app);
 app.newsController = new NewsController(mongoose);
 app.mediaController = new MediaController(mongoose);
 app.congratulationsController = new CongratulationsController(mongoose);
@@ -81,9 +82,6 @@ app.userController = new UserController(mongoose);
 app.pageController = new PageController(mongoose, app);
 
 require('./routes/adminRoutes')(app);
-
-
-
 
 
 if (!module.parent) {

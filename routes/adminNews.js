@@ -1,5 +1,4 @@
 module.exports = function(app) {
-	
 	app.get('/admin/news', app.userController.Pass, function(req, res){
 	  app.newsController.list(req, res);
 	});
