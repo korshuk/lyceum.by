@@ -8,6 +8,7 @@ include ../layout/header
             -locals.type = '';
             -locals.olympic = '';
             p!= doc.type
+            p!= translateObj(doc.type)
             if (doc.type === 'table') 
                 - locals.type = 'table'
             if (doc.type === 'table olimp')
