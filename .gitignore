@@ -14,5 +14,5 @@ results
 npm-debug.log
 node_modules
 public/images/*
-public/files/*
+public/files
 nodeblog.sublime-workspace
