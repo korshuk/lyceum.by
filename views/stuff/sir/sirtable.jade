@@ -4,6 +4,9 @@
 - var caption_re = /\[(.*)\]/;
 - var lastline;
 - var clss;
+- var row;
+- var rowcells;
+- var cellcontent;
       
 - lastline = lines[lines.length-1];
 if lastline.match(caption_re)
@@ -19,12 +22,16 @@ each content in captioncells
                 
 - var rows = lines.slice(2, lines.length)
     each line in rows
-        -   var row = '<tr>';
-        -   var rowcells = line.split(" | ");
+        - row = '<tr>';
+        - rowcells = line.split(" | ");
         each content in rowcells //(line.split(" | "), function(content) {
-            - row += '<td>' + parse(content) + '</th>';
-        -   row += '</tr>';
-        -   html += row;
+            - cellcontent = parse(content);
+            if locals.olympic
+                if cellcontent === 'n'
+                    - cellcontent = '<span class="o-n"></span>';
+            - row += '<td>' + cellcontent + '</th>';
+        - row += '</tr>';
+        - html += row;
 - html += '</tbody>';
 if locals.type
     table(class = locals.type + ' ' + locals.olympic)!= html
