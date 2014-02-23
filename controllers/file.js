@@ -1,5 +1,9 @@
 var     fs = require('fs');
 
+var isUnixHiddenPath = function (path) {
+    return (/(^|.\/)\.+[^\/\.]/g).test(path);
+};
+
 FileController = function() {
 	this.viewPath = 'file/';
 	this.path = 'admin/files';	
@@ -7,8 +11,12 @@ FileController = function() {
 
 FileController.prototype.list = function(req, res) {
 	var self = this;
+	var files = [];
 	fs.readdir('./public/files', function(err, data){
-		res.render(self.viewPath + 'list.jade', {docs: data});
+		for (var i = 0; i < data.length; i++) {
+			if (!isUnixHiddenPath(data[i])) files.push(data[i]);
+		};
+		res.render(self.viewPath + 'list.jade', {docs: files});
 	});
 };
 
