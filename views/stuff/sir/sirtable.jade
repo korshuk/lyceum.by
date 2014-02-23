@@ -33,7 +33,7 @@ each content in captioncells
                     - cellcontent = '<span class="o-n"></span>';
                 else
                     - medals = cellcontent.split(' ');
-                    if medals.length
+                    if medals.length === 4
                         - cellcontent = '<span class="o-g">' + medals[0] + '</span><span class="o-s">' + medals[1] + '</span><span class="o-b">' + medals[2] + '</span><span class="o-d">' + medals[3] + '</span>';
             - row += '<td>' + cellcontent + '</th>';
         - row += '</tr>';
