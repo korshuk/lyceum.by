@@ -1,11 +1,10 @@
-include layout/header
+extends layout/header
 
-	block content
-		main(role='main')#main.index
-			-var docs = ndocs;
-			include news/index
-			-docs = cdocs;
-			include congratulations/index
-			-docs = mdocs;
-			include media/index
-include layout/footer
+block content
+	main(role='main')#main.index
+		-var docs = ndocs;
+		include news/index
+		-docs = cdocs;
+		include congratulations/index
+		-docs = mdocs;
+		include media/index

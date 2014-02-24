@@ -1,25 +1,24 @@
-include ../layout/header
-    block content
-        div#main.index
-            section#content.style-green.col-2
-                include ../menu/breadcrumbs-congratulations
-                hr.colored        
-                - var counter = 0;
-                - var mod = docs.length % 2;
-                - var height;
-                - var d;
-                - if (mod === 0) {
-                -    height = docs.length / 2;
-                -    tail = height;
-                -}
-                -else {
-                -   height = (docs.length - mod) / 2;
-                -   height = height + 1;
-                -}
-                if counter < docs.length
-                    include column
-                if counter < docs.length
-                    include column
-                include moreLink
-            include ../layout/asideIndex
-include ../layout/footer
+extends ../layout/header
+block content
+    div#main.index
+        section#content.style-green.col-2
+            include ../menu/breadcrumbs-congratulations
+            hr.colored        
+            - var counter = 0;
+            - var mod = docs.length % 2;
+            - var height;
+            - var d;
+            - if (mod === 0) {
+            -    height = docs.length / 2;
+            -    tail = height;
+            -}
+            -else {
+            -   height = (docs.length - mod) / 2;
+            -   height = height + 1;
+            -}
+            if counter < docs.length
+                include column
+            if counter < docs.length
+                include column
+            include moreLink
+        include ../layout/asideIndex
