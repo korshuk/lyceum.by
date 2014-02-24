@@ -1,35 +1,34 @@
-include ../layout/headerContacts
-    block content
-        div#main.page
-            include ../menu/breadcrumbs-contacts
-            hr.colored
-            h1= translate('Контакты')
-            section#content.col-2
-                p
-                    = translate('Беларусь, 220030, Минск, Ульяновская, 8')
-                    br
-                    = translate('телефон приёмной: 2095265, факс: 2260050')
-                    br
-                    != translate('р/с 3632901335015 отд.№539 ОАО&quot;Белинвестбанк&quot;, код 739')
-                div#map-canvas
-                h3= translate('Все контакты Лицея')
-                table.table.contacts
-                    tbody
+extends ../layout/headerContacts
+block content
+    main(role='main')#main.page
+        include ../menu/breadcrumbs-contacts
+        hr.colored
+        h1= translate('Контакты')
+        section#content.col-2
+            p
+                = translate('Беларусь, 220030, Минск, Ульяновская, 8')
+                br
+                = translate('телефон приёмной: 2095265, факс: 2260050')
+                br
+                != translate('р/с 3632901335015 отд.№539 ОАО&quot;Белинвестбанк&quot;, код 739')
+            div#map-canvas
+            h3= translate('Все контакты Лицея')
+            table.table.contacts
+                tbody
+                    tr
+                        th.th-1= translate('Контактное лицо')
+                        th.th-2= translate('Должность')
+                        th.th-3= translate('Кабинет')
+                        th= translate('Телефон, email')
+                    each doc in docs
                         tr
-                            th.th-1= translate('Контактное лицо')
-                            th.th-2= translate('Должность')
-                            th.th-3= translate('Кабинет')
-                            th= translate('Телефон, email')
-                        each doc in docs
-                            tr
-                                td!= (doc.name[locals.lang || "ru"] || doc.name.ru).replace(' ','<br>') 
-                                td= doc.occupation[locals.lang || "ru"] || doc.name.ru
-                                td= doc.place
-                                td
-                                    = doc.phone
-                                    if (doc.email)
-                                        br
-                                        a(href="mailto:" + doc.email)= doc.email
-                include ../layout/asidesmall
-            include ../layout/asideIndex
-include ../layout/footer
+                            td!= (doc.name[locals.lang || "ru"] || doc.name.ru).replace(' ','<br>') 
+                            td= doc.occupation[locals.lang || "ru"] || doc.name.ru
+                            td= doc.place
+                            td
+                                = doc.phone
+                                if (doc.email)
+                                    br
+                                    a(href="mailto:" + doc.email)= doc.email
+            include ../layout/asidesmall
+        include ../layout/asideIndex

@@ -4,10 +4,10 @@ aside.sharearea.style-grey
     ul.small
         li#fb-like
             a(href="https://www.facebook.com/sharer.php?u=" + locals.fullUrl, 
-                target="_blank", alt=translate('Поделиться'))=translate('Поделиться')
+                target="_blank", title=translate('Поделиться'))=translate('Поделиться')
         li#vk-like
             a(href="http://vk.com/share.php?url=" + locals.fullUrl, 
-                target="_blank", alt=translate('Сохранить'))=translate('Сохранить')
+                target="_blank", title=translate('Сохранить'))=translate('Сохранить')
         li#tw-like
             a(href="https://twitter.com/intent/tweet?original_referer=" + locals.fullUrl + "text=" + '' +"&tw_p=tweetbutton&url=" + locals.fullUrl + "&via=" + 'lyceumBSU', 
-                target="_blank", alt=translate('Tweet'))=translate('Tweet')
+                target="_blank", title=translate('Tweet'))=translate('Tweet')

@@ -1,37 +1,36 @@
-include ../layout/header
-    block content
-        div#main.page
-            include ../menu/breadcrumbs
-            hr.colored
-            h1= translateObj(doc.name)
-            include ../menu/subMenu
-            -locals.type = '';
-            -locals.olympic = '';
-            if (translateObj(doc.type) === 'table') 
-                - locals.type = 'table'
-            if (translateObj(doc.type) === 'olymp')
-                - locals.type = 'table'
-                - locals.olympic = 'olympic'
-            section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
-                include ../stuff/sir/sirparser 
-                each block in translateObj(doc.body).data
-                    case block.type
-                        when "heading"
-                            include ../stuff/sir/sirheading
-                        when "heading3"
-                            include ../stuff/sir/sirheading3
-                        when "heading4"
-                            include ../stuff/sir/sirheading4
-                        when "video"
-                            include ../stuff/sir/sirvideo
-                        when "list"
-                            include ../stuff/sir/sirlist
-                        when "table"
-                            include ../stuff/sir/sirtable 
-                        when "text"
-                            include ../stuff/sir/sirtext
-                        when "image"
-                            include ../stuff/sir/sirimage
-                include ../layout/asidesmall
-            include ../layout/aside
-include ../layout/footer
+extends ../layout/header
+block content
+    main(role='main')#main.page
+        include ../menu/breadcrumbs
+        hr.colored
+        h1= translateObj(doc.name)
+        include ../menu/subMenu
+        -locals.type = '';
+        -locals.olympic = '';
+        if (translateObj(doc.type) === 'table') 
+            - locals.type = 'table'
+        if (translateObj(doc.type) === 'olymp')
+            - locals.type = 'table'
+            - locals.olympic = 'olympic'
+        section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+            include ../stuff/sir/sirparser 
+            each block in translateObj(doc.body).data
+                case block.type
+                    when "heading"
+                        include ../stuff/sir/sirheading
+                    when "heading3"
+                        include ../stuff/sir/sirheading3
+                    when "heading4"
+                        include ../stuff/sir/sirheading4
+                    when "video"
+                        include ../stuff/sir/sirvideo
+                    when "list"
+                        include ../stuff/sir/sirlist
+                    when "table"
+                        include ../stuff/sir/sirtable 
+                    when "text"
+                        include ../stuff/sir/sirtext
+                    when "image"
+                        include ../stuff/sir/sirimage
+            include ../layout/asidesmall
+        include ../layout/aside

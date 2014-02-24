@@ -9,13 +9,15 @@ html(lang= locals.lang || "ru")
         meta(name="viewport", content="width=device-width, initial-scale=1")
     
         include metatags
-        
+     
         link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
         link(rel="icon", href="/favicon.ico", type="image/x-icon")    
-        
+            
         link(href='http://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
         link(rel='stylesheet', href='/css/style.css')
         
+        block script
+
         include social/script
         
     body
@@ -24,3 +26,5 @@ html(lang= locals.lang || "ru")
         div(itemscope, itemtype="http://schema.org/LocalBusiness")#container
             include sidebar
             block content
+        block footer
+            include footer

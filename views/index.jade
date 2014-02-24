@@ -1,7 +1,7 @@
 include layout/header
 
 	block content
-		div#main.index
+		main(role='main')#main.index
 			-var docs = ndocs;
 			include news/index
 			-docs = cdocs;

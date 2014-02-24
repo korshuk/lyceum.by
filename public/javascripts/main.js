@@ -96,4 +96,23 @@ $(function () {
         var top = (screen.height/2)-(150);
         window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600,top='+top+',left='+left);
     });       
+
+    if ($('#map-canvas').length){
+        function initialize() {
+            var Latlng = new google.maps.LatLng(53.896601,27.565727);
+            var mapOptions = {
+                center: Latlng,
+                zoom: 15
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            var image = '/img/map.png';
+            var marker = new google.maps.Marker({
+                position: Latlng,
+                map: map,
+                title: 'Лицей БГУ',
+                icon: image
+            });
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    }
 });
