@@ -268,7 +268,7 @@ section.col-2,
 .style-yellow .news-item h3{margin:0;}
 .imagelink:hover img{opacity: 0.8;}
 .news-item img{width:300px;float:left;margin-bottom:5px;}
-.news-item .image-narrow{width:100px;margin-right:20px;}
+.news-item .image-narrow, .news-item .narrow{width:100px;margin-right:20px;}
 .preview{position:relative;}
 .preview span{position:absolute;background:#f1cc32;}
 .news-item .preview img{float:none;}
