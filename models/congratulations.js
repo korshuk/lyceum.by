@@ -39,7 +39,7 @@ function define(mongoose, fn) {
   CongratulationsSchema.statics.findByReq = function(req, res, next) {
     var query;
     if (req.params.congratulationsType) {
-      query = { pathAlias: req.params.path};
+      query = { pathAlias: req.params.w};
     }
     else {
       query = { _id: req.params.id}; 

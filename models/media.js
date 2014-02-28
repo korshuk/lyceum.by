@@ -29,7 +29,7 @@ function define(mongoose, fn) {
   MediaSchema.statics.findByReq = function(req, res, next) {
     var query;
     if (req.params.newsType) {
-      query = { pathAlias: req.params.path};
+      query = { pathAlias: req.params.w};
     }
     else {
       query = { _id: req.params.id}; 

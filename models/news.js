@@ -44,14 +44,14 @@ function define(mongoose, fn) {
   NewsSchema.statics.findByReq = function(req, res, next) {
     var query;
     if (req.params.newsType) {
-      query = { pathAlias: req.params.path};
+      query = { pathAlias: req.params.w};
     }
     else {
       query = { _id: req.params.id}; 
     }
     this.findOne(query, function(err, doc) {
         if (!doc) {
-          req.session.error = new Error('такой страницы не существует');
+          //req.session.error = new Error('такой страницы не существует');
           res.redirect('404.html');
         } else {
           res.locals.breadcrumbs = {
