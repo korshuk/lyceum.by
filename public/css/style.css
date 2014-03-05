@@ -270,7 +270,7 @@ section.col-2,
 .imagelink:hover img{opacity: 0.8;}
 .news-item img{width:300px;float:left;margin-bottom:5px;}
 #content img.narrow{float: left; margin-right: 20px;}
-.news-item .image-narrow, .news-item .narrow, #content .news-item .narrow{width:100px;margin-right:20px;margin-top:8px;}
+.news-item .image-narrow, .news-item .narrow, #content .news-item .narrow{width:100px;margin-right:20px;margin-top:8px;margin-bottom:0;}
 .preview{position:relative;}
 .preview span{position:absolute;background:#f1cc32;}
 .news-item .preview img{float:none;}
