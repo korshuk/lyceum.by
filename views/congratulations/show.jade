@@ -13,7 +13,7 @@ block content
             - locals.type = 'table'
             - locals.olympic = 'olympic'
         -var blocks;
-        section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+        section(class= locals.type === 'table' ? 'col-3 clearfix' : 'col-2 clearfix')#content
             if doc.body[locals.lang || "ru"]
                 - blocks = doc.body[locals.lang || "ru"].data
             else

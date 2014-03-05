@@ -12,7 +12,7 @@ block content
         -if (translateObj(doc.type) === 'table olimp')
             - locals.type = 'table'
             - locals.olympic = 'olympic'
-        section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
+        section(class= locals.type === 'table' ? 'col-3 clearfix' : 'col-2 clearfix')#content
             if doc.image
                 - var image = JSON.parse(doc.image).data[0].data;
                 img(src= image.file.dUrl, class= image.file.imageType)
