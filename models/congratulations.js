@@ -44,6 +44,7 @@ function define(mongoose, fn) {
     else {
       query = { id: req.params.id}; 
     }
+    console.log(query);
     this.findOne(query, function(err, doc) {
         if (!doc) {
           req.session.error = new Error('такой страницы не существует');
