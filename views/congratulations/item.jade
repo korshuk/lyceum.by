@@ -11,4 +11,4 @@ div.news-item
         - var image = JSON.parse(d.image).data[0].data;
         a(href= ahref, title= block.data.text).imagelink
             img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-    div.teaser.clearfix= block.data.text
+    div.teaser.clearfix!= parse(block.data.text) 

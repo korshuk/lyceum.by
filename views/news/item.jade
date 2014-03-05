@@ -13,11 +13,11 @@ div(class= d.name[locals.lang || 'ru'] !== '' ? 'news-item' : 'news-item no-head
             - var image = JSON.parse(d.image).data[0].data;
             a(href= ahref, title= block.data.text).imagelink
                 img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-        div.teaser.clearfix= parse(block.data.text) 
+        div.teaser.clearfix!= parse(block.data.text) 
     else
         if d.image
             - var image = JSON.parse(d.image).data[0].data;
             a(href= ahref, title= block.data.text).imagelink
                 img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
         div.teaser.clearfix
-            a(href= ahref, title= block.data.text).to-full-page= parse(block.data.text)
+            a(href= ahref, title= block.data.text).to-full-page!= parse(block.data.text)
