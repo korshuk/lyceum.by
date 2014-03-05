@@ -42,7 +42,7 @@ function define(mongoose, fn) {
       query = { pathAlias: req.params.w};
     }
     else {
-      query = { id: req.params.id}; 
+      query = { _id: req.params.id}; 
     }
     console.log(query);
     this.findOne(query, function(err, doc) {
