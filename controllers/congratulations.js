@@ -7,6 +7,7 @@ CongratulationsController = function(mongoose) {
   var base  = new BaseController('Congratulations', 'congratulations', mongoose);
 
   base.remove = function(req, res) {
+    console.log('jhfkhgfkh00');
     var self = this;
     this.Collection.findByReq(req, res, function(doc){
       doc.remove(function() {

@@ -16,7 +16,6 @@ block content
             td= n.createdAt.format('dd-MM-yyyy hh:mm:ss')
             td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
             td  
-              a(href="/admin/congratulations/"+n.id+"/edit") Редактировать
+              a(href="/admin/congratulations/edit/"+n.id) Редактировать
               br
-              a(href="/admin/congratulations/"+n.id+"/delete") Удалить 
-            
+              a(href="/admin/congratulations/delete/"+n.id) Удалить

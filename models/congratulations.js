@@ -38,6 +38,7 @@ function define(mongoose, fn) {
   
   CongratulationsSchema.statics.findByReq = function(req, res, next) {
     var query;
+    console.log('!@!@@!!!@!@@!@!@!');
     if (req.params.congratulationsType) {
       query = { pathAlias: req.params.w};
     }
@@ -47,7 +48,7 @@ function define(mongoose, fn) {
     console.log(query);
     this.findOne(query, function(err, doc) {
         if (!doc) {
-          req.session.error = new Error('такой страницы не существует');
+          //req.session.error = new Error('такой страницы не существует');
           res.redirect('404.html');
         } else {
           res.locals.breadcrumbs = {
