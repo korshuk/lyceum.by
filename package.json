@@ -9,7 +9,7 @@
     "express": "latest",
     "jade": "0.30.0",
     "mongodb": "latest",
-    "mongoose": "*",
+    "mongoose": "3.6.11",
     "gm": "*",
     "localize": "*",
     "winston": "*",
