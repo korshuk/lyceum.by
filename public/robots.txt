@@ -1,0 +1,4 @@
+User-agent: *
+Host: 
+Host: liceum.bsu.by
+Sitemap: http://lyceum.by
