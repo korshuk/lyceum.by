@@ -134,6 +134,7 @@ table td,
 .table.contacts th{font-family:Arial, sans-serif;font-size:13px;font-weight:normal;color:#898989;}
 .table.contacts td{vertical-align:top;height:65px;color:#111;padding-top:18px;line-height:15px;}
 .table.contacts td a{color:#111;}
+#cintent a{color:#111;}
 .th-1{width:170px;}
 .th-2{width:230px;}
 .th-3{width:80px;}
