@@ -4,5 +4,5 @@ div.news-item
         - var image = JSON.parse(d.image).data[0].data;
         img(src= image.file.mUrl, alt= d.body[locals.lang || 'ru'])
         span= translateObj(d.name)
-    a(href= d.link, title= d.body[locals.lang || 'ru'] ).to-full-page
+    a(href= d.link, title= d.body[locals.lang || 'ru'], target='_blank' ).to-full-page
         h3= translateObj(d.body)
