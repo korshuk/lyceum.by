@@ -208,10 +208,12 @@ section h2.caption{margin-bottom:15px;}
 .page h1{padding-top:8px;margin-bottom:30px;}
 .style-blue h2, .style-blue a{color:#2dc6f4;}
 .style-blue hr, .page hr{background:#2dc6f4;}
-.style-blue .to-full-page *:hover, .style-blue .to-full-page:hover, a.more-link:hover.style-blue{color:#2dc6f4;}
+.style-blue .to-full-page *:hover, .style-blue .to-full-page:hover, a.more-link:hover.style-blue,
+#content .style-blue .to-full-page *:hover, #content .style-blue .to-full-page:hover, #content a.more-link:hover.style-blue{color:#2dc6f4;}
 .style-green h2, .style-green a{color:#82d120;}
 .style-green hr{background:#82d120;}
-.style-green .to-full-page *:hover, .style-green .to-full-page:hover, a.more-link:hover.style-green{color:#82d120;}
+.style-green .to-full-page *:hover, .style-green .to-full-page:hover, a.more-link:hover.style-green,
+#content .style-green .to-full-page *:hover, #content .style-green .to-full-page:hover, #content a.more-link:hover.style-green{color:#82d120;}
 .style-yellow h2, .style-yellow a{color:#f1cc32;}
 .style-yellow hr{background:#f1cc32;}
 .style-yellow .to-full-page *:hover, .style-yellow .to-full-page:hover, a.more-link:hover.style-yellow{color:#f1cc32;}
