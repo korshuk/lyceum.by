@@ -244,7 +244,7 @@ section{margin-bottom:22px;}
 section,
 section.col-2{padding-top:8px;margin-left:-20px;}
 .page section,
-.page section.col-2{padding-top:0;}
+.page section.col-2{padding-top:8px;}
 section.col-2,
 .index #content.col-2{width:640px;}
 #content .image-narrow{margin-right: 30px;float:left;}
