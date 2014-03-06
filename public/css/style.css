@@ -217,7 +217,7 @@ section h2.caption{margin-bottom:15px;}
 .style-yellow h2, .style-yellow a{color:#f1cc32;}
 .style-yellow hr{background:#f1cc32;}
 .style-yellow .to-full-page *:hover, .style-yellow .to-full-page:hover, a.more-link:hover.style-yellow{color:#f1cc32;}
-aside.front h2 {margin-top: -2px}
+aside.front h2 {margin-top: 0}
 aside.style-grey h2, .style-grey a{color:#898989;padding-bottom:0;}
 .style-grey hr.colored{background:#898989;}
 .style-grey .to-full-page *:hover, .style-grey .to-full-page:hover, a.more-link:hover.style-grey{color:#282828;}
