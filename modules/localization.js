@@ -20,6 +20,14 @@ setLocale = function(req, res, next) {
     	res.locals.translateObj = function(obj) {
     		return obj[res.locals.lang || "ru"] || obj["ru"]
     	};
+    	res.locals.translateNews = function(obj) {
+    		if (obj[res.locals.lang || "ru"].data.length > 0) {
+    			return obj[res.locals.lang || "ru"];
+    		}
+    		else {
+    			return obj["ru"];
+    		}
+    	};
 		res.locals.localDate = localize.localDate;
     	next();
 	}

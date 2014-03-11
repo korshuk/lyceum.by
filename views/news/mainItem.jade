@@ -1,10 +1,10 @@
-div(class= main.name[locals.lang || 'ru'] !== '' ? 'news-item' : 'news-item no-header').col-2.top-news
+div.news-item.col-2.top-news
     if (locals.lang) 
         - var ahref = '/' +locals.lang + '/news/' + main.pathAlias + '.html';
     else
         - var ahref = '/news/' + main.pathAlias + '.html';
     span.time= main.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
-    - var block = translateObj(main.teaser).data[0];
+    - var block = translateNews(main.teaser).data[0];
     if translateObj(main.name) !== ''
         a(href= ahref).to-full-page
             h3= translateObj(main.name)
