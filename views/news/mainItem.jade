@@ -14,4 +14,4 @@ div(class= main.name[locals.lang || 'ru'] !== '' ? 'news-item' : 'news-item no-h
             img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
     div.teaser.clearfix
         = block.data.text
-        a(href="#", title= translate("Читать всю новость")).more-link= translate('Читать всю новость')
+        a(href=ahref, title= translate("Читать всю новость")).more-link= translate('Читать всю новость')
