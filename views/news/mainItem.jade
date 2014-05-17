@@ -1,3 +1,4 @@
+include ../stuff/sir/sirparser 
 div.news-item.col-2.top-news
     if (locals.lang) 
         - var ahref = '/' +locals.lang + '/news/' + main.pathAlias + '.html';
@@ -13,5 +14,5 @@ div.news-item.col-2.top-news
         a(href= ahref, title=block.data.text).imagelink
             img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
     div.teaser.clearfix
-        = block.data.text
+        != parse(block.data.text)
         a(href=ahref, title= translate("Читать всю новость")).more-link= translate('Читать всю новость')

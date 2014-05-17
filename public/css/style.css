@@ -338,3 +338,21 @@ to{-moz-transform:rotate(360deg);}
 #container,
 footer{width:1220px;}
 #main{width:940px;}
+@media only screen
+and (min-width : 700px)
+and (max-width : 1240px) {
+	#container, 
+	footer{width:900px;}
+	#footer-logo{display:none;}
+	footer .col-1.first{margin-left:40px;}
+	footer .col-1{width: 270px;}
+	#main{width:620px;}
+	aside.col-1.front,
+	aside.col-1.style-grey.inner{width:640px;margin-left:-20px;}
+	aside.style-grey h2,
+	aside hr.colored{margin-left:20px;}
+	aside .large li{margin-left:20px}
+	aside .large #yt-widget,
+	aside .large li:last-child{display:none;}
+
+}
