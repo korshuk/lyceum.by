@@ -33,7 +33,7 @@ module.exports = function(app) {
   });
   
   app.get('/404.html', localization, function(req, res){
-   res.render('404.jade');
+   res.status(404).render('404.jade');
   });
 	
 }
