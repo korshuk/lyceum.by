@@ -43,11 +43,7 @@ app.configure(function(){
     secret: 'secret secret'
   }));
 
-  app.use(function(req, res) {
-     //res.status(400);
-     res.status(404).render('404.jade');
-    // res.render('404.jade', {title: '404: File Not Found'});
-  });
+  
 });
 
 app.configure('development', function(){
@@ -90,6 +86,11 @@ app.pageController = new PageController(mongoose, app);
 
 require('./routes/adminRoutes')(app);
 
+app.use(function(req, res) {
+     //res.status(400);
+    res.status(404).render('404.jade');
+    // res.render('404.jade', {title: '404: File Not Found'});
+  });
 
 if (!module.parent) {
   var port = process.argv[process.argv.length-1];
