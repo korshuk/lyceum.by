@@ -28,7 +28,7 @@ var menuHelper = function (req, res, next) {
     next();
   }
   else {
-    req.session.error = new Error('такой страницы не существует');
+  //  req.session.error = new Error('такой страницы не существует');
     res.status(404).render('404.jade');
    // res.redirect('404.html');
   }
@@ -54,7 +54,7 @@ var newsMenuHelper = function (req, res, next) {
     next();
   }
   else {
-    req.session.error = new Error('такой страницы не существует');
+   // req.session.error = new Error('такой страницы не существует');
    // res.redirect('404.html');
    res.status(404).render('404.jade');
   }
