@@ -210,7 +210,7 @@ nav li a:hover{color:#939393;}
 #search-form input:focus{background:url(../img/search-active.png) 130px 5px no-repeat;}
 #main{padding-top:8px;}
 .breadcrumb{list-style:none;margin:8px 0 15px 0;line-height:14px;}
-.breadcrumb > li + li:before{padding:0 5px;color:#cccccc;content:"\2192";}
+.breadcrumb > li + li:before{padding:0 5px;color:#ccc;content:"\2192";}
 .breadcrumb > li + li a {margin-left: -4px;}
 section .breadcrumb{margin-top:0;}
 .index .breadcrumb{margin-left:20px;}
