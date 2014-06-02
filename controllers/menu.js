@@ -167,8 +167,8 @@ MenuController = function (app) {
           app.pageController.show(req, res);
         });
       };
-      app.get('*', function(req, res) {
-        res.redirect('404.html');
+      app.get('*', localization, function(req, res) {
+        res.status(404).render('404.jade');
       });
     };
 
