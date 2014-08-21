@@ -19,6 +19,11 @@ var getBreadcrumbs = function (id) {
 var menuHelper = function (req, res, next) {
   var id;
   if (pathArray[req.path]) {
+    console.log(pathArray);
+  /*  console.log(newsPathArray);
+    console.log(MainMenu);
+    console.log(subMenusArray);*/
+
     id = pathArray[req.path].id;
     req.params.id = id;
     res.locals.subMenu = getSubMenu(id);
@@ -150,6 +155,27 @@ MenuController = function (app) {
       }
     };
 
+    this.generate_xml_sitemap = function() {
+        // this is the source of the URLs on your site, in this case we use a simple array, actually it could come from the database
+       // var urls = ['about.html', 'javascript.html', 'css.html', 'html5.html'];
+        // the root of your website - the protocol and the domain name with a trailing slash
+        var root_path = 'http://www.lyceum.by';
+        // XML sitemap generation starts here
+        var priority = 0.8;
+        var freq = 'monthly';
+        var xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        for (var i in pathArray) {
+            xml += '<url>';
+            xml += '<loc>'+ root_path + i + '</loc>';
+            xml += '<changefreq>'+ freq +'</changefreq>';
+            xml += '<priority>'+ priority +'</priority>';
+            xml += '</url>';
+            i++;
+        }
+        xml += '</urlset>';
+        return xml;
+    };
+
     this.generateRouts = function () {
       var self = this;
       self.map(self.JSON, '/');
@@ -167,6 +193,11 @@ MenuController = function (app) {
           app.pageController.show(req, res);
         });
       };
+      app.get('/sitemap.xml', function(req, res) {
+        var sitemap = self.generate_xml_sitemap(); // get the dynamically generated XML sitemap
+        res.header('Content-Type', 'text/xml');
+        res.send(sitemap);    
+      });
       app.get('*', localization, function(req, res) {
         res.status(404).render('404.jade');
       });
