@@ -393,8 +393,8 @@ and (max-width : 919px) {
 	#menu{padding-top:10px;width:630px;}
 	nav hr{display:none;}
 	#sub-sites{display:none;}
-	#menu ul{margin-left:160px;}
-	nav li{display:inline-block;width:155px;margin-bottom:15px;}
+	#menu ul{margin-left:200px;}
+	nav li{display:inline-block;width:215px;margin-bottom:15px;padding-right:5px;}
 	nav li.active {margin: -4px 5px 12px -5px;padding: 4px 5px 1px 5px;background: #df3b49;color: #fff;width: 155px;}
 	nav.fixed{position:relative;}
 	#footer-logo{display:none;}
