@@ -395,7 +395,7 @@ and (max-width : 919px) {
 	#sub-sites{display:none;}
 	#menu ul{margin-left:200px;}
 	nav li{display:inline-block;width:215px;margin-bottom:15px;padding-right:5px;}
-	nav li.active {margin: -4px 5px 12px -5px;padding: 4px 5px 1px 5px;background: #df3b49;color: #fff;width: 155px;}
+	nav li.active {margin: -4px 5px 12px -5px;padding: 4px 5px 1px 5px;background: #df3b49;color: #fff;width: 215px;}
 	nav.fixed{position:relative;}
 	#footer-logo{display:none;}
 	footer .col-1.first{margin-left:40px;}
