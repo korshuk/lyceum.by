@@ -1,9 +1,9 @@
 div#lang-picker
-		- var lang = locals.lang || "ru"
-		if locals.lang
-			- path = path.slice(3);
-		each loc in ["ru", "by", "en"]
-			if lang === loc
-				span.active= loc
-			else
-				a(href="/" + loc + path)= loc
+    -var lang = locals.lang || "ru"
+    if locals.lang
+        -path = path.slice(3);
+    each loc in ["ru", "by", "en"]
+        if lang === loc
+            span.active= loc
+        else
+            a(href="/" + loc + path)= loc

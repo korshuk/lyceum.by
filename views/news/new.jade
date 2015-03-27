@@ -2,12 +2,20 @@ include ../stuff/mixins/form-helper
 extends ../adminLayout
 
 block content
-    div.page-header
+    div.page-header.row
         if method === 'put'
-            h1 Редактирование новости
+            h1.col.col-lg-8 Редактирование новости
         else
-            h1 Новая новость
-    form.form-horizontal(method='post', action= method === 'put' ? '/admin/news/' + doc.id : '/admin/news' )
+            h1.col.col-lg-8 Новая новость
+        div.col.col-lg-4
+            a.copy-link.btn.btn-default Скопировать из старых новостей
+    
+    script.
+        var docId = '#{doc.id}';
+        var method = '#{method}';
+        var postUrl = "#{method === 'put' ? '/admin/news/' + doc.id : '/admin/news'}";
+                
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/news/' + doc.id : '/admin/news')
         if method === 'put'
             input(type="hidden", name="_method", value="put")
 
@@ -49,6 +57,7 @@ block content
             !=doc.image || ''
 
         +buttonSet
+    include ../stuff/copy-modal
 
 block scripts
     include ../stuff/adminScriptBlock

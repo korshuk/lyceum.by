@@ -1,0 +1,68 @@
+script.
+    $(function () {
+        var list,
+            i,
+            len;
+        $('.copy-link').on('click', function(e){
+            e.preventDefault();
+            $.get('/admin/news/api/list', function (data) {
+                list = data;
+                len = list.length;
+                var el,
+                    table = $('#copyDataList tbody'),
+                    name;
+                for (i = 0; i < len; i++) {
+                    if (list[i].name) {
+                        name = list[i].name.ru;
+                    } else {
+                        name = 'no name';
+                    }
+                    el = $('<tr>' + 
+                        '<td>' + name + '</td>' +
+                        '<td>' + list[i].createdAt + '</td>' +
+                        '<td>' + list[i].updatedAt + '</td>' +
+                        '<td>' + 
+                        '<a class="post-content" ' +
+                        'href="' + postUrl + '"'+
+                        'data-id="' + list[i]._id + '">'+
+                        'Скопировать</a></td></tr>');
+                    table.append(el);
+                }
+                $('#copyModal').modal('show');
+            });            
+        });
+        
+        $(document).on('click', '.post-content', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id'),
+                doc,
+                obj = [],
+                json,
+                name, 
+                lang, 
+                length = SirTrevor.instances.length;
+                        
+            for (i = 0; i < len; i++) {
+                if (list[i]._id == id) {
+                    doc = list[i];
+                    break;
+                }
+            }
+            for (i=0; i < length; i++) {
+                obj[i] = SirTrevor.instances[i];
+            }
+            for (i=0; i < length; i++) {
+                name = obj[i].el.name.split('.');
+                lang = name[1];
+                name = name[0];
+                json = JSON.stringify(doc[name]);
+                if (lang) {
+                    json = JSON.stringify(doc[name][lang]);                   
+                }
+                obj[i].destroy();
+                $('#' + name + '-' + lang).text(json);
+            }
+            initSirBlocks();
+            $('#copyModal').modal('hide');
+        });
+    });

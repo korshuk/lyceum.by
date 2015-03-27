@@ -1,4 +1,5 @@
 var  model = require('../models/user');
+var  qs = require('querystring');
 
 UserController = function(mongoose) {
 	var self = this;

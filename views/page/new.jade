@@ -2,6 +2,8 @@ include ../stuff/mixins/form-helper
 extends ../adminLayout
 
 block content
+    script
+        isPage = true;
     div.page-header
         if doc.name.ru
             h1 Редактирование страницы

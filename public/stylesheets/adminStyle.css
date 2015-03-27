@@ -1,3 +1,33 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('../fonts/icomoon.eot?csh4hy');
+	src:url('../fonts/icomoon.eot?#iefixcsh4hy') format('embedded-opentype'),
+		url('../fonts/icomoon.woff?csh4hy') format('woff'),
+		url('../fonts/icomoon.ttf?csh4hy') format('truetype'),
+		url('../fonts/icomoon.svg?csh4hy#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.icon-lock:hover:before,
+.sir-commented-block .icon-lock:before {
+	content: "\e98f";
+}
+.sir-commented-block .icon-lock:hover:before,
+.icon-lock:before {
+	content: "\e990";
+}
 body {
   position: relative;
   padding-top: 70px;
@@ -54,4 +84,7 @@ body {
 }
 .navbar-inverse a.navbar-link {
   color: #fff;
+}
+.sir-commented-block .st-block__inner{
+    background: #c2c2c2;
 }

@@ -9,83 +9,122 @@ var model = require('../models/menu'),
     app;
 
 var getSubMenu = function (id) {
-  return subMenusArray[id];
+    return subMenusArray[id];
 };
 
 var getBreadcrumbs = function (id) {
-  return breadcrumbsArray[id];
+    return breadcrumbsArray[id];
 };
 
 var menuHelper = function (req, res, next) {
-  var id;
-  if (pathArray[req.path]) {
-    console.log(pathArray);
-  /*  console.log(newsPathArray);
-    console.log(MainMenu);
-    console.log(subMenusArray);*/
+    var id;
+    if (pathArray[req.path]) {
+        id = pathArray[req.path].id;
+        req.params.id = id;
+        res.locals.subMenu = getSubMenu(id);
+        res.locals.breadcrumbs = getBreadcrumbs(id);
+        res.locals.MainMenu = MainMenu;
+        res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
+        next();
+    } else {
+        res.status(404).render('404.jade');
+    }
+};
 
-    id = pathArray[req.path].id;
-    req.params.id = id;
-    res.locals.subMenu = getSubMenu(id);
-    res.locals.breadcrumbs = getBreadcrumbs(id);
-    res.locals.MainMenu = MainMenu;
-    res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length-1].name;
-    next();
-  }
-  else {
-  //  req.session.error = new Error('такой страницы не существует');
-    res.status(404).render('404.jade');
-   // res.redirect('404.html');
-  }
+var appReqHelper = function (req, res) {
+    if (pathArray[req.path]) {
+        req.params.id = pathArray[req.path].id;
+    } else {
+        res.status(404).render('404.jade');
+    }
+}
+
+var appMenuHelper = function (req, res) {
+    console.log(req.params);
+    var id = req.params.id,
+        renderData = {};
+    console.log(req.path);
+    if (pathArray[req.path]) {
+        renderData.subMenu = getSubMenu(id);
+        renderData.breadcrumbs = getBreadcrumbs(id);
+        renderData.MainMenu = MainMenu;
+        renderData.activepage = renderData.breadcrumbs[renderData.breadcrumbs.length - 1].name;
+        return renderData;
+    } else {
+        res.status(404).render('404.jade');
+    }
+};
+
+var appNewsMenuHelper = function (req, res, next) {
+    var id,
+        renderData = {};
+    //if (newsPathArray[req.path]) {
+    /*    id = newsPathArray[req.path].id;
+        req.params.id = id;
+        renderData.subMenu = [];
+        //TODO news type
+        renderData.breadcrumbs = [{
+            name: {
+                en: 'cvxmx m',
+                by: 'fvfvf',
+                ru: 'sdfsdf'
+            },
+            path: '/sdfsdf.html'
+      }];*/
+        renderData.MainMenu = MainMenu;
+     //   renderData.activepage = renderData.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
+        return renderData;
+   // } else {
+  //      res.status(404).render('404.jade');
+   // }
 };
 
 var newsMenuHelper = function (req, res, next) {
-  var id;
-  if (newsPathArray[req.path]) {
-    id = newsPathArray[req.path].id;
-    req.params.id = id;
-    res.locals.subMenu = [];
-    //TODO news type
-    res.locals.breadcrumbs = [{
-        name: { 
-          en: 'cvxmx m', 
-          by: 'fvfvf', 
-          ru: 'sdfsdf' 
-        },
-        path: '/sdfsdf.html' 
+    var id;
+    if (newsPathArray[req.path]) {
+        id = newsPathArray[req.path].id;
+        req.params.id = id;
+        res.locals.subMenu = [];
+        //TODO news type
+        res.locals.breadcrumbs = [{
+            name: {
+                en: 'cvxmx m',
+                by: 'fvfvf',
+                ru: 'sdfsdf'
+            },
+            path: '/sdfsdf.html'
       }];
-    res.locals.MainMenu = MainMenu;
-    res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length-1].name;
-    next();
-  }
-  else {
-   // req.session.error = new Error('такой страницы не существует');
-   // res.redirect('404.html');
-   res.status(404).render('404.jade');
-  }
-}
+        res.locals.MainMenu = MainMenu;
+        res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
+        next();
+    } else {
+        res.status(404).render('404.jade');
+    }
+};
 
-MenuController = function (app) {
+var MenuController = function (app) {
 
-    this.JSON = {children: []};
+    this.JSON = {
+        children: []
+    };
 
     this.routes = [];
 
     this.List = [];
 
     this.clear = function () {
-        var self = this;
-        this.JSON = { children: [] };
-        console.log('clearing routs');
-        for (var i = 0; i < self.routes.length; i++) {
+        var self = this,
+            i;
+        this.JSON = {
+            children: []
+        };
+        for (i = 0; i < self.routes.length; i++) {
             for (k in app.routes.get) {
                 if (app.routes.get[k].path === self.routes[i] || app.routes.get[k].path === '/:lang' + self.routes[i]) {
-                    app.routes.get.splice(k,1);
-                    console.log(self.routes[i]);
+                    app.routes.get.splice(k, 1);
                 }
             }
-        };
-        console.log('clearing routs stop');
+        }
         this.routes = [];
         this.List = [];
         pathArray = {};
@@ -93,82 +132,97 @@ MenuController = function (app) {
     };
 
     this.generate = function (collection) {
-      var self = this;
-      self.clear();
-      console.log('MenuController generate');
-      collection.find().sort('createdAt').exec(function(err, docs) {
-        for (var i = 0; i < docs.length; i++) {
-          self.saveItem(docs[i]);
-        };
-        
-        self.resort();
-        self.generateMainMenu();
-        self.generateRouts();
-        
-        self.listTree(self.JSON);
-      });
+        var self = this,
+            i;
+        self.clear();
+        collection.find().sort('createdAt').exec(function (err, docs) {
+            for (i = 0; i < docs.length; i++) {
+                self.saveItem(docs[i]);
+            }
+
+            self.resort();
+            self.generateMainMenu();
+            self.generateRouts();
+
+            self.listTree(self.JSON);
+        });
     };
 
     this.saveItem = function (doc) {
-        var self = this;
-        var menuItem = new model.MenuItem({id: doc.id, name: doc.name, pathAlias: doc.pathAlias, order: doc.order});
+        var self = this,
+            menuItem = new model.MenuItem({
+                id: doc.id,
+                name: doc.name,
+                pathAlias: doc.pathAlias,
+                order: doc.order
+            });
         doc.parentpage === '' ? self.JSON.children.push(menuItem) : self.saveTree(self.JSON, doc.parentpage, menuItem);
     };
 
     this.saveTree = function (m, parent, item) {
-      for (var i = 0; i < m.children.length; i++) {
-        if (m.children[i].id === parent) {
-          m.children[i].children.push(item);
-          break;
+        var i;
+        for (i = 0; i < m.children.length; i++) {
+            if (m.children[i].id === parent) {
+                m.children[i].children.push(item);
+                break;
+            }
+            this.saveTree(m.children[i], parent, item);
         }
-        this.saveTree(m.children[i], parent, item);
-      };
     };
 
     this.resort = function () {
         var self = this,
-            newJSON = { children: [] };
+            newJSON = {
+                children: []
+            };
         this.itemsTree(self.JSON, newJSON);
         this.JSON = newJSON;
     };
 
-    this.listTree = function(m) {
-      var item;
-      if (m.children.length != 0) {
-        m.children = sortBy(m.children, ['order']);
-        for (var i = 0; i < m.children.length; i++) {
-          this.List.push(m.children[i]);
-          this.listTree(m.children[i]);
-        };
-      }
+    this.listTree = function (m) {
+        var item,
+            i;
+        if (m.children.length !== 0) {
+            m.children = sortBy(m.children, ['order']);
+            for (i = 0; i < m.children.length; i++) {
+                this.List.push(m.children[i]);
+                this.listTree(m.children[i]);
+            }
+        }
     };
 
     this.itemsTree = function (m, n) {
-      var item;
-      if (m.children.length != 0) {
-        m.children = sortBy(m.children, ['order']);
-        for (var i = 0; i < m.children.length; i++) {
-          item = new model.MenuItem({id: m.children[i].id, name: m.children[i].name, pathAlias: m.children[i].pathAlias, order: m.children[i].order});
-          n.children.push(item);
-          this.itemsTree(m.children[i], n.children[i]);
-        };
-      }
+        var item,
+            i;
+        if (m.children.length !== 0) {
+            m.children = sortBy(m.children, ['order']);
+            for (i = 0; i < m.children.length; i++) {
+                item = new model.MenuItem({
+                    id: m.children[i].id,
+                    name: m.children[i].name,
+                    pathAlias: m.children[i].pathAlias,
+                    order: m.children[i].order
+                });
+                n.children.push(item);
+                this.itemsTree(m.children[i], n.children[i]);
+            }
+        }
     };
 
-    this.generate_xml_sitemap = function() {
+    this.generate_xml_sitemap = function () {
         // this is the source of the URLs on your site, in this case we use a simple array, actually it could come from the database
-       // var urls = ['about.html', 'javascript.html', 'css.html', 'html5.html'];
+        // var urls = ['about.html', 'javascript.html', 'css.html', 'html5.html'];
         // the root of your website - the protocol and the domain name with a trailing slash
-        var root_path = 'http://www.lyceum.by';
-        // XML sitemap generation starts here
-        var priority = 0.8;
-        var freq = 'monthly';
-        var xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        for (var i in pathArray) {
+        var root_path = 'http://www.lyceum.by',
+            priority = 0.8,
+            freq = 'monthly',
+            xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            i;
+        for (i in pathArray) {
             xml += '<url>';
-            xml += '<loc>'+ root_path + i + '</loc>';
-            xml += '<changefreq>'+ freq +'</changefreq>';
-            xml += '<priority>'+ priority +'</priority>';
+            xml += '<loc>' + root_path + i + '</loc>';
+            xml += '<changefreq>' + freq + '</changefreq>';
+            xml += '<priority>' + priority + '</priority>';
             xml += '</url>';
             i++;
         }
@@ -177,54 +231,64 @@ MenuController = function (app) {
     };
 
     this.generateRouts = function () {
-      var self = this;
-      self.map(self.JSON, '/');
-      self.setRouts();
+        var self = this;
+        self.map(self.JSON, '/');
+        self.setRouts();
     };
 
     this.setRouts = function () {
-      var self = this;
-      app.routes.get.splice(app.routes.get.length - 1, 1);
-      for (var i = self.routes.length - 1; i >= 0 ; i--) {
-        app.get('/:lang' + self.routes[i], [localization, menuHelper], function(req, res) {
-          app.pageController.show(req, res);
+        var self = this,
+            i;
+        app.routes.get.splice(app.routes.get.length - 1, 1);
+        for (i = self.routes.length - 1; i >= 0; i--) {
+            app.get('/:lang' + self.routes[i], function (req, res) {
+                app.pageController.show(req, res);
+            });
+            app.get(self.routes[i], function (req, res) {
+                app.pageController.show(req, res);
+            });
+        }
+        app.get('/sitemap.xml', function (req, res) {
+            var sitemap = self.generate_xml_sitemap(); // get the dynamically generated XML sitemap
+            res.header('Content-Type', 'text/xml');
+            res.send(sitemap);
         });
-        app.get(self.routes[i], [localization, menuHelper], function(req, res) {
-          app.pageController.show(req, res);
+        app.get('*', localization, function (req, res) {
+            res.status(404).render('404.jade');
         });
-      };
-      app.get('/sitemap.xml', function(req, res) {
-        var sitemap = self.generate_xml_sitemap(); // get the dynamically generated XML sitemap
-        res.header('Content-Type', 'text/xml');
-        res.send(sitemap);    
-      });
-      app.get('*', localization, function(req, res) {
-        res.status(404).render('404.jade');
-      });
     };
 
     this.map = function (obj, path) {
-      var self = this;
-      if (obj.pathAlias) {
-        path = path + obj.pathAlias;
-        self.addPathToPathArray(path, obj);
-        path = path + '/';
-      }
-      if (obj.children.length != 0) {
-        self.routes.push(path + ':w.html');
-        for (var i = 0; i < obj.children.length; i++) {
-          self.map(obj.children[i], path);
-        };
-      }
+        var self = this,
+            i;
+        if (obj.pathAlias) {
+            path = path + obj.pathAlias;
+            self.addPathToPathArray(path, obj);
+            path = path + '/';
+        }
+        if (obj.children.length !== 0) {
+            self.routes.push(path + ':w.html');
+            for (i = 0; i < obj.children.length; i++) {
+                self.map(obj.children[i], path);
+            }
+        }
     };
 
     this.addPathToPathArray = function (path, obj) {
-        pathArray[path + '.html'] = {id : obj.id};
-        pathArray['/ru' + path + '.html'] = {id : obj.id};
-        pathArray['/en' + path + '.html'] = {id : obj.id};
-        pathArray['/by' + path + '.html'] = {id : obj.id};
-        
-        
+        pathArray[path + '.html'] = {
+            id: obj.id
+        };
+        pathArray['/ru' + path + '.html'] = {
+            id: obj.id
+        };
+        pathArray['/en' + path + '.html'] = {
+            id: obj.id
+        };
+        pathArray['/by' + path + '.html'] = {
+            id: obj.id
+        };
+
+
         subMenusArray[obj.id] = this.generateSubMenu(obj.id);
         obj['path'] = path + '.html';
 
@@ -236,72 +300,81 @@ MenuController = function (app) {
     };
 
     this.getMainMenu = function () {
-      return MainMenu
-    }
-    this.generateBreadcrumbs = function (obj) {
-        var that = this;
-        var array = [];
-        var flag = true;
-        array.push({name: obj.name});
-        var search = function (json, _obj) {
-            var path;
-            for (var i = 0; i < json.children.length; i++) {
-                for (var j = 0; j < json.children[i].children.length; j++) {
-                  if (json.children[i].children[j].id === _obj.id) {
+        return MainMenu;
+    };
 
-                    for(var p in pathArray) {
-                      if (pathArray[p].id === json.children[i].id) {
-                        path = p;
-                        break;
-                      }
+    this.generateBreadcrumbs = function (obj) {
+        var that = this,
+            array = [],
+            flag = true;
+        array.push({
+            name: obj.name
+        });
+
+        function search(json, _obj) {
+            var path,
+                i,
+                j,
+                p;
+            for (i = 0; i < json.children.length; i++) {
+                for (j = 0; j < json.children[i].children.length; j++) {
+                    if (json.children[i].children[j].id === _obj.id) {
+
+                        for (p in pathArray) {
+                            if (pathArray[p].id === json.children[i].id) {
+                                path = p;
+                                break;
+                            }
+                        }
+                        array.push({
+                            name: json.children[i].name,
+                            path: p
+                        });
+                        search(that.JSON, json.children[i]);
+                        flag = false;
                     }
-                    array.push({
-                      name: json.children[i].name,
-                      path: p,
-                    });
-                    search(that.JSON, json.children[i]);
-                    flag = false;
-                  }
-                };
-                if (flag) {
-                  search(json.children[i], _obj);
                 }
-            };
-        };
+                if (flag) {
+                    search(json.children[i], _obj);
+                }
+            }
+        }
         search(this.JSON, obj);
-        return array;;
+        return array;
     };
 
     this.generateSubMenu = function (id) {
-        var array = [];
-        var flag = true;
-        var search = function (json) {
-            for (var i = 0; i < json.children.length; i++) {
+        var array = [],
+            flag = true,
+            i,
+            j;
+
+        function search(json) {
+            for (i = 0; i < json.children.length; i++) {
                 if (json.children[i].id === id) {
                     if (json.children[i].children.length) {
                         array = json.children[i].children;
-                    }
-                    else {
-                        for (var j = 0; j < MainMenu.length; j++) {
+                    } else {
+                        for (j = 0; j < MainMenu.length; j++) {
                             if (MainMenu[j].id === id) {
                                 flag = false;
                             }
-                        };
+                        }
                         if (flag) {
                             array = json.children;
                         }
-                    };
+                    }
                     break;
-                }
-                else {
+                } else {
                     search(json.children[i]);
                 }
-            };
-        };
+            }
+        }
         search(this.JSON);
         return array;
     };
 };
-
+exports.menuReqHelper = appReqHelper;
+exports.menuHelper = appMenuHelper;
+exports.menuNewsHelper = appNewsMenuHelper;
 exports.MenuController = MenuController;
-

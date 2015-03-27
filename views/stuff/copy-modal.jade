@@ -1,0 +1,18 @@
+div#copyModal.modal(role="dialog", aria-hidden="true")
+  div.modal-dialog.modal-lg
+    div.modal-content
+      div.modal-header
+        button.close(type="button", data-dismiss="modal", aria-label="Close")
+            span(aria-hidden="true")&times;
+        h4.modal-title Modal title
+      div.modal-body
+        table#copyDataList.table.table-hover
+            tbody
+                tr
+                    th Название
+                    th Создана
+                    th Обновлена
+                    th 
+      div.modal-footer
+        button.btn.btn-default(type="button", data-dismiss="modal") Close
+        button.btn.btn-primary(type="button") Save changes
