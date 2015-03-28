@@ -2,7 +2,6 @@ var model = require('../models/menu'),
     localization = require('../modules/localization').localization,
     sortBY = require('../modules/sort').sortBy,
     pathArray = {},
-    newsPathArray = {},
     MainMenu = [],
     subMenusArray = {},
     breadcrumbsArray = {},
@@ -27,57 +26,76 @@ var menuHelper = function (req, res, next) {
         res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
         next();
     } else {
+        console.log('menu.js 30');
         res.status(404).render('404.jade');
     }
 };
 
 var appReqHelper = function (req, res) {
-    if (pathArray[req.path]) {
-        req.params.id = pathArray[req.path].id;
-    } else {
-        res.status(404).render('404.jade');
+    console.log('appReqHelper');
+    switch (req.appContentType) {
+    case 'page':
+        if (pathArray[req.path]) {
+            req.params.id = pathArray[req.path].id;
+        } else {
+            console.log('menu.js 40');
+            localization(req, res, function () {
+                res.status(404).render('404.jade');
+            });
+        }
+    case 'news':
+        break;
+    case 'congratulations':
+        break;
     }
-}
+};
 
 var appMenuHelper = function (req, res) {
-    console.log(req.params);
+    console.log('appMenuHelper', req.params);
     var id = req.params.id,
         renderData = {};
-    console.log(req.path);
-    if (pathArray[req.path]) {
-        renderData.subMenu = getSubMenu(id);
-        renderData.breadcrumbs = getBreadcrumbs(id);
-        renderData.MainMenu = MainMenu;
-        renderData.activepage = renderData.breadcrumbs[renderData.breadcrumbs.length - 1].name;
+    renderData.MainMenu = MainMenu;
+    console.log(req.appContentType);
+    switch (req.appContentType) {
+    case 'page':
+        if (pathArray[req.path]) {
+            renderData.subMenu = getSubMenu(id);
+            renderData.breadcrumbs = getBreadcrumbs(id);
+            renderData.activepage = renderData.breadcrumbs[renderData.breadcrumbs.length - 1].name;
+            return renderData;
+        } else {
+            console.log('menu.js 59');
+            res.status(404).render('404.jade');
+        }
+        break;
+    case 'news':
+        renderData.metatags = {
+            title: 'Новости',
+            keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
+            description: 'Новости Лицея БГУ'
+        }
         return renderData;
-    } else {
-        res.status(404).render('404.jade');
+        break;
+    case 'congratulations':
+        renderData.metatags = {
+            title: 'Поздравления',
+            keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
+            description: 'Успехи и победы лицеистов'
+        }
+        return renderData;
+        break;
+    case 'index':
+        return renderData;
+        break;
     }
+
 };
 
-var appNewsMenuHelper = function (req, res, next) {
-    var id,
-        renderData = {};
-    //if (newsPathArray[req.path]) {
-    /*    id = newsPathArray[req.path].id;
-        req.params.id = id;
-        renderData.subMenu = [];
-        //TODO news type
-        renderData.breadcrumbs = [{
-            name: {
-                en: 'cvxmx m',
-                by: 'fvfvf',
-                ru: 'sdfsdf'
-            },
-            path: '/sdfsdf.html'
-      }];*/
-        renderData.MainMenu = MainMenu;
-     //   renderData.activepage = renderData.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
-        return renderData;
-   // } else {
-  //      res.status(404).render('404.jade');
-   // }
-};
+/*var appNewsMenuHelper = function (req, res, next) {
+    var renderData = {};
+    renderData.MainMenu = MainMenu;
+    return renderData;
+};*/
 
 var newsMenuHelper = function (req, res, next) {
     var id;
@@ -98,6 +116,7 @@ var newsMenuHelper = function (req, res, next) {
         res.locals.activepage = res.locals.breadcrumbs[res.locals.breadcrumbs.length - 1].name;
         next();
     } else {
+        console.log('menu.js 96');
         res.status(404).render('404.jade');
     }
 };
@@ -239,12 +258,18 @@ var MenuController = function (app) {
     this.setRouts = function () {
         var self = this,
             i;
+        console.log('set');
         app.routes.get.splice(app.routes.get.length - 1, 1);
         for (i = self.routes.length - 1; i >= 0; i--) {
+            console.log(self.routes[i]);
             app.get('/:lang' + self.routes[i], function (req, res) {
+                console.log('12');
+                req.appContentType = 'page';
                 app.pageController.show(req, res);
             });
             app.get(self.routes[i], function (req, res) {
+                console.log('13');
+                req.appContentType = 'page';
                 app.pageController.show(req, res);
             });
         }
@@ -252,9 +277,6 @@ var MenuController = function (app) {
             var sitemap = self.generate_xml_sitemap(); // get the dynamically generated XML sitemap
             res.header('Content-Type', 'text/xml');
             res.send(sitemap);
-        });
-        app.get('*', localization, function (req, res) {
-            res.status(404).render('404.jade');
         });
     };
 
@@ -376,5 +398,5 @@ var MenuController = function (app) {
 };
 exports.menuReqHelper = appReqHelper;
 exports.menuHelper = appMenuHelper;
-exports.menuNewsHelper = appNewsMenuHelper;
+//exports.menuNewsHelper = appNewsMenuHelper;
 exports.MenuController = MenuController;

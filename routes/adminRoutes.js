@@ -1,5 +1,6 @@
 module.exports = function (app) {
     'use strict';
+    require('../routes/adminCash')(app);
     require('../routes/adminFiles')(app);
     require('../routes/adminLogin')(app);
     require('../routes/adminUsers')(app);

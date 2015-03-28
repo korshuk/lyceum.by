@@ -4,8 +4,10 @@
         localize = new Localize('./translations', "dd.mm.yyyy", "ru");
 
     function setLocale(req, res, next) {
+        console.log(req.originalUrl);
         var lang = req.params.lang;
         if (lang !== "ru" && lang !== "by" && lang !== "en" && lang !== undefined) {
+            console.log('laocalization.js 9');
             res.redirect('404.html');
         } else {
             if (lang === undefined) {
@@ -35,10 +37,12 @@
     function setLang(req, res) {
         var lang = req.params.lang,
             renderData = {};
-        if (lang !== "ru" && lang !== "by" && lang !== "en" && lang !== undefined) {
+        console.log(req.params);
+        if (lang !== "ru" && lang !== "by" && lang !== "en" && lang != undefined) {
+            console.log('localization.js 40');
             res.redirect('404.html');
         } else {
-            if (lang === undefined) {
+            if (lang == undefined) {
                 lang = "ru";
             } else {
                 renderData.lang = lang;

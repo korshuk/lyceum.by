@@ -1,0 +1,17 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Вот что в кэше
+        a.btn.btn-primary(href='/admin/cash/deleteAll') Почистить всё
+    table.table.table-hover
+      tr
+        th Ссылка
+        th Сохранена в
+        th
+      each n in docs
+          tr
+            td= n.name
+            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+            td
+              a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить 

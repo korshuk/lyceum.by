@@ -1,5 +1,3 @@
-var localization = require('../modules/localization').localization;
-
 module.exports = function (app) {
     'use strict';
 
@@ -14,6 +12,7 @@ module.exports = function (app) {
         if (cashObj && cashObj.updatedAt > dateNow) {
             res.status(200).send(cashObj.html);
         } else {
+            req.appContentType = 'index';
             // res.locals.MainMenu = app.menuController.getMainMenu();
 
             /* res.locals.path = '/index.html';
@@ -38,28 +37,25 @@ module.exports = function (app) {
                             main: main,
                             updatedAt: newDate
                         }
-                        req.app.sendPage(req, res, doc, 'index.jade', true);
+                        req.app.sendPage(req, res, doc, 'index.jade');
                     });
                 });
             });
         }
     }
 
-    app.get('/', localization, function (req, res) {
+    app.get('/', function (req, res) {
+        console.log('get /');
         showIndex(req, res);
     });
-    app.get('/:lang', localization, function (req, res) {
+    app.get('/:lang', function (req, res) {
+        console.log('get /:lang')
         showIndex(req, res);
     });
-    app.get('/index.html', localization, function (req, res) {
+    app.get('/index.html', function (req, res) {
         showIndex(req, res);
     });
-    app.get('/:lang/index.html', localization, function (req, res) {
+    app.get('/:lang/index.html', function (req, res) {
         showIndex(req, res);
     });
-
-    app.get('/404.html', localization, function (req, res) {
-        res.status(404).render('404.jade');
-    });
-
 };

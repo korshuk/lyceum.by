@@ -6,6 +6,7 @@
         url = require('url'),
         fs = require('fs'),
         MongoStore = require('connect-mongo')(express),
+        localization = require('./modules/localization').localization,
         NewsController = require('./controllers/news').NewsController,
         MediaController = require('./controllers/media').MediaController,
         CongratulationsController = require('./controllers/congratulations').CongratulationsController,
@@ -90,8 +91,14 @@
         next();
     });
 
-    //   app.locals.translate = localization.translate,
-    //  app.locals.translateObj = res.locals.translateObj,
+    app.param('lang', function (req, res, next, lang) {
+        var regex = new RegExp(/^(ru|by|en)$/);
+        if (regex.test(lang)) {
+            next();
+        } else {
+            next('route');
+        }
+    });
 
     app.fileController = new FileController(app);
 
@@ -108,15 +115,9 @@
 
     require('./routes/adminRoutes')(app);
 
-    app.use(function (req, res) {
-        res.status(404).render('404.jade');
-    });
-
     function extend(dest, from) {
-        console.log(from);
         var props = Object.getOwnPropertyNames(from);
         props.forEach(function (name) {
-            console.log('sd', name);
             dest[name] = from[name];
         });
         return dest;
@@ -126,30 +127,27 @@
 
     app.helpers = {
         setMenu: require('./controllers/menu').menuHelper,
-        setNewsMenu: require('./controllers/menu').menuNewsHelper,
+        // setNewsMenu: require('./controllers/menu').menuNewsHelper,
         setLang: require('./modules/localization').loclizationHelper
     };
 
-    app.sendPage = function (req, res, doc, viewPath, newsFlag) {
+    app.sendPage = function (req, res, doc, viewPath) {
         var self = this,
             renderData = {};
+        console.log('sendPage', req.appContentType);
 
         renderData = extend(renderData, self.helpers.setLang(req, res));
-        
-        console.log('!!!', doc);
-        if (newsFlag) {
-            renderData = extend(renderData, self.helpers.setNewsMenu(req, res));
+        renderData = extend(renderData, self.helpers.setMenu(req, res));
+
+        if (req.appContentType === 'index') {
             renderData = extend(renderData, doc);
         } else {
-            renderData = extend(renderData, self.helpers.setMenu(req, res));
             renderData.doc = doc;
         }
         renderData.path = req.path;
-
         self.render(viewPath,
             renderData,
             function (err, html) {
-                console.log(err);
                 self.superCash[req.originalUrl] = {
                     html: html,
                     updatedAt: doc.updatedAt
@@ -159,9 +157,17 @@
     };
 
 
-    if (!module.parent) {
-        var port = process.argv[process.argv.length - 1];
-        app.listen(port);
-        console.log('started');
-    }
+    setTimeout(function () {
+        app.use(function (req, res) {
+            console.log('app.js 112');
+            localization(req, res, function () {
+                res.status(404).render('404.jade');
+            });
+        });
+        if (!module.parent) {
+            var port = process.argv[process.argv.length - 1];
+            app.listen(port);
+            console.log('started');
+        }
+    }, 5000);
 }());

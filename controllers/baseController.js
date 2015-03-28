@@ -19,14 +19,10 @@
 
     BaseController.prototype.setId = require('./menu').menuReqHelper;
 
-    BaseController.prototype.setLang = require('../modules/localization').loclizationHelper;
-
-    BaseController.prototype.setMenu = require('./menu').menuHelper;
-
     BaseController.prototype.show = function (req, res, next) {
         var self = this,
             cashObj;
-        
+        console.log('show');
         this.setId(req, res);
         this.Collection.findByReq(req, res, function (doc) {
             cashObj = req.app.superCash[req.originalUrl];
