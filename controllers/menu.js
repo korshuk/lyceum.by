@@ -333,16 +333,13 @@ var MenuController = function (app) {
             name: obj.name
         });
 
-        function search(json, _obj) {
-            var path,
-                i,
-                j,
-                p;
-            for (i = 0; i < json.children.length; i++) {
-                for (j = 0; j < json.children[i].children.length; j++) {
+        var search = function (json, _obj) {
+            var path;
+            for (var i = 0; i < json.children.length; i++) {
+                for (var j = 0; j < json.children[i].children.length; j++) {
                     if (json.children[i].children[j].id === _obj.id) {
 
-                        for (p in pathArray) {
+                        for (var p in pathArray) {
                             if (pathArray[p].id === json.children[i].id) {
                                 path = p;
                                 break;
@@ -371,13 +368,13 @@ var MenuController = function (app) {
             i,
             j;
 
-        function search(json) {
-            for (i = 0; i < json.children.length; i++) {
+        var search = function (json) {
+            for (var i = 0; i < json.children.length; i++) {
                 if (json.children[i].id === id) {
                     if (json.children[i].children.length) {
                         array = json.children[i].children;
                     } else {
-                        for (j = 0; j < MainMenu.length; j++) {
+                        for (var j = 0; j < MainMenu.length; j++) {
                             if (MainMenu[j].id === id) {
                                 flag = false;
                             }
