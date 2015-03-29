@@ -10,16 +10,10 @@ module.exports = function (app) {
         cashObj = req.app.superCash[req.originalUrl];
 
         if (cashObj && cashObj.updatedAt > dateNow) {
+            req.app.superCash[req.originalUrl].counter = req.app.superCash[req.originalUrl].counter + 1;
             res.status(200).send(cashObj.html);
         } else {
             req.appContentType = 'index';
-            // res.locals.MainMenu = app.menuController.getMainMenu();
-
-            /* res.locals.path = '/index.html';
-             if (res.locals.lang) {
-                 res.locals.path = '/' + res.locals.lang + '/index.html';
-             }*/
-
             app.newsController.getList(0, function (err, ndocs, main) {
                 app.mediaController.getList(0, function (err, mdocs) {
                     app.congratulationsController.getList(0, function (err, cdocs) {

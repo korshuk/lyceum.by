@@ -7,11 +7,15 @@ block content
     table.table.table-hover
       tr
         th Ссылка
-        th Сохранена в
+        th Последнее изменеие в
+        th Добавлено в кэш
+        th За это время просмотров:
         th
       each n in docs
           tr
             td= n.name
             td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+            td= n.addedToCash.format('dd-MM-yyyy hh:mm:ss')
+            td= n.counter
             td
               a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить 

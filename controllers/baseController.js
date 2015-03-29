@@ -22,11 +22,11 @@
     BaseController.prototype.show = function (req, res, next) {
         var self = this,
             cashObj;
-        console.log('show');
         this.setId(req, res);
         this.Collection.findByReq(req, res, function (doc) {
             cashObj = req.app.superCash[req.originalUrl];
             if (cashObj && (cashObj.updatedAt >= doc.updatedAt)) {
+                req.app.superCash[req.originalUrl].counter =  req.app.superCash[req.originalUrl].counter + 1;
                 res.status(200).send(cashObj.html);
             } else {
                 req.app.sendPage(req, res, doc, self.viewPath + 'show.jade');

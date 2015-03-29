@@ -132,7 +132,8 @@
 
     app.sendPage = function (req, res, doc, viewPath) {
         var self = this,
-            renderData = {};
+            renderData = {},
+            newDate;
         console.log('sendPage', req.appContentType);
 
         renderData = extend(renderData, self.helpers.setLang(req, res));
@@ -147,9 +148,12 @@
         self.render(viewPath,
             renderData,
             function (err, html) {
+                newDate = new Date();
                 self.superCash[req.originalUrl] = {
                     html: html,
-                    updatedAt: doc.updatedAt
+                    updatedAt: doc.updatedAt,
+                    addedToCash: newDate,
+                    counter: 1
                 };
                 res.status(200).send(html);
             });

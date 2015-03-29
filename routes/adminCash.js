@@ -6,7 +6,9 @@ module.exports = function (app) {
         props.forEach(function (name) {
             docs.push({
                 name: name,
-                updatedAt: app.superCash[name].updatedAt
+                updatedAt: app.superCash[name].updatedAt,
+                counter: app.superCash[name].counter,
+                addedToCash: app.superCash[name].addedToCash
             });
         });
         res.render('cash/list.jade', {
