@@ -364,9 +364,7 @@ var MenuController = function (app) {
 
     this.generateSubMenu = function (id) {
         var array = [],
-            flag = true,
-            i,
-            j;
+            flag = true;
 
         var search = function (json) {
             for (var i = 0; i < json.children.length; i++) {
