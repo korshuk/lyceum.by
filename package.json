@@ -13,6 +13,7 @@
         "gm": "*",
         "localize": "*",
         "winston": "*",
-        "connect-mongo": "0.3.3"
+        "connect-mongo": "0.3.3",
+        "node-logentries": "0.0.2"
     }
 }

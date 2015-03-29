@@ -5,8 +5,8 @@
         mongoose = require('mongoose'),
         url = require('url'),
         fs = require('fs'),
-        MongoStore = require('connect-mongo')(express),
         localization = require('./modules/localization').localization,
+        MongoStore = require('connect-mongo')(express),
         NewsController = require('./controllers/news').NewsController,
         MediaController = require('./controllers/media').MediaController,
         CongratulationsController = require('./controllers/congratulations').CongratulationsController,
@@ -24,7 +24,6 @@
     require('./modules/date.js');
 
     app = express();
-
 
     app.disable('x-powered-by');
 
