@@ -1,3 +1,5 @@
+/*jslint node: true */
+
 var model = require('../models/menu'),
     localization = require('../modules/localization').localization,
     sortBY = require('../modules/sort').sortBy,
@@ -27,7 +29,7 @@ var menuHelper = function (req, res, next) {
         next();
     } else {
         console.log('menu.js 30');
-        res.status(404).render('404.jade');
+        res.redirect('404.html');
     }
 };
 
@@ -39,10 +41,9 @@ var appReqHelper = function (req, res) {
             req.params.id = pathArray[req.path].id;
         } else {
             console.log('menu.js 40');
-            localization(req, res, function () {
-                res.status(404).render('404.jade');
-            });
+            res.redirect('404.html');
         }
+        break;
     case 'news':
         break;
     case 'congratulations':
@@ -65,7 +66,7 @@ var appMenuHelper = function (req, res) {
             return renderData;
         } else {
             console.log('menu.js 59');
-            res.status(404).render('404.jade');
+            res.redirect('404.html');
         }
         break;
     case 'news':
@@ -73,20 +74,17 @@ var appMenuHelper = function (req, res) {
             title: 'Новости',
             keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
             description: 'Новости Лицея БГУ'
-        }
+        };
         return renderData;
-        break;
     case 'congratulations':
         renderData.metatags = {
             title: 'Поздравления',
             keywords: 'Лицей БГУ, Лицей Белорусского государственного университета, Новости',
             description: 'Успехи и победы лицеистов'
-        }
+        };
         return renderData;
-        break;
     case 'index':
         return renderData;
-        break;
     }
 
 };
@@ -97,7 +95,7 @@ var appMenuHelper = function (req, res) {
     return renderData;
 };*/
 
-var newsMenuHelper = function (req, res, next) {
+/*var newsMenuHelper = function (req, res, next) {
     var id;
     if (newsPathArray[req.path]) {
         id = newsPathArray[req.path].id;
@@ -117,10 +115,10 @@ var newsMenuHelper = function (req, res, next) {
         next();
     } else {
         console.log('menu.js 96');
-        res.status(404).render('404.jade');
+        res.redirect('404.jade');
     }
 };
-
+*/
 var MenuController = function (app) {
 
     this.JSON = {
@@ -164,6 +162,7 @@ var MenuController = function (app) {
             self.generateRouts();
 
             self.listTree(self.JSON);
+            
         });
     };
 
@@ -263,12 +262,10 @@ var MenuController = function (app) {
         for (i = self.routes.length - 1; i >= 0; i--) {
             console.log(self.routes[i]);
             app.get('/:lang' + self.routes[i], function (req, res) {
-                console.log('12');
                 req.appContentType = 'page';
                 app.pageController.show(req, res);
             });
             app.get(self.routes[i], function (req, res) {
-                console.log('13');
                 req.appContentType = 'page';
                 app.pageController.show(req, res);
             });
@@ -338,7 +335,6 @@ var MenuController = function (app) {
             for (var i = 0; i < json.children.length; i++) {
                 for (var j = 0; j < json.children[i].children.length; j++) {
                     if (json.children[i].children[j].id === _obj.id) {
-
                         for (var p in pathArray) {
                             if (pathArray[p].id === json.children[i].id) {
                                 path = p;

@@ -16,7 +16,6 @@
         });
     };
 
-
     BaseController.prototype.setId = require('./menu').menuReqHelper;
 
     BaseController.prototype.show = function (req, res, next) {

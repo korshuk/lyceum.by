@@ -1,6 +1,18 @@
 extends ../adminLayout
 
 block content
+    div.row
+        div.col-lg-12
+            div.alert.alert-info
+                if result.memoryInfo
+                    strong!= Math.round(1000 * result.memoryInfo.rss / (1024 * 1024)) / 1000
+                    |&nbsp;MB;&nbsp;
+                    strong!= Math.round(1000 * result.memoryInfo.rss * 100 / result.memoryInfo.vsize) / 1000 
+                    |&nbsp;% of Memory usage;&nbsp;
+                    strong!= Math.round(1000 * result.cpu) / 1000
+                    |&nbsp;% of CPU usage;&nbsp;
+                else
+                    p!= result
     div.page-header
         h1 Вот что в кэше
         a.btn.btn-primary(href='/admin/cash/deleteAll') Почистить всё
@@ -19,3 +31,8 @@ block content
             td= n.counter
             td
               a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить 
+    h3 Времена старта сервера
+    table.table.table-hover
+        each n in starts
+            tr
+                td!= (new Date(n)).format('dd-MM-yyyy hh:mm:ss')

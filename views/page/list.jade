@@ -1,27 +1,28 @@
 extends ../adminLayout
 
+mixin render_list(json, pref)
+    each doc, i in json
+        tr
+            td!= pref + doc.name.ru
+            td= doc.order || 0
+            td= doc.pathAlias + '.html'
+            td
+                a(href="/admin/pages/"+doc.id+"/edit") Редактировать 
+                br
+                a(href="/admin/pages/"+doc.id+"/delete") Удалить
+        if doc.children && doc.children.length > 0
+            mixin render_list(doc.children, pref + '&mdash; ')
+
 block content
     div.page-header
         h1: Список страниц
         a.btn.btn-primary(href='/admin/pages/create') Добавить страницу
     table.table.table-hover
-      tr
-        th Название
-        th Автор
-        th Уровень
-        th Путь
-        th Создана
-        th Обновлена
-        th
-      - each doc in docs
-          tr
-            td= doc.name.ru
-            td= doc.createdBy
-            td= doc.order || 0
-            td= doc.pathAlias + '.html'
-            td= doc.createdAt.format('dd-MM-yyyy hh:mm:ss')
-            td= doc.updatedAt.format('dd-MM-yyyy hh:mm:ss')
-            td
-              a(href="/admin/pages/"+doc.id+"/edit") Редактировать 
-              br
-              a(href="/admin/pages/"+doc.id+"/delete") Удалить
+        
+    table.table.table-hover
+        tr
+            th Название
+            th Уровень
+            th Путь
+            th
+        mixin render_list(pages, '')
