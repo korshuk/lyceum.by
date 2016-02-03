@@ -1,0 +1,82 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Результаты экзаменов
+
+        button#versionBtn.btn.btn-primary Показать версии
+        
+        form(action="/admin/exams/resultsUpload", method="post", enctype="multipart/form-data")
+          input#csvFileInput(type="file", name="csvTable")
+          input(type="submit", value="Загрузить файл").btn.btn-primary
+    
+    div.col-lg-12
+        label.checkbox-inline
+            input(type="checkbox", value="")
+            | Option1
+        label.checkbox-inline
+            input(type="checkbox", value="")
+            | Option12
+        label.checkbox-inline
+            input(type="checkbox", value="")
+            | Option13
+        label.checkbox-inline
+            input(type="checkbox", value="")
+            | Option14
+
+
+    table#examGrid.table.table-hover
+        thead
+            tr
+                th
+                th Название
+                th Уровень
+                th Путь
+                th eee
+        tbody
+
+
+    div#examModal.modal.fade(role="dialog")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true")
+                            | &times;
+                    h4.modal-title
+                        | Обновление даннных
+                div.modal-body
+                    form
+                        div.form-group
+                            label(for="examPassport")
+                                | Passport
+                            input#examPassport.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Num
+                            input#examNum.form-control(type="text")
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")
+                        | Close
+                    button#updatePupil.btn.btn-primary(type="button")
+                        | Save changes
+
+    div#versionModal.modal.fade(role="dialog")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true")
+                            | &times;
+                    h4.modal-title
+                        | Список версий
+                div.modal-body
+                    
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")
+                        | Close
+
+
+block scripts
+    include ../stuff/adminScriptBlock
+    include ../stuff/examGrid

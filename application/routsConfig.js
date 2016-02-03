@@ -11,6 +11,7 @@
         MenuController = require('../controllers/menu').MenuController,
         ContactsController = require('../controllers/contacts').ContactsController,
         FileController = require('../controllers/file').FileController;
+        ExamsController = require('../controllers/exams').ExamsController;
 
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -35,6 +36,7 @@
         app.menuController = new MenuController(app);
         app.userController = new UserController(mongoose);
         app.pageController = new PageController(mongoose, app);
+        app.examsController = new ExamsController(mongoose);
 
         require('../routes/adminRoutes')(app);
         return app;
