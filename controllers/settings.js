@@ -23,7 +23,6 @@ SettingsController = function(mongoose) {
               doc = new base.Collection();
           }
           doc.showPupilCabinet = req.body.showPupilCabinet == 'on' ? true : false;
-          console.log(doc, req.body.showPupilCabinet);
           doc.save(function (err, d) {
             res.redirect(self.path);
           });

@@ -6,7 +6,7 @@ block content
     form.form-horizontal(method='post', action='/admin/settings/')
         div.form-group
             label.checkbox
-                input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=docs.showPupilCabinet)
+                input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=(docs && docs.showPupilCabinet))
                 | showPupilCabinet
         div.row
             div.col.col-lg-12
