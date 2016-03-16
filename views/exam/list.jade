@@ -3,39 +3,89 @@ extends ../adminLayout
 block content
     div.page-header
         h1 Результаты экзаменов
-
+        button#classBtn.btn.btn-primary Профили
+        hr
         button#versionBtn.btn.btn-primary Показать версии
-        
+        hr
         form(action="/admin/exams/resultsUpload", method="post", enctype="multipart/form-data")
           input#csvFileInput(type="file", name="csvTable")
           input(type="submit", value="Загрузить файл").btn.btn-primary
     
-    div.col-lg-12
-        label.checkbox-inline
-            input(type="checkbox", value="")
-            | Option1
-        label.checkbox-inline
-            input(type="checkbox", value="")
-            | Option12
-        label.checkbox-inline
-            input(type="checkbox", value="")
-            | Option13
-        label.checkbox-inline
-            input(type="checkbox", value="")
-            | Option14
-
-
+    div.row
+        div.col.col-lg-3
+            h4 Профили
+            div#profileChecker
+        div.col.col-lg-3
+            strong I экзамен
+            table.table.table-hover
+                tbody
+                    tr
+                        td Min
+                        td
+                            input#minTable1(type="number")
+                    tr
+                        td Max
+                        td
+                            input#maxTable1(type="number")
+        div.col.col-lg-3
+            strong II экзамен
+            table.table.table-hover
+                tbody
+                    tr
+                        td Min
+                        td
+                            input#minTable2(type="number")
+                    tr
+                        td Max
+                        td
+                            input#maxTable2(type="number")
+        div.col.col-lg-3
+            strong Сумма
+            table.table.table-hover
+                tbody
+                    tr
+                        td Min
+                        td
+                            input#minTable(type="number")
+                    tr
+                        td Max
+                        td
+                            input#maxTable(type="number")
+        
     table#examGrid.table.table-hover
         thead
             tr
                 th
-                th Название
-                th Уровень
-                th Путь
-                th eee
+                th Паспорт
+                th Версия
+                th Фамилия
+                th Имя
+                th Отчество
+                th Профиль
+                th Подпрофиль
+                th Экзамен_1
+                th Экзамен_2
+                th Сумма
+                th Без_экзаменов
+                th 
         tbody
 
-
+    div#removePupilModal.modal.fade(role="dialog")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true")
+                            | &times;
+                    h4.modal-title
+                        | Удаление ученика
+                div.modal-body
+                    h2 Уверены?
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")
+                        | Close
+                    button#removePupil.btn.btn-primary(type="button")
+                        | Удалить
     div#examModal.modal.fade(role="dialog")
         div.modal-dialog
             div.modal-content
@@ -49,17 +99,176 @@ block content
                     form
                         div.form-group
                             label(for="examPassport")
-                                | Passport
-                            input#examPassport.form-control(type="text")
+                                | Паспорт
+                            input#passport.form-control(type="text")
                         div.form-group
                             label(for="examNum")
-                                | Num
-                            input#examNum.form-control(type="text")
+                                | Фамилия
+                            input#firstname.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Имя
+                            input#lastname.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Отчество
+                            input#patronymic.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Профиль
+                            select#profile.form-control
+                        div.form-group
+                            label(for="examNum")
+                                | Экзамен_1
+                            input#exam1.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Экзамен_2
+                            input#exam2.form-control(type="text")
+                        div.form-group
+                            label(for="examNum")
+                                | Сумма
+                            input#sum.form-control(type="text", disabled="true")
+                        div.form-group
+                            label(for="examNum")
+                                | Без экзаменов  
+                            select#pass.form-control
+                                option(value="true") Да
+                                option(value="false") Нет
                 div.modal-footer
                     button.btn.btn-default(type="button", data-dismiss="modal")
                         | Close
                     button#updatePupil.btn.btn-primary(type="button")
                         | Save changes
+
+    div#classModal.modal.fade(role="dialog")
+        div.modal-dialog(style="width: 100%;margin: 0 auto;left: 0;")
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true")
+                            | &times;
+                    h4.modal-title
+                        | Список профилей
+                div.modal-body
+                    table.profile-form.table.table-hover.table-bordered
+                        thead
+                            tr
+                                th
+                                        | Профиль
+                                th
+                                        | Первый экзамен
+                                th
+                                        | Второй экзамен
+                                th
+                                        | Инфо
+                                th
+
+                                th
+                                        | Статистика
+                        tbody
+                            tr.copy-row
+                                td
+                                    div.form-group
+                                        label Название
+                                        input#name.form-control(type="text")
+                                    div.form-group
+                                        label Код
+                                        input#code.form-control(type="text")
+                                    div.form-group
+                                        label Сабкод
+                                        input#subcode.form-control(type="text")
+                                    div.form-group
+                                        label Места
+                                        input#ammount.form-control.input-with-feedback(type="number", required="true")
+                                td
+                                    div.form-group
+                                        label Название
+                                        input#firstExamName.form-control(type="text")
+                                    div.form-group
+                                        label Дата
+                                        input#firstExamDate.form-control(type="text")
+                                    div.form-group
+                                        label Место
+                                        input#firstExamPlace.form-control(type="text")
+                                    div.form-group
+                                        label.checkbox
+                                            input#firstIsFirst(type="checkbox", value=true, checked="true")
+                                            | Первый
+                                td
+                                    div.form-group
+                                        label Название
+                                        input#secondExamName.form-control(type="text")
+                                    div.form-group
+                                        label Дата
+                                        input#secondExamDate.form-control(type="text")
+                                    div.form-group
+                                        label Место
+                                        input#secondExamPlace.form-control(type="text")
+                                td
+                                    div.form-group
+                                        label.checkbox
+                                            input#firstUploaded(type="checkbox", value=false)
+                                            | первый 
+                                    div.form-group
+                                        label.checkbox
+                                            input#secondUploaded(type="checkbox", value=false)
+                                            | второй 
+                                    div.form-group
+                                        label.checkbox
+                                            input#totalUploaded(type="checkbox", value=false)
+                                            | зачисление    
+                                td
+                                    div.form-group
+                                        button#addProfile.btn.btn-primary(type="button")
+                                            | Add
+                                td
+                                    div.form-group
+                                        label I экзамен
+                                        br
+                                        | pass: 
+                                        span#passF
+                                        br
+                                        | min: 
+                                        span#minF
+                                        |  max:
+                                        span#maxF
+                                    div.form-group
+                                        label II экзамен
+                                        br
+                                        | pass: 
+                                        span#passS
+                                        br
+                                        | min: 
+                                        span#minS
+                                        |  max:
+                                        span#maxS
+                                    div.form-group
+                                        label Сумма
+                                        br
+                                        | pass: 
+                                        span#passT
+                                        br
+                                        | min: 
+                                        span#minT
+                                        |  max:
+                                        span#maxT
+                                    div.form-group
+                                        label Без экзаменов&nbsp;
+                                        span#olimp
+                                    div.form-group
+                                        label Полупроходнй&nbsp;
+                                        span#halfpass
+                                    div.form-group
+                                        label С полупроходным баллом&nbsp;
+                                        span#halfPupils
+                                    div.form-group
+                                        label Дельта&nbsp;
+                                        span#halfDelta
+                        hr
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")
+                        | Close
 
     div#versionModal.modal.fade(role="dialog")
         div.modal-dialog
@@ -79,4 +288,5 @@ block content
 
 block scripts
     include ../stuff/adminScriptBlock
+    include examApp
     include ../stuff/examGrid

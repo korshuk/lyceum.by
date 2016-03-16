@@ -10,8 +10,10 @@
         PageController = require('../controllers/page').PageController,
         MenuController = require('../controllers/menu').MenuController,
         ContactsController = require('../controllers/contacts').ContactsController,
+        ResultsController = require('../controllers/results').ResultsController;
         FileController = require('../controllers/file').FileController;
         ExamsController = require('../controllers/exams').ExamsController;
+        SettingsController = require('../controllers/settings').SettingsController;
 
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -30,13 +32,15 @@
         app.mediaController = new MediaController(mongoose);
         app.congratulationsController = new CongratulationsController(mongoose);
         app.contactsController = new ContactsController(mongoose, app);
+        app.resultsController = new ResultsController(mongoose, app);
 
         require('../routes/frontRoutes')(app);
 
         app.menuController = new MenuController(app);
         app.userController = new UserController(mongoose);
         app.pageController = new PageController(mongoose, app);
-        app.examsController = new ExamsController(mongoose);
+        app.examsController = new ExamsController(mongoose, app);
+        app.settingsController = new SettingsController(mongoose);
 
         require('../routes/adminRoutes')(app);
         return app;

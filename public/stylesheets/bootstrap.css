@@ -1482,11 +1482,11 @@ fieldset[disabled] input[type="checkbox"] {
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #dbc59e;
 }
 
-.has-error .control-label {
+.has-error, .has-error .control-label {
   color: #b94a48;
 }
 
-.has-error .input-with-feedback {
+.has-error .input-with-feedback, .has-error.input-with-feedback {
   padding-right: 32px;
   border-color: #b94a48;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

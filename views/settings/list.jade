@@ -1,0 +1,13 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Настройки
+    form.form-horizontal(method='post', action='/admin/settings/')
+        div.form-group
+            label.checkbox
+                input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=docs.showPupilCabinet)
+                | showPupilCabinet
+        div.row
+            div.col.col-lg-12
+                input.btn.btn-default(type='submit', value='Save')
