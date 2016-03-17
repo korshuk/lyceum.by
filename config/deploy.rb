@@ -5,6 +5,7 @@ set :application, 'lyceum.by'
 set :repo_url, 'git@github.com:korshuk/lyceum.by.git'
 set :branch, 'master'
 set :user, 'lyceum'
+set :use_sudo, true
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 

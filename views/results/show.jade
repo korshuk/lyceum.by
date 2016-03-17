@@ -1,0 +1,9 @@
+extends ../layout/header
+block content
+    main(role='main')#main.page
+        include ../menu/breadcrumbs-contacts
+        hr.colored
+        h1= translate('Результаты экзамена')
+        section#content.col-2
+            include widget
+        include ../layout/asideIndex
