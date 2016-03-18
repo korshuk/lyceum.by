@@ -1,6 +1,18 @@
-(function(w,d,u){w.readyQ=[];w.bindReadyQ=[];function p(x,y){if(x=="ready"){w.bindReadyQ.push(y);}else{w.readyQ.push(x);}};var a={ready:p,bind:p};w.$=w.jQuery=function(f){if(f===d||f===u){return a}else{p(f)}}})(window,document);
+function ready(fn) {
+  if (document.readyState != 'loading'){
+    fn();
+  } else if (document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', fn);
+  } else {
+    document.attachEvent('onreadystatechange', function() {
+      if (document.readyState != 'loading')
+        fn();
+    });
+  }
+}
 
 var componentHandler = {
+    
   /**
    * Searches existing DOM for elements of our component type and upgrades them
    * if they have not already been upgraded.
@@ -428,7 +440,7 @@ componentHandler['downgradeElements'] = componentHandler.downgradeElements;
 window.componentHandler = componentHandler;
 window['componentHandler'] = componentHandler;
 
-window.addEventListener('load', function() {
+ready(function() {
   'use strict';
 
   /**
@@ -804,7 +816,7 @@ window.addEventListener('load', function() {
     widget: false
   });
 })();
-$(function(){
+ready(function(){
 	var NONLATINREGEXP = /[^\u0000-\u007f]/;
 
 	var $passportInputGroup = $('.passport-input-group');
