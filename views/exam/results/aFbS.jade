@@ -1,12 +1,14 @@
 include header
 h3 Первый экзамен закончился, впереди второй
 
-+resultLine(profile, data, 1)
-
-p 
-	b * 
-	| - текущий проходной балл по первому экзамену
-
+if ((profile.firstIsFirst && data.exam1 > 0) || (!profile.firstIsFirst && data.exam2 > 0))
+	+resultLine(profile, data, 1)
+	p 
+		b * 
+		| - текущий проходной балл по первому экзамену
+else
+	+absent('первый')
+	
 hr.dotted
 
 include nextExam

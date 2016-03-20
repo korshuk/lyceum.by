@@ -352,20 +352,23 @@ ExamsController = function(mongoose) {
         var templateName = 'results/'
         //TODO check empty firstExamDeate
         console.log(date, firstExamDate, date < firstExamDate);
-        if (date < firstExamDate) {
-            templateName = templateName + 'bF'
-        }
-        if (date >= firstExamDate && date < secondExamDate) {
-            templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
-        }
-        if (date >= secondExamDate) {
-            if (profile.totalExamUploaded) {
-                templateName = templateName + 'Total'
-            } else {
-                templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
+        if (data.pass) {
+            templateName = templateName + 'olymp'
+        } else {
+            if (date < firstExamDate) {
+                templateName = templateName + 'bF'
+            }
+            if (date >= firstExamDate && date < secondExamDate) {
+                templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
+            }
+            if (date >= secondExamDate) {
+                if (profile.totalExamUploaded) {
+                    templateName = templateName + 'Total'
+                } else {
+                    templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
+                }
             }
         }
-
         res.render(base.viewPath + templateName, requestData);
     }
 

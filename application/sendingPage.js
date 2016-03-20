@@ -25,7 +25,7 @@
 
             renderData = extend(renderData, self.helpers.setLang(req, res));
             renderData = extend(renderData, self.helpers.setMenu(req, res));
-
+            renderData.siteConfig = self.siteConfig;
             if (req.appContentType === 'index') {
                 renderData = extend(renderData, doc);
             } else {

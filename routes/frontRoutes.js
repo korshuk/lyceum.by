@@ -18,5 +18,6 @@
         require('../routes/frontCongratulations')(app);
         require('../routes/frontContacts')(app);
         require('../routes/frontResults')(app);
+        require('../routes/frontStats')(app);
     };
 }(exports, require));

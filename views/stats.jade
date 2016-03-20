@@ -1,0 +1,30 @@
+extends layout/headerStats
+
+block content
+    a(href='#')#logo
+        img(src="/img/logo404.png")
+    div(ng-app="sotkaApp", ng-controller="sotkaController")
+        div.list-container
+            ul(ng-style="{'width': 1920 * profiles.length + 'px', 'margin-left': -1920 * style.left + 'px'}")
+                li(ng-repeat="profile in profiles")
+                    h2 {{profile.common ? '' : 'профиль'}}
+                    h1 {{profile.name}}
+                    div.row
+                        div.col-6.left
+                            div.text-left
+                                | Количество мест: 
+                                span {{profile.places}}
+                                br
+                                | Количество заявлений: 
+                                span {{profile.ammount[profile.ammount.length - 1].count}}
+                                br
+                                | Без экзаменов: 
+                                span {{profile.olymp}}
+                        div.col-6.concurse
+                            | Конкурс:
+                            h3 {{((profile.ammount[profile.ammount.length - 1].count - profile.olymp) / (profile.places - profile.olymp)).toFixed(2)}}
+        div.buttons-container
+            ul
+                li(ng-repeat="profile in profiles")
+                    button(ng-click="moveToItem($index)", ng-class="profile.active ? 'active' : ''") {{profile.name}}
+        div#examples

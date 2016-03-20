@@ -35,7 +35,7 @@ var dateFormat = function () {
 
         // Passing date through Date applies Date.parse, if necessary
         date = date ? new Date(date) : new Date;
-        if (isNaN(date)) throw SyntaxError("invalid date");
+        //if (isNaN(date)) throw SyntaxError("invalid date");
 
         mask = String(dF.masks[mask] || mask || dF.masks["default"]);
 
@@ -358,6 +358,8 @@ $(function() {
         $profileForm.append('<tr class="copy-row">' + $copyRow + '</tr>');
         $('#firstExamDate').datetimepicker();
         $('#secondExamDate').datetimepicker();
+        $('#firstExamAppelationDate').datetimepicker();
+        $('#secondExamAppelationDate').datetimepicker();
 
         for (var i = response.length - 1; i >= 0; i--) {
             if (response[i].subcode) {
@@ -379,8 +381,10 @@ $(function() {
             $('#firstExamName_'+i).val(response[i].firstExamName);
             $('#firstExamDate_'+i).val(dateFormat(new Date(response[i].firstExamDate),'yyyy/mm/dd HH:MM'));
             $('#firstExamPlace_'+i).val(response[i].firstExamPlace);
+            $('#firstExamAppelationDate_'+i).val(dateFormat(new Date(response[i].firstExamAppelationDate),'yyyy/mm/dd HH:MM'));
             $('#secondExamName_'+i).val(response[i].secondExamName);
             $('#secondExamDate_'+i).val(dateFormat(new Date(response[i].secondExamDate),'yyyy/mm/dd HH:MM'));
+            $('#secondExamAppelationDate_'+i).val(dateFormat(new Date(response[i].secondExamAppelationDate),'yyyy/mm/dd HH:MM'));
             $('#secondExamPlace_'+i).val(response[i].secondExamPlace);
             $('#firstIsFirst_'+i).prop( "checked", response[i].firstIsFirst);
             $('#passT_'+i).text(response[i].passT);
@@ -402,6 +406,9 @@ $(function() {
             $('#secondUploaded_'+i).prop( "checked", response[i].secondExamUploaded);
             $('#firstExamDate_' + i).datetimepicker();
             $('#secondExamDate_' + i).datetimepicker();
+            $('#firstExamAppelationDate_' + i).datetimepicker();
+            $('#secondExamAppelationDate_' + i).datetimepicker();
+
         }
         table.draw();
     }
@@ -424,9 +431,11 @@ $(function() {
             subcode: $('#subcode_'+num).val(),
             firstExamName: $('#firstExamName_'+num).val(),
             firstExamDate: $('#firstExamDate_'+num).val(),
+            firstExamAppelationDate: $('#firstExamAppelationDate_'+num).val(),
             firstExamPlace: $('#firstExamPlace_'+num).val(),
             secondExamName: $('#secondExamName_'+num).val(),
             secondExamDate: $('#secondExamDate_'+num).val(),
+            secondExamAppelationDate: $('#secondExamAppelationDate_'+num).val(),
             secondExamPlace: $('#secondExamPlace_'+num).val(),
             ammount: $('#ammount_'+num).val(),
             firstIsFirst:  $('#firstIsFirst_'+num).prop( "checked"),
@@ -461,9 +470,11 @@ $(function() {
             subcode: $('#subcode').val(),
             firstExamName: $('#firstExamName').val(),
             firstExamDate: $('#firstExamDate').val(),
+            firstExamAppelationDate: $('#firstExamAppelationDate').val(),
             firstExamPlace: $('#firstExamPlace').val(),
             secondExamName: $('#secondExamName').val(),
             secondExamDate: $('#secondExamDate').val(),
+            secondExamAppelationDate: $('#secondExamAppelationDate').val(),
             secondExamPlace: $('#secondExamPlace').val(),
             firstIsFirst:  $('#firstIsFirst').prop( "checked"),
             ammount: $('#ammount').val(),

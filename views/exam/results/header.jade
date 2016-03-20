@@ -1,6 +1,15 @@
 include dateFormat
 include resultLine
+include absent
 p Здравствуйте, #{data.lastname} #{data.firstname} #{data.patronymic}!
 	br
-	| Вы подали документы для поступления в Лицей БГУ по специальности 
-	b #{profile.name}
+	| Вы подали документы для поступления в Лицей БГУ 
+	if (profile.name == 'Прикладная математика')
+		| на профиль 
+		nobr
+			b.uppercase #{profile.name}
+	else
+		| на 
+		nobr
+			b.uppercase #{profile.name} 
+		| профиль.

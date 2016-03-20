@@ -1,8 +1,11 @@
 p Напоминаем Вам, что следующий экзамен по предмету 
 	b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName } 
 	| пройдет 
-	b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)} 
-	| по адресу 
-	b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace} 
-	| начало экзамена в 
-	b 9:00
+	nobr
+		b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)} 
+	if ((profile.firstIsFirst && profile.secondExamPlace) || (!profile.firstIsFirst && profile.firstExamPlace))
+		| по адресу 
+		nobr
+			b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace} 
+		| начало экзамена в 
+		b 9:00

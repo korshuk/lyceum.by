@@ -1,0 +1,59 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Приём документов
+    
+    div.row(ng-app="sotkaApp", ng-controller="sotkaController", ng-cloak)
+        div.col.col-lg-12
+            div.row
+                div.col.col-lg-8
+                    div(ng-show="showProfilesFlag")
+                        label Название
+                        input(ng-model="newProfile.name")
+                        label Количество
+                        input(ng-model="newProfile.places")
+                        button(ng-click="addProfile(newProfile)") Добавить
+                        ul
+                            li.row(ng-repeat='profile in profiles')
+                                div.col.col-lg-4
+                                    | {{profile.name}}
+                                div.col.col-lg-4
+                                    | order
+                                    input(type="text", ng-model="profile.order")
+                                div.col.col-lg-4
+                                    button(ng-click="removeProfile(profile)") Удалить
+                                    button(ng-click="updateOrder(profile)") Обновить
+                div.col.col-lg-2
+                    button(ng-click="showProfilesOptions()")
+                        | {{showProfilesFlag ? 'Скрыть' : 'Показать'}} профили
+        hr
+        div.col.col-lg-12
+            table.table.table-hover
+                thead
+                    tr
+                        th Название
+                        th Количество мест
+                        th Заявления
+                        th Обычный
+                        th Олимпиадник                        
+                tbody
+                    tr(ng-repeat="profile in profiles")
+                        td {{profile.name}}
+                        td {{profile.places}}
+                        td 
+                            | {{profile.ammount[profile.ammount.length-1].count}}
+                            br
+                            | Б/Э {{profile.olymp}}
+                        td
+                            button(ng-click="changeAmmount(profile, +1)") +1
+                            br
+                            button(ng-click="changeAmmount(profile, -1)") -1
+                        td
+                            button(ng-click="changeOlymp(profile, +1)") +1
+                            br
+                            button(ng-click="changeOlymp(profile, -1)") -1
+        
+block scripts
+    include ../stuff/adminScriptBlock
+    include ../stuff/sotka

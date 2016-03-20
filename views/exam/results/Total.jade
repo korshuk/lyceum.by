@@ -1,33 +1,38 @@
 include header
-h3 У нас готовы списки рекомендованных к зачислению!
+if (data.exam1 >0 && data.exam2 >0)
+    h3 У нас готовы списки рекомендованных к зачислению!
 
-h4 Результаты Ваших экзаменов:
-ul
-	li  Первый экзамен по предмету 
-		b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
-		br
-		| - Ваш результат: 
-		b  #{profile.firstIsFirst ? data.exam1 : data.exam2}
-	li	Второй экзамен по предмету 
-		b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
-		br
-		| - Ваш результат: 
-		b  #{profile.firstIsFirst ? data.exam2 : data.exam1}
-	li Сумма баллов: 
-		b #{+data.exam1 + +data.exam2}
-p 	Проходной балл по специальности 
-	b #{profile.name}
-	| : 
-	b #{profile.passT}
-if +data.exam1 + +data.exam2 >= profile.passT
-	include happy
+    h4 Результаты Ваших экзаменов:
+    ul
+        li  Первый экзамен по предмету 
+            b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
+            br
+            | - Ваш результат: 
+            b  #{profile.firstIsFirst ? data.exam1 : data.exam2}
+        li	Второй экзамен по предмету 
+            b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
+            br
+            | - Ваш результат: 
+            b  #{profile.firstIsFirst ? data.exam2 : data.exam1}
+        li Сумма баллов: 
+            b #{+data.exam1 + +data.exam2}
+    p 	Проходной балл по специальности 
+        b #{profile.name}
+        | : 
+        b #{profile.passT}
+    if +data.exam1 + +data.exam2 >= profile.passT
+        include happy
+    else
+        if profile.halfpass > 0
+            if +data.exam1 + +data.exam2 == profile.halfpass
+                include halfhappy
+            else
+                include unhappy
+        else
+            include unhappy
 else
-	if profile.halfpass > 0
-		if +data.exam1 + +data.exam2 == profile.halfpass
-			include halfhappy
-		else
-			include unhappy
-	else
-		include unhappy
-
+    p
+        b К сожалению, вы не явились на один из экзаменов.
+    h3.result-header Мы не можем зачислить Вас
+         
 include attantion

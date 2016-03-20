@@ -14,7 +14,8 @@
         FileController = require('../controllers/file').FileController;
         ExamsController = require('../controllers/exams').ExamsController;
         SettingsController = require('../controllers/settings').SettingsController;
-
+        SotkaController = require('../controllers/sotka').SotkaController;
+        
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
             var regex = new RegExp(/^(ru|by|en)$/);
@@ -40,8 +41,9 @@
         app.userController = new UserController(mongoose);
         app.pageController = new PageController(mongoose, app);
         app.examsController = new ExamsController(mongoose, app);
-        app.settingsController = new SettingsController(mongoose);
-
+        app.settingsController = new SettingsController(mongoose, app);
+        app.sotkaController = new SotkaController(mongoose, app);
+        
         require('../routes/adminRoutes')(app);
         return app;
     };

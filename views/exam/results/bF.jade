@@ -8,18 +8,23 @@ ul
 		| Первый экзамен по предмету 
 		b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName} 
 		| пройдет 
-		b #{prettyDate(profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate)} 
-		| по адресу 
-		b #{profile.firstIsFirst ? profile.firstExamPlace : profile.secondExamPlace} 
-		| начало экзамена в 
-		b 9:00
+		nobr
+			b #{prettyDate(profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate)} 
+		if ((profile.firstIsFirst && profile.firstExamPlace) || (!profile.firstIsFirst && profile.secondExamPlace))
+			| по адресу 
+			nobr
+				b #{profile.firstIsFirst ? profile.firstExamPlace : profile.secondExamPlace} 
+			| начало экзамена в 
+			b 9:00
 	li 
 		| Второй экзамен по предмету 
 		b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName} 
 		| пройдет 
 		b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)} 
-		| по адресу 
-		b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace} 
-		| начало экзамена в 
-		b 9:00
+		if ((profile.firstIsFirst && profile.secondExamPlace) || (!profile.firstIsFirst && profile.firstExamPlace))
+			| по адресу 
+			nobr
+				b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace} 
+			| начало экзамена в 
+			b 9:00
 include footer

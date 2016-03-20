@@ -16,8 +16,8 @@ module.exports = function(grunt) {
         ]
       },
       dist: {
-        src: 'public/css/style.css'
-      }
+        src: ['public/css/style.css', 'public/css/widget.css']
+          }
     },
 
     less: {
@@ -28,7 +28,9 @@ module.exports = function(grunt) {
           optimization: 2
         },
         files: {
-          "public/css/style.css": "public/less/main.less"
+          "public/css/style.css": "public/less/main.less",
+          "public/css/widget.css": "public/less/widget.less",
+          "public/css/stats.css": "public/less/stats.less"
         }
       }
     },
