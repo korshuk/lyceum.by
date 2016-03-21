@@ -3,7 +3,7 @@ angular.module('sotkaApp', [])
         $scope.style = {
             left: 0
         };
-        
+        $scope.firstTime = true;
         $scope.stopFlag = false;
         
         $scope.get = function () {
@@ -31,16 +31,19 @@ angular.module('sotkaApp', [])
                         places: places
                     })
                     
-                    $scope.profiles[$scope.style.left].active = true;
+                 //   $scope.profiles[$scope.style.left].active = true;
+                  if ($scope.firstTime) {
                     $scope.moveNext();
+                    $scope.firstTime = false;
+                  }
                     $timeout(function(){
                         $scope.get();
-                    }, 300000)          
+                    }, 3000)  //  300000      
                 })
                 .error(function(){
                      $timeout(function(){
                         $scope.get();
-                    }, 300000);
+                    }, 300000); //  300000  
                 });
         }
         
@@ -60,7 +63,7 @@ angular.module('sotkaApp', [])
                     $scope.stopFlag = false;
                 }
                 $scope.moveNext();
-            }, 30000);
+            }, 3000); //30000
          } 
          
          $scope.moveToItem = function (num) {
