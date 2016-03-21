@@ -38,7 +38,7 @@ angular.module('sotkaApp', [])
                   }
                     $timeout(function(){
                         $scope.get();
-                    }, 3000)  //  300000      
+                    }, 30000)  //  300000      
                 })
                 .error(function(){
                      $timeout(function(){
@@ -63,7 +63,7 @@ angular.module('sotkaApp', [])
                     $scope.stopFlag = false;
                 }
                 $scope.moveNext();
-            }, 3000); //30000
+            }, 30000); //30000
          } 
          
          $scope.moveToItem = function (num) {
