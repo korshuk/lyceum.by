@@ -4,38 +4,15 @@ function define(mongoose, fn) {
     var Schema = mongoose.Schema,
 
     ExamSchema = new Schema({
-       /* 'name': {
-            type: String,
-            index: true,
-            required: true
-        },*/
         'data': {
             type: Array
         },
-      /*  'timestamp': {
-            type: Date,
-            index: true,
-            required: false
-        },*/
         'passport' : {
             type: String,
             index: true,
             required: true
         },
-        /*'result': {
-            type: String,
-            index: true,
-            required: true
-        },
-        'num': {
-            type: String,
-            index: true,
-            required: true
-        },
-        'status': {
-            type: String,
-            index: true,
-        }*/
+        'message': String
     });
 
     ExamSchema.virtual('id').get(function () {

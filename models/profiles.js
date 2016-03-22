@@ -12,6 +12,7 @@ function define(mongoose, fn) {
         'firstExamAppelationDate': Date,
     	'firstExamPlace': String,
         'firstExamUploaded': Boolean,
+        'firstExamNoStats': Boolean,
     	'secondExamName': String,
     	'secondExamDate': Date,
         'secondExamAppelationDate': Date,

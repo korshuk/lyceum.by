@@ -286,7 +286,7 @@ $(function() {
             $('#exam2').val(userData.exam2);
             $('#sum').val(userData.sum);
             $('#pass').val(String(userData.pass));
-
+            $('#message').val(String(userData.message || ''));
             $('#examModal').modal('show');
         })
     });
@@ -301,7 +301,6 @@ $(function() {
     
     $(document).on('click', '#removePupil', function() {
         $.post('/admin/exams/rest/' + currentUser._id + '/delete', function (response) {
-            console.log(response);
             $('#removePupilModal').modal('hide'); 
             table.ajax.reload();
             currentUser = {};
@@ -317,6 +316,7 @@ $(function() {
         currentUser.data[currentUser.data.length - 1].exam1 = $('#exam1').val();
         currentUser.data[currentUser.data.length - 1].exam2 = $('#exam2').val();
         currentUser.data[currentUser.data.length - 1].pass= $('#pass').val() == 'true';
+        currentUser.data[currentUser.data.length - 1].message = $('#message').val();
         $.post('/admin/exams/rest/' + currentUser._id, currentUser, function (response) {
             $('#examModal').modal('hide'); 
             table.ajax.reload();
@@ -404,6 +404,7 @@ $(function() {
             $('#totalUploaded_'+i).prop( "checked", response[i].totalExamUploaded);
             $('#firstUploaded_'+i).prop( "checked", response[i].firstExamUploaded);
             $('#secondUploaded_'+i).prop( "checked", response[i].secondExamUploaded);
+            $('#firstExamNoStats_'+i).prop( "checked", response[i].firstExamNoStats);
             $('#firstExamDate_' + i).datetimepicker();
             $('#secondExamDate_' + i).datetimepicker();
             $('#firstExamAppelationDate_' + i).datetimepicker();
@@ -441,6 +442,7 @@ $(function() {
             firstIsFirst:  $('#firstIsFirst_'+num).prop( "checked"),
             totalExamUploaded: $('#totalUploaded_'+num).prop( "checked"),
             firstExamUploaded: $('#firstUploaded_'+num).prop( "checked"),
+            firstExamNoStats: $('#firstExamNoStats_'+num).prop( "checked"),
             secondExamUploaded: $('#secondUploaded_'+num).prop( "checked"),
         };
         if (data.ammount > 0) {

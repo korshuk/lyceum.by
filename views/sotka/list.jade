@@ -27,9 +27,10 @@ block content
                 div.col.col-lg-2
                     button(ng-click="showProfilesOptions()")
                         | {{showProfilesFlag ? 'Скрыть' : 'Показать'}} профили
-        hr
         div.col.col-lg-12
-            table.table.table-hover
+            hr.dotted
+        div.col.col-lg-12
+            table.table.table-hover.table-bordered
                 thead
                     tr
                         th Название
@@ -46,13 +47,13 @@ block content
                             br
                             | Б/Э {{profile.olymp}}
                         td
-                            button(ng-click="changeAmmount(profile, +1)") +1
-                            br
-                            button(ng-click="changeAmmount(profile, -1)") -1
+                            button.btn.btn-success(ng-click="changeAmmount(profile, +1)") +1
+                            | &nbsp;
+                            button.btn.btn-primary(ng-click="changeAmmount(profile, -1)") -1
                         td
-                            button(ng-click="changeOlymp(profile, +1)") +1
-                            br
-                            button(ng-click="changeOlymp(profile, -1)") -1
+                            button.btn.btn-success(ng-click="changeOlymp(profile, +1)") +1
+                            | &nbsp;
+                            button.btn.btn-primary(ng-click="changeOlymp(profile, -1)") -1
         
 block scripts
     include ../stuff/adminScriptBlock

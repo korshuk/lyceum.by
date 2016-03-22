@@ -144,7 +144,7 @@ ExamsController = function(mongoose) {
                         }
 
                         passed = best;
-
+                        docsP[i].olimp = profiles[docsP[i].code].olimp;
                         docsP[i].minF = profiles[docsP[i].code].resultsF[0];
                         docsP[i].maxF = profiles[docsP[i].code].resultsF[profiles[docsP[i].code].resultsF.length - 1];
                         docsP[i].passF = profiles[docsP[i].code].resultsF[profiles[docsP[i].code].resultsF.length - best];
@@ -156,15 +156,17 @@ ExamsController = function(mongoose) {
                         docsP[i].minT = profiles[docsP[i].code].resultsT[0];
                         docsP[i].maxT = profiles[docsP[i].code].resultsT[profiles[docsP[i].code].resultsT.length - 1];
                         docsP[i].passT = profiles[docsP[i].code].resultsT[profiles[docsP[i].code].resultsT.length - best];
-
+                        
                         indexOfPass = profiles[docsP[i].code].resultsT.indexOf(docsP[i].passT);
                         lastIndexOf = profiles[docsP[i].code].resultsT.lastIndexOf(docsP[i].passT);
+                        
                         if (lastIndexOf - indexOfPass > 0) {
                             docsP[i].halfpass = docsP[i].passT;
+                            console.log(docsP[i].halfpass);
                             docsP[i].passT = profiles[docsP[i].code].resultsT[lastIndexOf + 1];
                             passed = profiles[docsP[i].code].resultsT.length - lastIndexOf - 1;
 
-                            docsP[i].halfDelta = docsP[i].ammount - passed;
+                            docsP[i].halfDelta = docsP[i].ammount - passed - docsP[i].olimp;
                             docsP[i].halfPupils = lastIndexOf - indexOfPass + 1;
 
                             if (docsP[i].halfDelta == docsP[i].halfPupils) {
@@ -177,10 +179,7 @@ ExamsController = function(mongoose) {
                             docsP[i].halfDelta = 0;
                             docsP[i].halfPupils = 0;
                         }
-
-
-                        docsP[i].olimp = profiles[docsP[i].code].olimp;
-
+            
                         docsP[i].save(function() {
                             counter = counter - 1;
                             if (counter == 0 && next) {

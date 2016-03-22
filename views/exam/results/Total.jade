@@ -32,7 +32,11 @@ if (data.exam1 >0 && data.exam2 >0)
             include unhappy
 else
     p
-        b К сожалению, вы не явились на один из экзаменов.
-    h3.result-header Мы не можем зачислить Вас
+        b К сожалению, вы не явились 
+        if (data.exam1 > 0 || data.exam2> 0)
+            b на один из экзаменов 
+        else
+            b на оба экзамена 
+        b и не можете участвовать в конкурсе.
          
 include attantion

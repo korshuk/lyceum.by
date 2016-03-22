@@ -13,3 +13,6 @@ p Здравствуйте, #{data.lastname} #{data.firstname} #{data.patronymic
 		nobr
 			b.uppercase #{profile.name} 
 		| профиль.
+if (data.message)
+	p.pupil-message
+		| #{data.message}
