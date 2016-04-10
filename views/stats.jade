@@ -5,8 +5,8 @@ block content
         img(src="/img/logo404.png")
     div(ng-app="sotkaApp", ng-controller="sotkaController")
         div.list-container
-            ul(ng-style="{'width': 1920 * profiles.length + 'px', 'margin-left': -1920 * style.left + 'px'}")
-                li(ng-repeat="profile in profiles")
+            ul
+                li(ng-repeat="profile in profiles", ng-class="style.left == $index ? 'active' : ''")
                     h2 {{profile.common ? '' : 'профиль'}}
                     h1 {{profile.name}}
                     div.row
@@ -23,8 +23,10 @@ block content
                         div.col-6.concurse
                             | Конкурс:
                             h3 {{((profile.ammount[profile.ammount.length - 1].count - profile.olymp) / (profile.places - profile.olymp)).toFixed(2)}}
+                        br
+                        div.col-12(id="{{'graph' + $index}}")
         div.buttons-container
             ul
                 li(ng-repeat="profile in profiles")
-                    button(ng-click="moveToItem($index)", ng-class="profile.active ? 'active' : ''") {{profile.name}}
-        div#examples
+                    button(ng-click="moveToItem($index)", ng-class="style.left == $index ? 'active' : ''") {{profile.name}}
+    button#reloadButton

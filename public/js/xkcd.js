@@ -51,7 +51,6 @@ function xkcdplot() {
         // Set the axes limits.
         xscale.domain(xlim).range([0, width]);
         yscale.domain(ylim).range([height, 0]);
-
         // Compute the zero points where the axes will be drawn.
         var x0 = xscale(0),
             y0 = yscale(0);
@@ -109,9 +108,8 @@ function xkcdplot() {
         // Add some axes labels.
         el.append("text").attr("class", "x label")
                               .attr("text-anchor", "end")
-                              .attr("x", width - s)
-                              .attr("y", y0 + aa)
-                              .attr("dy", ".75em")
+                              .attr("x", width)
+                              .attr("y", y0 - 15)
                               .text(xlabel);
         el.append("text").attr("class", "y label")
                               .attr("text-anchor", "end")
@@ -120,6 +118,7 @@ function xkcdplot() {
                               .attr("dy", "-.75em")
                               .attr("transform", "rotate(-90)")
                               .text(ylabel);
+                           
 
 
         return xkcd;
@@ -163,6 +162,7 @@ function xkcdplot() {
             bgline = d3.svg.line().x(x).y(y),
             strokeWidth = _get(opts, "stroke-width", 3),
             color = _get(opts, "stroke", "steelblue");
+        var axis = d3.svg.line().interpolate(xinterp);    
         el.append("svg:path").attr("d", bgline(data))
                              .style("stroke", "white")
                              .style("stroke-opacity", 0)                             
@@ -174,14 +174,30 @@ function xkcdplot() {
                              .style("stroke-width", strokeWidth + "px")
                              .style("fill", "none")
 							 .attr("class", "path");
-		el.append("text").attr("class", "point label")
+		el.append("text").attr("class", "point label result-label")
                               .attr("text-anchor", "end")
-                              .attr("x", data[data.length-1].x)
-                              .attr("y", data[data.length-1].y)
-                              .attr("dy", ".75em")
+                              .attr("x", xscale(data[data.length-1].x) + 10)
+                              .attr("y", yscale(data[data.length-1].y) - 5)
                               .text(data[data.length-1].y);
-							  console.log(data[data.length-1]);					 
-    };
+       el.append("svg:path").attr("d", axis([[xscale(data[data.length-1].x), yscale(0) - 5], [xscale(data[data.length-1].x), yscale(0) + 5]]))
+                             .style("stroke", "white")
+                             .style("stroke-width", 2 + "px")
+                             .style("fill", "none");                       
+       el.append("text").attr("class", "y label")
+                              .attr("text-anchor", "end")
+                              .attr("x", xscale(data[data.length-1].x) + 30)
+                              .attr("y", yscale(0) + 30)
+                              .text(dateFormat(window.xmin + data[data.length-1].x, 'd mmmm'));
+       el.append("svg:path").attr("d", axis([[xscale(xmax), yscale(0) - 5], [xscale(xmax), yscale(0) + 5]]))
+                             .style("stroke", "white")
+                             .style("stroke-width", 2 + "px")
+                             .style("fill", "none");                       
+       el.append("text").attr("class", "y label")
+                              .attr("text-anchor", "end")
+                              .attr("x", xscale(xmax) + 30)
+                              .attr("y", yscale(0) + 30)
+                              .text(dateFormat(window.xmin + xmax, 'd mmmm'));                          				 
+    }
 
     // XKCD-style line interpolation. Roughly based on:
     //    jakevdp.github.com/blog/2012/10/07/xkcd-style-plots-in-matplotlib
@@ -275,27 +291,3 @@ function xkcdplot() {
     return xkcd;
 
 }
-
-$(document).ready(function() {
-/*
-    function f1 (x) {
-        return (0.5 * (x) * (x));
-    }
-    
-    var xmin = 0,
-        xmax = 70,
-        N = 100,
-        data = d3.range(xmin, xmax, (xmax - xmin) / N).map(function (d) {
-            return {x: d, y: f1(d)};
-        }),
-        
-        parameters = {  title: "Examples",
-                        xlabel: "Время",
-                        ylabel: "Заявления",
-                        xlim: [xmin - (xmax - xmin) / 16, xmax + (xmax - xmin) / 16] },
-        plot = xkcdplot();
-    plot("#examples", parameters);
-    plot.plot(data,{stroke: "white"});
-    plot.draw();
-	*/
-});
