@@ -115,11 +115,9 @@ angular.module('sotkaApp', [])
         $scope.get = function() {
             sotkaFactory.getList()
                 .success(function(response) {
-                    console.log('resp');
                     if (JSON.stringify(response) == $scope.oldResponse){
                         return;
                     }
-                    console.log('new resp');
                     $scope.oldResponse = JSON.stringify(response);
                     $scope.stopFlag = false;
                     $scope.profiles = response;
