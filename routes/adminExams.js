@@ -32,6 +32,9 @@ module.exports = function(app) {
 	});
 
 	app.get('/admin/exams/profiles', app.userController.Pass, function(req, res) {
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
 	  app.examsController.getProfiles(req, res);
 	});
 
@@ -40,6 +43,9 @@ module.exports = function(app) {
 	});
 
 	app.post('/admin/exams/profiles/:id', app.userController.Pass, function(req, res) {
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
 	  app.examsController.updateProfile(req, res);
 	});
 
@@ -52,4 +58,4 @@ module.exports = function(app) {
 		function(req, res) {
 	  		app.examsController.resultsUpload(req, res);
 		});
-}
+};

@@ -4,6 +4,20 @@ var fs = require('fs'),
     mongoose = require('mongoose');
 
 
+var passportTranslater = {
+    'К': 'K',
+    'Е': 'E',
+    'Н': 'H',
+    'Х': 'X',
+    'В': 'B',
+    'А': 'A',
+    'Р': 'P',
+    'О': 'O',
+    'С': 'C',
+    'М': 'M',
+    'Т': 'T'
+};
+
 ExamsController = function(mongoose) {
     var self = this;
     var vid = 0;
@@ -23,7 +37,15 @@ ExamsController = function(mongoose) {
 
     function onNewRecord(records, number, req, res) {
         var record = records[number];
-        //TODO: translate
+        
+        var i = record.passport.length;
+        var passportString = record.passport;
+        while (i--) {
+            if (passportTranslater[passportString[i]]) {
+                passportString = passportString.substr(0, i) + passportTranslater[passportString[i]] + passportString.substr(i+1);
+            }
+        }
+        record.passport = passportString;
         var sum;
         base.Collection.findOne({ passport: record.passport }, function(err, doc) {
             if (err) {
@@ -79,12 +101,12 @@ ExamsController = function(mongoose) {
                     }
                 }
 
-            })
+            });
         });
     }
 
     function onError(error) {
-        console.log('error', error)
+        console.log('error', error);
     }
 
     function statistics(next) {
@@ -102,7 +124,7 @@ ExamsController = function(mongoose) {
                                 resultsS: [],
                                 resultsT: [],
                                 olimp: 0,
-                            }
+                            };
                         }
                         if (data.pass) {
                             profiles[data.profile].olimp = profiles[data.profile].olimp + 1;
@@ -185,11 +207,11 @@ ExamsController = function(mongoose) {
                             if (counter == 0 && next) {
                                 next();
                             }
-                        })
+                        });
                     }
                 }
-            })
-        })
+            });
+        });
     }
 
     function done(req, res) {
@@ -228,7 +250,7 @@ ExamsController = function(mongoose) {
         });
 
         parser.on("error", function(error) {
-            onError(error)
+            onError(error);
         });
 
         parser.on("end", function() {
@@ -242,7 +264,7 @@ ExamsController = function(mongoose) {
                 if (records.length) {
                     onNewRecord(records, 0, req, res);
                 }
-            })
+            });
         });
 
         source.pipe(parser);
@@ -252,14 +274,14 @@ ExamsController = function(mongoose) {
         for (var i = req.docs[req.number].data.length - 1; i >= 0; i--) {
             if (req.docs[req.number].data[i].vid == req.vid) {
                 req.docs[req.number].data.splice(i, 1);
-                req.docs[req.number].save(function(err) {
+                req.docs[req.number].save(function (err) {
                     console.log('errrrrr', arguments);
                 })
             }
         };
         req.number = req.number + 1;
         if (req.number < req.docs.length) {
-            versionDelete(req, res, next)
+            versionDelete(req, res, next);
         }
         else {
             if (next) {
@@ -298,12 +320,12 @@ ExamsController = function(mongoose) {
                     req.docs = docs;
                     req.number = 0;
                     versionDelete(req, res, versionDeleteCallback);
-                })
+                });
 
             }
-        })
+        });
 
-    }
+    };
 
     base.resultsUpload = function(req, res) {
         var filePath = req.files.csvTable.path;
@@ -346,9 +368,9 @@ ExamsController = function(mongoose) {
         var requestData = {
             data: data,
             profile: profile,
-        }
+        };
 
-        var templateName = 'results/'
+        var templateName = 'results/';
         //TODO check empty firstExamDeate
         console.log(date, firstExamDate, date < firstExamDate);
         if (data.pass) {

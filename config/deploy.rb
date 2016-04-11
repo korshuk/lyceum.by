@@ -35,8 +35,6 @@ namespace :deploy do
   task :started do
     on roles(:app) do
       begin
-        execute "forever stopall"
-        execute "pm2 stop all"
         execute "pm2 delete all"
       rescue
         info "no forever script"
