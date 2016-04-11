@@ -276,9 +276,9 @@ ExamsController = function(mongoose) {
                 req.docs[req.number].data.splice(i, 1);
                 req.docs[req.number].save(function (err) {
                     console.log('errrrrr', arguments);
-                })
+                });
             }
-        };
+        }
         req.number = req.number + 1;
         if (req.number < req.docs.length) {
             versionDelete(req, res, next);
@@ -391,7 +391,7 @@ ExamsController = function(mongoose) {
             }
         }
         res.render(base.viewPath + templateName, requestData);
-    }
+    };
 
     base.getResult = function(req, res) {
         base.Collection.findOne({ 'passport': req.body.passport }, function(err, doc) {

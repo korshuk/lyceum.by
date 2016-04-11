@@ -347,7 +347,7 @@ $(function() {
     function updateProfilesList(response) {
         profiles = response;
         var $copyRow = $('.copy-row').html();
-        var $newRow = ''
+        var $newRow = '';
         var $profileForm = $('.profile-form tbody');
         var $profileChecker = $('#profileChecker');
         var checkboxvalue;
@@ -416,7 +416,7 @@ $(function() {
 
     $(document).on('click', '#classBtn', function(){
         $.get('/admin/exams/profiles', function(response) {
-            updateProfilesList(response)
+            updateProfilesList(response);
             $('#classModal').modal('show');
         });
     });
@@ -432,11 +432,11 @@ $(function() {
             subcode: $('#subcode_'+num).val(),
             firstExamName: $('#firstExamName_'+num).val(),
             firstExamDate: $('#firstExamDate_'+num).val(),
-            firstExamAppelationDate: $('#firstExamAppelationDate_'+num).val(),
+            firstExamAppelationDate: $('#firstExamAppelationDate_'+num).val() === 'NaN/NaN/NaN NaN:NaN' ? null : $('#firstExamAppelationDate_'+num).val(),
             firstExamPlace: $('#firstExamPlace_'+num).val(),
             secondExamName: $('#secondExamName_'+num).val(),
             secondExamDate: $('#secondExamDate_'+num).val(),
-            secondExamAppelationDate: $('#secondExamAppelationDate_'+num).val(),
+            secondExamAppelationDate: $('#secondExamAppelationDate_'+num).val() === 'NaN/NaN/NaN NaN:NaN' ? null : $('#secondExamAppelationDate_'+num).val(),
             secondExamPlace: $('#secondExamPlace_'+num).val(),
             ammount: $('#ammount_'+num).val(),
             firstIsFirst:  $('#firstIsFirst_'+num).prop( "checked"),
