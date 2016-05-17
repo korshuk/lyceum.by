@@ -13,7 +13,7 @@ mixin resultLine(profile, data, num)
         - var exam = profile.firstIsFirst ? data.exam2 : data.exam1
         - var name = profile.firstIsFirst ? profile.secondExamName : profile.firstExamName
     - }
-    h4 Ваш результат #{num == 1 ? 'первого' : 'второго'} экзамена по предемту #{name}:
+    h4 Ваш результат #{num == 1 ? 'первого' : 'второго'} экзамена по предмету #{name}:
     div.resultsLine
         div.line
             div.result-line(style="left:#{min}%;right:#{100 - max}%")
