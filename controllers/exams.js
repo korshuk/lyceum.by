@@ -374,17 +374,17 @@ ExamsController = function(mongoose) {
         //TODO check empty firstExamDeate
         console.log(date, firstExamDate, date < firstExamDate);
         if (data.pass) {
-            templateName = templateName + 'olymp'
+            templateName = templateName + 'olymp';
         } else {
             if (date < firstExamDate) {
-                templateName = templateName + 'bF'
+                templateName = templateName + 'bF';
             }
             if (date >= firstExamDate && date < secondExamDate) {
                 templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
             }
             if (date >= secondExamDate) {
                 if (profile.totalExamUploaded) {
-                    templateName = templateName + 'Total'
+                    templateName = templateName + 'Total';
                 } else {
                     templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
                 }
@@ -401,7 +401,6 @@ ExamsController = function(mongoose) {
             else {
                 if (doc) {
                     self.profilesCollection.find({ 'code': doc.data[doc.data.length - 1].profile }, function(err, profiles) {
-                        console.log(12, doc, profiles)
                         var profile;
                         if (err) {
                             res.send(err);
@@ -423,11 +422,11 @@ ExamsController = function(mongoose) {
                 } else {
                     res.json({
                         errorMessage: 'not found'
-                    })
+                    });
                 }
 
             }
-        })
+        });
     };
 
 
@@ -506,7 +505,7 @@ ExamsController = function(mongoose) {
             else {
                 statistics(function() {
                     base.getProfiles(req, res);
-                })
+                });
             }
         });
     };

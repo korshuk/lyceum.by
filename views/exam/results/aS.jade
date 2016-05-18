@@ -1,7 +1,7 @@
 include header
 h3 Второй экзамен закончился
 
-if ((profile.firstIsFirst && data.exam1 > 0) || (!profile.firstIsFirst && data.exam2 > 0))
+if ((profile.firstIsFirst && data.exam1 >= 0) || (!profile.firstIsFirst && data.exam2 >= 0))
     +resultLine(profile, data, 1)
     p 
         b * 
@@ -11,7 +11,7 @@ else
 
 hr.dotted
 
-if ((profile.firstIsFirst && data.exam2 > 0) || (!profile.firstIsFirst && data.exam1 > 0))
+if ((profile.firstIsFirst && data.exam2 >= 0) || (!profile.firstIsFirst && data.exam1 >= 0))
     +resultLine(profile, data, 2)
     p 
         b * 
