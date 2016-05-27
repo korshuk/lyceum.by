@@ -29,6 +29,13 @@ module.exports = function(app) {
       res.header('Pragma', 'no-cache');
     app.examsController.getResult(req, res);
   });
+  
+  app.post('/results/getResultTest', function(req, res) {
+      res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.header('Expires', '-1');
+      res.header('Pragma', 'no-cache');
+    app.examsController.getResultTest(req, res);
+  });
 
 
 };

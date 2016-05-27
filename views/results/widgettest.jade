@@ -1,0 +1,32 @@
+div#resultsWidget
+    h2 Личный кабинет абитуриента
+    p
+        | В личном кабинете Вы можете ознакомиться с расписанием вступительных экзаменов и их результатами. Для того чтобы это сделать введите серию и номер паспорта.
+        br
+    p
+        | <b>Внимание!</b> Серию и номер паспорта необходимо вводить без пробелов латинскими символами, например, вот так: WS1234567.
+    
+    div.passport-input-group
+        input#passportInput(type="text")
+        label(for="passportInput") Номер паспорта
+        span Можно вводить только латинские символы!
+    button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent#submitPassport Проверить
+
+    div.cs-loader
+        div.cs-loader-inner
+            label ●
+            label ●
+            label ●
+            label ●
+            label ●
+            label ●
+
+    div#results(style="display: none;")
+    div#notfoundError(style="display: none;")
+        h3.error Что-то пошло не так!
+        p Мы не смогли найти Вас. Возможно, Вы ошиблись&nbsp;-&nbsp;проверьте еще раз, правильно&nbsp;ли&nbsp;Вы&nbsp;ввели номер&nbsp;паспорта. Или&nbsp;просто&nbsp;поробуйте&nbsp;еще&nbsp;раз. 
+        p Если Вы уверены, что всё&nbsp;сделали правильно, а результата всё&nbsp;равно&nbsp;нет, свяжитесь с&nbsp;нами по&nbsp;телефону 
+            b 209-56-11
+        p С&nbsp;уважением, Администрация&nbsp;Лицея&nbsp;БГУ!
+link(rel='stylesheet', href='/css/widget.css')
+script(src='/js/resultstest.js')

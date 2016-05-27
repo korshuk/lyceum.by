@@ -392,6 +392,39 @@ ExamsController = function(mongoose) {
         }
         res.render(base.viewPath + templateName, requestData);
     };
+    processResultRequestTest = function(req, res, data, profile) {
+        var date = new Date;
+
+        var firstExamDate = profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate;
+        var secondExamDate = profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate;
+
+        var requestData = {
+            data: data,
+            profile: profile,
+        };
+
+        var templateName = 'results/';
+        //TODO check empty firstExamDeate
+        console.log(date, firstExamDate, date < firstExamDate);
+        if (data.pass) {
+            templateName = templateName + 'olymp';
+        } else {
+           // if (date < firstExamDate) {
+          //      templateName = templateName + 'bF';
+          //  }
+          //  if (date >= firstExamDate && date < secondExamDate) {
+           //     templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
+           // }
+           // if (date >= secondExamDate) {
+              //  if (profile.totalExamUploaded) {
+                    templateName = templateName + 'Total';
+             //   } else {
+             //       templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
+              //  }
+          //  }
+        }
+        res.render(base.viewPath + templateName, requestData);
+    };
 
     base.getResult = function(req, res) {
         base.Collection.findOne({ 'passport': req.body.passport }, function(err, doc) {
@@ -429,6 +462,41 @@ ExamsController = function(mongoose) {
         });
     };
 
+    base.getResultTest = function(req, res) {
+        base.Collection.findOne({ 'passport': req.body.passport }, function(err, doc) {
+            if (err) {
+                res.send(err);
+            }
+            else {
+                if (doc) {
+                    self.profilesCollection.find({ 'code': doc.data[doc.data.length - 1].profile }, function(err, profiles) {
+                        var profile;
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            if (profiles.length > 1) {
+                                for (var i = 0; i < profiles.length; i++) {
+                                    if (profiles[i].subcode == doc.data[doc.data.length - 1].subcode) {
+                                        profile = profiles[i];
+                                    }
+                                }
+                            }
+                            else {
+                                profile = profiles[0];
+                            }
+                            processResultRequestTest(req, res, doc.data[doc.data.length - 1], profile);
+                        }
+                    });
+
+                } else {
+                    res.json({
+                        errorMessage: 'not found'
+                    });
+                }
+
+            }
+        });
+    };
 
     base.updateExam = function(req, res) {
         base.Collection.findOne({ '_id': req.params.id }, function(err, doc) {
