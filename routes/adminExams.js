@@ -6,6 +6,10 @@ module.exports = function(app) {
 	app.get('/admin/exams', app.userController.Pass, function(req, res) {
 	  app.examsController.list(req, res);
 	});
+    
+    app.get('/admin/exams/testpage', app.userController.Pass, function(req, res) {
+	  app.examsController.testpage(req, res);
+	});
 
 	app.get('/admin/exams/rest', app.userController.Pass, function(req, res) {
 	  app.examsController.listRest(req, res);

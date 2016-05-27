@@ -524,6 +524,14 @@ ExamsController = function(mongoose) {
             }
         });
     };
+    
+    base.testpage = function(req, res) {
+        res.render('../views/exam/testpage', {
+            doc: {
+                name: 'test'
+            }
+        });
+    };
 
     base.constructor = arguments.callee;
 
