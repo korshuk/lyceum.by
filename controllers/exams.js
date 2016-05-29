@@ -138,6 +138,7 @@ ExamsController = function(mongoose) {
                     }
                 }
             }
+            
             var best;
             var counter;
             var indexOfPass;
@@ -181,10 +182,9 @@ ExamsController = function(mongoose) {
                         
                         indexOfPass = profiles[docsP[i].code].resultsT.indexOf(docsP[i].passT);
                         lastIndexOf = profiles[docsP[i].code].resultsT.lastIndexOf(docsP[i].passT);
-                        
+ 
                         if (lastIndexOf - indexOfPass > 0) {
                             docsP[i].halfpass = docsP[i].passT;
-                            console.log(docsP[i].halfpass);
                             docsP[i].passT = profiles[docsP[i].code].resultsT[lastIndexOf + 1];
                             passed = profiles[docsP[i].code].resultsT.length - lastIndexOf - 1;
 
@@ -192,6 +192,7 @@ ExamsController = function(mongoose) {
                             docsP[i].halfPupils = lastIndexOf - indexOfPass + 1;
 
                             if (docsP[i].halfDelta == docsP[i].halfPupils) {
+                                docsP[i].passT = docsP[i].halfpass;
                                 docsP[i].halfpass = null;
                                 docsP[i].halfDelta = 0;
                                 docsP[i].halfPupils = 0;
@@ -201,7 +202,6 @@ ExamsController = function(mongoose) {
                             docsP[i].halfDelta = 0;
                             docsP[i].halfPupils = 0;
                         }
-            
                         docsP[i].save(function() {
                             counter = counter - 1;
                             if (counter == 0 && next) {
