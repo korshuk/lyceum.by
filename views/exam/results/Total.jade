@@ -1,8 +1,25 @@
 include header
 if (data.exam1 >=0 && data.exam2 >=0)
-    h3 У нас готовы списки рекомендованных к зачислению!
+    h3 Вступительные экзаменя закончились!
 
     h4 Результаты Ваших экзаменов:
+    
+    +resultLine(profile, data, 1)
+    p 
+        b * 
+        | - текущий проходной балл по первому экзамену
+    
+    hr.dotted
+    
+    +resultLine(profile, data, 2)
+    p 
+        b * 
+        | - текущий проходной балл по первому экзамену
+        
+    +resultLine(profile, data, 3)
+    p 
+        b * 
+        | - текущий проходной балл по первому экзамену
     ul
         li  Первый экзамен по предмету 
             b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
@@ -16,7 +33,7 @@ if (data.exam1 >=0 && data.exam2 >=0)
             b  #{profile.firstIsFirst ? data.exam2 : data.exam1}
         li Сумма баллов: 
             b #{+data.exam1 + +data.exam2}
-    p 	Проходной балл по специальности 
+    p 	Проходной балл для профиля 
         b #{profile.name}
         | : 
         b #{profile.passT}
