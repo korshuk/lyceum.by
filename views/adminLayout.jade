@@ -51,7 +51,7 @@ html
                   a(href="/admin/cash") Посмотреть кэш
               p.navbar-text.pull-right
                 a.navbar-link(href="/admin/logout") Logout
-    div(class= viewName && viewName === 'pupil' ? 'container-fluid' : 'container')
+    div(class= (locals.viewName && locals.viewName === 'pupil') ? 'container-fluid' : 'container')
       div.row
         div.col.col-lg-8!= locals.message
       div.row
