@@ -329,7 +329,7 @@ module.exports = function (app) {
             gm(req.files.attachment.file.path)
                 .quality(80)
                 .resize(800)
-                .write('./images/pupils/' + filename, function (err) {
+                .write('./pubic/images/pupils/' + filename, function (err) {
                     if (!err) {
                         pupil.diplomImg = filename;
                         pupil.diplomImgNotApproved = false;
@@ -356,7 +356,7 @@ module.exports = function (app) {
         gm(req.files.attachment.file.path)
             .quality(80)
             .resize(800)
-            .write('./images/pupils/' + filename, function (err) {
+            .write('./public/images/pupils/' + filename, function (err) {
                 if (!err) {
                     pupil.requestImg = filename;
                     pupil.requestImgNotApproved = false;
