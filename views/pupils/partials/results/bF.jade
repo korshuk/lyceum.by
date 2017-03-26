@@ -1,0 +1,64 @@
+if (user.diplomImg)
+    p
+        | Вы подали диплом победителя республиканской олимпиады
+        +space()
+        nobr
+            | по предмету <b>#{user.diplomExamName}</b>.
+        br
+        | К сожалению, мы не можем зачислить вас без экзаменов, так как диплом
+        +space()
+            | по предмету <b>#{user.diplomExamName}</b>
+        +space()
+        | не позволяет поступить
+        +space()
+        nobr
+            | на <b class="uppercase">#{profile.name}</b> профиль
+        +space()
+        | без экзаменов*.
+        br
+        | Напоминаем, профиль можно поменять до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>.
+    p
+        small *Ознакомьтесь с пунктом 3.8 <a href="#{siteConfig.rulesLink}" target="_blank" title="Правила приёма">правил приёма</a>, для того чтобы знать на какой профиль вы можете поступить без экзаменов.
+
+h3 Экзамены еще не начались
+
+h4 Напоминаем Вам, что Вас ждут следующие экзамены:
+ul
+    li
+        | Первый экзамен по предмету
+        +space()
+        b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
+        +space()
+        | пройдет
+        nobr
+            +space()
+            b #{prettyDate(profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate)}
+        if ((profile.firstIsFirst && profile.firstExamPlace) || (!profile.firstIsFirst && profile.secondExamPlace))
+            +space()
+            | по адресу
+            +space()
+            nobr
+                b #{profile.firstIsFirst ? profile.firstExamPlace : profile.secondExamPlace}
+            +space()
+            | начало экзамена в
+            +space()
+            b 9:00
+    li
+        | Второй экзамен по предмету
+        +space()
+        b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
+        +space()
+        | пройдет
+        +space()
+        b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
+        if ((profile.firstIsFirst && profile.secondExamPlace) || (!profile.firstIsFirst && profile.firstExamPlace))
+            +space()
+            | по адресу
+            +space()
+            nobr
+                b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace}
+            +space()
+            | начало экзамена в
+            +space()
+            b 9:00
+include ./footer

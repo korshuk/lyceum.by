@@ -1,0 +1,18 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="request")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=(user.requestImg ? (user.requestImgNotApproved ? 'not-approved' : 'ready'): ''))
+                        if (user.requestImg)
+                            i.material-icons.done-icon #{user.requestImgNotApproved ? 'clear' : 'done'}
+                        else
+                            | 4
+                    b Справка
+                div.setting-value
+                    if (user.requestImg)
+                        img.img-preview(src="/images/pupils/#{user.requestImg}", width="200")
+                    else
+                        | нужно отправить нам справку из школы
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right

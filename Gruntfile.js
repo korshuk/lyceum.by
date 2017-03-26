@@ -1,50 +1,58 @@
-module.exports = function(grunt) {
-  require('jit-grunt')(grunt);
+module.exports = function (grunt) {
+    require('jit-grunt')(grunt);
 
-  grunt.initConfig({
+    grunt.initConfig({
 
-    postcss: {
-      options: {
-        map: {
-            inline: false,
-            annotation: 'public/css/maps/'
+        postcss: {
+            options: {
+                map: {
+                    inline: false,
+                    annotation: 'public/css/maps/'
+                },
+
+                processors: [
+                    require('autoprefixer')({browsers: '> 5%'}),
+                    require('cssnano')()
+                ]
+            },
+            dist: {
+                src: ['public/css/style.css', 'public/css/widget.css']
+            }
         },
 
-        processors: [
-          require('autoprefixer')({browsers: '> 5%'}),
-          require('cssnano')()
-        ]
-      },
-      dist: {
-        src: ['public/css/style.css', 'public/css/widget.css']
-          }
-    },
-
-    less: {
-      development: {
-        options: {
-          compress: true,
-          yuicompress: true,
-          optimization: 2
+        less: {
+            development: {
+                options: {
+                    compress: true,
+                    yuicompress: true,
+                    optimization: 2
+                },
+                files: {
+                    "public/css/style.css": "public/less/main.less",
+                    "public/css/widget.css": "public/less/widget.less",
+                    "public/css/stats.css": "public/less/stats.less"
+                }
+            }
         },
-        files: {
-          "public/css/style.css": "public/less/main.less",
-          "public/css/widget.css": "public/less/widget.less",
-          "public/css/stats.css": "public/less/stats.less"
-        }
-      }
-    },
 
-    watch: {
-      styles: {
-        files: ['public/less/**/*.less'],
-        tasks: ['less', 'postcss'],
-        options: {
-          nospawn: true
-        }
-      }
-    }
-  });
+        concat: {
+            dist: {
+                src: ['public/js/pupils/ready.js', 'public/js/pupils/dropify.js', 'public/js/pupils/material.js', 'public/js/pupils/storage.js', 'public/js/pupils/oauth.js', 'public/js/pupils/ui.js', 'public/js/pupils/app.js'],
+                dest: 'public/js/results.js',
+            },
+        },
 
-  grunt.registerTask('default', ['less', 'postcss', 'watch']);
+
+        watch: {
+            styles: {
+                files: ['public/less/**/*.less', 'public/js/pupils/*.js'],
+                tasks: ['less', 'postcss', 'concat'],
+                options: {
+                    nospawn: true
+                }
+            }
+        }
+    });
+
+    grunt.registerTask('default', ['less', 'postcss', 'watch']);
 };

@@ -1,0 +1,80 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Абитуриент
+    div.row
+        form.col-md-4(method='post')
+            input(type="hidden", name='return_query', value=query)
+            ul.list-group
+                li.list-group-item.row
+                    +field('text', "firstName", 'Фамилия')(value= doc.firstName || '')
+                li.list-group-item.row
+                    +field('text', "lastName", 'Имя')(value= doc.lastName || '')
+                li.list-group-item.row
+                    +field('text', "parentName", 'Отчество')(value= doc.parentName || '')
+                li.list-group-item.row
+                    .col-md-12
+                        .form-group
+                            label.col-md-12 Регион:
+                            select.form-control(name='region')
+                                option(value=undefined) Выберите регион
+                                option(value="г. Минск", selected=(doc.region === "г. Минск")) г. Минск
+                                option(value="Минская область", selected=(doc.region === "Минская область")) Минская область
+                                option(value="Брестская область", selected=(doc.region === "Брестская область")) Брестская область
+                                option(value="Витебская область", selected=(doc.region === "Витебская область")) Витебская область
+                                option(value="Гомельская область", selected=(doc.region === "Гомельская область")) Гомельская область
+                                option(value="Гродненская область", selected=(doc.region === "Гродненская область")) Гродненская область
+                                option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
+                                option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
+                li.list-group-item.row
+                    .col-md-12
+                        .form-group= doc.email
+                li.list-group-item.row
+                    .col-md-12
+                        .form-group= doc.created
+                li.list-group-item.row
+                    .col-md-12
+                        h2.form-group.bg-danger= doc.status
+                li.list-group-item.row
+                    +field('checkbox', "night", 'Вечерний Лицей')(checked=(doc.night))
+                li.list-group-item.row
+                    +field('checkbox', "distant", 'Дистанционные курсы')(checked=(doc.distant))
+                li.list-group-item.row
+                    .col-md-12
+                        h5 профиль
+                        h4= profile.name
+                li.list-group-item.row
+                    +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')
+            .row
+                .col-md-12
+                    .form-group
+                        button.btn.btn-success(type='submit', name="action", value='pupil_approve') Подтвердить заявку
+            hr
+            .row
+                +field('checkbox', "requestImgNotApproved", 'Справка НЕ подошла')(checked=(doc.requestImgNotApproved))
+                +field('checkbox', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
+                +field('textarea', "message", 'Сообщение для абитуриента')(value= doc.message || '').form-control(rows="5")
+                .col-md-12
+                    .form-group
+                        button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+
+
+            hr
+
+            .row
+                .col-md-6
+                    .form-group
+                        button.btn.btn-warning(type='submit', name="action", value='pupil_return') Вернуться без сохранения
+                .col-md-6
+                    .form-group
+                        button.btn.btn-default(type='submit', name="action", value='pupil_save') Просто сохранить
+
+        .col-md-8
+            label Справка
+            img.img-responsive(src="/images/pupils/#{doc.requestImg}")
+            if doc.diplomImg
+                hr
+                label Диплом
+                img.img-responsive(src="/images/pupils/#{doc.diplomImg}")

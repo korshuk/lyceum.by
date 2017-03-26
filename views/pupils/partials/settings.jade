@@ -1,0 +1,78 @@
+div#user-settings.style-grey
+    hr.colored
+    h3.pupil-settings Настройки:
+    div.settings-list
+        //div.settings-list-item-holder
+            a.settings-list-item.pupil-settingd(href="email")
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b Email
+                        div.setting-value #{user.email || 'не заполнено'}
+                    div.settings-list-next-sign
+                        i.material-icons keyboard_arrow_right
+
+        div.settings-list-item-holder
+            a.settings-list-item.pupil-settingd(href="password")
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b Пароль
+                        div.setting-value ********
+                    div.settings-list-next-sign
+                        i.material-icons keyboard_arrow_right
+
+        div.settings-list-item-holder
+            a.settings-list-item.pupil-settingd(href="logout")
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b Разлогиниться
+                        div.setting-value
+                    div.settings-list-next-sign
+                        i.material-icons keyboard_arrow_right
+
+
+    div#pupilSettingsDialogContent.hiddenView
+        div#email
+            h3.mdl-dialog__title Изменение email адреса
+            div.mdl-dialog__content
+                p Для смены email адреса, сохраните новый адрес.
+                p <b>Внимание!</b> Изменения вступят в силу не сразу после сахронения.
+                    br
+                    | Вам придется подтвердить правильность нового адреса,
+                    br
+                    | перейдя по ссылке в письме, которое мы вам вышлем.
+                div#pupilSettingsExistsError.error-container.hiddenView
+                    p
+                        | Пользователь с таким email адресом уже зарегистрирован!
+                        br
+                        | Пожалуйста, проверьте правильность написания email.
+
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#registerEmailInput.form-input.mdl-textfield__input(type="email")
+                    label.mdl-textfield__label(for="registerEmailInput") Email
+                    span.error-message
+                        span.message-required Это поле нужно обязательно заполнить
+                        span.message-characters Похоже, что это не правильный Email
+                        span.message-maxlength Слишком много символов
+
+        div#password
+            h3.mdl-dialog__title Смена пароля
+            div.mdl-dialog__content
+                p Для смены пароля, введите новый пароль два раза
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#pupilPassword.form-input.mdl-textfield__input(type="password")
+                    label.mdl-textfield__label(for="pupilPassword") Пароль
+                    span.error-message
+                        span.message-required Это поле нужно обязательно заполнить
+                        span.message-minlength Введите как минимум 8 символов
+                        span.message-maxlength Слишком длинный пароль
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#pupilPasswordConfirm.form-input.mdl-textfield__input(type="password")
+                    label.mdl-textfield__label(for="pupilPasswordConfirm") Пароль еще раз
+                    span.error-message
+                        span.message-required Это поле нужно обязательно заполнить
+                        span.message-characters Введенные пароли не совпадают
+        div#logout
+            h3.mdl-dialog__title Выйти

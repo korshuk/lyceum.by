@@ -1,0 +1,8 @@
+div#diplom
+    h3.mdl-dialog__title Диплом олимпиады
+    div.mdl-dialog__content
+        h4 Победил на республиканской олимпиаде?
+        p Загружай диплом и поступай в Лицей БГУ без экзаменов!
+
+        div.form-input-group
+            input#fileUploadDiplom.dropify(type="file", data-default-file=user.diplomImg ? '/images/pupils/' + user.diplomImg : undefined, data-show-remove="true", data-max-file-size="5M", data-allowed-file-extensions="pdf png jpg jpeg gif bmp")

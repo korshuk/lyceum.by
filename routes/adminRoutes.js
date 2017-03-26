@@ -13,4 +13,7 @@ module.exports = function (app) {
     require('../routes/adminNews')(app);
     require('../routes/adminMedia')(app);
     require('../routes/adminImages')(app);
+    require('../routes/adminSubjects')(app);
+    require('../routes/adminProfiles')(app);
+    require('../routes/adminPupils')(app);
 };

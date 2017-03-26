@@ -74,6 +74,8 @@ namespace :deploy do
         execute "ln -nfs #{shared_path}/desktop #{release_path}/public/images/desktop"
         #execute "mkdir -p /public/images/mobile && chmod g+w /public/images/mobile"
         execute "ln -nfs #{shared_path}/mobile #{release_path}/public/images/mobile"
+        #execute "mkdir -p /images/pupils && chmod g+w /images/pupils"
+        execute "ln -nfs #{shared_path}/pupils #{release_path}/images/pupils"
         execute "ln -nfs #{shared_path}/media #{release_path}/public/images/media"
         execute "ln -nfs #{shared_path}/files #{release_path}/public/files"
       rescue

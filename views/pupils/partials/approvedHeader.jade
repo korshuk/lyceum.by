@@ -1,0 +1,23 @@
+include dateFormat
+include resultLine
+include absent
+include space
+p Здравствуйте, #{user.firstName} #{user.lastName} #{user.parentName}!
+    br
+    | Вы подали документы для поступления в Лицей БГУ
+    +space()
+    if (profile.name == 'Прикладная математика')
+        | на профиль
+        +space()
+        nobr
+            b.uppercase #{profile.name}
+    else
+        | на
+        +space()
+        nobr
+            b.uppercase #{profile.name}
+        +space()
+        | профиль.
+if (user.message)
+    p.pupil-message
+        | #{user.message}

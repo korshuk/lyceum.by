@@ -1,0 +1,26 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="additional")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=(typeof user.night !== 'undefined' && typeof user.distant !== 'undefined' ? 'ready': ''))
+                        if (typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
+                            i.material-icons.done-icon done
+                        else
+                            | 5
+                    b Дополнительная информация
+                div.setting-value
+                    if (typeof user.night === 'undefined' || typeof user.distant === 'undefined')
+                        | Отметьте, посещали ли вы вечерние курсы или курсы дистанционного обучения.
+                    else
+                        if user.night
+                            | я посещал(а) Вечерний Лицей
+                        else
+                            | я не посещал(а) Вечерний Лицей
+                        br
+                        if user.distant
+                            | я учился(лась) на дистанционных курсах
+                        else
+                            | я не учился(лась) на дистанционных курсах
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right

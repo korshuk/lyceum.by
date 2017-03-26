@@ -1,0 +1,15 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="profile")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    if (user.status === 'new' || user.status === 'disapproved')
+                        div.step-sign(class=(profile ? 'ready': ''))
+                            if (profile)
+                                i.material-icons.done-icon done
+                            else
+                                | 1
+                    b Профиль
+                div.setting-value #{profile ? profile.name : 'надо выбрать'}
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right

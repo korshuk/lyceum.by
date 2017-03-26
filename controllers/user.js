@@ -65,7 +65,7 @@ UserController.prototype.authenticate = function(name, pass, req, res) {
       req.session.error = 'Не получилось залогиниться :( <br>' + err;
       res.redirect('admin');
     }
-  };
+  }
 };
 
 UserController.prototype.logout = function(req, res){
@@ -98,7 +98,7 @@ UserController.prototype.list = function(req, res) {
           var date = new Date(doc.createdAt);
       		return { name: doc.name, id: doc._id, createdAt: date.toDateString() };
     	}); 
-    	res.render(self.viewPath + 'list.jade', {users: docs});
+    	res.render(self.viewPath + 'list.jade', {users: docs, viewName: 'users'});
   	});
 };
 

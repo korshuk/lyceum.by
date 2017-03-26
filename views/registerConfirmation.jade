@@ -1,0 +1,28 @@
+include ./layout/header404
+    block content
+        a(href='#')#logo.confirmation-logo
+            img(src="/img/logo404.png")
+            h1!= 'Лицей Белорусского государственного университета'.split(' ').join('<br>')
+        section.confirmation-page-block
+
+            h2 Ваша учетная запись теперь активна!
+
+            p Благодарим за подтверждение адреса электронной почты.
+            p Теперь Вы можете зайти в <a href="/abiturientu.html" title="Личный кабинет абитуриента">личный кабинет абитуриента</a>, используя электронную почту в качестве логина.
+            p В ближайшее время на адрес вашей электронной почты будут отправлены правила приёма, инструкция по заполнению информации в личном кабинете абитуриента и материалы для подготовки к вступительным испытаниям в Лицей БГУ.
+
+            p
+             small С уважением,
+             br
+             small Приемная комиссия
+             br
+             small Лицея БГУ
+    script.
+        var lyceum = {
+            access_token: "#{access_token}",
+            refresh_token: "#{refresh_token}"
+        };
+    script(src='/javascripts/jquery.js')
+    script(src='/js/pupils/oauth.js')
+    script(src='/js/pupils/storage.js')
+    script(src='/js/registerConfirmation.js')

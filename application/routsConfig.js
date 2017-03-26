@@ -10,11 +10,15 @@
         PageController = require('../controllers/page').PageController,
         MenuController = require('../controllers/menu').MenuController,
         ContactsController = require('../controllers/contacts').ContactsController,
-        ResultsController = require('../controllers/results').ResultsController;
-        FileController = require('../controllers/file').FileController;
-        ExamsController = require('../controllers/exams').ExamsController;
-        SettingsController = require('../controllers/settings').SettingsController;
-        SotkaController = require('../controllers/sotka').SotkaController;
+        ResultsController = require('../controllers/results').ResultsController,
+        FileController = require('../controllers/file').FileController,
+        ExamsController = require('../controllers/exams').ExamsController,
+        SettingsController = require('../controllers/settings').SettingsController,
+        SubjectController = require('../controllers/subject').SubjectController,
+        ProfileController = require('../controllers/profile').ProfileController,
+        PupilsController = require('../controllers/pupils').PupilsController,
+        SotkaController = require('../controllers/sotka').SotkaController,
+        MailController = require('../controllers/mail').MailController;
         
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -37,13 +41,17 @@
 
         require('../routes/frontRoutes')(app);
 
+        app.mailController = new MailController(mongoose, app);
         app.menuController = new MenuController(app);
         app.userController = new UserController(mongoose);
         app.pageController = new PageController(mongoose, app);
         app.examsController = new ExamsController(mongoose, app);
         app.settingsController = new SettingsController(mongoose, app);
         app.sotkaController = new SotkaController(mongoose, app);
-        
+        app.subjectController = new SubjectController(mongoose, app);
+        app.profileController = new ProfileController(mongoose, app);
+        app.pupilsController = new PupilsController(mongoose, app);
+
         require('../routes/adminRoutes')(app);
         return app;
     };

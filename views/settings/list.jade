@@ -3,11 +3,68 @@ extends ../adminLayout
 block content
     div.page-header
         h1 Настройки
-    form.form-horizontal(method='post', action='/admin/settings/')
+    form(method='post', action='/admin/settings/')
         div.form-group
-            label.checkbox
-                input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=(docs && docs.showPupilCabinet))
-                | showPupilCabinet
+            .checkbox
+                label
+                    input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=(docs && docs.showPupilCabinet))
+                    | showPupilCabinet
+
+        div.form-group
+            label Дата конца регистрации
+            input#registrationEndDate.form-control(name="registrationEndDate", type="text", value=(docs && docs.registrationEndDate))
+        div.form-group
+            label Дата конца подтверждения регистрации (и профиль перестанет меняться в этот момент)
+            input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
+        hr
+        div.form-group
+            label Ссылка на правила приёма
+            input#rulesLink.form-control(name="rulesLink", type="text", value=(docs && docs.rulesLink))
+        div.form-group
+            label Правила приёма
+            textarea#rulesHTML.form-control(name="rulesHTML", rows="10")
+                | #{docs && docs.rulesHTML}
+
+        hr
+        div.form-group
+            label Первый email
+            input#email1.form-control(name="email1", type="text", value=(docs && docs.email1))
+            label Первый email - пароль
+            input#email1Pass.form-control(name="email1Pass", type="text", value=(docs && docs.email1Pass))
+        div.form-group
+            label Втрой email
+            input#emai21.form-control(name="email2", type="text", value=(docs && docs.email2))
+            label Втрой email - пароль
+            input#email2Pass.form-control(name="email2Pass", type="text", value=(docs && docs.email2Pass))
+        div.form-group
+            label Третий email
+            input#email3.form-control(name="email3", type="text", value=(docs && docs.email3))
+            label Третий email - пароль
+            input#email3Pass.form-control(name="email3Pass", type="text", value=(docs && docs.email3Pass))
+        div.form-group
+            label Четвертый email
+            input#email4.form-control(name="email4", type="text", value=(docs && docs.email4))
+            label Четвертый email - пароль
+            input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
+
+        hr
+        div.form-group
+            label Супер пароль
+            input#superPassword.form-control(name="superPassword", type="text", value=(docs && docs.superPassword))
+        hr
+        div.form-group
+            label clientAppName
+            input#clientAppName.form-control(name="clientAppName", type="text", value=(docs && docs.clientAppName))
+        div.form-group
+            label clientAppSecret
+            input#clientAppSecret.form-control(name="clientAppSecret", type="text", value=(docs && docs.clientAppSecret))
         div.row
             div.col.col-lg-12
                 input.btn.btn-default(type='submit', value='Save')
+
+block scripts
+    include ../stuff/adminScriptBlock
+
+    script
+        $('#registrationEndDate').datetimepicker();
+        $('#confirmationEndDate').datetimepicker();

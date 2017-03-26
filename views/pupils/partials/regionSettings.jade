@@ -1,0 +1,14 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="region")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=(user.region ? 'ready': ''))
+                        if (user.region)
+                            i.material-icons.done-icon done
+                        else
+                            | 3
+                    b Адрес (регион) проживания
+                div.setting-value #{user.region || 'не выбран'}
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right

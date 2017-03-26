@@ -3,7 +3,10 @@ html
   head
     title title
     
-    link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    //link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
     link(rel='stylesheet', href='/stylesheets/adminStyle.css')
     link(rel='stylesheet', href='/stylesheets/sir-trevor.css')
     link(rel='stylesheet', href='/stylesheets/sir-trevor-icons.css')
@@ -12,9 +15,10 @@ html
     
   body
     div.navbar.navbar-inverse.bs-docs-nav
-      div.container
-        a.navbar-brand(href="/admin")Админка
-        div.nav-collapse.collapse.bs-navbar-collapse
+      div.container-fluid
+        .navbar-header
+          a.navbar-brand(href="/admin") Админка
+        div.collapse.navbar-collapse.bs-navbar-collapse
             if (locals.logged == 'logged')
               ul.nav.navbar-nav
                 li
@@ -29,23 +33,29 @@ html
                   a(href="/admin/contacts") Контакты
                 li
                   a(href="/admin/files") Файлы
+                li.dropdown
+                  a.dropdown-toggle(href="#", data-toggle="dropdown", role="button") Приёмная комиссия <span class="caret"></span>
+                  ul.dropdown-menu
+                    li
+                      a(href="/admin/pupils#/page=1&itemsPerPage=30") Абитуриенты
+                    li
+                      a(href="/admin/pupils/profiles") Профили
+                    li
+                      a(href="/admin/pupils/subjects") Предметы
+
                 li
                   a(href="/admin/users") Пользователи
-                li
-                  a(href="/admin/exams") Результаты экзаменов
-                li
-                  a(href="/admin/sotka") Приём документов
                 li
                   a(href="/admin/settings") Настройки
                 li
                   a(href="/admin/cash") Посмотреть кэш
               p.navbar-text.pull-right
                 a.navbar-link(href="/admin/logout") Logout
-    div.container
+    div(class= viewName && viewName === 'pupil' ? 'container-fluid' : 'container')
       div.row
         div.col.col-lg-8!= locals.message
       div.row
-        div.col.col-lg-8
+        div.col.col-lg-12
           block content
     footer
       p 

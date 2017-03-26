@@ -274,13 +274,13 @@ $(function() {
             
 
             $.each(profiles, function (i, profile) {
-                $('#profile').append($('<option>', { 
+                $('#profiles').append($('<option>', {
                     value: profile.code,
                     text : profile.name 
                 }));
             });
 
-            $('#profile').val(userData.profile);
+            $('#profiles').val(userData.profile);
 
             $('#exam1').val(userData.exam1);
             $('#exam2').val(userData.exam2);
@@ -312,7 +312,7 @@ $(function() {
         currentUser.data[currentUser.data.length - 1].lastname = $('#lastname').val();
         currentUser.data[currentUser.data.length - 1].firstname = $('#firstname').val();
         currentUser.data[currentUser.data.length - 1].patronymic = $('#patronymic').val();
-        currentUser.data[currentUser.data.length - 1].profile = $('#profile').val();
+        currentUser.data[currentUser.data.length - 1].profile = $('#profiles').val();
         currentUser.data[currentUser.data.length - 1].exam1 = $('#exam1').val();
         currentUser.data[currentUser.data.length - 1].exam2 = $('#exam2').val();
         currentUser.data[currentUser.data.length - 1].pass= $('#pass').val() == 'true';
@@ -348,7 +348,7 @@ $(function() {
         profiles = response;
         var $copyRow = $('.copy-row').html();
         var $newRow = '';
-        var $profileForm = $('.profile-form tbody');
+        var $profileForm = $('.profiles-form tbody');
         var $profileChecker = $('#profileChecker');
         var checkboxvalue;
 
@@ -371,7 +371,7 @@ $(function() {
             $profileChecker.append('<label class="checkbox"><input type="checkbox" value="' + checkboxvalue + '" checked="true">' + response[i].name + '</label>');
 
             $newRow = $copyRow.replace('<button id="addProfile" type="button" class="btn btn-primary">Add</button>',
-                '<button data-num="' + i + '" data-id="' + response[i]._id + '" type="button" class="btn btn-primary profile-update-btn">Update</button><br><br><button data-num="' + i + '" data-id="' + response[i]._id + '" type="button" class="btn btn-danger profile-remove-btn">Remove</button>');
+                '<button data-num="' + i + '" data-id="' + response[i]._id + '" type="button" class="btn btn-primary profiles-update-btn">Update</button><br><br><button data-num="' + i + '" data-id="' + response[i]._id + '" type="button" class="btn btn-danger profiles-remove-btn">Remove</button>');
 
             $newRow = $newRow.replace(/ id="(.*?)"/g, ' id="$1_' + i + '"');
             $profileForm.append('<tr>' + $newRow + '</tr>');
@@ -421,7 +421,7 @@ $(function() {
         });
     });
 
-    $(document).on('click', '.profile-update-btn', function () {
+    $(document).on('click', '.profiles-update-btn', function () {
         var num = $(this).data('num');
         var id = $(this).data('id');
 
@@ -456,7 +456,7 @@ $(function() {
         
     });
 
-    $(document).on('click', '.profile-remove-btn', function () {
+    $(document).on('click', '.profiles-remove-btn', function () {
         var id = $(this).data('id');
         $.post('/admin/exams/profiles/delete/' + id, {}, function(response) {
             $('#ammount').removeClass('has-error');

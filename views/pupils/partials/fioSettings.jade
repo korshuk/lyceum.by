@@ -1,0 +1,21 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="fio")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=((user.firstName && user.lastName && user.parentName) ? 'ready': ''))
+                        if (user.firstName && user.lastName && user.parentName)
+                            i.material-icons.done-icon done
+                        else
+                            | 2
+                    b ФИО
+                div.setting-value
+                    if (user.firstName && user.lastName && user.parentName)
+                        | #{user.FIO}
+                    else
+                        if (user.firstName || user.lastName || user.parentName)
+                            | заполнено не полностью
+                        else
+                            | надо заполнить
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right

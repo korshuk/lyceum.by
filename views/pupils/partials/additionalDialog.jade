@@ -1,0 +1,20 @@
+div#additional
+    h3.mdl-dialog__title Дополнительная информация
+    div.mdl-dialog__content
+        p Отметьте, посещали ли вы вечерние курсы
+            br
+            | или курсы дистанционного обучения.
+
+        .mdl-selectfield.mdl-js-selectfield.mdl-selectfield--floating-label
+            select#night.mdl-selectfield__select(name="nightInput")
+                option(value=undefined)
+                option(value='Да', selected=(user.night === true)) Да
+                option(value='Нет', selected=(user.night === false)) Нет
+            label.mdl-selectfield__label(for="night") Вечерний Лицей
+        br
+        .mdl-selectfield.mdl-js-selectfield.mdl-selectfield--floating-label
+            select#distant.mdl-selectfield__select(name="distantInput")
+                option(value=undefined)
+                option(value='Да', selected=(user.distant === true)) Да
+                option(value='Нет', selected=(user.distant === false)) Нет
+            label.mdl-selectfield__label(for="distant") Курсы дистанционного обучения

@@ -1,0 +1,22 @@
+include ./partials/space
+div#approvedView.visibleView
+    include ./partials/approvedHeader
+
+    if (pupilViewName === 'bF')
+        include  ./partials/results/bF
+    if (pupilViewName === 'passOlymp')
+        include  ./partials/results/passOlymp
+
+    include ./partials/requestApprovedView
+
+    br
+    include ./partials/attantion
+    br
+
+    include ./partials/settings
+
+    section.view-dialog-content
+
+        include ./partials/profileDialog
+
+script(src='/js/pupilViews/unapproved.js')

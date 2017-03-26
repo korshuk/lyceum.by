@@ -13,16 +13,16 @@ block content
                         div.col-6.left
                             div.text-left
                                 | Количество мест: 
-                                span {{profile.places}}
+                                span {{profile.ammount}}
                                 br
                                 | Количество заявлений: 
-                                span {{profile.ammount[profile.ammount.length - 1].count}}
+                                span {{profile.countArray[profile.countArray.length - 1].count}}
                                 br
                                 | Без экзаменов: 
                                 span {{profile.olymp}}
                         div.col-6.concurse
                             | Конкурс:
-                            h3 {{((profile.ammount[profile.ammount.length - 1].count - profile.olymp) / (profile.places - profile.olymp)).toFixed(2)}}
+                            h3 {{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}}
                         br
                         div.col-12(id="{{'graph' + $index}}")
         div.buttons-container

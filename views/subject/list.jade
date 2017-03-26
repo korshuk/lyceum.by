@@ -1,0 +1,17 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Список предметов
+        a.btn.btn-primary(href='/admin/pupils/subjects/create') Добавить предмет
+    table.table.table-hover
+        tr
+            th Название
+            th
+        - each doc in docs
+            tr
+                td= doc.name
+                td
+                    a(href="/admin/pupils/subjects/edit/"+doc.id) Редактировать
+                    br
+                    a(href="/admin/pupils/subjects/delete/"+doc.id) Удалить

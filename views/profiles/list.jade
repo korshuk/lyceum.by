@@ -1,0 +1,47 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Список профилей
+        a.btn.btn-primary(href='/admin/pupils/profiles/create') Добавить профиль
+    table.table.table-hover
+        tr
+            th Название
+            th I экзамен
+            th II экзамен
+            th Сумма
+            th Статистика
+            th
+        - each doc in docs
+            tr
+                td  #{doc.name}
+                    br
+                    | Мест #{doc.ammount}
+                    br
+                    | Заявлений #{doc.count}
+                    br
+                    | без экзаменов #{doc.olimp}
+
+                td
+                    | pass:#{doc.passF}
+                    br
+                    | min:#{doc.minF}
+                    | max:#{doc.maxF}
+                td
+                    | pass:#{doc.passS}
+                    br
+                    | min:#{doc.minS}
+                    | max:#{doc.maxS}
+                td
+                    | pass:#{doc.passT}
+                    br
+                    |  min:#{doc.minT}
+                    |  max:#{doc.maxT}
+                td
+                    | Полупроходной #{doc.halfpass}&nbsp;/&nbsp;#{doc.halfPupils}
+                    br
+                    | Дельта&nbsp;#{doc.halfDelta}
+                td
+                    a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
+                    br
+                    a(href="/admin/pupils/profiles/delete/"+doc.id) Удалить

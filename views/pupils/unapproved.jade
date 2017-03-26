@@ -1,0 +1,18 @@
+include ./partials/space
+div#unapprovedView.visibleView
+    p
+        | Мы проверяем вышу заявку
+
+    include ./partials/requestApprovedView
+
+    br
+    include ./partials/attantion
+    br
+
+    include ./partials/settings
+
+    section.view-dialog-content
+
+        include ./partials/profileDialog
+
+script(src='/js/pupilViews/unapproved.js')

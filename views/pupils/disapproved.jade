@@ -1,0 +1,88 @@
+include ./partials/space
+div#disapprovedView.visibleView
+    h4 Мы проверили вашу заявку.
+    p.no-padding К сожалению, ваша заявка не принята.
+        br
+        | Это произошло по следующим причинам:
+    ul
+        if (user.requestImgNotApproved)
+            li Ваша справка из школы не подошла
+        if (user.diplomImgNotApproved)
+            li Ваш диплом не соответсвует требованиям
+        if (user.message)
+            li #{user.message}
+
+    div.style-green
+        h3 Заявка на участие во вступительных испытаниях
+        hr.colored
+        div.settings-list
+
+            include ./partials/profileSetting
+
+            include ./partials/fioSettings
+
+            include ./partials/regionSettings
+
+            include ./partials/requestSettings
+
+            include ./partials/additionalSetting
+
+            include ./partials/diplomSettings
+
+        if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined' && !user.requestImgNotApproved && !user.diplomImgNotApproved)
+            button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку снова
+        else
+            p Чтобы подать заявку надо поправить всё
+            button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent(disabled) Подать заявку снова
+    br
+    include ./partials/attantion
+    br
+
+    include ./partials/settings
+
+    section.view-dialog-content
+
+        include ./partials/profileDialog
+
+        div#fio
+            h3.mdl-dialog__title ФИО
+            div.mdl-dialog__content
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#newFirstNameInput.form-input.mdl-textfield__input(type="text", value=(user.firstName))
+                    label.mdl-textfield__label(for="newFirstNameInput") Фамилия
+                    span.error-message
+                br
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#newLastNameInput.form-input.mdl-textfield__input(type="text", value=(user.lastName))
+                    label.mdl-textfield__label(for="newLastNameInput") Имя
+                    span.error-message
+                br
+                div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#newParentNameInput.form-input.mdl-textfield__input(type="text", value=(user.parentName))
+                    label.mdl-textfield__label(for="newParentNameInput") Отчество
+                    span.error-message
+
+        include ./partials/requestImgDialog
+
+        include ./partials/diplomDialog
+
+        include ./partials/additionalDialog
+
+        div#region
+            h3.mdl-dialog__title Адрес (регион) проживания
+            div.mdl-dialog__content
+                div.form-input-group
+                    .mdl-selectfield.mdl-js-selectfield.mdl-selectfield--floating-label
+                        select#regionInput.mdl-selectfield__select(name="regionInput", value="user.region")
+                            option(value=undefined) Выберите регион
+                            option(value="г. Минск", selected=(user.region === "г. Минск")) г. Минск
+                            option(value="Минская область", selected=(user.region === "Минская область")) Минская область
+                            option(value="Брестская область", selected=(user.region === "Брестская область")) Брестская область
+                            option(value="Витебская область", selected=(user.region === "Витебская область")) Витебская область
+                            option(value="Гомельская область", selected=(user.region === "Гомельская область")) Гомельская область
+                            option(value="Гродненская область", selected=(user.region === "Гродненская область")) Гродненская область
+                            option(value="Могилевская область", selected=(user.region === "Могилевская область")) Могилевская область
+                            option(value="Иностранный гражданин", selected=(user.region === "Иностранный гражданин")) Иностранный гражданин
+                        label.mdl-selectfield__label(for="regionInput") Адрес (регион) проживания
+
+script(src='/js/pupilViews/new.js')

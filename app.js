@@ -13,8 +13,8 @@
     app = require('./application/sendingPage.js').configure(app);
 
     setTimeout(function () {
-        app.use(function (req, res) {
-            console.log('app.js 17', req.params);
+        app.use(function (err, req, res, next) {
+            console.log('app.js 17', err);
             res.redirect('404.html');
         });
         if (!module.parent) {

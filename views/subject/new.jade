@@ -1,0 +1,19 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        if doc.name
+            h1 Редактирование предмета
+        else
+            h1 Новый предмет
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/subjects/' + doc.id : '/admin/pupils/subjects' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+        div.row
+            div.panel.panel-default
+                +field('text', "name", 'Название')(value= doc.name || '')
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock

@@ -123,7 +123,7 @@ angular.module('sotkaApp', [])
                     $scope.profiles = response;
                     var sum = 0;
                     var olymp = 0;
-                    var places = 0,
+                    var ammount = 0,
                         common = {},
                         flag,
                         i = 0,
@@ -135,36 +135,36 @@ angular.module('sotkaApp', [])
                         date,                     
                         length = $scope.profiles.length;
                     for (i; i < length; i++) {
-                        if ($scope.profiles[i].ammount.length > 0) {
-                            sum = sum + $scope.profiles[i].ammount[$scope.profiles[i].ammount.length - 1].count;
+                        if ($scope.profiles[i].countArray.length > 0) {
+                            sum = sum + $scope.profiles[i].countArray[$scope.profiles[i].countArray.length - 1].count;
                         }
                         olymp = olymp + $scope.profiles[i].olymp || 0;
-                        places = places + $scope.profiles[i].places;
+                        ammount = ammount + $scope.profiles[i].ammount;
                     }
 
                     common = {
                         common: true,
                         name: 'Общий конкурс',
-                        ammount: [{
+                        countArray: [{
                             count: sum
                         }],
                         points: [],
                         olymp: olymp,
-                        places: places
+                        ammount: ammount
                     };
                                         
                     for (i = 0; i < length; i++) {
                         profile = $scope.profiles[i];
                         date = '';
                         profile.points = [];
-                        ammountLength = profile.ammount.length;
+                        ammountLength = profile.countArray.length;
                         for (j = 0; j < ammountLength; j++) {
-                            if (date == dateFormat(profile.ammount[j].date, "yyyy-mm-dd")) {
-                                profile.points[profile.points.length - 1].count = profile.ammount[j].count;
+                            if (date == dateFormat(profile.countArray[j].date, "yyyy-mm-dd")) {
+                                profile.points[profile.points.length - 1].count = profile.countArray[j].count;
                             } else {
-                                date = dateFormat(profile.ammount[j].date, "yyyy-mm-dd");
+                                date = dateFormat(profile.countArray[j].date, "yyyy-mm-dd");
                                 profile.points.push({
-                                    count: profile.ammount[j].count,
+                                    count: profile.countArray[j].count,
                                     date: date
                                 });
                                 flag = false;
@@ -248,9 +248,9 @@ angular.module('sotkaApp', [])
                 });
         };
         
-        
-        window.xmin = new Date("2016-03-20").getTime();
-        window.xmax = new Date("2016-05-07").getTime() - xmin;
+        //TODO current year and start--end date
+        window.xmin = new Date("2017-03-27").getTime();
+        window.xmax = new Date("2017-05-07").getTime() - xmin;
 
         $scope.drawGraph = function (i, points) {
             

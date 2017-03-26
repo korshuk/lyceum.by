@@ -4,13 +4,15 @@
 
     var BaseController;
 
-    BaseController = function (name, path, mongoose, application) {
+    BaseController = function (name, path, mongoose, application, adminInPath) {
         var self = this;
+        var adminPath = adminInPath ? '' : 'admin/';
         this.app = application;
         this.name = name;
         this.viewPath = this.name.toLowerCase() + '/';
-        this.path = 'admin/' + path.toLowerCase();
+        this.path = adminPath + path.toLowerCase();
         this.model = require('../models/' + this.name.toLowerCase());
+        console.log(this.name.toLowerCase());
         this.model.define(mongoose, function () {
             self.Collection = mongoose.model(self.name);
         });
@@ -38,7 +40,8 @@
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {
             res.render(self.viewPath + 'list.jade', {
-                docs: docs
+                docs: docs,
+                viewName: self.name.toLowerCase()
             });
         });
     };

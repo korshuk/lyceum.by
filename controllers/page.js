@@ -10,7 +10,8 @@ var PageController = function (mongoose, application) {
     base.list = function (req, res) {
         var self = this;
         res.render(self.viewPath + 'list.jade', {
-            pages: req.app.menuController.JSON.children
+            pages: req.app.menuController.JSON.children,
+            viewName: 'pages'
         });
     };
 

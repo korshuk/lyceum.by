@@ -16,3 +16,4 @@ public/images/*
 public/files
 *.brackets.json
 nodeblog.sublime-workspace
+.idea/*

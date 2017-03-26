@@ -1,0 +1,50 @@
+div.style-green
+    h3 Заявка на участие во вступительных испытаниях
+    hr.colored
+    div.settings-list
+        div.settings-list-item-holder
+        include ./profileSetting
+
+    div.settings-list.disabled
+        div.settings-list-item-holder
+            span.settings-list-item
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b ФИО
+                        div.setting-value
+                            if (user.firstName && user.lastName && user.parentName)
+                                | #{user.FIO}
+                            else
+                                if (user.firstName || user.lastName || user.parentName)
+                                    | заполнено не полностью
+                                else
+                                    | надо заполнить
+
+        div.settings-list-item-holder
+            span.settings-list-item
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b Адрес (регион) проживания
+                        div.setting-value #{user.region || 'не выбран'}
+
+        div.settings-list-item-holder
+            span.settings-list-item
+                div.settings-list-item-container
+                    div.settings-list-content
+                        div.setting-name
+                            b Дополнительная информация
+                        div.setting-value
+                            if (typeof user.night === 'undefined' || typeof user.distant === 'undefined')
+                                | заполните дополнительную информацию
+                            else
+                                if user.night
+                                    | я посещал(а) Вечерний Лицей
+                                else
+                                    | я не посещал(а) Вечерний Лицей
+                                br
+                                if user.distant
+                                    | я учился(лась) на дистанционных курсах
+                                else
+                                    | я не учился(лась) на дистанционных курсах

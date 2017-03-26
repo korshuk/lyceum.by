@@ -3,7 +3,9 @@ extends ../adminLayout
 block content
     div.page-header
         h1 Результаты экзаменов
-        button#classBtn.btn.btn-primary Профили
+        a.btn.btn-primary(href="/admin/pupils/profiles") Профили
+        hr
+        a.btn.btn-primary(href="/admin/pupils/subjects") Предметы
         hr
         button#versionBtn.btn.btn-primary Показать версии
         hr

@@ -1,0 +1,9 @@
+div#profile
+    h3.mdl-dialog__title Выберите профиль
+    div.mdl-dialog__content
+        .mdl-selectfield.mdl-js-selectfield.mdl-selectfield--floating-label
+            select#profileInput.mdl-selectfield__select(name="profileInput")
+                option(value=undefined) Выберите профиль
+                each profile, i in profiles
+                    option(value=profile._id, selected=('+' + user.profile == '+' + profile._id)) #{profile.name}
+            label.mdl-selectfield__label(for="profileInput") Профиль

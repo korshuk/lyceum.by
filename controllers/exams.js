@@ -27,12 +27,12 @@ ExamsController = function(mongoose) {
         self.examDatasCollection = mongoose.model('ExamDatas');
     });
 
-
+/*
     this.profilesModel = require('../models/profiles');
     this.profilesModel.define(mongoose, function() {
         self.profilesCollection = mongoose.model('Profiles');
     });
-
+*/
     var base = new BaseController('Exam', 'exams', mongoose);
 
     function onNewRecord(records, number, req, res) {
@@ -413,13 +413,13 @@ ExamsController = function(mongoose) {
           //      templateName = templateName + 'bF';
           //  }
           //  if (date >= firstExamDate && date < secondExamDate) {
-           //     templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
+           //     templateName = templateName + (profiles.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
            // }
            // if (date >= secondExamDate) {
-              //  if (profile.totalExamUploaded) {
+              //  if (profiles.totalExamUploaded) {
                     templateName = templateName + 'Total';
              //   } else {
-             //       templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
+             //       templateName = templateName + (profiles.secondExamUploaded ? 'aS' : 'aSnoR');
               //  }
           //  }
         }

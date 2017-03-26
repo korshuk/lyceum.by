@@ -24,7 +24,8 @@ module.exports = function (app) {
             res.render('cash/list.jade', {
                 result: result,
                 docs: docs,
-                starts: array
+                starts: array,
+                viewName: 'cash'
             });
         });
 

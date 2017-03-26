@@ -15,15 +15,15 @@ block content
                         input(ng-model="newProfile.places")
                         button(ng-click="addProfile(newProfile)") Добавить
                         ul
-                            li.row(ng-repeat='profile in profiles')
+                            li.row(ng-repeat='profiles in profiles')
                                 div.col.col-lg-4
                                     | {{profile.name}}
                                 div.col.col-lg-4
                                     | order
                                     input(type="text", ng-model="profile.order")
                                 div.col.col-lg-4
-                                    button(ng-click="removeProfile(profile)") Удалить
-                                    button(ng-click="updateOrder(profile)") Обновить
+                                    button(ng-click="removeProfile(profiles)") Удалить
+                                    button(ng-click="updateOrder(profiles)") Обновить
                 div.col.col-lg-2
                     button(ng-click="showProfilesOptions()")
                         | {{showProfilesFlag ? 'Скрыть' : 'Показать'}} профили
@@ -39,7 +39,7 @@ block content
                         th Обычный
                         th Олимпиадник                        
                 tbody
-                    tr(ng-repeat="profile in profiles")
+                    tr(ng-repeat="profiles in profiles")
                         td {{profile.name}}
                         td {{profile.places}}
                         td 
@@ -47,13 +47,13 @@ block content
                             br
                             | Б/Э {{profile.olymp}}
                         td
-                            button.btn.btn-success(ng-click="changeAmmount(profile, +1)") +1
+                            button.btn.btn-success(ng-click="changeAmmount(profiles, +1)") +1
                             | &nbsp;
-                            button.btn.btn-primary(ng-click="changeAmmount(profile, -1)") -1
+                            button.btn.btn-primary(ng-click="changeAmmount(profiles, -1)") -1
                         td
-                            button.btn.btn-success(ng-click="changeOlymp(profile, +1)") +1
+                            button.btn.btn-success(ng-click="changeOlymp(profiles, +1)") +1
                             | &nbsp;
-                            button.btn.btn-primary(ng-click="changeOlymp(profile, -1)") -1
+                            button.btn.btn-primary(ng-click="changeOlymp(profiles, -1)") -1
         
 block scripts
     include ../stuff/adminScriptBlock

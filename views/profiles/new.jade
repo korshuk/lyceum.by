@@ -1,0 +1,60 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        if doc.name
+            h1 Редактирование профиля
+        else
+            h1 Новый профиль
+
+    form(method='post', action= method === 'put' ? '/admin/pupils/profiles/' + doc.id : '/admin/pupils/profiles' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+
+        div.panel.panel-default.row
+            +field('text', "name", 'Название')(value= doc.name || '')
+            +field('text', "code", 'Код')(value= doc.code || '')
+            +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
+            +field('number', "ammount", 'Количество мест')(value= doc.ammount || '')
+
+        div.panel.panel-default.row
+            h3 Первый экзамен
+            +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
+            +field('text', "firstExamDate", 'Дата')(value= doc.firstExamDate || '')#firstExamDate
+            +field('text', "firstExamPlace", 'Место проведение')(value= doc.firstExamPlace || '')
+            +field('text', "firstExamAppelationDate", 'Дата ознакомления')(value= doc.firstExamAppelationDate || '')#firstExamAppelationDate
+            +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
+
+        div.panel.panel-default.row
+            h3 Второй экзамен
+
+            +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
+            +field('text', "secondExamDate", 'Дата')(value= doc.secondExamDate || '')#secondExamDate
+            +field('text', "secondExamPlace", 'Место проведение')(value= doc.secondExamPlace || '')
+            +field('text', "secondExamAppelationDate", 'Дата ознакомления')(value= doc.secondExamAppelationDate || '')#secondExamAppelationDate
+
+        div.panel.panel-default.row
+            h3 Олимпадные предметы
+            each subject, index in subjects
+                +field('checkbox', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
+
+        div.panel.panel-default.row
+            h3 Готовность результатов
+
+            +field('checkbox', "firstUploaded", 'Первый экзамен готов')(checked=(doc.firstUploaded))
+            +field('checkbox', "firstExamNoStats", 'Первый экзамен готов, без статистики')(checked=(doc.firstExamNoStats))
+            +field('checkbox', "secondUploaded", 'Второй экзамен готов')(checked=(doc.secondUploaded))
+            +field('checkbox', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
+
+
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock
+
+    script
+        $('#firstExamDate').datetimepicker();
+        $('#secondExamDate').datetimepicker();
+        $('#firstExamAppelationDate').datetimepicker();
+        $('#secondExamAppelationDate').datetimepicker();

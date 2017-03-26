@@ -1,0 +1,21 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="diplom")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=(user.diplomImg ? (user.diplomImgNotApproved ? 'not-approved' : 'ready'): ''))
+                        if (user.diplomImg)
+                            i.material-icons.done-icon #{user.diplomImgNotApproved ? 'clear' : 'done'}
+                        else
+                            i.material-icons.done-icon plus_one
+
+                    b Диплом
+                    br
+                    | (не обязательно)
+                div.setting-value
+                    if (user.diplomImg)
+                        img.img-preview(src="/images/pupils/#{user.diplomImg}", width="200")
+                    else
+                        | Если вы являетесь победителем республиканской олимпиады, загрузите диплом сюда
+            div.settings-list-next-sign
+                i.material-icons keyboard_arrow_right
