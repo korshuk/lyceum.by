@@ -33,7 +33,7 @@ footer
                 | info@lyceum.by
     include ../menu/footerMenu
 
-if (siteConfig.showPupilCabinet && doc.pathAlias == 'abiturientu')
+if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias == 'abiturientu'))
     dialog#settingsDialog.mdl-dialog
         .modal-settings-container
         .mdl-dialog__actions
