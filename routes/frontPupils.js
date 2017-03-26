@@ -395,7 +395,8 @@ module.exports = function (app) {
             res.set('Content-Type', type);
             s.pipe(res);
         });
-        s.on('error', function () {
+        s.on('error', function (err) {
+            console.log('fileerror', err);
             res.set('Content-Type', 'text/plain');
             res.status(404).end('Not found');
         });
