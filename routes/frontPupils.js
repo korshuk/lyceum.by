@@ -38,7 +38,7 @@ module.exports = function (app) {
 */
     passportStrategies(passport);
 
-    app.get('/images/pupils/:img', serveImg);
+    app.get('/api/pupils/images/:img', serveImg);
 
     app.use('/api/pupils/', passport.initialize());
 
