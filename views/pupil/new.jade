@@ -73,6 +73,12 @@ block content
                 .col-md-6
                     .form-group
                         button.btn.btn-default(type='submit', name="action", value='pupil_save') Просто сохранить
+            hr
+            .row
+                .col-md-6
+                .col-md-6.text-right
+                    .form-group
+                        button.btn.btn-info(type='submit', name="action", value='pupil_delete') Удалить!!!            
 
         .col-md-8
             label Справка
@@ -81,12 +87,7 @@ block content
                 hr
                 label Диплом
                 img.img-responsive(src="/images/pupils/#{doc.diplomImg}")
-    hr
-    .row
-        .col-md-6
-        .col-md-6.text-right
-            .form-group
-                button.btn.btn-info(type='submit', name="action", value='pupil_delete') Удалить!!!
+    
     script.
         var hasDiplom = '#{doc.diplomImg}';
         var btn = document.getElementById('approveBtn');
