@@ -1,17 +1,23 @@
 include ./partials/space
 div#disapprovedView.visibleView
     h4 Мы проверили вашу заявку.
-    p.no-padding К сожалению, ваша заявка не принята.
-        br
-        | Это произошло по следующим причинам:
-    ul
-        if (user.requestImgNotApproved)
-            li Ваша справка из школы не подошла
-        if (user.diplomImgNotApproved)
-            li Ваш диплом не соответсвует требованиям
-        if (user.message)
-            li #{user.message}
+    h4 К сожалению, ваша заявка не принята.
 
+    if (user.requestImgNotApproved || user.requestImgLowQuality || user.requestImgStampError || user.diplomImgNotApproved || user.message)
+        p.no-padding Это произошло по следующим причинам:
+
+        ul
+            if (user.requestImgNotApproved)
+                li Ваша справка из школы не подошла
+            if (user.requestImgLowQuality)
+                li Слишком плохое качество файла справки.
+            if (user.requestImgStampError)
+                li Печать на справке не попадает на вашу фотографию
+            if (user.diplomImgNotApproved)
+                li Ваш диплом не соответсвует требованиям
+            if (user.message)
+                li #{user.message}
+    p Попробуйте подать заявку еще раз.
     div.style-green
         h3 Заявка на участие во вступительных испытаниях
         hr.colored

@@ -44,16 +44,19 @@ block content
                 li.list-group-item.row
                     .col-md-12
                         h5 профиль
-                        h4= profile.name
+                        h4= profile ? profile.name : 'Еще не выбран профиль'
                 li.list-group-item.row
-                    +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')
+                    +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
             .row
                 .col-md-12
+                    div#diplomAlert.alert.alert-danger(role="alert", style="display:none") А вот и нельзя апрувнуть, если у чувака есть диплом, а предмет диплома не выбран
                     .form-group
-                        button.btn.btn-success(type='submit', name="action", value='pupil_approve') Подтвердить заявку
+                        button#approveBtn.btn.btn-success(type='submit', name="action", value='pupil_approve') Подтвердить заявку
             hr
             .row
                 +field('checkbox', "requestImgNotApproved", 'Справка НЕ подошла')(checked=(doc.requestImgNotApproved))
+                +field('checkbox', "requestImgLowQuality", 'Справка: Слишком плохое качество')(checked=(doc.requestImgLowQuality))
+                +field('checkbox', "requestImgStampError", 'Справка: Печать не на фото')(checked=(doc.requestImgStampError))
                 +field('checkbox', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
                 +field('textarea', "message", 'Сообщение для абитуриента')(value= doc.message || '').form-control(rows="5")
                 .col-md-12
@@ -78,3 +81,27 @@ block content
                 hr
                 label Диплом
                 img.img-responsive(src="/images/pupils/#{doc.diplomImg}")
+    hr
+    .row
+        .col-md-6
+        .col-md-6.text-right
+            .form-group
+                button.btn.btn-info(type='submit', name="action", value='pupil_delete') Удалить!!!
+    script.
+        var hasDiplom = '#{doc.diplomImg}';
+        var btn = document.getElementById('approveBtn');
+        var exam = document.getElementById('diplomExamName');
+        if (hasDiplom) {
+            btn.addEventListener('click', function (e) {
+                if (!exam.value) {
+                    e.preventDefault();
+                    document.getElementById('diplomAlert').style.display = 'block';
+                }
+            });
+
+            exam.addEventListener('change', function (e) {
+                if (exam.value) {
+                    document.getElementById('diplomAlert').style.display = 'none';
+                }
+            });
+        }

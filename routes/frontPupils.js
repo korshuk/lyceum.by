@@ -259,6 +259,8 @@ module.exports = function (app) {
         pupil.status = 'unapproved';
         pupil.message = '';
         pupil.requestImgNotApproved = false;
+        pupil.requestImgLowQuality = false;
+        pupil.requestImgStampError = false;
         pupil.diplomImgNotApproved = false;
         console.log('requestSend', pupil);
         pupil.save(function (err, pupil) {
@@ -360,6 +362,8 @@ module.exports = function (app) {
                 if (!err) {
                     pupil.requestImg = filename;
                     pupil.requestImgNotApproved = false;
+                    pupil.requestImgLowQuality = false;
+                    pupil.requestImgStampError = false;
                     pupil.save(function (err, pupil) {
                         savePupil(res, err, pupil);
                     });

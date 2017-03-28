@@ -8,8 +8,7 @@
 
     function pupilController($http, $location) {
         var vm = this;
-console.log($location)
-        vm.QQQ = 'ssgfdgfd';
+
         vm.getServerData = getServerData;
         vm.location = $location;
 
@@ -21,7 +20,6 @@ console.log($location)
         vm.gridActions = {};
 
         function getServerData(params, callback) {
-            console.log('13124', arguments)
             $http
                 .get('/admin/pupils/api/list' + params)
                 .then(function (response) {

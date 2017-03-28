@@ -54,7 +54,6 @@ var PupilsController = function(mongoose, app) {
                             value: subject.name
                         }
                     });
-                    console.log(profile);
                     res.render(self.viewPath + 'new.jade', {
                         doc: doc,
                         subjects: subjects,
@@ -153,52 +152,72 @@ var PupilsController = function(mongoose, app) {
         var returnUrl = '/admin/pupils#/' + (urlParser.parse(req.originalUrl).query || '');
         if(req.body.action === 'pupil_return') {
             res.redirect(returnUrl);
-        } else {
+            return;
+        }
+        if (req.body.action === 'pupil_delete') {
             this.Collection.findByReq(req, res, function (doc) {
-                doc.night = req.body.night === 'on';
-                doc.distant = req.body.distant === 'on';
-                doc.region = req.body.region;
-                doc.firstName = req.body.firstName;
-                doc.lastName = req.body.lastName;
-                doc.parentName = req.body.parentName;
-                doc.requestImgNotApproved = req.body.requestImgNotApproved === 'on';
-                doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
-                doc.diplomExamName = req.body.diplomExamName;
-                doc.message = req.body.message;
-                if (req.body.action === 'pupil_approve') {
-                    doc.status = 'approved';
-                }
-                if (req.body.action === 'pupil_disapprove') {
-                    doc.status = 'disapproved';
-                }
-                app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                    if (doc.diplomImg && doc.status === 'approved') {
-                        if (profile.olympExams.indexOf(doc.diplomExamName) > -1) {
-                            doc.passOlymp = true;
-                            doc.exam1 = -1;
-                            doc.exam2 = -1;
-                            doc.sum = -1;
-                        } else {
-                            doc.passOlymp = false;
-                            doc.exam1 = 0;
-                            doc.exam2 = 0;
-                            doc.sum = 0;
-                        }
+                doc.remove(function (err, doc) {
+                    if (err) {
+                        req.session.error = 'Не получилось удалить(( Возникли следующие ошибки: <p>' + err + '</p>';
+                        req.session.locals = {doc: doc};
+                        res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
                     }
-                    doc.save(function (err, doc) {
-                        if (err) {
-                            req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
-                            req.session.locals = {doc: doc};
-                            res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
-                        }
-                        else {
-                            req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                            res.redirect(returnUrl);
-                        }
-                    });
+                    else {
+                        req.session.success = 'Абитуриент удален';
+                        res.redirect(returnUrl);
+                    }
                 });
             });
+            return;
         }
+        this.Collection.findByReq(req, res, function (doc) {
+            doc.night = req.body.night === 'on';
+            doc.distant = req.body.distant === 'on';
+            doc.region = req.body.region;
+            doc.firstName = req.body.firstName;
+            doc.lastName = req.body.lastName;
+            doc.parentName = req.body.parentName;
+            doc.requestImgLowQuality = req.body.requestImgLowQuality === 'on';
+            doc.requestImgStampError = req.body.requestImgStampError === 'on';
+            doc.requestImgNotApproved = (req.body.requestImgNotApproved === 'on') || doc.requestImgStampError || doc.requestImgLowQuality;
+            doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
+            doc.diplomExamName = req.body.diplomExamName;
+            doc.message = req.body.message;
+
+            if (req.body.action === 'pupil_approve') {
+                doc.status = 'approved';
+            }
+            if (req.body.action === 'pupil_disapprove') {
+                doc.status = 'disapproved';
+            }
+
+            app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
+                if (doc.diplomImg && doc.status === 'approved') {
+                    if (profile.olympExams.indexOf(doc.diplomExamName) > -1) {
+                        doc.passOlymp = true;
+                        doc.exam1 = -1;
+                        doc.exam2 = -1;
+                        doc.sum = -1;
+                    } else {
+                        doc.passOlymp = false;
+                        doc.exam1 = 0;
+                        doc.exam2 = 0;
+                        doc.sum = 0;
+                    }
+                }
+                doc.save(function (err, doc) {
+                    if (err) {
+                        req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+                        req.session.locals = {doc: doc};
+                        res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
+                    }
+                    else {
+                        req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
+                        res.redirect(returnUrl);
+                    }
+                });
+            });
+        });
     }
 
     function apiList(req, res) {
@@ -208,16 +227,17 @@ var PupilsController = function(mongoose, app) {
 
         base.Collection
             .find()
+            .populate('profile')
+            .sort(sortDirection + sortField)
             .limit(req.query.itemsPerPage)
             .skip(req.query.itemsPerPage * (req.query.page - 1))
-            .sort(sortDirection + sortField)
             .exec(function (err, pupils) {
-                base.Collection.count().exec(function (err, count) {
-                    res.json({
-                        pupils: pupils,
-                        count: count
+                    base.Collection.count().exec(function (err, count) {
+                        res.json({
+                            pupils: pupils,
+                            count: count
+                        });
                     });
-                });
             });
     }
 

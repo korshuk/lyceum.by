@@ -24,7 +24,10 @@ function define(mongoose, fn) {
         resetPasswordExpires: Date,
         confirmMailToken: String,
 
-        profile: mongoose.Schema.Types.ObjectId,
+        profile: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Profiles'
+        },
         firstName: String,
         lastName: String,
         parentName: String,
@@ -34,6 +37,8 @@ function define(mongoose, fn) {
         night: Boolean,
         distant: Boolean,
         requestImgNotApproved: Boolean,
+        requestImgLowQuality: Boolean,
+        requestImgStampError: Boolean,
         diplomImgNotApproved: Boolean,
         diplomExamName: String,
 
