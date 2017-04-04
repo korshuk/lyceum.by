@@ -440,7 +440,7 @@ ready(function () {
                     200: function (response) {
                         if (response.message === 'registered') {
                             loadingEnd();
-                            showRegisteredMessage();
+                            showRegisteredMessage(data.email);
                         } else {
                             auth.login(response.access_token, response.refresh_token);
                             signInView.hide();
@@ -484,10 +484,11 @@ ready(function () {
                 .addClass('visibleView');
         }
         
-        function showRegisteredMessage() {
+        function showRegisteredMessage(email) {
             $('#registeredMessage')
                 .removeClass('hiddenView')
                 .addClass('visibleView');
+            $('#userMail').text(email);
             $('#registerInputs')
                 .removeClass('visibleView')
                 .addClass('hiddenView');

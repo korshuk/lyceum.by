@@ -265,6 +265,9 @@ angular.module('sotkaApp', [])
                                 xlim: [0 - (xmax - 0)/ 42, xmax + (xmax - 0) / 42],
                                 ylim: [-2, max + 10] },
                 plot = xkcdplot();
+            data = data.filter(function(point){
+                return point.x !== 0;
+            });
             data.unshift({
                     x: 0,
                     y: 0

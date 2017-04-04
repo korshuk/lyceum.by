@@ -33,7 +33,7 @@ ready(function() {
             errorTimeout: 3000,
             errorsPosition: 'overlay',
             imgFileExtensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp'],
-            maxFileSizePreview: "5M",
+            maxFileSizePreview: "20M",
             allowedFormats: ['portrait', 'square', 'landscape'],
             allowedFileExtensions: ['*'],
             messages: {

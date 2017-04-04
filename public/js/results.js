@@ -45,7 +45,7 @@ ready(function() {
             errorTimeout: 3000,
             errorsPosition: 'overlay',
             imgFileExtensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp'],
-            maxFileSizePreview: "5M",
+            maxFileSizePreview: "20M",
             allowedFormats: ['portrait', 'square', 'landscape'],
             allowedFileExtensions: ['*'],
             messages: {
@@ -4565,7 +4565,7 @@ ready(function () {
                     200: function (response) {
                         if (response.message === 'registered') {
                             loadingEnd();
-                            showRegisteredMessage();
+                            showRegisteredMessage(data.email);
                         } else {
                             auth.login(response.access_token, response.refresh_token);
                             signInView.hide();
@@ -4609,10 +4609,11 @@ ready(function () {
                 .addClass('visibleView');
         }
         
-        function showRegisteredMessage() {
+        function showRegisteredMessage(email) {
             $('#registeredMessage')
                 .removeClass('hiddenView')
                 .addClass('visibleView');
+            $('#userMail').text(email);
             $('#registerInputs')
                 .removeClass('visibleView')
                 .addClass('hiddenView');

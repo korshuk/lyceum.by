@@ -224,13 +224,33 @@ var PupilsController = function(mongoose, app) {
         var sortObj = req.query.sort ? req.query.sort.split('-') : ['created', 'asc'];
         var sortField = sortObj[0];
         var sortDirection = sortObj[1] === 'asc' ? '' : '-';
+        var profile = req.query.profile;
+        var status = req.query.status;
+        var firstName = req.query.firstName;
+        var email = req.query.email;
 
-        base.Collection
-            .find()
-            .populate('profile')
+        var itemsPerPage = req.query.itemsPerPage || 100;
+        var page = req.query.page || 1;
+        var query =  base.Collection
+                            .find()
+                            .populate('profile');
+        if (firstName) {
+            query.find({"firstName": new RegExp(firstName, 'i')});
+        }
+        if (email) {
+            query.find({"email": new RegExp(email, 'i')});
+        }
+        if (status) {
+            query.find({"status": status});
+        }
+        if (profile) {
+            query.find({"profile": profile});
+        }
+
+        query
             .sort(sortDirection + sortField)
-            .limit(req.query.itemsPerPage)
-            .skip(req.query.itemsPerPage * (req.query.page - 1))
+            .limit(itemsPerPage)
+            .skip(itemsPerPage * (page - 1))
             .exec(function (err, pupils) {
                     base.Collection.count().exec(function (err, count) {
                         res.json({
@@ -246,7 +266,8 @@ var PupilsController = function(mongoose, app) {
         base.Collection.findOne({_id: req.user.userId}, function (err, pupil) {
             if (pupil.status === 'new clear') {
                 res.render('pupils/newClear.jade', {
-                    userId: pupil._id
+                    userId: pupil._id,
+                    email: pupil.email
                 });
             }
             if (pupil.status === 'new') {

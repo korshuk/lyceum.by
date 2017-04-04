@@ -17,7 +17,28 @@
             getData: vm.getServerData
         };
 
-        vm.gridActions = {};
+        // vm.gridActions = {};
+        getProfiles()
+            .then(function (resp) {
+                vm.profileOptions = resp.data;
+                vm.statusOptions = [
+                    {
+                        name: "new"
+                    },
+                    {
+                        name: "new clear"
+                    },
+                    {
+                        name: "unapproved"
+                    },
+                    {
+                        name: "disapproved"
+                    },
+                    {
+                        name: "approved",
+                    }
+                ]
+            });
 
         function getServerData(params, callback) {
             $http
@@ -31,6 +52,10 @@
                 .catch(function (err) {
                     console.log(err);
                 });
+        }
+
+        function getProfiles() {
+            return $http.get('/front/rest/sotka')
         }
     }
 

@@ -23,6 +23,49 @@ block content
                                 option 1000
                                 option 2000
                                 option 3000
+            .panel.panel-default
+                .panel-body
+                    div.row
+                        .col-md-2
+                            .form-group
+                                label Поиск по фамилии
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по фамилии"
+                                                                    ng-change="filter()"
+                                                                    ng-model="firstName"
+                                                                    filter-by="firstName"
+                                                                    filter-type="text")
+                        .col-md-2
+                            .form-group
+                                label Поиск по email
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по email"
+                                                                    ng-change="filter()"
+                                                                    ng-model="email"
+                                                                    filter-by="email"
+                                                                    filter-type="text")
+                        .col-md-2
+                            .form-group
+                                label Фильтр профиля
+                                select.form-control.order-search-box(placeholder="Фильтр профиля",
+                                                                    ng-change="filter()",
+                                                                    ng-model="profile",
+                                                                    filter-by="profile",
+                                                                    filter-type="select")
+                                    option(value="") Все профили
+                                    option(ng-repeat="option in app.profileOptions track by $index",
+                                        value="{{option._id}}") {{option.name}}
+                        .col-md-2
+                            .form-group
+                                label Фильтр статуса
+                                select.form-control.order-search-box(placeholder="Фильтр статуса",
+                                                                        ng-change="filter()",
+                                                                        ng-model="status",
+                                                                        filter-by="status",
+                                                                        filter-type="select")
+                                    option(value="") Все статусы
+                                    option(ng-repeat="option in app.statusOptions track by $index",
+                                            value="{{option.name}}") {{option.name}}
             table.table.table-hover.table-striped
                 thead
                     tr

@@ -13,12 +13,14 @@ module.exports = function(app) {
   app.get('/contacts.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
     res.locals.path = '/contacts.html';
+    res.locals.siteConfig = app.siteConfig;
     metatags(res);
     app.contactsController.showList(req, res);
   });
   app.get('/:lang/contacts.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
     res.locals.path = '/' + res.locals.lang + '/contacts.html';
+    res.locals.siteConfig = app.siteConfig;
     metatags(res);
     app.contactsController.showList(req, res);
   });
