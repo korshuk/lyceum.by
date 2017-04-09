@@ -10,6 +10,8 @@ div.settings-list-item-holder
                             else
                                 | 1
                     b Профиль
-                div.setting-value #{profile ? profile.name : 'надо выбрать'}
+                div.setting-value
+                    | #{profile ? profile.name : 'надо выбрать'}
+
             div.settings-list-next-sign
                 i.material-icons keyboard_arrow_right

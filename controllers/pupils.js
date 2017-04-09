@@ -11,8 +11,11 @@ var PupilsController = function(mongoose, app) {
     base.ClientAppModel = require('../models/pupil').ClientAppModel;
     base.AccessTokenModel = require('../models/pupil').AccessTokenModel;
     base.RefreshTokenModel = require('../models/pupil').RefreshTokenModel;
+    base.HistoryModel = require('../models/pupil').HistoryModel;
 
     base.apiList = apiList;
+
+    base.historyList = historyList;
 
     base.getUserData = getUserData;
 
@@ -178,8 +181,9 @@ var PupilsController = function(mongoose, app) {
             doc.lastName = req.body.lastName;
             doc.parentName = req.body.parentName;
             doc.requestImgLowQuality = req.body.requestImgLowQuality === 'on';
+            doc.requestImgNoPhoto = req.body.requestImgNoPhoto === 'on';
             doc.requestImgStampError = req.body.requestImgStampError === 'on';
-            doc.requestImgNotApproved = (req.body.requestImgNotApproved === 'on') || doc.requestImgStampError || doc.requestImgLowQuality;
+            doc.requestImgNotApproved = (req.body.requestImgNotApproved === 'on') || doc.requestImgStampError || doc.requestImgLowQuality || doc.requestImgNoPhoto;
             doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
             doc.diplomExamName = req.body.diplomExamName;
             doc.message = req.body.message;
@@ -259,6 +263,18 @@ var PupilsController = function(mongoose, app) {
                         });
                     });
             });
+    }
+
+    function historyList(req, res) {
+        base.HistoryModel
+            .find()
+            .populate('pupil')
+            .sort('-created')
+            .exec(function (err, histories) {
+                res.render('pupil/histories.jade', {
+                    histories: histories
+                });
+            })
     }
 
     function getUserData(req, res) {

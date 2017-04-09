@@ -9,6 +9,11 @@ block content
                 label
                     input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=(docs && docs.showPupilCabinet))
                     | showPupilCabinet
+        div.form-group
+            .checkbox
+                label
+                    input#showStats(name="showStats", type="checkbox", checked=(docs && docs.showStats))
+                    | Показать конкурс на главной
 
         div.form-group
             label Дата конца регистрации
@@ -16,6 +21,8 @@ block content
         div.form-group
             label Дата конца подтверждения регистрации (и профиль перестанет меняться в этот момент)
             input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
+        div.form-group
+            a.btn.btn-primary(href='/admin/settings/calculateStats') Пересчитать статистику
         hr
         div.form-group
             label Ссылка на правила приёма

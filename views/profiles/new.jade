@@ -17,6 +17,8 @@ block content
             +field('text', "code", 'Код')(value= doc.code || '')
             +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
             +field('number', "ammount", 'Количество мест')(value= doc.ammount || '')
+            +field('checkbox', "belLang", 'Есть возможность выбрать бел. язык')(checked=(doc.belLang))
+            +field('number', "order", 'Порядок')(value= doc.order || '')
 
         div.panel.panel-default.row
             h3 Первый экзамен

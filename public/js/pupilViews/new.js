@@ -12,18 +12,20 @@ ready(function () {
         $(document).off('click', '.settings-list-item.editable');
         $(document).off('click', '#sendRequestBtn');
         $(document).off('click', '#saveRequest');
+        $(document).off('change', '#profileInput');
         window.pupilViews.newView = new NewView();
     }
     $dialogContent = $('.view-dialog-content').detach();
 
     function NewView() {
         var settingView;
-       // $(document).on('change', "#fileUpload", on/FileUploadChange);
 
         $(document).on('click', '#saveSettings', saveSettings);
         $(document).on('click', '#saveRequest', saveRequest);
         $(document).on('click', '.settings-list-item.editable', openSettingsDialog);
         $(document).on('click', '#sendRequestBtn', openSendRequestDialog);
+
+        $(document).on('change', '#profileInput', profileInputChange);
 
         function saveRequest() {
             if ($('#rulesOk').prop('checked')) {
@@ -126,7 +128,8 @@ ready(function () {
             if (settingView === 'profile') {
                 if ($('#profileInput').val() != 'Выберите профиль') {
                     data = {
-                        profile: $('#profileInput').val()
+                        profile: $('#profileInput').val(),
+                        needBel: $('#profileBel').prop('checked')
                     };
                     updateProfile(data);
                 }
@@ -152,6 +155,19 @@ ready(function () {
             }
         }
 
+        function profileInputChange() {
+            var selectedOption = $('#profileInput')[0].selectedOptions[0];
+            $('#profileBelLabel')[0].MaterialCheckbox.uncheck()
+            if ($(selectedOption).data('bel')) {
+                $('#belLang')
+                    .removeClass('hiddenView')
+                    .addClass('visibleView');
+            } else {
+                $('#belLang')
+                    .removeClass('visibleView')
+                    .addClass('hiddenView');
+            }
+        }
 
         function updateFIO(data) {
             $.ajax({

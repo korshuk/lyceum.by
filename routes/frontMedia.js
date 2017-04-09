@@ -12,12 +12,14 @@ module.exports = function(app) {
   app.get('/media.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
     res.locals.path = '/media.html';
+    res.locals.siteConfig = app.siteConfig;
     metatags(res);
     app.mediaController.showList(req, res);
   });
   app.get('/:lang/media.html', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
     res.locals.path = '/' + res.locals.lang + '/media.html';
+    res.locals.siteConfig = app.siteConfig;
     metatags(res);
     app.mediaController.showList(req, res);
   });

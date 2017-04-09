@@ -25,6 +25,7 @@ SettingsController = function(mongoose, app) {
             }
 
             doc.showPupilCabinet = req.body.showPupilCabinet === 'on';
+            doc.showStats = req.body.showStats === 'on';
             doc.clientAppName = req.body.clientAppName;
             doc.clientAppSecret = req.body.clientAppSecret;
             doc.registrationEndDate = req.body.registrationEndDate;

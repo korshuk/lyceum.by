@@ -13,12 +13,14 @@ module.exports = function (app) {
     app.get('/news.html', localization, function (req, res) {
         res.locals.MainMenu = app.menuController.getMainMenu();
         res.locals.path = '/news.html';
+        res.locals.siteConfig = app.siteConfig;
         metatags(res);
         app.newsController.showList(req, res);
     });
     app.get('/:lang/news.html', localization, function (req, res) {
         res.locals.MainMenu = app.menuController.getMainMenu();
         res.locals.path = '/' + req.params.lang + '/news.html';
+        res.locals.siteConfig = app.siteConfig;
         metatags(res);
         app.newsController.showList(req, res);
     });

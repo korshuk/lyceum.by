@@ -28,6 +28,7 @@ function define(mongoose, fn) {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Profiles'
         },
+        needBel: Boolean,
         firstName: String,
         lastName: String,
         parentName: String,
@@ -37,6 +38,7 @@ function define(mongoose, fn) {
         night: Boolean,
         distant: Boolean,
         requestImgNotApproved: Boolean,
+        requestImgNoPhoto: Boolean,
         requestImgLowQuality: Boolean,
         requestImgStampError: Boolean,
         diplomImgNotApproved: Boolean,
@@ -94,11 +96,23 @@ function define(mongoose, fn) {
         });
     };
 
-
     mongoose.model('Pupil', PupilSchema);
     fn();
 }
 
+var HistoryModelSchema = new mongoose.Schema({
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    pupil: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Pupil'
+    },
+    message: String
+});
+
+var HistoryModel = mongoose.model('HistoryModelSchema', HistoryModelSchema);
 
 var ClientApp = new mongoose.Schema({
     name: {
@@ -169,3 +183,4 @@ exports.define = define;
 exports.ClientAppModel = ClientAppModel;
 exports.AccessTokenModel = AccessTokenModel;
 exports.RefreshTokenModel = RefreshTokenModel;
+exports.HistoryModel = HistoryModel;

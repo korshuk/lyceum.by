@@ -141,6 +141,19 @@ dialog.dialog-scale {
     margin-top: 0;
   }
 }
+
+.visibleView {
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+  transition: opacity @animationInterval ease-in-out;
+}
+.hiddenView {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}
 #resultsWidget {
   hr.colored {
     margin: 0 0 20px 0;
@@ -315,18 +328,7 @@ dialog.dialog-scale {
     border: 3px solid @colorGreen;
   }
 
-  .visibleView {
-    opacity: 1;
-    visibility: visible;
-    height: auto;
-    transition: opacity @animationInterval ease-in-out;
-  }
-  .hiddenView {
-    opacity: 0;
-    visibility: hidden;
-    height: 0;
-    overflow: hidden;
-  }
+
 
   #signInView {
     .mdl-tabs__tab-bar {

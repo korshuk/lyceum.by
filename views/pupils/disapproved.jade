@@ -3,12 +3,25 @@ div#disapprovedView.visibleView
     h4 Мы проверили вашу заявку.
     h4 К сожалению, ваша заявка не принята.
 
-    if (user.requestImgNotApproved || user.requestImgLowQuality || user.requestImgStampError || user.diplomImgNotApproved || user.message)
+    if (user.requestImgNotApproved || user.requestImgLowQuality || user.requestImgStampError || user.requestImgNoPhoto || user.diplomImgNotApproved || user.message)
         p.no-padding Это произошло по следующим причинам:
 
         ul
             if (user.requestImgNotApproved)
                 li Ваша справка из школы не подошла
+            if (user.requestImgNoPhoto)
+                li На справке отсутсвует фотография.
+                    br
+                    | Вам нужно сделать другую справку.
+                    br
+                    | Для этого:
+                    ol
+                        li Сфотографируйтесь
+                        li Наклейте фотографию на справку
+                        li Поставьте печать в школе (гимназии)
+                            br
+                            strong Обратите внимание - необходимо, чтобы печать попадала на фото
+                        li Загрузите изображение новой справки
             if (user.requestImgLowQuality)
                 li Слишком плохое качество файла справки.
             if (user.requestImgStampError)
@@ -17,6 +30,8 @@ div#disapprovedView.visibleView
                 li Ваш диплом не соответсвует требованиям
             if (user.message)
                 li #{user.message}
+
+
     p Попробуйте подать заявку еще раз.
     div.style-green
         h3 Заявка на участие во вступительных испытаниях

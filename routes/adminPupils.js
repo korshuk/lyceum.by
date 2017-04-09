@@ -12,6 +12,10 @@ module.exports = function(app) {
         app.pupilsController.apiList(req, res);
     });
 
+    router.get('/history', app.userController.Pass, function(req, res) {
+        app.pupilsController.historyList(req, res);
+    });
+
     //router.get('/create', app.userController.Pass, function(req, res) {
     //    app.profileController.create(req, res);
     //});

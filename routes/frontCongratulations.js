@@ -13,12 +13,14 @@ module.exports = function (app) {
     app.get('/congratulations.html', localization, function (req, res) {
         res.locals.MainMenu = app.menuController.getMainMenu();
         res.locals.path = '/congratulations.html';
+        res.locals.siteConfig = app.siteConfig;
         metatags(res);
         app.congratulationsController.showList(req, res);
     });
     app.get('/:lang/congratulations.html', localization, function (req, res) {
         res.locals.MainMenu = app.menuController.getMainMenu();
         res.locals.path = '/' + req.params.lang + '/congratulations.html';
+        res.locals.siteConfig = app.siteConfig;
         metatags(res);
         app.congratulationsController.showList(req, res);
     });
@@ -26,6 +28,7 @@ module.exports = function (app) {
     app.get('/congratulations/:w.html', localization, function (req, res) {
         req.params.congratulationsType = 'congratulations';
         req.params.path = '/congratulations/' + req.params.w + '.html';
+        res.locals.siteConfig = app.siteConfig;
         req.appContentType = 'congratulations';
         app.congratulationsController.show(req, res);
     });

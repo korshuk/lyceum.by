@@ -2,6 +2,8 @@ section.style-blue.col-2
 	h2.caption
 		a(href=beforeUrl + "/news.html", title=translate("Больше новостей"))= translate('Новости')
 	hr.colored
+	if siteConfig.showStats
+		include showStats
 	if main
 		include mainItem
 	include indexlist

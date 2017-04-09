@@ -39,7 +39,9 @@ function define(mongoose, fn) {
         'ammount': Number,
         'count': Number,
         'countArray': Array,
-        'olymp': Number
+        'olymp': Number,
+        'order': Number,
+        'belLang': Boolean
     });
 
     ProfilesSchema.virtual('id').get(function() {

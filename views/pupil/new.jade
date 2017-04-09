@@ -5,7 +5,7 @@ block content
     div.page-header
         h1 Абитуриент
     div.row
-        form.col-md-4(method='post')
+        form.col-sm-4(method='post')
             input(type="hidden", name='return_query', value=query)
             ul.list-group
                 li.list-group-item.row
@@ -55,6 +55,7 @@ block content
             hr
             .row
                 +field('checkbox', "requestImgNotApproved", 'Справка НЕ подошла')(checked=(doc.requestImgNotApproved))
+                +field('checkbox', "requestImgNoPhoto", 'Справка: Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
                 +field('checkbox', "requestImgLowQuality", 'Справка: Слишком плохое качество')(checked=(doc.requestImgLowQuality))
                 +field('checkbox', "requestImgStampError", 'Справка: Печать не на фото')(checked=(doc.requestImgStampError))
                 +field('checkbox', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
@@ -80,7 +81,7 @@ block content
                     .form-group
                         button.btn.btn-info(type='submit', name="action", value='pupil_delete') Удалить!!!            
 
-        .col-md-8
+        .col-sm-8
             label Справка
             img.img-responsive(src="/images/pupils/#{doc.requestImg}")
             if doc.diplomImg

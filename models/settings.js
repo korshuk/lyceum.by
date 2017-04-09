@@ -5,6 +5,7 @@ function define(mongoose, fn) {
 
     SettingsSchema = new Schema({
     	'showPupilCabinet': Boolean,
+        'showStats': Boolean,
         'clientAppName': String,
         'clientAppSecret': String,
         'registrationEndDate': Date,

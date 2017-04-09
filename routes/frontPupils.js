@@ -14,6 +14,8 @@ module.exports = function (app) {
     var crypto = require('crypto');
 
     var ClientAppModel = require('../models/pupil').ClientAppModel;
+
+    var HistoryModel = require('../models/pupil').HistoryModel;
     //var AccessTokenModel = require('../models/pupil').AccessTokenModel;
    // var RefreshTokenModel = require('../models/pupil').RefreshTokenModel;
 
@@ -259,6 +261,7 @@ module.exports = function (app) {
         pupil.status = 'unapproved';
         pupil.message = '';
         pupil.requestImgNotApproved = false;
+        pupil.requestImgNoPhoto = false;
         pupil.requestImgLowQuality = false;
         pupil.requestImgStampError = false;
         pupil.diplomImgNotApproved = false;
@@ -270,6 +273,8 @@ module.exports = function (app) {
 
     function updateProfile(req, res) {
         var pupil = req.user;
+        var oldNeedBel = pupil.needBel;
+        pupil.needBel = req.body.needBel;
         app.profileController.Collection.findOne({_id: pupil.profile}, function (err, profile) {
             app.profileController.Collection.findOne({_id: req.body.profile}, function (err, pupilProfile) {
                 //TODO check pupil status
@@ -306,6 +311,14 @@ module.exports = function (app) {
                 profile.save(function (err) {
                     pupilProfile.save(function (err) {
                         pupil.save(function (err, pupil) {
+                            var history = new HistoryModel({
+                                pupil: pupil._id,
+                                message: "Changed profile from " +  profile.name + ' to ' + pupilProfile.name + ', and bel from ' + oldNeedBel + ' to ' + pupil.needBel,
+                            });
+                            history.save(function (err, history) {
+                                console.log('pupil change', history);
+                            });
+
                             savePupil(res, err, pupil);
                         });
                     });
@@ -362,6 +375,7 @@ module.exports = function (app) {
                 if (!err) {
                     pupil.requestImg = filename;
                     pupil.requestImgNotApproved = false;
+                    pupil.requestImgNoPhoto = false;
                     pupil.requestImgLowQuality = false;
                     pupil.requestImgStampError = false;
                     pupil.save(function (err, pupil) {
