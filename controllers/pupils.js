@@ -235,28 +235,35 @@ var PupilsController = function(mongoose, app) {
 
         var itemsPerPage = req.query.itemsPerPage || 100;
         var page = req.query.page || 1;
+        var countQuery = base.Collection.find();
         var query =  base.Collection
                             .find()
                             .populate('profile');
         if (firstName) {
             query.find({"firstName": new RegExp(firstName, 'i')});
+            countQuery.find({"firstName": new RegExp(firstName, 'i')});
         }
         if (email) {
             query.find({"email": new RegExp(email, 'i')});
+            countQuery.find({"email": new RegExp(email, 'i')});
         }
         if (status) {
             query.find({"status": status});
+            countQuery.find({"status": status});
         }
         if (profile) {
             query.find({"profile": profile});
+            countQuery.find({"profile": profile});
         }
 
         query
             .sort(sortDirection + sortField)
-            .limit(itemsPerPage)
             .skip(itemsPerPage * (page - 1))
+            .limit(itemsPerPage)
             .exec(function (err, pupils) {
-                    base.Collection.count().exec(function (err, count) {
+                countQuery
+                    .count()
+                    .exec(function (err, count) {
                         res.json({
                             pupils: pupils,
                             count: count

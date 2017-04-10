@@ -7,7 +7,7 @@ div#profile
                 each profile, i in profiles
                     option(value=profile._id, selected=('+' + user.profile == '+' + profile._id), data-bel="#{profile.belLang || false}") #{profile.name}
             label.mdl-selectfield__label(for="profileInput") Профиль
-        #belLang(class=(profile.belLang ? 'visibleView' : 'hiddenView'))
+        #belLang(class=((profile && profile.belLang) ? 'visibleView' : 'hiddenView'))
             p
             p
                 | У вас есть возможность выбора языка заданий

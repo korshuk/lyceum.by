@@ -7,7 +7,7 @@ block content
         div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
             div.row
                 .col.col-md-3
-                    span.items {{filtered.length}} items total
+                    span.items {{paginationOptions.totalItems}} items total
                 .col.col-md-9.text-right
                     form.form-inline.pull-right.margin-bottom-basic
                         .form-group
