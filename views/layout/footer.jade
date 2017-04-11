@@ -57,12 +57,14 @@ if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias == 'abiturientu'
             | Подать заявку
         .mdl-dialog__content
             h3 Ознакомся с правилами приёма
+            h4 (Просмотрите правила приёма до конца)
             div#rulesContainer
                 div#rulesContent!= siteConfig.rulesHTML
             .form-input-group
                 label#rulesOkLabel.mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect(for="rulesOk")
                     input#rulesOk.mdl-checkbox__input(type="checkbox")
                     span.mdl-checkbox__label С правилами приёма ознакомлен
+                label#rulesOkHelp.visibleView Галочку можно поставить только долистав правила приёма до самого конца.
             br
             p
                 | Внимание! Введенная информация будет проверена.

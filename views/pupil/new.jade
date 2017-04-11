@@ -83,12 +83,22 @@ block content
 
         .col-sm-8
             label Справка
-            img.img-responsive(src="/images/pupils/#{doc.requestImg}")
+            if (doc.requestImg)
+                if (doc.requestImg.substr(doc.requestImg.lastIndexOf('.') + 1) === 'pdf')
+                    br
+                    a(href="/images/pupils/#{doc.requestImg}", title="pdf. файл", target="_blank") файл справки
+                else
+                    img.img-responsive(src="/images/pupils/#{doc.requestImg}")
+
             if doc.diplomImg
                 hr
                 label Диплом
-                img.img-responsive(src="/images/pupils/#{doc.diplomImg}")
-    
+                if (doc.diplomImg.substr(doc.diplomImg.lastIndexOf('.') + 1) === 'pdf')
+                    br
+                    a(href="/images/pupils/#{doc.diplomImg}", title="pdf. файл", target="_blank") файл диплома
+                else
+                    img.img-responsive(src="/images/pupils/#{doc.diplomImg}")
+
     script.
         var hasDiplom = '#{doc.diplomImg}';
         var btn = document.getElementById('approveBtn');

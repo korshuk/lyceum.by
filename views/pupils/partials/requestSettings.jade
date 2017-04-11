@@ -11,7 +11,10 @@ div.settings-list-item-holder
                     b Справка
                 div.setting-value
                     if (user.requestImg)
-                        img.img-preview(src="/images/pupils/#{user.requestImg}", width="200")
+                        if (user.requestImg.substr(user.requestImg.lastIndexOf('.') + 1) === 'pdf')
+                            a(href="/images/pupils/#{user.requestImg}", title="pdf. файл", target="_blank") файл справки
+                        else
+                            img.img-preview(src="/images/pupils/#{user.requestImg}", width="200")
                     else
                         | нужно отправить нам справку из школы
             div.settings-list-next-sign

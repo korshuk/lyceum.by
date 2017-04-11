@@ -689,6 +689,7 @@ ready(function () {
         var $saveRequestBtn = $("#saveRequest");
         var $rulesOk = $('#rulesOk');
         var $rulesOkLabel = $("#rulesOkLabel");
+        var $rulesOkHelp = $("#rulesOkHelp");
 
         requestDialog.opened = true;
         requestDialog.scrolledToBottom = false;
@@ -696,6 +697,7 @@ ready(function () {
         $rulesContainer.off( 'scroll');
         $saveRequestBtn.attr('disabled', true);
         $rulesOkLabel.addClass('is-disabled');
+        $rulesOkHelp.removeClass('hiddenView').addClass('visibleView');
         $rulesOk.attr('disabled', true);
         document.querySelector('#rulesOkLabel').MaterialCheckbox.uncheck()
 
@@ -714,6 +716,7 @@ ready(function () {
                 $saveRequestBtn.attr('disabled', false);
                 $rulesOk.attr('disabled', false);
                 $rulesOkLabel.removeClass('is-disabled');
+                $rulesOkHelp.removeClass('visibleView').addClass('hiddenView');
                 $rulesContainer.off( 'scroll');
             }
         });

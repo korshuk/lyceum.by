@@ -14,7 +14,10 @@ div.settings-list-item-holder
                     | (не обязательно)
                 div.setting-value
                     if (user.diplomImg)
-                        img.img-preview(src="/images/pupils/#{user.diplomImg}", width="200")
+                        if (user.diplomImg.substr(user.diplomImg.lastIndexOf('.') + 1) === 'pdf')
+                            a(href="/images/pupils/#{user.diplomImg}", title="pdf. файл", target="_blank") файл диплома
+                        else
+                            img.img-preview(src="/images/pupils/#{user.diplomImg}", width="200")
                     else
                         | Если вы являетесь победителем республиканской олимпиады, загрузите диплом сюда
             div.settings-list-next-sign

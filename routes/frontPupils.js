@@ -159,10 +159,11 @@ module.exports = function (app) {
         app.pupilsController.Collection.findOne({confirmMailToken: req.params.token}, function (err, pupil) {
             console.log('registerConfirmation2', pupil);
             if (!pupil) {
-                return res.redirect('/forgot'); //invalid token
+                return res.redirect('/abiturientu.html'); //TODO invalid token
             }
             pupil.status = 'new';
-//TODO remove confirmation code
+            pupil.confirmMailToken = null;
+
             pupil.save(function () {
 
                 ClientAppModel.findOne({clientId: 'mobileV1'}, function (err, client) {
@@ -313,7 +314,7 @@ module.exports = function (app) {
                         pupil.save(function (err, pupil) {
                             var history = new HistoryModel({
                                 pupil: pupil._id,
-                                message: "Changed profile from " +  profile.name + ' to ' + pupilProfile.name + ', and bel from ' + oldNeedBel + ' to ' + pupil.needBel,
+                                message: "profile from <b>" +  profile.name + '</b> to <b>' + pupilProfile.name + '</b>, and bel from <b>' + oldNeedBel + '</b> to <b>' + pupil.needBel + '</b>',
                             });
                             history.save(function (err, history) {
                                 console.log('pupil change', history);

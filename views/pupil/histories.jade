@@ -5,7 +5,8 @@ block content
         h1 История
     table.table.table-hover.table-striped
         each his in histories
-            tr
-                td #{his.pupil.email}
-                td #{his.created}
-                td #{his.message}
+            if his.pupil
+                tr
+                    td #{his.pupil.email}
+                    td #{his.created}
+                    td!= his.message
