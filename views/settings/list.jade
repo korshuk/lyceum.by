@@ -19,7 +19,7 @@ block content
             label Дата конца регистрации
             input#registrationEndDate.form-control(name="registrationEndDate", type="text", value=(docs && docs.registrationEndDate))
         div.form-group
-            label Дата конца подтверждения регистрации (и профиль перестанет меняться в этот момент)
+            label Дата конца регистрации, когда уже точно нельзя будет подать заявку
             input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
         div.form-group
             a.btn.btn-primary(href='/admin/settings/calculateStats') Пересчитать статистику

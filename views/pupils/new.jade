@@ -1,43 +1,58 @@
 include ./partials/dateFormat
 include ./partials/space
 
+- var dateNow = new Date();
+- var regDate = new Date(siteConfig.registrationEndDate);
+- var stopDate = new Date(siteConfig.confirmationEndDate);
+
 div#startView.visibleView
-    p
-        | Для участия в приемной кампании необходимо указать ряд сведений: фамилию, имя и т.д; закачать <b>фото</b> справки из школы в соответствующее поле.
-    p
-        | В случае если ты победил на заключительном этапе республиканской предметной олимпиады, ты можешь закачать изображение диплома I,II или III степени и быть рекомендованным к зачислению в Лицей БГУ без экзаменов*.
+    if (dateNow < stopDate)
+        p
+            | Для участия в приемной кампании необходимо указать ряд сведений: фамилию, имя и т.д; закачать <b>фото</b> справки из школы в соответствующее поле.
+        p
+            | В случае если ты победил на заключительном этапе республиканской предметной олимпиады, ты можешь закачать изображение диплома I,II или III степени и быть рекомендованным к зачислению в Лицей БГУ без экзаменов*.
 
-    p
-        | И помни, документы можно подать до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>!
 
-    p
-        small *Ознакомься с пунктом 3.8 <a href="#{siteConfig.rulesLink}" target="_blank" title="Правила приёма">правил приёма</a>, для того чтобы знать на какой профиль ты можешь поступить без экзаменов.
+        if (dateNow <= regDate)
+            p
+                | И помни, документы можно подать до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>!
+        if (dateNow > regDate && dateNow < stopDate)
+            p
+                | И помни, документы можно подать до <strong>#{prettyDate(siteConfig.confirmationEndDate)}</strong>!
 
-    div.style-green
-        h3 Заявка на участие во вступительных испытаниях
-        if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
-            h4 Теперь, когда все поля заполнены, можно, наконец, отправить нам заявку.
-            h4 Для этого нажмите большую кнопку внизу и следуйте дальнейшим указаниям.
-        hr.colored
-        div.settings-list
+        p
+            small *Ознакомься с пунктом 3.8 <a href="#{siteConfig.rulesLink}" target="_blank" title="Правила приёма">правил приёма</a>, для того чтобы знать на какой профиль ты можешь поступить без экзаменов.
 
-            include ./partials/profileSetting
+        div.style-green
+            h3 Заявка на участие во вступительных испытаниях
+            if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
+                h4 Теперь, когда все поля заполнены, можно, наконец, отправить нам заявку.
+                h4 Для этого нажмите большую кнопку внизу и следуйте дальнейшим указаниям.
+            hr.colored
+            div.settings-list
 
-            include ./partials/fioSettings
+                include ./partials/profileSetting
 
-            include ./partials/regionSettings
+                include ./partials/fioSettings
 
-            include ./partials/requestSettings
+                include ./partials/regionSettings
 
-            include ./partials/additionalSetting
+                include ./partials/requestSettings
 
-            include ./partials/diplomSettings
+                include ./partials/additionalSetting
 
-        if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
-            button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку
-        else
-            p Чтобы подать заявку надо заполнить всё
-            button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent(disabled) Подать заявку
+                include ./partials/diplomSettings
+
+            if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
+                button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку
+            else
+                p Чтобы подать заявку надо заполнить всё
+                button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent(disabled) Подать заявку
+    else
+        h4
+            | К сожалению, регистрация для участия во вступительных экзаменах закончилась.
+        h3
+            | Вы не успели подать заявку.
     br
     include ./partials/attantion
     br

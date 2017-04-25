@@ -1,3 +1,4 @@
+var async = require('async');
 var BaseController = require('./baseController').BaseController;
 var crypto = require('crypto');
 var urlParser =  require('url');
@@ -259,17 +260,32 @@ var PupilsController = function(mongoose, app) {
         query
             .sort(sortDirection + sortField)
             .skip(itemsPerPage * (page - 1))
-            .limit(itemsPerPage)
-            .exec(function (err, pupils) {
-                countQuery
-                    .count()
-                    .exec(function (err, count) {
-                        res.json({
-                            pupils: pupils,
-                            count: count
-                        });
-                    });
-            });
+            .limit(itemsPerPage);
+
+        var firstQ = function(callback){
+            query
+                .exec(function (err, pupils) {
+                    if(err){ callback(err, null) }
+                    else{
+                        callback(null, pupils);
+                    }
+                });
+        };
+
+        var secondQ = function(callback){
+            countQuery
+                .count()
+                .exec(function (err, count) {
+                    if(err){ callback(err, null) }
+                    else{
+                        callback(null, count);
+                    }
+                });
+        };
+
+        async.parallel([firstQ, secondQ], function(err, results){
+            res.json({pupils: results[0], count: results[1]});
+        });
     }
 
     function historyList(req, res) {
@@ -336,6 +352,7 @@ var PupilsController = function(mongoose, app) {
                 app.profileController.Collection.find(function (err, profiles) {
                     app.profileController.Collection.findOne({_id: pupil.profile}, function (err, profile) {
                         res.render('pupils/disapproved.jade', {
+                            siteConfig: app.siteConfig,
                             user: pupil,
                             profiles: profiles,
                             profile: profile

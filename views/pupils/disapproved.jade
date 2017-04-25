@@ -1,60 +1,80 @@
+include ./partials/dateFormat
 include ./partials/space
+
+- var dateNow = new Date();
+- var regDate = new Date(siteConfig.registrationEndDate);
+- var stopDate = new Date(siteConfig.confirmationEndDate);
+
 div#disapprovedView.visibleView
-    h4 Мы проверили вашу заявку.
-    h4 К сожалению, ваша заявка не принята.
+    if (dateNow < stopDate)
+        h4 Мы проверили вашу заявку.
+        h4 К сожалению, ваша заявка не принята.
 
-    if (user.requestImgNotApproved || user.requestImgLowQuality || user.requestImgStampError || user.requestImgNoPhoto || user.diplomImgNotApproved || user.message)
-        p.no-padding Это произошло по следующим причинам:
+        if (user.requestImgNotApproved || user.requestImgLowQuality || user.requestImgStampError || user.requestImgNoPhoto || user.diplomImgNotApproved || user.message)
+            p.no-padding Это произошло по следующим причинам:
 
-        ul
-            if (user.requestImgNotApproved)
-                li Ваша справка из школы не подошла
-            if (user.requestImgNoPhoto)
-                li На справке отсутсвует фотография.
-                    br
-                    | Вам нужно сделать другую справку.
-                    br
-                    | Для этого:
-                    ol
-                        li Сфотографируйтесь
-                        li Наклейте фотографию на справку
-                        li Поставьте печать в школе (гимназии)
-                            br
-                            strong Обратите внимание - необходимо, чтобы печать попадала на фото
-                        li Загрузите изображение новой справки
-            if (user.requestImgLowQuality)
-                li Слишком плохое качество файла справки.
-            if (user.requestImgStampError)
-                li Печать на справке не попадает на вашу фотографию
-            if (user.diplomImgNotApproved)
-                li Ваш диплом не соответсвует требованиям
-            if (user.message)
-                li #{user.message}
+            ul
+                if (user.requestImgNotApproved)
+                    li Ваша справка из школы не подошла
+                if (user.requestImgNoPhoto)
+                    li На справке отсутсвует фотография.
+                        br
+                        | Вам нужно сделать другую справку.
+                        br
+                        | Для этого:
+                        ol
+                            li Сфотографируйтесь
+                            li Наклейте фотографию на справку
+                            li Поставьте печать в школе (гимназии)
+                                br
+                                strong Обратите внимание - необходимо, чтобы печать попадала на фото
+                            li Загрузите изображение новой справки
+                if (user.requestImgLowQuality)
+                    li Слишком плохое качество файла справки.
+                if (user.requestImgStampError)
+                    li Печать на справке не попадает на вашу фотографию
+                if (user.diplomImgNotApproved)
+                    li Ваш диплом не соответсвует требованиям
+                if (user.message)
+                    li #{user.message}
 
 
-    p Попробуйте подать заявку еще раз.
-    div.style-green
-        h3 Заявка на участие во вступительных испытаниях
-        hr.colored
-        div.settings-list
+        p Попробуйте подать заявку еще раз.
 
-            include ./partials/profileSetting
+        if (dateNow <= regDate)
+            p
+                | Напоминаем, документы можно подать до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>!
+        if (dateNow > regDate && dateNow < stopDate)
+            p
+                | Напоминаем, документы можно подать до <strong>#{prettyDate(siteConfig.confirmationEndDate)}</strong>!
 
-            include ./partials/fioSettings
+        div.style-green
+            h3 Заявка на участие во вступительных испытаниях
+            hr.colored
+            div.settings-list
 
-            include ./partials/regionSettings
+                include ./partials/profileSetting
 
-            include ./partials/requestSettings
+                include ./partials/fioSettings
 
-            include ./partials/additionalSetting
+                include ./partials/regionSettings
 
-            include ./partials/diplomSettings
+                include ./partials/requestSettings
 
-        if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined' && !user.requestImgNotApproved && !user.diplomImgNotApproved)
-            button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку снова
-        else
-            p Чтобы подать заявку надо поправить всё
-            button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent(disabled) Подать заявку снова
+                include ./partials/additionalSetting
+
+                include ./partials/diplomSettings
+
+            if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined' && !user.requestImgNotApproved && !user.diplomImgNotApproved)
+                button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку снова
+            else
+                p Чтобы подать заявку надо поправить всё
+                button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent(disabled) Подать заявку снова
+    else
+        h4
+            | К сожалению, регистрация для участия во вступительных экзаменах закончилась.
+        h3
+            | Вы не успели подать заявку.
     br
     include ./partials/attantion
     br

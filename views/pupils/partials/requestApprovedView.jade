@@ -1,11 +1,35 @@
+include ./dateFormat
+include ./space
+
+- var dateNow = new Date();
+- var regDate = new Date(siteConfig.registrationEndDate);
+- var stopDate = new Date(siteConfig.confirmationEndDate);
+
+
 div.style-green
     h3 Заявка на участие во вступительных испытаниях
     hr.colored
-    div.settings-list
-        div.settings-list-item-holder
-        include ./profileSetting
+    if (dateNow < stopDate)
+        div.settings-list
+            include ./profileSetting
 
     div.settings-list.disabled
+        if (dateNow >= stopDate)
+            div.settings-list-item-holder
+                span.settings-list-item
+                    div.settings-list-item-container
+                        div.settings-list-content
+                            div.setting-name
+                                if (user.status === 'new' || user.status === 'disapproved')
+                                    div.step-sign(class=(profile ? 'ready' : ''))
+                                        if (profile)
+                                            i.material-icons.done-icon done
+                                        else
+                                            | 1
+                                b Профиль
+                            div.setting-value
+                                | #{profile ? profile.name : 'надо выбрать'}
+
         div.settings-list-item-holder
             span.settings-list-item
                 div.settings-list-item-container

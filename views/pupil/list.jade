@@ -8,7 +8,9 @@ block content
             div.row
                 .col.col-md-3
                     span.items {{paginationOptions.totalItems}} items total
-                .col.col-md-9.text-right
+                .col.col-md-3
+                    button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
+                .col.col-md-6.text-right
                     form.form-inline.pull-right.margin-bottom-basic
                         .form-group
                             grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
