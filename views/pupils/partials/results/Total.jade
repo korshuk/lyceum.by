@@ -1,0 +1,39 @@
+if (user.exam1 >=0 && user.exam2 >=0)
+    h3 Вступительные экзамены закончились!
+
+    h4 Результаты Ваших экзаменов:
+    ul
+        li  Первый экзамен по предмету 
+            b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
+            br
+            | - Ваш результат: 
+            b  #{profile.firstIsFirst ? user.exam1 : user.exam2}
+        li	Второй экзамен по предмету 
+            b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
+            br
+            | - Ваш результат: 
+            b  #{profile.firstIsFirst ? user.exam2 : user.exam1}
+        li Сумма баллов: 
+            b #{+user.exam1 + +user.exam2}
+    p 	Проходной балл для профиля 
+        b "#{profile.name}"
+        | : 
+        b #{profile.passT}
+    if +user.exam1 + +user.exam2 >= profile.passT
+        include happy
+    else
+        if profile.halfpass > 0
+            if +user.exam1 + +user.exam2 == profile.halfpass
+                include halfhappy
+            else
+                include unhappy
+        else
+            include unhappy
+else
+    p
+        b К сожалению, вы не явились 
+        if (user.exam1 >= 0 || user.exam2>= 0)
+            b на один из экзаменов 
+        else
+            b на оба экзамена 
+        b и не можете участвовать в конкурсе.

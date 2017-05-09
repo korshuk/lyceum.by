@@ -112,6 +112,17 @@ body {
     vertical-align: top; }
 
 /* Make clicks pass-through */
+#loading-bar {
+    background: rgba(0, 0, 0, 0.36);
+    opacity: 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    z-index: 1000;
+}
+
 #loading-bar,
 #loading-bar-spinner {
     pointer-events: none;

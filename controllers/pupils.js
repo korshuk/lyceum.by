@@ -16,6 +16,8 @@ var PupilsController = function(mongoose, app) {
 
     base.apiList = apiList;
 
+    base.saveExams = saveExams;
+
     base.historyList = historyList;
 
     base.getUserData = getUserData;
@@ -225,6 +227,45 @@ var PupilsController = function(mongoose, app) {
         });
     }
 
+    function saveExams(req, res) {
+        var reqUser;
+        var i;
+        var userIds = [];
+        var reqUsers = []
+        for (i in req.body) {
+            reqUser = req.body[i];
+            if (reqUser._id) {
+                userIds.push( new mongoose.Types.ObjectId( reqUser._id ) );
+                reqUsers[reqUser._id] = reqUser;
+            }
+        }
+        base.Collection
+            .find( {_id: {$in: userIds}} )
+            .exec(function(err, users) {
+                if (err) res.status(500).send(err);
+                else {
+                    async.eachSeries(users, function(user, asyncdone) {
+                        reqUser = reqUsers[user._id];
+                        if (reqUser.exam1 || reqUser.exam1 === 0) {
+                            user.exam1 = reqUser.exam1;
+                        }
+                        if (reqUser.exam2 || reqUser.exam2 === 0) {
+                            user.exam2 = reqUser.exam2;
+                        }
+                        if (reqUser.exam1 || reqUser.exam2 || reqUser.exam1 === 0 || reqUser.exam2 === 0) {
+                            user.sum = (reqUser.exam1 || 0) + (reqUser.exam2 || 0);
+                        }
+
+                        user.save(asyncdone);
+                    }, function(err) {
+                        if (err) return res.status(500).send(err);
+                        res.status(200).send('ok');
+                    });
+                }
+        });
+
+    }
+
     function apiList(req, res) {
         var sortObj = req.query.sort ? req.query.sort.split('-') : ['created', 'asc'];
         var sortField = sortObj[0];
@@ -389,13 +430,13 @@ var PupilsController = function(mongoose, app) {
                 templateName = templateName + 'bF';
             }
             if (date >= firstExamDate && date < secondExamDate) {
-                templateName = templateName + (profile.firstExamUploaded ? 'aFbS' : 'aFbSnoR');
+                templateName = templateName + (profile.firstUploaded ? 'aFbS' : 'aFbSnoR');
             }
             if (date >= secondExamDate) {
-                if (profile.totalExamUploaded) {
+                if (profile.totalUploaded) {
                     templateName = templateName + 'Total';
                 } else {
-                    templateName = templateName + (profile.secondExamUploaded ? 'aS' : 'aSnoR');
+                    templateName = templateName + (profile.secondUploaded ? 'aS' : 'aSnoR');
                 }
             }
         }

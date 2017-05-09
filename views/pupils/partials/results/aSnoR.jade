@@ -1,0 +1,19 @@
+h3 Второй экзамен закончился, но его результатов пока нет
+
+p
+    b Результаты экзамена появятся в личном кабинете #{prettyDate(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate)} в 14:00.
+
+p
+    | Кроме того #{prettyDate(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate)} в Лицее БГУ с 14:00 по 17:30 вы можете ознакомиться с результатами проверки вашей работы.
+    br
+    | В другое время ознакомление с работами <nobr class="underline">не проводится</nobr>.
+    br
+    | Вход в здание Лицея БГУ в это время осуществляется <span class="underline">по предъявлению документа, удостоверяющего личность</span>.
+
+if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.exam2 >= 0))
+    +resultLine(profile, user, 1)
+    p
+        b *
+        | - текущий проходной балл по первому экзамену
+else
+    +absent('первый')

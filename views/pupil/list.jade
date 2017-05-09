@@ -68,6 +68,12 @@ block content
                                     option(value="") Все статусы
                                     option(ng-repeat="option in app.statusOptions track by $index",
                                             value="{{option.name}}") {{option.name}}
+                        .col-md-2
+                        .col-md-2
+                            .form-group
+                                button.btn.btn-primary(type="button", ng-click="app.isEditMode = true", ng-show="!app.isEditMode") Редактировать
+                                button.btn.btn-secondary(type="button", ng-click="app.disableEditMode()", ng-show="app.isEditMode") Отмена
+                                button.btn.btn-primary(type="button", ng-click="app.saveChanges()", ng-show="app.isEditMode") Сохранить
             table.table.table-hover.table-striped
                 thead
                     tr
@@ -101,8 +107,12 @@ block content
                         td {{item.profile.name}}
                         td {{item.needBel}}
                         td {{item.passOlymp ? 'БЭ' : ''}}
-                        td {{item.exam1}}
-                        td {{item.exam2}}
+                        td
+                            span(ng-if='!app.isEditMode || item.passOlymp') {{item.exam1}}
+                            input.form-control(type='number', ng-if='app.isEditMode && !item.passOlymp', ng-model="item.exam1")
+                        td
+                            span(ng-if='!app.isEditMode || item.passOlymp') {{item.exam2}}
+                            input.form-control(type='number', ng-if='app.isEditMode && !item.passOlymp', ng-model="item.exam2")
                         td {{item.sum}}
                         td
                             a(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}") Edit

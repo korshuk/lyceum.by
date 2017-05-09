@@ -1,0 +1,34 @@
+h3 Первый экзамен закончился, впереди второй
+
+if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.exam2 >= 0))
+    if (profile.firstExamNoStats)
+        h4 Ваш результат первого экзамена по предмету #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}:
+        h3 #{profile.firstIsFirst ? user.exam1 : user.exam2}
+    else
+        +resultLine(profile, user, 1)
+        p
+            b *
+            | - текущий проходной балл по первому экзамену
+else
+    +absent('первый')
+
+hr.dotted
+
+p Напоминаем Вам, что следующий экзамен по предмету
+    +space()
+    b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName }
+    +space()
+    | пройдет
+    +space()
+    nobr
+        b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
+        +space()
+    if ((profile.firstIsFirst && profile.secondExamPlace) || (!profile.firstIsFirst && profile.firstExamPlace))
+        | по адресу
+        +space()
+        nobr
+            b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace}
+        +space()
+        | начало экзамена в
+        +space()
+        b 9:00

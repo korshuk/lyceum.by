@@ -14,6 +14,8 @@
 
         vm.exportCSV = exportCSV;
         vm.getFileName = getFileName;
+        vm.disableEditMode = disableEditMode;
+        vm.saveChanges = saveChanges;
 
         vm.gridOptions = {
             data: [],
@@ -37,7 +39,6 @@
             'sum'
         ];
 
-        // vm.gridActions = {};
         getProfiles()
             .then(function (resp) {
                 vm.profileOptions = resp.data;
@@ -55,11 +56,31 @@
                         name: "disapproved"
                     },
                     {
-                        name: "approved",
+                        name: "approved"
                     }
                 ]
             });
 
+
+        function disableEditMode() {
+            window.location.reload();
+        }
+
+        function saveChanges() {
+            saveData(vm.sortedData);
+        }
+
+        function saveData(data) {
+            $http
+                .post('/admin/pupils/api/list', data)
+                .then(function (response) {
+                    disableEditMode();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    alert('Беда!!!! что-то сломалось');
+                });
+        }
         function getServerData(params, callback) {
             $http
                 .get('/admin/pupils/api/list' + params)

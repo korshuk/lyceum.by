@@ -12,6 +12,10 @@ module.exports = function(app) {
         app.pupilsController.apiList(req, res);
     });
 
+    router.post('/api/list', app.userController.Pass, function(req, res) {
+        app.pupilsController.saveExams(req, res);
+    });
+
     router.get('/history', app.userController.Pass, function(req, res) {
         app.pupilsController.historyList(req, res);
     });

@@ -41,7 +41,10 @@ function define(mongoose, fn) {
         'countArray': Array,
         'olymp': Number,
         'order': Number,
-        'belLang': Boolean
+        'belLang': Boolean,
+        'firstUploaded': Boolean,
+        'secondUploaded': Boolean,
+        'totalUploaded': Boolean,
     });
 
     ProfilesSchema.virtual('id').get(function() {

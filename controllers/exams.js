@@ -167,6 +167,7 @@ ExamsController = function(mongoose) {
                         }
 
                         passed = best;
+
                         docsP[i].olimp = profiles[docsP[i].code].olimp;
                         docsP[i].minF = profiles[docsP[i].code].resultsF[0];
                         docsP[i].maxF = profiles[docsP[i].code].resultsF[profiles[docsP[i].code].resultsF.length - 1];
