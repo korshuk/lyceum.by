@@ -34,6 +34,7 @@
             'profileName',
             'region',
             'status',
+            'needBel',
             'exam1',
             'exam2',
             'sum'
@@ -114,6 +115,7 @@
                     profileName: item.profile ? item.profile.name : '',
                     region: item.region,
                     status: item.status,
+                    needBel: item.needBel,
                     exam1: item.exam1,
                     exam2: item.exam2,
                     sum: item.sum

@@ -88,6 +88,7 @@ block content
                         th.sortable(sortable="created") created&nbsp;
                         th.sortable(sortable="profile") profile&nbsp;
                         th.sortable(sortable="needBel") Бел.яз&nbsp;
+                        th.sortable(sortable="requestImg") Есть картинка&nbsp;
                         th.sortable(sortable="passOlymp") БЭ&nbsp;
                         th.sortable(sortable="exam1") Э-1&nbsp;
                         th.sortable(sortable="exam2") Э-2&nbsp;
@@ -106,6 +107,7 @@ block content
                         td {{item.created | date:'dd-MM-yy HH:mm:ss'}}
                         td {{item.profile.name}}
                         td {{item.needBel}}
+                        td {{!!item.requestImg}}
                         td {{item.passOlymp ? 'БЭ' : ''}}
                         td
                             span(ng-if='!app.isEditMode || item.passOlymp') {{item.exam1}}
