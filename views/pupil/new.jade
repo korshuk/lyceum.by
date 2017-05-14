@@ -45,6 +45,7 @@ block content
                     .col-md-12
                         h5 профиль
                         h4= profile ? profile.name : 'Еще не выбран профиль'
+                    +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
                 li.list-group-item.row
                     +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
             .row

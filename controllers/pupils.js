@@ -54,20 +54,30 @@ var PupilsController = function(mongoose, app) {
         this.Collection.findByReq(req, res, function (doc) {
             app.subjectController.Collection.find(function (err, subjects) {
                 app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                    subjects = subjects.map(function (subject) {
-                        return {
-                            name: subject.name,
-                            value: subject.name
-                        }
-                    });
-                    res.render(self.viewPath + 'new.jade', {
-                        doc: doc,
-                        subjects: subjects,
-                        profile: profile,
-                        method: 'put',
-                        viewName: 'pupil',
-                        query: urlParser.parse(req.originalUrl).query
-                    });
+                    app.profileController.Collection.find().exec(function (err, profiles) {
+                        subjects = subjects.map(function (subject) {
+                            return {
+                                name: subject.name,
+                                value: subject.name
+                            }
+                        });
+                        profiles = profiles.map(function (profile) {
+                            return {
+                                name: profile.name,
+                                value: '' + profile._id
+                            }
+                        });
+                        res.render(self.viewPath + 'new.jade', {
+                            doc: doc,
+                            subjects: subjects,
+                            profile: profile,
+                            profiles: profiles,
+                            method: 'put',
+                            viewName: 'pupil',
+                            query: urlParser.parse(req.originalUrl).query
+                        });
+                    })
+
                 });
             });
         });
@@ -190,6 +200,9 @@ var PupilsController = function(mongoose, app) {
             doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
             doc.diplomExamName = req.body.diplomExamName;
             doc.message = req.body.message;
+            if (req.body.profile) {
+                doc.profile = req.body.profile;
+            }
 
             if (req.body.action === 'pupil_approve') {
                 doc.status = 'approved';
