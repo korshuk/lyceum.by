@@ -58,7 +58,7 @@ SotkaController = function(mongoose, application) {
                                       pupil = pupils[i];
                                       if (pupil.sum > -1) {
                                           resultsF.push(+pupil.exam1);
-                                          resultsS.push(+pupil.exam2);
+                                          resultsS.push(pupil.exam2 ? +pupil.exam2 : 0);
                                           resultsT.push(+pupil.sum);
                                       }
                                   }
