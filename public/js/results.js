@@ -4129,7 +4129,9 @@ var signInCaptcha;
 
 function onloadCallback() {
     console.log('ready');
-    window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': SITEKEY, callback: captchaCallbackSI });
+    if (document.getElementById('signInCaptcha')) {
+        window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': SITEKEY, callback: captchaCallbackSI});
+    }
     window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': SITEKEY, callback: captchaCallbackRQ });
 }
 
