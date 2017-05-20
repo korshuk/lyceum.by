@@ -13,21 +13,48 @@ mixin resultLine(profile, data, num)
         - var exam = profile.firstIsFirst ? data.exam2 : data.exam1
         - var name = profile.firstIsFirst ? profile.secondExamName : profile.firstExamName
     - }
-    h4 Ваш результат #{num == 1 ? 'первого' : 'второго'} экзамена по предмету #{name}:
-    div.resultsLine
-        div.line
-            div.result-line(style="left:#{min}%;right:#{100 - max}%")
-            div.not-pass-line(style="left:#{min}%;right:#{100 - pass}%")
-            div.badge.range-badge.left-range <b>0</b>
-            div.badge.minBadge.with-tooltip(id="minBadge#{num}",style="left:#{min}%")<b>#{min}</b>
-                div.arrow-up
-            div.mdl-tooltip(for="minBadge#{num}") Минимальный балл
-            div.badge.maxBadge.with-tooltip(id="maxBadge#{num}",style="left:#{max}%")<b>#{max}</b>
-                div.arrow-up
-            div.mdl-tooltip(for="maxBadge#{num}") Максимальный балл
-            div.badge.range-badge.right-range <b>100</b>
-            div.badge.passBadge.with-tooltip(id="passBadge#{num}",style="left:#{pass}%")<b>#{pass}*</b>
-                div.arrow-up
-            div.mdl-tooltip(for="passBadge#{num}") Текущий проходной
-            div.badge.resultBadge(style="left:#{exam}%", class=(exam < pass)? "not-pass" : "") Ваш результат <br><b>#{exam}</b>
-                div.arrow-down
+    - if (num == 3) {
+        - var min = profile.minT
+        - var max = profile.maxT
+        - var pass = profile.passT
+        - var exam = data.sum
+        - var name = profile.firstIsFirst ? profile.secondExamName : profile.firstExamName
+    - }
+    if (num != 3)
+        h4 Ваш результат #{num == 1 ? 'первого' : 'второго'} экзамена по предмету #{name}:
+        div.resultsLine
+            div.line
+                div.result-line(style="left:#{min}%;right:#{100 - max}%")
+                div.not-pass-line(style="left:#{min}%;right:#{100 - pass}%")
+                div.badge.range-badge.left-range <b>0</b>
+                div.badge.minBadge.with-tooltip(id="minBadge#{num}",style="left:#{min}%")<b>#{min}</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="minBadge#{num}") Минимальный балл
+                div.badge.maxBadge.with-tooltip(id="maxBadge#{num}",style="left:#{max}%")<b>#{max}</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="maxBadge#{num}") Максимальный балл
+                div.badge.range-badge.right-range <b>100</b>
+                div.badge.passBadge.with-tooltip(id="passBadge#{num}",style="left:#{pass}%")<b>#{pass}*</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="passBadge#{num}") Текущий проходной
+                div.badge.resultBadge(style="left:#{exam}%", class=(exam < pass)? "not-pass" : "") Ваш результат <br><b>#{exam}</b>
+                    div.arrow-down
+    if (num === 3)
+        h3 Ваш результат по двум экзаменам:
+        div.resultsLine
+            div.line
+                div.result-line(style="left:#{min * 0.5}%;right:#{100 - max * 0.5}%")
+                div.not-pass-line(style="left:#{min * 0.5}%;right:#{100 - pass * 0.5}%")
+                div.badge.range-badge.left-range <b>0</b>
+                div.badge.minBadge.with-tooltip(id="minBadge#{num}",style="left:#{min * 0.5}%")<b>#{min}</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="minBadge#{num}") Минимальный балл
+                div.badge.maxBadge.with-tooltip(id="maxBadge#{num}",style="left:#{max * 0.5}%")<b>#{max}</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="maxBadge#{num}") Максимальный балл
+                div.badge.range-badge.right-range <b>200</b>
+                div.badge.passBadge.with-tooltip(id="passBadge#{num}",style="left:#{pass * 0.5}%")<b>#{pass}*</b>
+                    div.arrow-up
+                div.mdl-tooltip(for="passBadge#{num}") Текущий проходной
+                div.badge.resultBadge(style="left:#{exam * 0.5}%", class=(exam < pass) ? "not-pass" : "") Ваш результат <br><b>#{exam}</b>
+                    div.arrow-down

@@ -391,6 +391,7 @@ var PupilsController = function(mongoose, app) {
             if (pupil.status === 'approved') {
                 app.profileController.Collection.find(function (err, profiles) {
                     app.profileController.Collection.findOne({_id: pupil.profile}, function (err, profile) {
+                        console.log(pupil, profile);
                         res.render('pupils/approved.jade', {
                             siteConfig: app.siteConfig,
                             user: pupil,
@@ -418,10 +419,11 @@ var PupilsController = function(mongoose, app) {
     }
 
     function createApprovedPupilView(pupil, profile) {
+        console.log(arguments);
         var date = new Date;
 
-        var firstExamDate = profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate;
-        var secondExamDate = profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate;
+        var firstExamDate = profile.firstExamDate;
+        var secondExamDate = profile.secondExamDate;
 
         var templateName = '';
         //TODO check empty firstExamDeate

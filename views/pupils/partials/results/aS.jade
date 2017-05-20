@@ -4,7 +4,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
     +resultLine(profile, user, 1)
     p
         b *
-        | - текущий проходной балл по первому экзамену
+        | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ первого экзамена
 else
     +absent('первый')
 
@@ -14,9 +14,16 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
     +resultLine(profile, user, 2)
     p
         b *
-        | - текущий проходной балл по второму экзамену
+        | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ второго экзамена
 else
     +absent('второй')
+
+hr.dotted
+if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.exam1 >= 0))
+    +resultLine(profile, user, 3)
+    p
+        b *
+        | - текущий проходной балл по итогам двух вступительных испытаний без учета процедуры ознакомления с результатами и резервного дня
 
 hr.dotted
 h4 Абитуриенты, рекомендованные к зачислению, будут определены после подведения итогов резервного дня (29 мая).
