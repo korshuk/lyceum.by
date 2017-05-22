@@ -62,7 +62,7 @@ SotkaController = function(mongoose, application) {
                                       if (pupil.exam2 > -1) {
                                           resultsS.push(+pupil.exam2);
                                       }
-                                      if (pupil.sum > -1) {
+                                      if (pupil.exam1 > -1 && pupil.exam2 > -1 && pupil.sum > -1) {
                                           resultsT.push(+pupil.sum);
                                       }
                                   }
@@ -122,7 +122,6 @@ SotkaController = function(mongoose, application) {
                                       }
 
                                   }
-                                  console.log(profile)
                                   profile.save(function (err, doc) {});
                           });
                       });
