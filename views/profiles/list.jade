@@ -18,9 +18,9 @@ block content
                     br
                     | Мест #{doc.ammount}
                     br
-                    | Заявлений #{doc.count}
+                    | Заявлений #{doc.countArray[doc.countArray.length-1].count}
                     br
-                    | без экзаменов #{doc.olimp}
+                    | без экзаменов #{doc.olymp}
 
                 td
                     | pass:#{doc.passF}
@@ -38,9 +38,13 @@ block content
                     |  min:#{doc.minT}
                     |  max:#{doc.maxT}
                 td
-                    | Полупроходной #{doc.halfpass}&nbsp;/&nbsp;#{doc.halfPupils}
+                    | Проходной:&nbsp;#{doc.passT}
                     br
-                    | Дельта&nbsp;#{doc.halfDelta}
+                    | Полупроходной:&nbsp;#{doc.halfpass}
+                    br
+                    | С полупроходным:&nbsp;#{doc.halfPupils}
+                    br
+                    | Дельта:&nbsp;#{doc.halfDelta}
                 td
                     a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
                     br

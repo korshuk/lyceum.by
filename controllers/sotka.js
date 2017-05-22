@@ -56,9 +56,13 @@ SotkaController = function(mongoose, application) {
                                   });
                                   for (i ; i < pupilsLength; i++) {
                                       pupil = pupils[i];
-                                      if (pupil.sum > -1) {
+                                      if (pupil.exam1 > -1) {
                                           resultsF.push(+pupil.exam1);
-                                          resultsS.push(pupil.exam2 ? +pupil.exam2 : 0);
+                                      }
+                                      if (pupil.exam2 > -1) {
+                                          resultsS.push(+pupil.exam2);
+                                      }
+                                      if (pupil.sum > -1) {
                                           resultsT.push(+pupil.sum);
                                       }
                                   }
@@ -98,6 +102,10 @@ SotkaController = function(mongoose, application) {
                                   indexOfPass = resultsT.indexOf(profile.passT);
                                   lastIndexOf = resultsT.lastIndexOf(profile.passT);
 
+                                  profile.halfDelta = 0;
+                                  profile.halfPupils = 0;
+                                  profile.halfpass = 0;
+
                                   if (lastIndexOf - indexOfPass > 0) {
                                       profile.halfpass = profile.passT;
                                       profile.passT = resultsT[lastIndexOf + 1];
@@ -113,10 +121,8 @@ SotkaController = function(mongoose, application) {
                                           profile.halfPupils = 0;
                                       }
 
-                                  } else {
-                                      profile.halfDelta = 0;
-                                      profile.halfPupils = 0;
                                   }
+                                  console.log(profile)
                                   profile.save(function (err, doc) {});
                           });
                       });
