@@ -161,7 +161,9 @@ module.exports = function (app) {
             if (!pupil) {
                 return res.redirect('/abiturientu.html'); //TODO invalid token
             }
-            pupil.status = 'new';
+            if (pupil.status && pupil.status !== 'approved') {
+                pupil.status = 'new';
+            }
             pupil.confirmMailToken = null;
 
             pupil.save(function () {
