@@ -309,7 +309,11 @@
                 },
                 table: {
                     'title': "Table"
+                },
+                pagebreak: {
+                    'title': "PageBreak"
                 }
+
             }
         }
     };
@@ -2367,6 +2371,26 @@
             this.getTextBlock().html(SirTrevor.toHTML(data.text, this.type));
         }
     });
+    /*
+        PageBreak
+    */
+    SirTrevor.Blocks.Pagebreak = SirTrevor.Block.extend({
+        type: 'pagebreak',
+
+        title: function () {
+            return i18n.t('blocks:pagebreak:title');
+        },
+
+        editorHTML: '<div class="st-text-block" contenteditable="false"><hr style="border-top: 2px solid;"></div>',
+
+        icon_name: 'quote',
+
+        loadData: function (data) {
+            this.getTextBlock().html();//SirTrevor.toHTML(data.text, this.type));
+        }
+
+    });
+
     SirTrevor.Blocks.Tweet = (function () {
 
         var tweet_template = _.template([
