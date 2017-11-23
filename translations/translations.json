@@ -187,8 +187,16 @@
         "en": "Contact Information",
         "by": "Кантактная інфармацыя"
     },
+    "р\/с BY39BLBB36320100557342001001" : {
+    	"en": "BY39BLBB36320100557342001001",
+    	"by": "р\/р BY39BLBB36320100557342001001"
+    },
+    "Дирекция&nbsp;ОАО&nbsp;&quot;Белинвестбанк&quot; по&nbsp;г.Минску&nbsp;и&nbsp;Минской&nbsp;области, код&nbsp;BLBBBY2X г.Минск,&nbsp;ул.&nbsp;Коллекторная,&nbsp;11 УНН&nbsp;100557342, ОКПО&nbsp;37360809" : {
+        "en": "BLBBBY2X, Belinvestbank JSC, Minsk, Belarus",
+        "by": "Дырэкцыя&nbsp;ААТ&nbsp;&quot;Белінвестбанк&quot; па&nbsp;г.Мінску&nbsp;і&nbsp;Мінскай&nbsp;вобласці, код&nbsp;BLBBBY2X г.Минск,&nbsp;вул.&nbsp;Калектарная,&nbsp;11 УНН&nbsp;100557342, ОКПО&nbsp;37360809"
+    },
     "" : {
-    	"en": "",
-    	"by": ""
+        "en": "",
+        "by": ""
     }
 }
