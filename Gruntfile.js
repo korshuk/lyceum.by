@@ -40,13 +40,25 @@ module.exports = function (grunt) {
                 src: ['public/js/pupils/ready.js', 'public/js/pupils/dropify.js', 'public/js/pupils/material.js', 'public/js/pupils/storage.js', 'public/js/pupils/oauth.js', 'public/js/pupils/ui.js', 'public/js/pupils/app.js'],
                 dest: 'public/js/results.js',
             },
+            main: {
+                src: ['public/js/pupils/ready.js', 'public/js/pupils/material.js', 'public/js/lyceumscript.js'],
+                dest: 'public/js/script.js',
+            }
+        },
+
+        uglify: {
+            lyceum: {
+                files: {
+                    'public/js/script.min.js': ['public/js/script.js']
+                }
+            }
         },
 
 
         watch: {
             styles: {
-                files: ['public/less/**/*.less', 'public/js/pupils/*.js'],
-                tasks: ['less', 'postcss', 'concat'],
+                files: ['public/less/**/*.less', 'public/js/pupils/*.js', 'public/js/*.js'],
+                tasks: ['less', 'postcss', 'concat', 'uglify'],
                 options: {
                     nospawn: true
                 }
@@ -54,5 +66,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['less', 'postcss', 'watch']);
+    grunt.registerTask('default', ['less', 'postcss', 'concat', 'uglify', 'watch']);
 };

@@ -312,6 +312,9 @@
                 },
                 pagebreak: {
                     'title': "PageBreak"
+                },
+                shopbutton: {
+                    'title': "Shop Button"
                 }
 
             }
@@ -2387,6 +2390,26 @@
 
         loadData: function (data) {
             this.getTextBlock().html();//SirTrevor.toHTML(data.text, this.type));
+        }
+
+    });
+
+    /*
+        Shop Button
+    */
+    SirTrevor.Blocks.Shopbutton = SirTrevor.Block.extend({
+        type: 'shopbutton',
+
+        title: function () {
+            return i18n.t('blocks:shopbutton:title');
+        },
+
+        editorHTML: '<p><strong>shop.lyceum.by link</strong></p><div class="st-text-block st-shop-block" contenteditable="true"></div>',
+
+        icon_name: 'link',
+
+        loadData: function (data) {
+            this.getTextBlock().html(SirTrevor.toHTML(data.text, this.type));
         }
 
     });
