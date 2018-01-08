@@ -1,5 +1,5 @@
 .st-outer {
-  font-size: 16px; 
+  font-size: 14px;
   border: 2px solid #f3f3f3;
 }
 
@@ -307,7 +307,7 @@ ul.st-text-block {
   position: absolute; }
 
 .st-block__editor img {
-  width: 100%;
+  width: 200px;
   height: auto; }
 
 .st-block__upload-container {

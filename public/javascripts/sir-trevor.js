@@ -2409,6 +2409,7 @@
         icon_name: 'link',
 
         loadData: function (data) {
+            data.text = data.text.trim().replace(/(\r\n|\n|\r)/gm,"");
             this.getTextBlock().html(SirTrevor.toHTML(data.text, this.type));
         }
 

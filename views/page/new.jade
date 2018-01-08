@@ -24,42 +24,57 @@ block content
                 br
                 div.tab-content
                     div.tab-pane.fade.in.active#ru
-                        +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
-                        +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15') 
-                            != JSON.stringify(doc.body.ru)
-                        +field('textarea', "keywords.ru", 'Ключевые слова')(rows='2')
-                            != doc.keywords.ru || ''
-                        +field('textarea', "description.ru", 'Описание')(rows='2')
-                            != doc.description.ru || ''
+                        .row
+                            .col-lg-12
+                                .col-lg-12
+                                    +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
+                                    +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15')
+                                        != JSON.stringify(doc.body.ru)
+                                    +field('textarea', "keywords.ru", 'Ключевые слова')(rows='2')
+                                        != doc.keywords.ru || ''
+                                    +field('textarea', "description.ru", 'Описание')(rows='2')
+                                        != doc.description.ru || ''
                     div.tab-pane.fade#by
-                        +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
-                        +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
-                            != JSON.stringify(doc.body.by)
-                        +field('textarea', "keywords.by", 'Ключевые слова')(rows='2')
-                            != doc.keywords.by || ''
-                        +field('textarea', "description.by", 'Описание')(rows='2')
-                            != doc.description.by || ''
+                        .row
+                            .col-lg-12
+                                .col-lg-12
+                                    +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
+                                    +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
+                                        != JSON.stringify(doc.body.by)
+                                    +field('textarea', "keywords.by", 'Ключевые слова')(rows='2')
+                                        != doc.keywords.by || ''
+                                    +field('textarea', "description.by", 'Описание')(rows='2')
+                                        != doc.description.by || ''
                     div.tab-pane.fade#en
-                        +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
-                        +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
-                            != JSON.stringify(doc.body.en)
-                        +field('textarea', "keywords.en", 'Ключевые слова')(rows='2')
-                            != doc.keywords.en || ''
-                        +field('textarea', "description.en", 'Описание')(rows='2')
-                            != doc.description.en || ''
-        if doc.name.ru
-            +field('text', 'pathAlias', 'Путь')(value= doc.pathAlias || '')            
-       
-        +field('number', 'order', 'Order')(value= doc.order || 0)
+                        .row
+                            .col-lg-12
+                                .col-lg-12
+                                    +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
+                                    +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
+                                        != JSON.stringify(doc.body.en)
+                                    +field('textarea', "keywords.en", 'Ключевые слова')(rows='2')
+                                        != doc.keywords.en || ''
+                                    +field('textarea', "description.en", 'Описание')(rows='2')
+                                        != doc.description.en || ''
         div.row
-            label.col Родительская страница:
+            .col
+                if doc.name.ru
+                    +field('text', 'pathAlias', 'Путь')(value= doc.pathAlias || '')
+
+                +field('number', 'order', 'Order')(value= doc.order || 0)
+        div.row
+            .col
+                label Родительская страница:
             div.col.col-lg-12
-                select(name='parentpage')
-                    option(value='') Нет
-                    each parent in parents
-                      option(value= parent.id, selected= doc.parentpage == parent.id)= parent.name.ru
-        
-        +buttonSet
+                .form-group
+                    select(name='parentpage')
+                        option(value='') Нет
+                        each parent in parents
+                          option(value= parent.id, selected= doc.parentpage == parent.id)= parent.name.ru
+        div.row
+            .col
+                hr
+                +buttonSet
 
 block scripts
     include ../stuff/adminScriptBlock

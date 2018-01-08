@@ -1,9 +1,10 @@
 mixin field(type, name, label, options, selected)
     case type
         when 'textarea'
+            .form-group
+                label.col-md-12 #{label}:
             .col-md-12
                 .form-group
-                    label.col-md-12 #{label}:
                     textarea.form-control(name='#{name}', attributes)
                         block
         when 'select'
