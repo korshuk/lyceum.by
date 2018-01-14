@@ -36,49 +36,7 @@ footer
     img#herbRB(src="/img/herb-rb.png")
 
 if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias == 'abiturientu'))
-    dialog#settingsDialog.mdl-dialog
-        .modal-settings-container
-        .mdl-dialog__actions
-            button#saveSettings.mdl-button Сохранить
-            button.mdl-button.close-dialog.mdl-button--colored Закрыть
-
-        .cs-loader.loading-start
-            div.mdl-spinner.mdl-js-spinner.is-active
-
-    dialog#pupilSettingsDialog.mdl-dialog
-        .modal-pupil-settings-container
-        .mdl-dialog__actions
-            button#savePupilSettings.mdl-button Сохранить
-            button.mdl-button.close-dialog.mdl-button--colored Закрыть
-
-        .cs-loader.loading-start
-            div.mdl-spinner.mdl-js-spinner.is-active
-
-    dialog#sendRequestDialog.mdl-dialog
-        h3.mdl-dialog__title
-            | Подать заявку
-        .mdl-dialog__content
-            h3 Ознакомся с правилами приёма
-            h4 (Просмотрите правила приёма до конца)
-            div#rulesContainer
-                div#rulesContent!= siteConfig.rulesHTML
-            .form-input-group
-                label#rulesOkLabel.mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect(for="rulesOk")
-                    input#rulesOk.mdl-checkbox__input(type="checkbox")
-                    span.mdl-checkbox__label С правилами приёма ознакомлен
-                label#rulesOkHelp.visibleView Галочку можно поставить только долистав правила приёма до самого конца.
-            br
-            p
-                | Внимание! Введенная информация будет проверена.
-                br
-                | После подачи заявления ты не сможешь редактировать личные данные, но сможешь менять профиль.
-
-        .mdl-dialog__actions
-            button#saveRequest.mdl-button Отправить
-            button.mdl-button.close-dialog.mdl-button--colored Закрыть
-
-        .cs-loader.loading-start
-            div.mdl-spinner.mdl-js-spinner.is-active
+    include ../results/widgetDialogs
 
 script(src='http://code.jquery.com/jquery-1.11.0.min.js')
 script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)

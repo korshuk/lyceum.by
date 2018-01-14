@@ -1,9 +1,9 @@
 var async = require('async');
 var BaseController = require('./baseController').BaseController;
 var crypto = require('crypto');
-var urlParser =  require('url');
+var urlParser = require('url');
 
-var PupilsController = function(mongoose, app) {
+var PupilsController = function (mongoose, app) {
 
     var base = new BaseController('Pupil', '', mongoose, app, true);
 
@@ -20,6 +20,8 @@ var PupilsController = function(mongoose, app) {
 
     base.historyList = historyList;
 
+    base.testPage = testPage;
+
     base.getUserData = getUserData;
 
     base.changeStatus = changeStatus;
@@ -34,7 +36,7 @@ var PupilsController = function(mongoose, app) {
             doc = new self.Collection();
         }
         app.subjectController.Collection.find(function (err, subjects) {
-            subjects = subjects.map(function(subject) {
+            subjects = subjects.map(function (subject) {
                 return {
                     name: subject.name,
                     value: subject.id
@@ -83,10 +85,10 @@ var PupilsController = function(mongoose, app) {
         });
     };
 
-    base.save = function(req, res) {
+    base.save = function (req, res) {
         var self = this;
         var doc = new this.Collection(req.body);
-        doc.save(function(err) {
+        doc.save(function (err) {
             if (err) {
                 req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
                 req.session.locals = {doc: doc};
@@ -99,9 +101,9 @@ var PupilsController = function(mongoose, app) {
         });
     };
 
-    base.update = function(req, res) {
+    base.update = function (req, res) {
         var self = this;
-        this.Collection.findByReq(req, res, function(doc){
+        this.Collection.findByReq(req, res, function (doc) {
             doc.name = req.body.name;
             doc.code = req.body.code;
             doc.subcode = req.body.subcode;
@@ -121,7 +123,7 @@ var PupilsController = function(mongoose, app) {
             doc.secondUploaded = req.body.secondUploaded === 'on';
             doc.totalUploaded = req.body.totalUploaded === 'on';
 
-            doc.save(function(err) {
+            doc.save(function (err) {
                 if (err) {
                     req.session.error = 'Не получилось обновить профиль(( Возникли следующие ошибки: <p>' + err + '</p>';
                     req.session.locals = {doc: doc};
@@ -135,11 +137,11 @@ var PupilsController = function(mongoose, app) {
         });
     };
 
-    base.remove = function(req, res) {
+    base.remove = function (req, res) {
         var self = this;
-        this.Collection.findByReq(req, res, function(doc){
+        this.Collection.findByReq(req, res, function (doc) {
             var name = doc.name;
-            doc.remove(function() {
+            doc.remove(function () {
                 req.session.success = 'Профиль <strong>' + name + '</strong> успешно удалён';
                 res.redirect(self.path);
             });
@@ -163,10 +165,10 @@ var PupilsController = function(mongoose, app) {
 
     return base;
 
-    function changeStatus (req, res) {
+    function changeStatus(req, res) {
         var self = this;
         var returnUrl = '/admin/pupils#/' + (urlParser.parse(req.originalUrl).query || '');
-        if(req.body.action === 'pupil_return') {
+        if (req.body.action === 'pupil_return') {
             res.redirect(returnUrl);
             return;
         }
@@ -248,16 +250,16 @@ var PupilsController = function(mongoose, app) {
         for (i in req.body) {
             reqUser = req.body[i];
             if (reqUser._id) {
-                userIds.push( new mongoose.Types.ObjectId( reqUser._id ) );
+                userIds.push(new mongoose.Types.ObjectId(reqUser._id));
                 reqUsers[reqUser._id] = reqUser;
             }
         }
         base.Collection
-            .find( {_id: {$in: userIds}} )
-            .exec(function(err, users) {
+            .find({_id: {$in: userIds}})
+            .exec(function (err, users) {
                 if (err) res.status(500).send(err);
                 else {
-                    async.eachSeries(users, function(user, asyncdone) {
+                    async.eachSeries(users, function (user, asyncdone) {
                         reqUser = reqUsers[user._id];
                         if (reqUser.exam1 || reqUser.exam1 === 0) {
                             user.exam1 = reqUser.exam1;
@@ -270,12 +272,12 @@ var PupilsController = function(mongoose, app) {
                         }
 
                         user.save(asyncdone);
-                    }, function(err) {
+                    }, function (err) {
                         if (err) return res.status(500).send(err);
                         res.status(200).send('ok');
                     });
                 }
-        });
+            });
 
     }
 
@@ -291,9 +293,9 @@ var PupilsController = function(mongoose, app) {
         var itemsPerPage = req.query.itemsPerPage || 100;
         var page = req.query.page || 1;
         var countQuery = base.Collection.find();
-        var query =  base.Collection
-                            .find()
-                            .populate('profile');
+        var query = base.Collection
+            .find()
+            .populate('profile');
         if (firstName) {
             query.find({"firstName": new RegExp(firstName, 'i')});
             countQuery.find({"firstName": new RegExp(firstName, 'i')});
@@ -316,28 +318,32 @@ var PupilsController = function(mongoose, app) {
             .skip(itemsPerPage * (page - 1))
             .limit(itemsPerPage);
 
-        var firstQ = function(callback){
+        var firstQ = function (callback) {
             query
                 .exec(function (err, pupils) {
-                    if(err){ callback(err, null) }
-                    else{
+                    if (err) {
+                        callback(err, null)
+                    }
+                    else {
                         callback(null, pupils);
                     }
                 });
         };
 
-        var secondQ = function(callback){
+        var secondQ = function (callback) {
             countQuery
                 .count()
                 .exec(function (err, count) {
-                    if(err){ callback(err, null) }
-                    else{
+                    if (err) {
+                        callback(err, null)
+                    }
+                    else {
                         callback(null, count);
                     }
                 });
         };
 
-        async.parallel([firstQ, secondQ], function(err, results){
+        async.parallel([firstQ, secondQ], function (err, results) {
             res.json({pupils: results[0], count: results[1]});
         });
     }
@@ -352,6 +358,11 @@ var PupilsController = function(mongoose, app) {
                     histories: histories
                 });
             })
+    }
+
+    function testPage(req, res) {
+        res.locals.siteConfig = app.siteConfig;
+        res.render('pupil/test.jade', {});
     }
 
     function getUserData(req, res) {
@@ -429,7 +440,7 @@ var PupilsController = function(mongoose, app) {
         //TODO check empty firstExamDeate
         console.log(date, firstExamDate, date < firstExamDate);
         if (pupil.passOlymp) {
-           // templateName = templateName + 'passOlymp';
+            // templateName = templateName + 'passOlymp';
         }
         if (pupil.pass || pupil.passOlymp) {
             var tail;
@@ -465,7 +476,7 @@ var PupilsController = function(mongoose, app) {
             console.log('RefreshTokenModel.findOne', err, token);
             //TODO delete
             base.RefreshTokenModel.find({}, function (err, rts) {
-                rts.forEach(function(rt) {
+                rts.forEach(function (rt) {
                     console.log('___:', rt);
                 });
             })
@@ -493,7 +504,7 @@ var PupilsController = function(mongoose, app) {
             });
         });
     }
-    
+
     function emailAuthorization(client, username, password, scope, done) {
         console.log('emailAuthorization', client, username, password, scope);
         base.Collection.findOne({email: username}, function (err, user) {
@@ -628,7 +639,6 @@ var PupilsController = function(mongoose, app) {
         });
     }
 };
-
 
 
 exports.PupilsController = PupilsController;

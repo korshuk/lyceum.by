@@ -18,7 +18,7 @@ block content
                     br
                     | Мест #{doc.ammount}
                     br
-                    | Заявлений #{doc.countArray[doc.countArray.length-1].count}
+                    | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}
                     br
                     | без экзаменов #{doc.olymp}
 

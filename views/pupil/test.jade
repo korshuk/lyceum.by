@@ -1,0 +1,15 @@
+extends ../adminLayout
+
+
+block content
+    script(src='http://code.jquery.com/jquery-1.11.0.min.js')
+    script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)
+
+    .page-header
+        h1 Форма для тестов
+    .row
+        .col.col-md-6
+            include ../results/widget
+
+    include ../results/widgetDialogs
+//script(src='/js/script.min.js')

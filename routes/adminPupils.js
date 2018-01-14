@@ -20,6 +20,10 @@ module.exports = function(app) {
         app.pupilsController.historyList(req, res);
     });
 
+    router.get('/test', app.userController.Pass, function(req, res) {
+        app.pupilsController.testPage(req, res);
+    });
+
     //router.get('/create', app.userController.Pass, function(req, res) {
     //    app.profileController.create(req, res);
     //});
