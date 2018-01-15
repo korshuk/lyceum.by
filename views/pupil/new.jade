@@ -144,12 +144,18 @@ block content
         }()
 
         var picture = $('#requestImg');  // Must be already loaded or cached!
-        picture.guillotine();
+        picture.on('load', function() {
+            picture.guillotine();
+            picture.guillotine('fit');
+        });
+
 
         var diplomImg = $('#diplomImg');  // Must be already loaded or cached!
-        diplomImg.guillotine();
-        picture.guillotine('fit');
-        diplomImg.guillotine('fit');
+        diplomImg.on('load', function () {
+            diplomImg.guillotine();
+            diplomImg.guillotine('fit');
+        });
+
 
         $('.controls.request a').click(function (e) {
             e.preventDefault()
