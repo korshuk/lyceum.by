@@ -89,7 +89,20 @@ block content
                     br
                     a(href="/images/pupils/#{doc.requestImg}", title="pdf. файл", target="_blank") файл справки
                 else
-                    img.img-responsive(src="/images/pupils/#{doc.requestImg}")
+                    div(style="width: 80%")
+                        img#requestImg.img-responsive(src="/images/pupils/#{doc.requestImg}")
+
+                    div.controls.request
+                        a#rotate_left(href="#", title="Rotate left")
+                            i.fa.fa-rotate-left
+                        a#zoom_out(href="#", title="Zoom out")
+                            i.fa.fa-search-minus
+                        a#fit(href="#", title="Fit image")
+                            i.fa.fa-arrows-alt
+                        a#zoom_in(href="#", title="Zoom in")
+                            i.fa.fa-search-plus
+                        a#rotate_right(href="#", title="Rotate right")
+                            i.fa.fa-rotate-right
 
             if doc.diplomImg
                 hr
@@ -98,12 +111,57 @@ block content
                     br
                     a(href="/images/pupils/#{doc.diplomImg}", title="pdf. файл", target="_blank") файл диплома
                 else
-                    img.img-responsive(src="/images/pupils/#{doc.diplomImg}")
+                    div(style="width: 80%")
+                        img#diplomImg.img-responsive(src="/images/pupils/#{doc.diplomImg}")
+                    div.controls.diplom
+                        a#rotate_left(href="#", title="Rotate left")
+                            i.fa.fa-rotate-left
+                        a#zoom_out(href="#", title="Zoom out")
+                            i.fa.fa-search-minus
+                        a#fit(href="#", title="Fit image")
+                            i.fa.fa-arrows-alt
+                        a#zoom_in(href="#", title="Zoom in")
+                            i.fa.fa-search-plus
+                        a#rotate_right(href="#", title="Rotate right")
+                            i.fa.fa-rotate-right
+
+    script(src = '/javascripts/jquery.js')
+    script(src="/javascripts/guillotine/jquery.guillotine.min.js")
 
     script.
         var hasDiplom = '#{doc.diplomImg}';
         var btn = document.getElementById('approveBtn');
         var exam = document.getElementById('diplomExamName');
+
+        var camelize = function () {
+            var regex = /[\W_]+(.)/g
+            var replacer = function (match, submatch) {
+                return submatch.toUpperCase()
+            }
+            return function (str) {
+                return str.replace(regex, replacer)
+            }
+        }()
+
+        var picture = $('#requestImg');  // Must be already loaded or cached!
+        picture.guillotine();
+
+        var diplomImg = $('#diplomImg');  // Must be already loaded or cached!
+        diplomImg.guillotine();
+        picture.guillotine('fit');
+        diplomImg.guillotine('fit');
+
+        $('.controls.request a').click(function (e) {
+            e.preventDefault()
+            action = camelize(this.id)
+            picture.guillotine(action)
+        });
+        $('.controls.diplom a').click(function (e) {
+            e.preventDefault()
+            action = camelize(this.id)
+            diplomImg.guillotine(action)
+        })
+
         if (hasDiplom) {
             btn.addEventListener('click', function (e) {
                 if (!exam.value) {
