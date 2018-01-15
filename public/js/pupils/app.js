@@ -1,13 +1,11 @@
-var SITEKEY = '6LeX2BUUAAAAAAns3g0pRiKL7TC9hlcEH-LqhcRV';
 var requestCaptcha;
 var signInCaptcha;
 
 function onloadCallback() {
-    console.log('ready');
     if (document.getElementById('signInCaptcha')) {
-        window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': SITEKEY, callback: captchaCallbackSI});
+        window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackSI});
     }
-    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': SITEKEY, callback: captchaCallbackRQ });
+    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackRQ });
 }
 
 function captchaCallbackSI() {

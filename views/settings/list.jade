@@ -33,27 +33,35 @@ block content
                 | #{docs && docs.rulesHTML}
 
         hr
-        div.form-group
-            label Первый email
-            input#email1.form-control(name="email1", type="text", value=(docs && docs.email1))
-            label Первый email - пароль
-            input#email1Pass.form-control(name="email1Pass", type="text", value=(docs && docs.email1Pass))
-        div.form-group
-            label Втрой email
-            input#emai21.form-control(name="email2", type="text", value=(docs && docs.email2))
-            label Втрой email - пароль
-            input#email2Pass.form-control(name="email2Pass", type="text", value=(docs && docs.email2Pass))
-        div.form-group
-            label Третий email
-            input#email3.form-control(name="email3", type="text", value=(docs && docs.email3))
-            label Третий email - пароль
-            input#email3Pass.form-control(name="email3Pass", type="text", value=(docs && docs.email3Pass))
-        div.form-group
-            label Четвертый email
-            input#email4.form-control(name="email4", type="text", value=(docs && docs.email4))
-            label Четвертый email - пароль
-            input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
+        h3 eMails
+        .row
+            div.form-group.col-sm-6
+                label Первый email
+                input#email1.form-control(name="email1", type="text", value=(docs && docs.email1))
+                label Первый email - пароль
+                input#email1Pass.form-control(name="email1Pass", type="text", value=(docs && docs.email1Pass))
+            div.form-group.col-sm-6
+                label Втрой email
+                input#emai21.form-control(name="email2", type="text", value=(docs && docs.email2))
+                label Втрой email - пароль
+                input#email2Pass.form-control(name="email2Pass", type="text", value=(docs && docs.email2Pass))
+            div.form-group.col-sm-6
+                label Третий email
+                input#email3.form-control(name="email3", type="text", value=(docs && docs.email3))
+                label Третий email - пароль
+                input#email3Pass.form-control(name="email3Pass", type="text", value=(docs && docs.email3Pass))
+            div.form-group.col-sm-6
+                label Четвертый email
+                input#email4.form-control(name="email4", type="text", value=(docs && docs.email4))
+                label Четвертый email - пароль
+                input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
 
+        hr
+        h3 reCAPTCHA
+        .row
+            .form-group.col-lg-6
+                label Ключ
+                input#reSiteKey.form-control(name="reSiteKey", type="text", value=(docs && docs.reSiteKey))
         hr
         div.form-group
             label Супер пароль

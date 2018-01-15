@@ -20,7 +20,8 @@ function define(mongoose, fn) {
         'email3Pass': String,
         'email4': String,
         'email4Pass': String,
-        'superPassword': String
+        'superPassword': String,
+        'reSiteKey': String
     });
 
     mongoose.model('Settings', SettingsSchema);
