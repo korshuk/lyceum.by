@@ -60,7 +60,9 @@ block content
         h3 reCAPTCHA
         .row
             .form-group.col-lg-6
-                label Ключ
+                label Ключ (
+                    a(href="https://www.google.com/recaptcha/admin") можно узнать тут
+                    |)
                 input#reSiteKey.form-control(name="reSiteKey", type="text", value=(docs && docs.reSiteKey))
         hr
         div.form-group
