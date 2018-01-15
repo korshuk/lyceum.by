@@ -175,7 +175,7 @@ ready(function () {
             if (captchaValid && emailValid) {
                 loadingStart();
                 $.post(RESETPASS_URL, {
-                    mail: $('#passEmail').val()
+                    mail: $('#passEmail').val().toLowerCase()
                 })
                 .done(function(res){
                     if (res.error && res.error === "user not found") {
@@ -272,7 +272,7 @@ ready(function () {
                 hideUserNotFoundError();
                 data = {
                     grant_type: 'password',
-                    username: $('#loginEmailInput').val(),
+                    username: $('#loginEmailInput').val().toLowerCase(),
                     password: $('#loginPassInput').val()
                 };
                 postData(TOKEN_URL, data);
@@ -357,7 +357,7 @@ ready(function () {
 
                 if ($('#registerForm .has-error').length === 0) {
                     data = {
-                        email: email,
+                        email: email.toLowerCase(),
                         password: password
                     };
                 }

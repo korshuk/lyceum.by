@@ -27,7 +27,7 @@ div#resultsWidget
                             | Если Вы всё внимательно проверили, но войти всё равно не удается, Вы можете нажать <a class="requestPasswordView" href='#'>сюда</a>.
                     .login-form-container
                         div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-                            input#loginEmailInput.form-input.mdl-textfield__input(type="text")
+                            input#loginEmailInput.form-input.mdl-textfield__input(type="email")
                             label.mdl-textfield__label(for="loginEmailInput") Email
                         div.form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
                             input#loginPassInput.form-input.mdl-textfield__input(type="password")
@@ -131,4 +131,4 @@ div#resultsWidget
 link(rel='stylesheet', href='/css/widget.css')
 script
     var reSITEKEY = '#{siteConfig.reSiteKey}';
-script(src='/js/results.js')
+script(src='/js/results.min.js')

@@ -49,7 +49,8 @@ module.exports = function (grunt) {
         uglify: {
             lyceum: {
                 files: {
-                    'public/js/script.min.js': ['public/js/script.js']
+                    'public/js/script.min.js': ['public/js/script.js'],
+                    'public/js/results.min.js': ['public/js/results.js']
                 }
             }
         },
