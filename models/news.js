@@ -1,5 +1,3 @@
-var NewsSchema;
-
 require('../modules/date.js');
 
 function define(mongoose, fn) {
@@ -73,6 +71,10 @@ function define(mongoose, fn) {
 
     NewsSchema.virtual('id').get(function () {
         return this._id.toHexString();
+    });
+
+    NewsSchema.virtual('isNews').get(function () {
+        return true;
     });
 
     NewsSchema.statics.findByReq = function (req, res, next) {

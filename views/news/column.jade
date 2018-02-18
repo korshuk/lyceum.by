@@ -1,7 +1,8 @@
-div(class= locals.ajax ? 'ajax' : '').col-1
-    - for (var i=0; i < height; i++) {
-    -   d = docs[counter];
-    -   counter++;
-        if (counter <= docs.length)
-            include item
-    -}
+- var length = columnDocs.length;
+- var doc;
+- for (var i=0; i < length; i++) {
+-   doc = columnDocs[i];
+    h3= columnDocs[i].name
+   // pre= d.createdAt
+  //  include item
+-}

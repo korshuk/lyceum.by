@@ -1,0 +1,25 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Список посланных писем
+    table.table.table-hover
+        tr
+            th Кому
+            th От кого
+            th Тема
+            th Ошибка
+            th messageId
+            th Ответ
+            th html
+            th Дата
+        - each doc in docs
+            tr
+                td= doc.to
+                td= doc.from
+                td= doc.subject
+                td= doc.error
+                td= doc.messageId
+                td= doc.response
+                td!= doc.html
+                td= doc.createdAt.format('dd-MM-yyyy hh:mm:ss')

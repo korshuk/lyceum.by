@@ -1,15 +1,17 @@
 var nodemailer = require('nodemailer');
+var BaseController = require('./baseController').BaseController;
 
-var MailController = function(mongoose, app) {
-    console.log('MailController', app.siteConfig);
+var MailController = function (mongoose, app) {
+
+    var base = new BaseController('Emails', '', mongoose, app, true);
 
     var transporters = [];
     var senderEmails = [];
     var transportCounter = 0;
 
-    this.update = update;
-    this.mailPassRequest = mailPassRequest;
-    this.mailRegisterConfirm = mailRegisterConfirm;
+    base.update = update;
+    base.mailPassRequest = mailPassRequest;
+    base.mailRegisterConfirm = mailRegisterConfirm;
 
     function mailPassRequest(mailTo, param) {
         prepareMail(mailTo, 'mails/passwordRequest.jade', param, 'Запрос пароля');
@@ -20,20 +22,22 @@ var MailController = function(mongoose, app) {
     }
 
     function prepareMail(mailTo, viewPath, param, subject) {
-        app
-            .render(viewPath, {
-                    param: param,
-                    subject: subject
-                },
-                function (err, html) {
-                    console.log(err, html)
-                    var mailOptions = {
-                        to: mailTo,
-                        subject: subject,
-                        html: html
-                    };
-                    sendEmail(mailOptions)
-                });
+        var options = {
+            param: param,
+            subject: subject
+        };
+
+        app.render(viewPath, options, onRendered);
+
+        function onRendered(err, html) {
+            var mailOptions = {
+                to: mailTo,
+                subject: subject,
+                html: html
+            };
+            sendEmail(mailOptions)
+        }
+
     }
 
     function sendEmail(mailOptions) {
@@ -45,7 +49,22 @@ var MailController = function(mongoose, app) {
         }
         mailOptions.from = 'Лицей БГУ Приемная Комиссия <' + senderEmails[num] + '>';
 
-        transporters[num].sendMail(mailOptions, function(error, info)  {
+        transporters[num].sendMail(mailOptions, function (error, info) {
+            var email = {
+                error: error,
+                messageId: info.messageId,
+                response: info.response,
+                from: mailOptions.from,
+                to: mailOptions.to,
+                subject: mailOptions.subject,
+                html: mailOptions.html
+            };
+
+            var doc = new base.Collection(email);
+            doc.save(function(err) {
+                console.log('!!!!!!!!', arguments);
+            });
+
             if (error) {
                 return console.log(error);
             }
@@ -57,7 +76,7 @@ var MailController = function(mongoose, app) {
         var tr;
 
         transporters = [];
-        senderEmails = []
+        senderEmails = [];
         console.log('MailController update')
         for (var i = 1; i < 5; i++) {
             tr = nodemailer.createTransport({
@@ -72,7 +91,9 @@ var MailController = function(mongoose, app) {
         }
     }
 
+    base.constructor = arguments.callee;
 
+    return base;
 };
 
 exports.MailController = MailController;

@@ -112,16 +112,28 @@
 
         base.getList = function (page, next) {
             var self = this;
-            this.Collection.find().sort('-createdAt').skip(page * 6).limit(6).exec(function (err, docs) {
-                self.getMain(function (err, main) {
+            this.Collection
+                .find()
+                .sort('-createdAt')
+                .skip(page * 6)
+                .limit(6)
+                .exec(onListFound);
+
+            function onListFound(err, docs) {
+                self.getMain(mainCheck);
+
+                function mainCheck(err, main) {
                     if (main) {
-                        docs = docs.filter(function (item) {
-                            return item.id !== main.id;
-                        });
+                        docs = docs.filter(docFilter);
                     }
                     next(err, docs, main);
-                });
-            });
+
+                    function docFilter(item) {
+                        return item.id !== main.id;
+                    }
+                }
+
+            }
         };
 
         base.getMain = function (next) {

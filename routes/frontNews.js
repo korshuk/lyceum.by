@@ -10,38 +10,65 @@ module.exports = function (app) {
         };
     };
 
-    app.get('/news.html', localization, function (req, res) {
+    app.get('/news.html', localization, showNews);
+    app.get('/:lang/news.html', localization, showNews);
+
+    app.get('/morenews/:page', localization, moreList);
+    app.get('/:lang/morenews/:page', localization, moreList);
+
+    app.get('/morenewsitems/:page', localization, moreNewsItems);
+    app.get('/:lang/morenewsitems/:page', localization, moreNewsItems);
+
+    app.get('/news/:w.html', localization, showNewsItem);
+    app.get('/:lang/news/:w.html', localization, showNewsItem);
+
+    function moreList (req, res) {
+        app.newsController.moreList(req, res);
+    }
+
+    function moreNewsItems(req, res) {
+        const page = req.params.page;
+
+        app.newsController.getList(page, function (err, ndocs, main) {
+            app.congratulationsController.getList(page, function (err, cdocs) {
+                var docs = ndocs
+                    .map(setNewsFlag)
+                    .concat(cdocs)
+                    .sort(sortByDate);
+                var templateName = 'news/';
+
+                templateName += docs.length > 0 ? 'indexlist.jade' : 'nomore.jade';
+
+                res.render(templateName, {
+                    docs: docs,
+                    ajax: true
+                });
+
+            });
+        });
+
+        function sortByDate(a, b) {
+            return b.createdAt - a.createdAt;
+        }
+
+        function setNewsFlag(doc) {
+            doc.isNews = true;
+            return doc;
+        }
+    }
+
+    function showNews(req, res) {
         res.locals.MainMenu = app.menuController.getMainMenu();
         res.locals.path = '/news.html';
         res.locals.siteConfig = app.siteConfig;
         metatags(res);
         app.newsController.showList(req, res);
-    });
-    app.get('/:lang/news.html', localization, function (req, res) {
-        res.locals.MainMenu = app.menuController.getMainMenu();
-        res.locals.path = '/' + req.params.lang + '/news.html';
-        res.locals.siteConfig = app.siteConfig;
-        metatags(res);
-        app.newsController.showList(req, res);
-    });
+    }
 
-    app.get('/morenews/:page', localization, function (req, res) {
-        app.newsController.moreList(req, res);
-    });
-    app.get('/:lang/morenews/:page', localization, function (req, res) {
-        app.newsController.moreList(req, res);
-    });
-
-    app.get('/news/:w.html', localization, function (req, res) {
+    function showNewsItem(req, res) {
         req.params.newsType = 'news';
         req.params.path = '/news/' + req.params.w + '.html';
         req.appContentType = 'news';
         app.newsController.show(req, res);
-    });
-    app.get('/:lang/news/:w.html', localization, function (req, res) {
-        req.params.newsType = 'news';
-        req.params.path = '/' + req.params.lang + '/news/' + req.params.w + '.html';
-        req.appContentType = 'news';
-        app.newsController.show(req, res);
-    });
+    }
 };

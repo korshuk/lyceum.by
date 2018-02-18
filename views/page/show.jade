@@ -2,9 +2,11 @@ extends ../layout/header
 block content
     main(role='main')#main.page
         include ../menu/breadcrumbs
+
         hr.colored
-        h1= translateObj(doc.name)
+
         include ../menu/subMenu
+
         -locals.type = '';
         -locals.olympic = '';
         if (translateObj(doc.type) === 'table') 
@@ -13,7 +15,9 @@ block content
             - locals.type = 'table'
             - locals.olympic = 'olympic'
         section(class= locals.type === 'table' ? 'col-3' : 'col-2')#content
-            if (siteConfig.showPupilCabinet && doc.pathAlias == 'abiturientu')
+            h1= translateObj(doc.name)
+
+            if (siteConfig.showPupilCabinet && doc.pathAlias === 'abiturientu')
                 include ../results/widget
             else
                 include ../stuff/sir/sirparser 

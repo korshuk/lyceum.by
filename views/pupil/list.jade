@@ -6,10 +6,12 @@ block content
     div(ng-app="pupilApp", ng-controller="pupilController as app")
         div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
             div.row
-                .col.col-md-3
+                .col.col-md-2
                     span.items {{paginationOptions.totalItems}} items total
-                .col.col-md-3
+                .col.col-md-4
                     button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
+                .col.col-md-4
+
                 .col.col-md-6.text-right
                     form.form-inline.pull-right.margin-bottom-basic
                         .form-group
@@ -69,11 +71,34 @@ block content
                                     option(ng-repeat="option in app.statusOptions track by $index",
                                             value="{{option.name}}") {{option.name}}
                         .col-md-2
+                            .form-group.has-error
+                                label.control-label Поиск дупликатов
+                                select.form-control.order-search-box(placeholder="Поиск дупликатов",
+                                                                        ng-change="filter()",
+                                                                        ng-model="duplicates",
+                                                                        filter-by="duplicates",
+                                                                        filter-type="select")
+                                    option(value="") Поиск дупликатов
+                                    option(value="false") Off
+                                    option(value="true") On
+
                         .col-md-2
-                            .form-group
-                                button.btn.btn-primary(type="button", ng-click="app.isEditMode = true", ng-show="!app.isEditMode") Редактировать
-                                button.btn.btn-secondary(type="button", ng-click="app.disableEditMode()", ng-show="app.isEditMode") Отмена
-                                button.btn.btn-primary(type="button", ng-click="app.saveChanges()", ng-show="app.isEditMode") Сохранить
+                            .form-group.has-success.text-right
+                                label.control-label Добавить результаты
+                                .row
+                                    .col-xs-12(ng-show="!app.isEditMode1 && !app.isEditMode2")
+                                        button.btn.btn-success(type="button", ng-click="app.isEditMode1 = true")
+                                            | 1 Экзамен
+                                        | &nbsp;
+                                        button.btn.btn-success(type="button", ng-click="app.isEditMode2 = true")
+                                            | 2 Экзамен
+                                    .col-xs-12(ng-show="app.isEditMode1 || app.isEditMode2")
+                                        button.btn.btn-secondary(type="button", ng-click="app.disableEditMode()")
+                                            | Отмена
+                                        | &nbsp;
+                                        button.btn.btn-primary(type="button", ng-click="app.saveChanges()")
+                                            | Сохранить
+
             table.table.table-hover.table-striped
                 thead
                     tr
@@ -112,11 +137,11 @@ block content
                         td {{!!item.requestImg}}
                         td {{item.passOlymp ? 'БЭ' : ''}}
                         td
-                            span(ng-if='!app.isEditMode || item.passOlymp') {{item.exam1}}
-                            input.form-control(type='number', ng-if='app.isEditMode && !item.passOlymp', ng-model="item.exam1")
+                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1}}
+                            input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
                         td
-                            span(ng-if='!app.isEditMode || item.passOlymp') {{item.exam2}}
-                            input.form-control(type='number', ng-if='app.isEditMode && !item.passOlymp', ng-model="item.exam2")
+                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2}}
+                            input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
                         td {{item.sum}}
                         td
                             a(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}") Edit

@@ -30,7 +30,6 @@
                 req.app.superCash[req.originalUrl].counter =  req.app.superCash[req.originalUrl].counter + 1;
                 res.status(200).send(cashObj.html);
             } else {
-                console.log(doc);
                 req.app.sendPage(req, res, doc, self.viewPath + 'show.jade');
             }
         });

@@ -26,9 +26,10 @@ ready(function () {
         function saveSettings() {
             var data = {};
             if (settingView === 'profile') {
-                if ($('#profileInput').val() != 'Выберите профиль') {
+                var $profileInput = $('#profileInput');
+                if ($profileInput.val() !== 'Выберите профиль') {
                     data = {
-                        profile: $('#profileInput').val(),
+                        profile: $profileInput.val(),
                         needBel: $('#profileBel').prop('checked')
                     };
                     updateProfile(data);
@@ -38,7 +39,7 @@ ready(function () {
 
         function profileInputChange() {
             var selectedOption = $('#profileInput')[0].selectedOptions[0];
-            $('#profileBelLabel')[0].MaterialCheckbox.uncheck()
+            $('#profileBelLabel')[0].MaterialCheckbox.uncheck();
             if ($(selectedOption).data('bel')) {
                 $('#belLang')
                     .removeClass('hiddenView')
@@ -53,7 +54,7 @@ ready(function () {
         function openSettingsDialog(e) {
             e.preventDefault();
             e.stopPropagation();
-            settingView = $(e.currentTarget).attr('href')
+            settingView = $(e.currentTarget).attr('href');
 
             if (settingView === 'logout') {
                 $(document).trigger('lyceum:logout');
@@ -74,7 +75,7 @@ ready(function () {
                             var pupil = response.pupil;
                             //TODO loadingEnd();
                             $('#profileInput').val(pupil.profile);
-
+                            $(document).trigger('lyceum:showNotification', 'Профиль изменён.');
                             $(document).trigger('lyceum:needReload');
                         } else {
                             //  auth.login(response.access_token, response.refresh_token);

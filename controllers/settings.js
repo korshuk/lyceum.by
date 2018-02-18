@@ -45,6 +45,7 @@ SettingsController = function(mongoose, app) {
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;
+                base.app.siteConfig.startTime = Date.now();
                 app.mailController.update();
                 app.superCash = {};
                 res.redirect(self.path);
@@ -63,6 +64,7 @@ SettingsController = function(mongoose, app) {
             doc.save();
         }
         base.app.siteConfig = doc;
+        base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
         console.log(base.app.siteConfig);
     });

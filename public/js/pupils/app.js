@@ -5,7 +5,7 @@ function onloadCallback() {
     if (document.getElementById('signInCaptcha')) {
         window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackSI});
     }
-    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackRQ });
+    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackRQ});
 }
 
 function captchaCallbackSI() {
@@ -50,8 +50,10 @@ ready(function () {
 
     var auth = new jqOAuth({
         events: {
-            login: function () {},
-            logout: function () {},
+            login: function () {
+            },
+            logout: function () {
+            },
             tokenExpiration: function () {
                 // this event is fired when 401 calls are
                 // received from the server. Has to return
@@ -59,11 +61,10 @@ ready(function () {
                 // New tokens are set with auth.setAccessToken()
 
                 return $.post(TOKEN_URL, {
-                        grant_type: 'refresh_token',
-                        refresh_token: auth.data.refreshToken
-                    })
+                    grant_type: 'refresh_token',
+                    refresh_token: auth.data.refreshToken
+                })
                     .done(function (response) {
-                        console.log(auth.data.refreshToken, response.refresh_token);
                         auth.setAccessToken(response.access_token, response.refresh_token);
                     })
                     .fail(function () {
@@ -74,8 +75,9 @@ ready(function () {
         }
     });
     var dialog = document.getElementById('settingsDialog');
+    var snackbarContainer  = document.getElementById('snackbar');
     var settingsDialog = document.getElementById('pupilSettingsDialog');
-    var requestDialog = document.getElementById('sendRequestDialog')
+    var requestDialog = document.getElementById('sendRequestDialog');
     var dialogTransition;
     var settingsDialogTransition;
     var requestDialogTransition;
@@ -88,6 +90,8 @@ ready(function () {
     $(document).on('lyceum:openDialog', openDialog);
     $(document).on('lyceum:openRequestDialog', openRequestDialog);
     $(document).on('lyceum:openSettingsDialog', openSettingsDialog);
+
+    $(document).on('lyceum:showNotification', showNotification);
 
     $(document).on('click', '#settingsDialog .close-dialog', closeDialog);
     $(document).on('click', '#sendRequestDialog .close-dialog', closeRequestDialog);
@@ -122,23 +126,21 @@ ready(function () {
             });
     }
 
-    function onDataViewReady(event, status) {
+    function onDataViewReady() {
         componentHandler.upgradeAllRegistered();
     }
 
     function RequestPasswordView() {
         var $passRequestView = $('#passRequestView');
-        
-        var captchaId;
 
         this.show = show;
         this.hide = hide;
-        
+
         $(document).on('click', '#requestPassBtn', requestPass);
         $(document).on('click', '#requestCancelBtn', requestCancel);
         $(document).on('click', '#returnToLogin', returnToLogin);
         $(document).on('keyup', '#passEmail', emailValidator);
-        
+
         function show() {
             if (window.requestCaptcha && window.grecaptcha) {
                 grecaptcha.reset(requestCaptcha);
@@ -177,29 +179,29 @@ ready(function () {
                 $.post(RESETPASS_URL, {
                     mail: $('#passEmail').val().toLowerCase()
                 })
-                .done(function(res){
-                    if (res.error && res.error === "user not found") {
-                        $('#passReqNotFoundError')
-                            .removeClass('hiddenView')
-                            .addClass('visibleView');
-                    }
-                    if (res.error && res.error === "error") {
+                    .done(function (res) {
+                        if (res.error && res.error === "user not found") {
+                            $('#passReqNotFoundError')
+                                .removeClass('hiddenView')
+                                .addClass('visibleView');
+                        }
+                        if (res.error && res.error === "error") {
+                            $(document).trigger('lyceum:globalError');
+                        }
+                        if (res === "Email Sent") {
+                            $('#passReqFound')
+                                .removeClass('hiddenView')
+                                .addClass('visibleView');
+                            $('#passReqForm')
+                                .removeClass('visibleView')
+                                .addClass('hiddenView');
+                        }
+                        loadingEnd();
+                    })
+                    .fail(function () {
                         $(document).trigger('lyceum:globalError');
-                    }
-                    if (res === "Email Sent") {
-                        $('#passReqFound')
-                            .removeClass('hiddenView')
-                            .addClass('visibleView');
-                        $('#passReqForm')
-                            .removeClass('visibleView')
-                            .addClass('hiddenView');
-                    }
-                    loadingEnd();
-                })
-                .fail(function(){
-                    $(document).trigger('lyceum:globalError');
-                    loadingEnd();
-                });
+                        loadingEnd();
+                    });
             }
         }
 
@@ -215,8 +217,9 @@ ready(function () {
         }
 
         function emailValidator() {
-            var emailContainer = $('#passEmail').parent().removeClass('has-error');
-            var email = $('#passEmail').val();
+            var $passEmail = $('#passEmail');
+            var emailContainer = $passEmail.parent().removeClass('has-error');
+            var email = $passEmail.val();
 
             if (email.length === 0) {
                 emailContainer.addClass('has-error').addClass('error-required');
@@ -245,7 +248,6 @@ ready(function () {
 
         var submittedLogin = false;
         var submittedSignIn = false;
-        var captchaId;
 
         this.show = show;
         this.hide = hide;
@@ -278,7 +280,7 @@ ready(function () {
                 postData(TOKEN_URL, data);
             }
         }
-        
+
         function signIn() {
             var data;
             submittedSignIn = true;
@@ -291,14 +293,17 @@ ready(function () {
         function signinValidation() {
             var data = {};
 
-            var emailContainer = $('#registerEmailInput').parent('.form-input-group');
-            var email = $('#registerEmailInput').val();
+            var $registerEmailInput = $('#registerEmailInput');
+            var emailContainer = $registerEmailInput.parent('.form-input-group');
+            var email = $registerEmailInput.val();
 
-            var passwordContainer = $('#registerPassInput').parent('.form-input-group');
-            var password = $('#registerPassInput').val();
+            var $registerPassInput = $('#registerPassInput');
+            var passwordContainer = $registerPassInput.parent('.form-input-group');
+            var password = $registerPassInput.val();
 
-            var confirmContainer = $('#registerPassConfirmInput').parent('.form-input-group');
-            var confirm = $('#registerPassConfirmInput').val();
+            var $registerPassConfirmInput =  $('#registerPassConfirmInput');
+            var confirmContainer = $registerPassConfirmInput.parent('.form-input-group');
+            var confirm = $registerPassConfirmInput.val();
 
             if (submittedSignIn) {
                 emailContainer.removeClass('has-error');
@@ -353,7 +358,7 @@ ready(function () {
                     emailContainer.removeClass('error-characters');
                 }
 
-                captchaValidator(window.signInCaptcha, '#signInCaptcha')
+                captchaValidator(window.signInCaptcha, '#signInCaptcha');
 
                 if ($('#registerForm .has-error').length === 0) {
                     data = {
@@ -368,23 +373,27 @@ ready(function () {
         function loginValidation() {
             var errorsFlag = false;
             if (submittedLogin) {
-                if ($('#loginEmailInput').val().length === 0) {
-                    $('#loginEmailInput').parent('.form-input-group').addClass('has-error');
+                var $loginEmailInput = $('#loginEmailInput');
+                if ($loginEmailInput.val().length === 0) {
+                    $loginEmailInput.parent('.form-input-group').addClass('has-error');
                     errorsFlag = true;
                 } else {
-                    $('#loginEmailInput').parent('.form-input-group').removeClass('has-error');
-                }
-                if ($('#loginPassInput').val().length === 0) {
-                    $('#loginPassInput').parent('.form-input-group').addClass('has-error');
-                    errorsFlag = true;
-                } else {
-                    $('#loginPassInput').parent('.form-input-group').removeClass('has-error');
+                    $loginEmailInput.parent('.form-input-group').removeClass('has-error');
                 }
 
-                if (errorsFlag) {
-                    $('#loginBtn').attr('disabled', true);
+                var $loginPassInput = $('#loginPassInput');
+                if ($loginPassInput.val().length === 0) {
+                    $loginPassInput.parent('.form-input-group').addClass('has-error');
+                    errorsFlag = true;
                 } else {
-                    $('#loginBtn').attr('disabled', false);
+                    $loginPassInput.parent('.form-input-group').removeClass('has-error');
+                }
+
+                var $loginBtn = $('#loginBtn');
+                if (errorsFlag) {
+                    $loginBtn.attr('disabled', true);
+                } else {
+                    $loginBtn.attr('disabled', false);
                 }
             }
 
@@ -392,7 +401,7 @@ ready(function () {
         }
 
         function loginKeyUp(e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 login();
             } else {
                 loginValidation();
@@ -400,7 +409,7 @@ ready(function () {
         }
 
         function signinKeyUp(e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 signIn();
             } else {
                 signinValidation();
@@ -447,11 +456,10 @@ ready(function () {
                             getUser();
                         }
                     },
-                    401: function (response) {
+                    401: function () {
                         $(document).trigger('lyceum:needReload');
                     },
                     403: function (response) {
-                        console.log(response);
                         if (response.responseText === '{"error":"invalid_grant","error_description":"Invalid resource owner credentials"}') {
                             loadingEnd();
                             $('#loginPassInput').val('');
@@ -477,13 +485,13 @@ ready(function () {
                 .removeClass('visibleView')
                 .addClass('hiddenView');
         }
-        
+
         function showNameExistsError() {
             $('#userExistsError')
                 .removeClass('hiddenView')
                 .addClass('visibleView');
         }
-        
+
         function showRegisteredMessage(email) {
             $('#registeredMessage')
                 .removeClass('hiddenView')
@@ -494,7 +502,7 @@ ready(function () {
                 .addClass('hiddenView');
         }
     }
-    
+
     function UserView() {
         var $userView = $('#userView');
 
@@ -520,7 +528,7 @@ ready(function () {
     function openPupilSettingsDialog(e) {
         e.preventDefault();
         e.stopPropagation();
-        settingView = $(e.currentTarget).attr('href')
+        settingView = $(e.currentTarget).attr('href');
 
         if (settingView === 'logout') {
             $(document).trigger('lyceum:logout');
@@ -528,14 +536,17 @@ ready(function () {
             $(document).trigger('lyceum:openSettingsDialog', $pupilSettingsDialogContent.find('#' + settingView).html());
         }
     }
-    
+
     function pupilSettingsValidation() {
         var data = {};
         if (settingView === 'password') {
-            var password = $('#pupilPassword').val();
-            var confirm = $('#pupilPasswordConfirm').val();
-            var passwordContainer = $('#pupilPassword').parent();
-            var confirmContainer = $('#pupilPasswordConfirm').parent();
+            var $pupilPassword =  $('#pupilPassword');
+            var $pupilPasswordConfirm = $('#pupilPasswordConfirm');
+
+            var password = $pupilPassword.val();
+            var confirm = $pupilPasswordConfirm.val();
+            var passwordContainer = $pupilPassword.parent();
+            var confirmContainer = $pupilPasswordConfirm.parent();
 
             passwordContainer.removeClass('has-error');
             confirmContainer.removeClass('has-error');
@@ -578,18 +589,15 @@ ready(function () {
         }
         return data;
     }
-    
+
     function savePupilSettings() {
-        console.log(settingView);
         if (settingView === 'password') {
-            console.log(21124)
             var data = pupilSettingsValidation();
             if (data.password) {
                 updatePassword(data);
             }
         }
     }
-
 
     function updatePassword(data) {
         $.ajax({
@@ -606,11 +614,10 @@ ready(function () {
                         //  getUser();
                     }
                 },
-                401: function (response) {
+                401: function () {
                     $(document).trigger('lyceum:needReload');
                 },
                 403: function (response) {
-                    console.log(response);
                     //TODO Error handle
                     if (response.responseText === '{"error":"invalid_grant","error_description":"Invalid resource owner credentials"}') {
                         loadingEnd();
@@ -637,7 +644,7 @@ ready(function () {
     function loadingEnd() {
         $('.cs-loader').removeClass('loading-start');
     }
-    
+
     function logout() {
         auth.logout();
         window.location.reload();
@@ -694,12 +701,12 @@ ready(function () {
         requestDialog.opened = true;
         requestDialog.scrolledToBottom = false;
 
-        $rulesContainer.off( 'scroll');
+        $rulesContainer.off('scroll');
         $saveRequestBtn.attr('disabled', true);
         $rulesOkLabel.addClass('is-disabled');
         $rulesOkHelp.removeClass('hiddenView').addClass('visibleView');
         $rulesOk.attr('disabled', true);
-        document.querySelector('#rulesOkLabel').MaterialCheckbox.uncheck()
+        document.querySelector('#rulesOkLabel').MaterialCheckbox.uncheck();
 
         requestDialog.showModal();
         $rulesContainer.animate({
@@ -710,26 +717,29 @@ ready(function () {
             $('#sendRequestDialog').addClass('dialog-scale');
         }, 0.5);
 
-        $rulesContainer.on( 'scroll', function(){
+        $rulesContainer.on('scroll', onRelseScroll);
+
+
+        function onRelseScroll() {
             if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
                 requestDialog.scrolledToBottom = true;
                 $saveRequestBtn.attr('disabled', false);
                 $rulesOk.attr('disabled', false);
                 $rulesOkLabel.removeClass('is-disabled');
                 $rulesOkHelp.removeClass('visibleView').addClass('hiddenView');
-                $rulesContainer.off( 'scroll');
+                $rulesContainer.off('scroll');
             }
-        });
+        }
     }
-    
-    function closeDialog(e) {
+
+    function closeDialog() {
         dialog.opened = false;
         $('#settingsDialog').removeClass('dialog-scale');
         dialog.close();
         clearTimeout(dialogTransition);
     }
 
-    function closeRequestDialog(e) {
+    function closeRequestDialog() {
         requestDialog.opened = false;
         $('#sendRequestDialog').removeClass('dialog-scale');
         requestDialog.close();
@@ -742,9 +752,18 @@ ready(function () {
         settingsDialog.close();
         clearTimeout(settingsDialogTransition);
     }
-    
+
     function globalError() {
         //TODO handle it
+        $(document).trigger('lyceum:showNotification', 'Произошла ошибка. Что-то пошло не так!');
         console.log('GLOBAL ERROR');
+    }
+
+    function showNotification(event, message) {
+        var data = {
+            message: message,
+            timeout: 2000
+        };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
     }
 });

@@ -35,13 +35,12 @@ footer
 
     img#herbRB(src="/img/herb-rb.png")
 
-if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias == 'abiturientu'))
+if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias === 'abiturientu'))
     include ../results/widgetDialogs
 
 script(src='http://code.jquery.com/jquery-1.11.0.min.js')
 script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)
 
-//-script(src='/javascripts/jquery.js')
-script(src='/js/script.min.js')
+script(src='/js/script.min.js?timestamp=' + siteConfig.startTime)
 if siteConfig.showStats
     script(src='/js/frontStats.js')

@@ -19,6 +19,7 @@
 
         vm.gridOptions = {
             data: [],
+            urlSync: true,
             getData: vm.getServerData
         };
 

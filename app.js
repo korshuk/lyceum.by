@@ -14,7 +14,6 @@
 
     setTimeout(function () {
         app.use(function (err, req, res, next) {
-            console.log('app.js 17', err);
             res.redirect('404.html');
         });
         if (!module.parent) {

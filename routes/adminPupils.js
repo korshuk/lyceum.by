@@ -24,6 +24,10 @@ module.exports = function(app) {
         app.pupilsController.testPage(req, res);
     });
 
+    router.get('/emails', app.userController.Pass, function(req, res) {
+        app.mailController.list(req, res);
+    });
+
     //router.get('/create', app.userController.Pass, function(req, res) {
     //    app.profileController.create(req, res);
     //});

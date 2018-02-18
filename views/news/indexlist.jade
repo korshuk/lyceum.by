@@ -1,15 +1,19 @@
-- var counter = 0;
-- var mod = docs.length % 2;
-- var height;
 - var d;
-- if (mod === 0) {
--    height = docs.length / 2;
--}
--else {
--   height = (docs.length - mod) / 2;
--   height = height + 1;
--}
-if counter < docs.length
-    include column
-if counter < docs.length
-    include column
+- var i;
+- var docsLength = docs.length;
+
+div(class= locals.ajax ? 'ajax' : '').col-1
+    - for (i = 0; i < docsLength; i+=3) {
+        - d = docs[i]
+        include item
+    - }
+div(class= locals.ajax ? 'ajax' : '').col-1
+    - for (i = 1; i < docsLength; i+=3) {
+        - d = docs[i]
+        include item
+    - }
+div(class= locals.ajax ? 'ajax' : '').col-1
+    - for (i = 2; i < docsLength; i+=3) {
+        - d = docs[i]
+        include item
+    - }

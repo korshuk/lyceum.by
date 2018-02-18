@@ -3206,6 +3206,197 @@ ready(function() {
         widget: false
     });
 })();
+
+(function() {
+    'use strict';
+
+    /**
+     * Class constructor for Snackbar MDL component.
+     * Implements MDL component design pattern defined at:
+     * https://github.com/jasonmayes/mdl-component-design-pattern
+     *
+     * @constructor
+     * @param {HTMLElement} element The element that will be upgraded.
+     */
+    var MaterialSnackbar = function MaterialSnackbar(element) {
+        this.element_ = element;
+        this.textElement_ = this.element_.querySelector('.' + this.cssClasses_.MESSAGE);
+        this.actionElement_ = this.element_.querySelector('.' + this.cssClasses_.ACTION);
+        if (!this.textElement_) {
+            throw new Error('There must be a message element for a snackbar.');
+        }
+        if (!this.actionElement_) {
+            throw new Error('There must be an action element for a snackbar.');
+        }
+        this.active = false;
+        this.actionHandler_ = undefined;
+        this.message_ = undefined;
+        this.actionText_ = undefined;
+        this.timeoutID_ = undefined;
+        this.queuedNotifications_ = [];
+        this.setActionHidden_(true);
+    };
+    window['MaterialSnackbar'] = MaterialSnackbar;
+
+    /**
+     * Store constants in one place so they can be updated easily.
+     *
+     * @enum {string | number}
+     * @private
+     */
+    MaterialSnackbar.prototype.Constant_ = {
+        // The duration of the snackbar show/hide animation, in ms.
+        ANIMATION_LENGTH: 250
+    };
+
+    /**
+     * Store strings for class names defined by this component that are used in
+     * JavaScript. This allows us to simply change it in one place should we
+     * decide to modify at a later date.
+     *
+     * @enum {string}
+     * @private
+     */
+    MaterialSnackbar.prototype.cssClasses_ = {
+        SNACKBAR: 'mdl-snackbar',
+        MESSAGE: 'mdl-snackbar__text',
+        ACTION: 'mdl-snackbar__action',
+        ACTIVE: 'mdl-snackbar--active'
+    };
+
+    /**
+     * Display the snackbar.
+     *
+     * @private
+     */
+    MaterialSnackbar.prototype.displaySnackbar_ = function() {
+        this.element_.setAttribute('aria-hidden', 'true');
+
+        if (this.actionHandler_) {
+            this.actionElement_.textContent = this.actionText_;
+            this.actionElement_.addEventListener('click', this.actionHandler_);
+            this.setActionHidden_(false);
+        }
+
+        this.textElement_.textContent = this.message_;
+        this.element_.classList.add(this.cssClasses_.ACTIVE);
+        this.element_.setAttribute('aria-hidden', 'false');
+        this.timeoutID_ = setTimeout(this.cleanup_.bind(this), this.timeout_);
+
+    };
+
+    /**
+     * Show the snackbar.
+     *
+     * @param {Object} data The data for the notification.
+     * @public
+     */
+    MaterialSnackbar.prototype.showSnackbar = function(data) {
+        if (data === undefined) {
+            throw new Error(
+                'Please provide a data object with at least a message to display.');
+        }
+        if (data['message'] === undefined) {
+            throw new Error('Please provide a message to be displayed.');
+        }
+        if (data['actionHandler'] && !data['actionText']) {
+            throw new Error('Please provide action text with the handler.');
+        }
+        if (this.active) {
+            this.queuedNotifications_.push(data);
+        } else {
+            this.active = true;
+            this.message_ = data['message'];
+            if (data['timeout']) {
+                this.timeout_ = data['timeout'];
+            } else {
+                this.timeout_ = 2750;
+            }
+            if (data['actionHandler']) {
+                this.actionHandler_ = data['actionHandler'];
+            }
+            if (data['actionText']) {
+                this.actionText_ = data['actionText'];
+            }
+            this.displaySnackbar_();
+        }
+    };
+    MaterialSnackbar.prototype['showSnackbar'] = MaterialSnackbar.prototype.showSnackbar;
+    /**
+     * Hide the snackbar.
+     *
+     * @public
+     */
+    MaterialSnackbar.prototype.hideSnackbar = function() {
+        if (!this.active) {
+            return;
+        }
+        if (typeof this.timeoutID_ === 'number') {
+            clearTimeout(this.timeoutID_);
+            this.cleanup_();
+        }
+    };
+    MaterialSnackbar.prototype['hideSnackbar'] = MaterialSnackbar.prototype.hideSnackbar;
+    /**
+     * Check if the queue has items within it.
+     * If it does, display the next entry.
+     *
+     * @private
+     */
+    MaterialSnackbar.prototype.checkQueue_ = function() {
+        if (this.queuedNotifications_.length > 0) {
+            this.showSnackbar(this.queuedNotifications_.shift());
+        }
+    };
+
+    /**
+     * Cleanup the snackbar event listeners and accessiblity attributes.
+     *
+     * @private
+     */
+    MaterialSnackbar.prototype.cleanup_ = function() {
+        this.element_.classList.remove(this.cssClasses_.ACTIVE);
+        setTimeout(function() {
+            this.element_.setAttribute('aria-hidden', 'true');
+            this.textElement_.textContent = '';
+            if (!Boolean(this.actionElement_.getAttribute('aria-hidden'))) {
+                this.setActionHidden_(true);
+                this.actionElement_.textContent = '';
+                this.actionElement_.removeEventListener('click', this.actionHandler_);
+            }
+            this.actionHandler_ = undefined;
+            this.message_ = undefined;
+            this.actionText_ = undefined;
+            this.timeoutID_ = undefined;
+            this.active = false;
+            this.checkQueue_();
+        }.bind(this), /** @type {number} */ (this.Constant_.ANIMATION_LENGTH));
+    };
+
+    /**
+     * Set the action handler hidden state.
+     *
+     * @param {boolean} value
+     * @private
+     */
+    MaterialSnackbar.prototype.setActionHidden_ = function(value) {
+        if (value) {
+            this.actionElement_.setAttribute('aria-hidden', 'true');
+        } else {
+            this.actionElement_.removeAttribute('aria-hidden');
+        }
+    };
+
+    // The component registers itself. It can assume componentHandler is available
+    // in the global scope.
+    componentHandler.register({
+        constructor: MaterialSnackbar,
+        classAsString: 'MaterialSnackbar',
+        cssClass: 'mdl-js-snackbar',
+        widget: true
+    });
+
+})();
 /* Copyright (c) 2010-2016 Marcus Westin */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.store = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
     (function (global){
@@ -4130,7 +4321,7 @@ function onloadCallback() {
     if (document.getElementById('signInCaptcha')) {
         window.signInCaptcha = grecaptcha.render('signInCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackSI});
     }
-    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackRQ });
+    window.requestCaptcha = grecaptcha.render('passCaptcha', {'sitekey': reSITEKEY, callback: captchaCallbackRQ});
 }
 
 function captchaCallbackSI() {
@@ -4175,8 +4366,10 @@ ready(function () {
 
     var auth = new jqOAuth({
         events: {
-            login: function () {},
-            logout: function () {},
+            login: function () {
+            },
+            logout: function () {
+            },
             tokenExpiration: function () {
                 // this event is fired when 401 calls are
                 // received from the server. Has to return
@@ -4184,11 +4377,10 @@ ready(function () {
                 // New tokens are set with auth.setAccessToken()
 
                 return $.post(TOKEN_URL, {
-                        grant_type: 'refresh_token',
-                        refresh_token: auth.data.refreshToken
-                    })
+                    grant_type: 'refresh_token',
+                    refresh_token: auth.data.refreshToken
+                })
                     .done(function (response) {
-                        console.log(auth.data.refreshToken, response.refresh_token);
                         auth.setAccessToken(response.access_token, response.refresh_token);
                     })
                     .fail(function () {
@@ -4199,8 +4391,9 @@ ready(function () {
         }
     });
     var dialog = document.getElementById('settingsDialog');
+    var snackbarContainer  = document.getElementById('snackbar');
     var settingsDialog = document.getElementById('pupilSettingsDialog');
-    var requestDialog = document.getElementById('sendRequestDialog')
+    var requestDialog = document.getElementById('sendRequestDialog');
     var dialogTransition;
     var settingsDialogTransition;
     var requestDialogTransition;
@@ -4213,6 +4406,8 @@ ready(function () {
     $(document).on('lyceum:openDialog', openDialog);
     $(document).on('lyceum:openRequestDialog', openRequestDialog);
     $(document).on('lyceum:openSettingsDialog', openSettingsDialog);
+
+    $(document).on('lyceum:showNotification', showNotification);
 
     $(document).on('click', '#settingsDialog .close-dialog', closeDialog);
     $(document).on('click', '#sendRequestDialog .close-dialog', closeRequestDialog);
@@ -4247,23 +4442,21 @@ ready(function () {
             });
     }
 
-    function onDataViewReady(event, status) {
+    function onDataViewReady() {
         componentHandler.upgradeAllRegistered();
     }
 
     function RequestPasswordView() {
         var $passRequestView = $('#passRequestView');
-        
-        var captchaId;
 
         this.show = show;
         this.hide = hide;
-        
+
         $(document).on('click', '#requestPassBtn', requestPass);
         $(document).on('click', '#requestCancelBtn', requestCancel);
         $(document).on('click', '#returnToLogin', returnToLogin);
         $(document).on('keyup', '#passEmail', emailValidator);
-        
+
         function show() {
             if (window.requestCaptcha && window.grecaptcha) {
                 grecaptcha.reset(requestCaptcha);
@@ -4302,29 +4495,29 @@ ready(function () {
                 $.post(RESETPASS_URL, {
                     mail: $('#passEmail').val().toLowerCase()
                 })
-                .done(function(res){
-                    if (res.error && res.error === "user not found") {
-                        $('#passReqNotFoundError')
-                            .removeClass('hiddenView')
-                            .addClass('visibleView');
-                    }
-                    if (res.error && res.error === "error") {
+                    .done(function (res) {
+                        if (res.error && res.error === "user not found") {
+                            $('#passReqNotFoundError')
+                                .removeClass('hiddenView')
+                                .addClass('visibleView');
+                        }
+                        if (res.error && res.error === "error") {
+                            $(document).trigger('lyceum:globalError');
+                        }
+                        if (res === "Email Sent") {
+                            $('#passReqFound')
+                                .removeClass('hiddenView')
+                                .addClass('visibleView');
+                            $('#passReqForm')
+                                .removeClass('visibleView')
+                                .addClass('hiddenView');
+                        }
+                        loadingEnd();
+                    })
+                    .fail(function () {
                         $(document).trigger('lyceum:globalError');
-                    }
-                    if (res === "Email Sent") {
-                        $('#passReqFound')
-                            .removeClass('hiddenView')
-                            .addClass('visibleView');
-                        $('#passReqForm')
-                            .removeClass('visibleView')
-                            .addClass('hiddenView');
-                    }
-                    loadingEnd();
-                })
-                .fail(function(){
-                    $(document).trigger('lyceum:globalError');
-                    loadingEnd();
-                });
+                        loadingEnd();
+                    });
             }
         }
 
@@ -4340,8 +4533,9 @@ ready(function () {
         }
 
         function emailValidator() {
-            var emailContainer = $('#passEmail').parent().removeClass('has-error');
-            var email = $('#passEmail').val();
+            var $passEmail = $('#passEmail');
+            var emailContainer = $passEmail.parent().removeClass('has-error');
+            var email = $passEmail.val();
 
             if (email.length === 0) {
                 emailContainer.addClass('has-error').addClass('error-required');
@@ -4370,7 +4564,6 @@ ready(function () {
 
         var submittedLogin = false;
         var submittedSignIn = false;
-        var captchaId;
 
         this.show = show;
         this.hide = hide;
@@ -4403,7 +4596,7 @@ ready(function () {
                 postData(TOKEN_URL, data);
             }
         }
-        
+
         function signIn() {
             var data;
             submittedSignIn = true;
@@ -4416,14 +4609,17 @@ ready(function () {
         function signinValidation() {
             var data = {};
 
-            var emailContainer = $('#registerEmailInput').parent('.form-input-group');
-            var email = $('#registerEmailInput').val();
+            var $registerEmailInput = $('#registerEmailInput');
+            var emailContainer = $registerEmailInput.parent('.form-input-group');
+            var email = $registerEmailInput.val();
 
-            var passwordContainer = $('#registerPassInput').parent('.form-input-group');
-            var password = $('#registerPassInput').val();
+            var $registerPassInput = $('#registerPassInput');
+            var passwordContainer = $registerPassInput.parent('.form-input-group');
+            var password = $registerPassInput.val();
 
-            var confirmContainer = $('#registerPassConfirmInput').parent('.form-input-group');
-            var confirm = $('#registerPassConfirmInput').val();
+            var $registerPassConfirmInput =  $('#registerPassConfirmInput');
+            var confirmContainer = $registerPassConfirmInput.parent('.form-input-group');
+            var confirm = $registerPassConfirmInput.val();
 
             if (submittedSignIn) {
                 emailContainer.removeClass('has-error');
@@ -4478,7 +4674,7 @@ ready(function () {
                     emailContainer.removeClass('error-characters');
                 }
 
-                captchaValidator(window.signInCaptcha, '#signInCaptcha')
+                captchaValidator(window.signInCaptcha, '#signInCaptcha');
 
                 if ($('#registerForm .has-error').length === 0) {
                     data = {
@@ -4493,23 +4689,27 @@ ready(function () {
         function loginValidation() {
             var errorsFlag = false;
             if (submittedLogin) {
-                if ($('#loginEmailInput').val().length === 0) {
-                    $('#loginEmailInput').parent('.form-input-group').addClass('has-error');
+                var $loginEmailInput = $('#loginEmailInput');
+                if ($loginEmailInput.val().length === 0) {
+                    $loginEmailInput.parent('.form-input-group').addClass('has-error');
                     errorsFlag = true;
                 } else {
-                    $('#loginEmailInput').parent('.form-input-group').removeClass('has-error');
-                }
-                if ($('#loginPassInput').val().length === 0) {
-                    $('#loginPassInput').parent('.form-input-group').addClass('has-error');
-                    errorsFlag = true;
-                } else {
-                    $('#loginPassInput').parent('.form-input-group').removeClass('has-error');
+                    $loginEmailInput.parent('.form-input-group').removeClass('has-error');
                 }
 
-                if (errorsFlag) {
-                    $('#loginBtn').attr('disabled', true);
+                var $loginPassInput = $('#loginPassInput');
+                if ($loginPassInput.val().length === 0) {
+                    $loginPassInput.parent('.form-input-group').addClass('has-error');
+                    errorsFlag = true;
                 } else {
-                    $('#loginBtn').attr('disabled', false);
+                    $loginPassInput.parent('.form-input-group').removeClass('has-error');
+                }
+
+                var $loginBtn = $('#loginBtn');
+                if (errorsFlag) {
+                    $loginBtn.attr('disabled', true);
+                } else {
+                    $loginBtn.attr('disabled', false);
                 }
             }
 
@@ -4517,7 +4717,7 @@ ready(function () {
         }
 
         function loginKeyUp(e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 login();
             } else {
                 loginValidation();
@@ -4525,7 +4725,7 @@ ready(function () {
         }
 
         function signinKeyUp(e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 signIn();
             } else {
                 signinValidation();
@@ -4572,11 +4772,10 @@ ready(function () {
                             getUser();
                         }
                     },
-                    401: function (response) {
+                    401: function () {
                         $(document).trigger('lyceum:needReload');
                     },
                     403: function (response) {
-                        console.log(response);
                         if (response.responseText === '{"error":"invalid_grant","error_description":"Invalid resource owner credentials"}') {
                             loadingEnd();
                             $('#loginPassInput').val('');
@@ -4602,13 +4801,13 @@ ready(function () {
                 .removeClass('visibleView')
                 .addClass('hiddenView');
         }
-        
+
         function showNameExistsError() {
             $('#userExistsError')
                 .removeClass('hiddenView')
                 .addClass('visibleView');
         }
-        
+
         function showRegisteredMessage(email) {
             $('#registeredMessage')
                 .removeClass('hiddenView')
@@ -4619,7 +4818,7 @@ ready(function () {
                 .addClass('hiddenView');
         }
     }
-    
+
     function UserView() {
         var $userView = $('#userView');
 
@@ -4645,7 +4844,7 @@ ready(function () {
     function openPupilSettingsDialog(e) {
         e.preventDefault();
         e.stopPropagation();
-        settingView = $(e.currentTarget).attr('href')
+        settingView = $(e.currentTarget).attr('href');
 
         if (settingView === 'logout') {
             $(document).trigger('lyceum:logout');
@@ -4653,14 +4852,17 @@ ready(function () {
             $(document).trigger('lyceum:openSettingsDialog', $pupilSettingsDialogContent.find('#' + settingView).html());
         }
     }
-    
+
     function pupilSettingsValidation() {
         var data = {};
         if (settingView === 'password') {
-            var password = $('#pupilPassword').val();
-            var confirm = $('#pupilPasswordConfirm').val();
-            var passwordContainer = $('#pupilPassword').parent();
-            var confirmContainer = $('#pupilPasswordConfirm').parent();
+            var $pupilPassword =  $('#pupilPassword');
+            var $pupilPasswordConfirm = $('#pupilPasswordConfirm');
+
+            var password = $pupilPassword.val();
+            var confirm = $pupilPasswordConfirm.val();
+            var passwordContainer = $pupilPassword.parent();
+            var confirmContainer = $pupilPasswordConfirm.parent();
 
             passwordContainer.removeClass('has-error');
             confirmContainer.removeClass('has-error');
@@ -4703,18 +4905,15 @@ ready(function () {
         }
         return data;
     }
-    
+
     function savePupilSettings() {
-        console.log(settingView);
         if (settingView === 'password') {
-            console.log(21124)
             var data = pupilSettingsValidation();
             if (data.password) {
                 updatePassword(data);
             }
         }
     }
-
 
     function updatePassword(data) {
         $.ajax({
@@ -4731,11 +4930,10 @@ ready(function () {
                         //  getUser();
                     }
                 },
-                401: function (response) {
+                401: function () {
                     $(document).trigger('lyceum:needReload');
                 },
                 403: function (response) {
-                    console.log(response);
                     //TODO Error handle
                     if (response.responseText === '{"error":"invalid_grant","error_description":"Invalid resource owner credentials"}') {
                         loadingEnd();
@@ -4762,7 +4960,7 @@ ready(function () {
     function loadingEnd() {
         $('.cs-loader').removeClass('loading-start');
     }
-    
+
     function logout() {
         auth.logout();
         window.location.reload();
@@ -4819,12 +5017,12 @@ ready(function () {
         requestDialog.opened = true;
         requestDialog.scrolledToBottom = false;
 
-        $rulesContainer.off( 'scroll');
+        $rulesContainer.off('scroll');
         $saveRequestBtn.attr('disabled', true);
         $rulesOkLabel.addClass('is-disabled');
         $rulesOkHelp.removeClass('hiddenView').addClass('visibleView');
         $rulesOk.attr('disabled', true);
-        document.querySelector('#rulesOkLabel').MaterialCheckbox.uncheck()
+        document.querySelector('#rulesOkLabel').MaterialCheckbox.uncheck();
 
         requestDialog.showModal();
         $rulesContainer.animate({
@@ -4835,26 +5033,29 @@ ready(function () {
             $('#sendRequestDialog').addClass('dialog-scale');
         }, 0.5);
 
-        $rulesContainer.on( 'scroll', function(){
+        $rulesContainer.on('scroll', onRelseScroll);
+
+
+        function onRelseScroll() {
             if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
                 requestDialog.scrolledToBottom = true;
                 $saveRequestBtn.attr('disabled', false);
                 $rulesOk.attr('disabled', false);
                 $rulesOkLabel.removeClass('is-disabled');
                 $rulesOkHelp.removeClass('visibleView').addClass('hiddenView');
-                $rulesContainer.off( 'scroll');
+                $rulesContainer.off('scroll');
             }
-        });
+        }
     }
-    
-    function closeDialog(e) {
+
+    function closeDialog() {
         dialog.opened = false;
         $('#settingsDialog').removeClass('dialog-scale');
         dialog.close();
         clearTimeout(dialogTransition);
     }
 
-    function closeRequestDialog(e) {
+    function closeRequestDialog() {
         requestDialog.opened = false;
         $('#sendRequestDialog').removeClass('dialog-scale');
         requestDialog.close();
@@ -4867,9 +5068,18 @@ ready(function () {
         settingsDialog.close();
         clearTimeout(settingsDialogTransition);
     }
-    
+
     function globalError() {
         //TODO handle it
+        $(document).trigger('lyceum:showNotification', 'Произошла ошибка. Что-то пошло не так!');
         console.log('GLOBAL ERROR');
+    }
+
+    function showNotification(event, message) {
+        var data = {
+            message: message,
+            timeout: 2000
+        };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
     }
 });

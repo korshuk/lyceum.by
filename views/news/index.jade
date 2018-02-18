@@ -1,11 +1,16 @@
-section.style-blue.col-2
+section.style-blue
 	h2.caption
-		a(href=beforeUrl + "/news.html", title=translate("Больше новостей"))= translate('Новости')
-	hr.colored
+		span.style-blue
+			a(href=beforeUrl + "/news.html", title=translate("Больше новостей"))= translate('Новости')
+
+		span.color-grey= ' / '
+
+		span.style-green
+			a(href=beforeUrl + "/congratulations.html", title=translate("Больше поздравлений"))= translate('Поздравления')
+	hr.colored.striped
 	if siteConfig.showStats
 		include showStats
 	if main
 		include mainItem
 	include indexlist
 	include moreLink
-include ../layout/asideIndex

@@ -21,7 +21,6 @@
             var self = this,
                 renderData = {},
                 newDate;
-            console.log('sendPage', req.appContentType);
 
             renderData = extend(renderData, self.helpers.setLang(req, res));
             renderData = extend(renderData, self.helpers.setMenu(req, res));
@@ -32,7 +31,7 @@
                 renderData.doc = doc;
             }
             renderData.path = req.path;
-            self.render(viewPath,
+            res.render(viewPath,
                 renderData,
                 function (err, html) {
                     newDate = new Date();

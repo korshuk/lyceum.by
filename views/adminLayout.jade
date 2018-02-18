@@ -20,7 +20,7 @@ html
         .navbar-header
           a.navbar-brand(href="/admin") Админка
         div.collapse.navbar-collapse.bs-navbar-collapse
-            if (locals.logged == 'logged')
+            if (locals.logged === 'logged')
               ul.nav.navbar-nav
                 li
                   a(href="/admin/news") Новости
@@ -45,6 +45,8 @@ html
                       a(href="/admin/pupils/subjects") Предметы
                     li
                       a(href="/admin/pupils/history") История
+                    li
+                        a(href="/admin/pupils/emails") Список посланных писем
                     li
                       a(href="/admin/pupils/test") Форма для тестов
 

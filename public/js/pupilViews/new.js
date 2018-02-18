@@ -1,6 +1,11 @@
 ready(function () {
     'use strict';
 
+    var FIO_REGEX = /^[а-яА-ЯёЁ_ ]+$/i;
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    };
+
     //$(document).trigger('lyceum:dataready', 'new');
     var $dialogContent;
 
@@ -19,6 +24,10 @@ ready(function () {
 
     function NewView() {
         var settingView;
+
+        var errorNameF = false;
+        var errorNameL = false;
+        var errorNameP = false;
 
         $(document).on('click', '#saveSettings', saveSettings);
         $(document).on('click', '#saveRequest', saveRequest);
@@ -41,7 +50,7 @@ ready(function () {
 
                             }
                         },
-                        401: function (response) {
+                        401: function () {
                             $(document).trigger('lyceum:needReload');
                         },
                         403: function (response) {
@@ -64,14 +73,8 @@ ready(function () {
 
         function saveSettings() {
             var data = {};
-            console.log(settingView);
             if (settingView === 'fio') {
-                data = {
-                    firstName: $('#newFirstNameInput').val(),
-                    lastName: $('#newLastNameInput').val(),
-                    parentName: $('#newParentNameInput').val()
-                };
-                updateFIO(data);
+                saveFIO();
             }
             if (settingView === 'request') {
                 var files = $('#fileUploadRequest')[0].files,
@@ -90,10 +93,11 @@ ready(function () {
             }
 
             if (settingView === 'diplom') {
-                var files = $('#fileUploadDiplom')[0].files,
+                var $fileUploadDiplom = $('#fileUploadDiplom');
+                var files = $fileUploadDiplom[0].files,
                     formData = new FormData();
                 if (files.length === 0) {
-                    if ($('#fileUploadDiplom').parent('.dropify-wrapper').hasClass('has-preview')) {
+                    if ($fileUploadDiplom.parent('.dropify-wrapper').hasClass('has-preview')) {
                         return false;
                     } else {
                         formData.append('attachment[empty]', true);
@@ -109,10 +113,12 @@ ready(function () {
             }
 
             if (settingView === 'additional') {
-                if ($('#night').val() != '' &&  $('#distant').val() != '') {
+                var $nightValue = $('#night').val();
+                var $distantValue = $('#distant').val();
+                if ($nightValue !== '' &&  $distantValue !== '') {
                     data = {
-                        night: $('#night').val() === 'Да',
-                        distant: $('#distant').val() === 'Да'
+                        night: $nightValue === 'Да',
+                        distant: $distantValue === 'Да'
                     };
                     updateAdditional(data);
                 }
@@ -126,9 +132,10 @@ ready(function () {
                 }
             }
             if (settingView === 'profile') {
-                if ($('#profileInput').val() != 'Выберите профиль') {
+                var $profileInputValue = $('#profileInput').val();
+                if ($profileInputValue !== 'Выберите профиль') {
                     data = {
-                        profile: $('#profileInput').val(),
+                        profile: $profileInputValue,
                         needBel: $('#profileBel').prop('checked')
                     };
                     updateProfile(data);
@@ -139,14 +146,13 @@ ready(function () {
         function openSendRequestDialog(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('lyceum:openRequestDialog')
             $(document).trigger('lyceum:openRequestDialog');
         }
 
         function openSettingsDialog(e) {
             e.preventDefault();
             e.stopPropagation();
-            settingView = $(e.currentTarget).attr('href')
+            settingView = $(e.currentTarget).attr('href');
 
             if (settingView === 'logout') {
                 $(document).trigger('lyceum:logout');
@@ -157,7 +163,7 @@ ready(function () {
 
         function profileInputChange() {
             var selectedOption = $('#profileInput')[0].selectedOptions[0];
-            $('#profileBelLabel')[0].MaterialCheckbox.uncheck()
+            $('#profileBelLabel')[0].MaterialCheckbox.uncheck();
             if ($(selectedOption).data('bel')) {
                 $('#belLang')
                     .removeClass('hiddenView')
@@ -170,6 +176,7 @@ ready(function () {
         }
 
         function updateFIO(data) {
+            console.log(data);
             $.ajax({
                 url: '/api/pupils/fio',
                 method: 'POST',
@@ -178,15 +185,12 @@ ready(function () {
                     200: function (response) {
                         if (response.message === 'ok') {
                             var pupil = response.pupil;
-
                            //TODO loadingEnd();
-
                             $('#newFirstNameInput').val(pupil.firstName);
                             $('#newLastNameInput').val(pupil.lastName);
                             $('#newParentNameInput').val(pupil.parentName);
-
+                            $(document).trigger('lyceum:showNotification', 'ФИО сохранено.');
                             $(document).trigger('lyceum:needReload');
-                          //  showRegisteredMessage();
                         } else {
                           //  auth.login(response.access_token, response.refresh_token);
                            // signInView.hide();
@@ -225,7 +229,7 @@ ready(function () {
                             //TODO loadingEnd();
                             $('#night').prop('checked', pupil.night);
                             $('#distant').prop('checked', pupil.distant);
-
+                            $(document).trigger('lyceum:showNotification', 'Дополнительная информация сохранена');
                             $(document).trigger('lyceum:needReload');
                         } else {
                             //  auth.login(response.access_token, response.refresh_token);
@@ -264,7 +268,7 @@ ready(function () {
                             var pupil = response.pupil;
                             //TODO loadingEnd();
                             $('#profileInput').val(pupil.profile);
-
+                            $(document).trigger('lyceum:showNotification', 'Профиль изменён.');
                             $(document).trigger('lyceum:needReload');
                         } else {
                             //  auth.login(response.access_token, response.refresh_token);
@@ -299,7 +303,7 @@ ready(function () {
                             var pupil = response.pupil;
                             //TODO loadingEnd();
                             $('#regionInput').val(pupil.region);
-
+                            $(document).trigger('lyceum:showNotification', 'Регион сохранён.');
                             $(document).trigger('lyceum:needReload');
                         } else {
                             //  auth.login(response.access_token, response.refresh_token);
@@ -364,8 +368,33 @@ ready(function () {
         }
 
         function handleSuccess(data) {
+            $(document).trigger('lyceum:showNotification', 'Файл загружен.');
             $(document).trigger('lyceum:needReload');
             loadingEnd();
+        }
+
+        function saveFIO() {
+            var data = checkFIOInputs();
+
+            if (!errorNameF && !errorNameL && !errorNameP) {
+                updateFIO(data);
+            }
+        }
+
+        function checkFIOInputs() {
+            var valueF = $('#newFirstNameInput').val().trim();
+            var valueL = $('#newLastNameInput').val().trim();
+            var valueP = $('#newParentNameInput').val().trim();
+
+            errorNameF = valueF.length > 0 ? !FIO_REGEX.test(valueF) : false;
+            errorNameL = valueL.length > 0 ? !FIO_REGEX.test(valueL) : false;
+            errorNameP = valueP.length > 0 ? !FIO_REGEX.test(valueP) : false;
+
+            return {
+                firstName: valueF.capitalize(),
+                lastName: valueL.capitalize(),
+                parentName: valueP.capitalize()
+            }
         }
 
     }
