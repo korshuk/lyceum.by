@@ -27,7 +27,7 @@ module.exports = function (app) {
     }
 
     function moreNewsItems(req, res) {
-        const page = req.params.page;
+        var page = req.params.page;
 
         app.newsController.getList(page, function (err, ndocs, main) {
             app.congratulationsController.getList(page, function (err, cdocs) {
