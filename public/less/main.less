@@ -1055,15 +1055,28 @@ section.col-2,
   margin-bottom: 24px;
 }
 
-.top-news.news-item img {
-  width: 300px;
-  margin: 0 0 9px 0;
-}
+.top-news.news-item {
+  img {
+    width: 300px;
+    margin: 0 0 9px 0;
+  }
 
-.top-news.news-item .teaser {
-  width: 620px;
-  margin-left: 20px;
-  float: left;
+  .teaser {
+    margin-left: 20px;
+    float: left;
+  }
+
+  &.col-3 {
+    .teaser {
+      width: 620px;
+    }
+  }
+
+  &.col-2 {
+    .teaser {
+      width: 300px;
+    }
+  }
 }
 
 .news-item {
