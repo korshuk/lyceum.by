@@ -25,6 +25,7 @@ var PlacesController = function(mongoose, app) {
         var self = this;
 
         this.Collection.findByReq(req, res, function(doc){
+            doc.code = req.body.code;
             doc.name = req.body.name;
             doc.address = req.body.address;
             doc.audience = [];

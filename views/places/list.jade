@@ -6,12 +6,14 @@ block content
         a.btn.btn-primary(href='/admin/pupils/places/create') Добавить место
     table.table.table-hover
         tr
+            th Код
             th Название
             th Адрес
             th Аудитории
             th
         - each doc in docs
             tr
+                td  #{doc.code}
                 td  #{doc.name}
                 td  #{doc.address}
                 td

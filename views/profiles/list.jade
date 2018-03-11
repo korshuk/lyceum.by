@@ -25,6 +25,8 @@ block content
 
                 td
                     - if(doc.examPlace)
+                        | #{doc.examPlace.code}
+                        br
                         | #{doc.examPlace.name}
                         br
                         | #{doc.examPlace.address}

@@ -15,6 +15,7 @@ block content
         div.panel.panel-default
             .row
                 .col-lg-12
+                    +field('text', "code", 'Код')(value= doc.code || '')
                     +field('text', "name", 'Название')(value= doc.name || '')
                     +field('text', "address", 'Адрес')(value= doc.address || '')
 

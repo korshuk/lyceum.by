@@ -2,6 +2,7 @@ function define(mongoose, fn) {
     var Schema = mongoose.Schema,
 
         PlacesSchema = new Schema({
+            'code': String,
             'name': String,
             'address': String,
             'audience': [{

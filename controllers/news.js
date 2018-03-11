@@ -98,7 +98,15 @@
 
         base.moreList = function (req, res) {
             var self = this;
-            this.getList(req.params.page, function (err, docs, main) {
+            var page = req.params.page;
+            this.Collection
+                .find()
+                .sort('-createdAt')
+                .skip(page * 6)
+                .limit(6)
+                .exec(onListFound);
+
+            function onListFound(err, docs) {
                 if (docs.length > 0) {
                     res.render(self.viewPath + 'indexlist.jade', {
                         docs: docs,
@@ -107,7 +115,7 @@
                 } else {
                     res.render(self.viewPath + 'nomore.jade');
                 }
-            });
+            }
         };
 
         base.getList = function (page, next) {

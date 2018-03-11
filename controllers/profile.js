@@ -151,8 +151,9 @@ var ProfileController = function (mongoose, app) {
 
     function createListForSelect(array, fieldName) {
         return array.map(function (item) {
+            var code = item.code ? item.code + ' - ' : '';
             return {
-                name: item.name,
+                name: code + item.name,
                 value: item[fieldName]
             }
         });
