@@ -16,6 +16,8 @@ var PupilsController = function (mongoose, app) {
 
         base.apiList = apiList;
 
+        base.apiListExport = apiListExport;
+
         base.saveExams = saveExams;
 
         base.historyList = historyList;
@@ -278,6 +280,46 @@ var PupilsController = function (mongoose, app) {
                         });
                     }
                 });
+
+        }
+
+        function apiListExport(req, res) {
+
+            var pupilsQ = function (callback) {
+                base.Collection.find({"status": 'approved'})
+                    .exec(function (err, data) {
+                        queryExecFn(err, data, callback)
+                    });
+            };
+
+            var profilesQ = function (callback) {
+                app.profileController.Collection.find()
+                    .exec(function (err, data) {
+                        data = data.map(function (profile) {
+                            return {
+                                _id: profile._id,
+                                name:   profile.name,
+                                examPlace: profile.examPlace
+                            }
+                        });
+                        queryExecFn(err, data, callback)
+                    });
+            };
+
+            var placesQ = function (callback) {
+                app.placesController.Collection.find()
+                    .exec(function (err, data) {
+                        queryExecFn(err, data, callback)
+                    });
+            };
+
+            async.parallel([pupilsQ, profilesQ, placesQ], function (err, results) {
+                res.json({
+                    pupils: results[0],
+                    profiles: results[1],
+                    places: results[2]
+                });
+            });
 
         }
 

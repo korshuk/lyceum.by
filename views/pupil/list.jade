@@ -10,6 +10,8 @@ block content
                     span.items {{paginationOptions.totalItems}} items total
                 .col.col-md-4
                     button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
+                    | &nbsp;
+                    a.btn.btn-primary(href="/admin/pupils/api/list-export", target="_blank") JSON-export
                 .col.col-md-4
 
                 .col.col-md-6.text-right

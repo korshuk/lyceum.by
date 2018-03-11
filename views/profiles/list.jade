@@ -7,6 +7,7 @@ block content
     table.table.table-hover
         tr
             th Название
+            th Место
             th I экзамен
             th II экзамен
             th Сумма
@@ -21,6 +22,14 @@ block content
                     | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}
                     br
                     | без экзаменов #{doc.olymp}
+
+                td
+                    - if(doc.examPlace)
+                        | #{doc.examPlace.name}
+                        br
+                        | #{doc.examPlace.address}
+                        br
+                        | Кабинетов: #{doc.examPlace.audience.length}
 
                 td
                     | pass:#{doc.passF}

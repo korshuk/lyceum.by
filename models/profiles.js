@@ -5,14 +5,16 @@ function define(mongoose, fn) {
     	'name': String,
         'code': String,
         'subcode': String,
-       // 'firstExam': mongoose.Schema.Types.ObjectId,
+        'examPlace': {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Places'
+        },
     	'firstExamName': String,
     	'firstExamDate': Date,
         'firstExamAppelationDate': Date,
     	'firstExamPlace': String,
         'firstExamUploaded': Boolean,
         'firstExamNoStats': Boolean,
-       // 'secondExam': mongoose.Schema.Types.ObjectId,
     	'secondExamName': String,
     	'secondExamDate': Date,
         'secondExamAppelationDate': Date,

@@ -21,28 +21,34 @@ block content
             +field('number', "order", 'Порядок')(value= doc.order || '')
 
         div.panel.panel-default.row
-            h3 Первый экзамен
+            .col-lg-12
+                h3 Первый экзамен
             +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
             +field('text', "firstExamDate", 'Дата')(value= doc.firstExamDate || '')#firstExamDate
-            +field('text', "firstExamPlace", 'Место проведение')(value= doc.firstExamPlace || '')
             +field('text', "firstExamAppelationDate", 'Дата ознакомления')(value= doc.firstExamAppelationDate || '')#firstExamAppelationDate
             +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
 
         div.panel.panel-default.row
-            h3 Второй экзамен
-
+            .col-lg-12
+                h3 Второй экзамен
             +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
             +field('text', "secondExamDate", 'Дата')(value= doc.secondExamDate || '')#secondExamDate
-            +field('text', "secondExamPlace", 'Место проведение')(value= doc.secondExamPlace || '')
             +field('text', "secondExamAppelationDate", 'Дата ознакомления')(value= doc.secondExamAppelationDate || '')#secondExamAppelationDate
 
         div.panel.panel-default.row
-            h3 Олимпадные предметы
+            .col-lg-12
+                h3 Место проведения экзаменов
+            +field('select', "examPlace", 'Место проведение', places, doc.examPlace)(value= doc.examPlace || '')
+
+        div.panel.panel-default.row
+            .col-lg-12
+                h3 Олимпадные предметы
             each subject, index in subjects
                 +field('checkbox', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
 
         div.panel.panel-default.row
-            h3 Готовность результатов
+            .col-lg-12
+                h3 Готовность результатов
 
             +field('checkbox', "firstUploaded", 'Первый экзамен готов')(checked=(doc.firstUploaded))
             +field('checkbox', "secondUploaded", 'Второй экзамен готов')(checked=(doc.secondUploaded))

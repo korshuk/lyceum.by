@@ -10,11 +10,11 @@ mixin field(type, name, label, options, selected)
         when 'select'
             .col-md-12
                 .form-group
-                    label.col-md-12 #{label}:
+                    label #{label}:
                     select.form-control(name='#{name}', attributes)
                         option(value="") ---
                         each obj in options
-                            option(value="#{obj.value}", selected=(selected === obj.value)) #{obj.name}
+                            option(value="#{obj.value}", selected=(selected == obj.value)) #{obj.name}
         when 'checkbox'
             .col-md-12
                 .checkbox

@@ -16,6 +16,7 @@
         SettingsController = require('../controllers/settings').SettingsController,
         SubjectController = require('../controllers/subject').SubjectController,
         ProfileController = require('../controllers/profile').ProfileController,
+        PlacesController = require('../controllers/place').PlacesController,
         PupilsController = require('../controllers/pupils').PupilsController,
         SotkaController = require('../controllers/sotka').SotkaController,
         MailController = require('../controllers/mail').MailController;
@@ -50,6 +51,7 @@
         app.sotkaController = new SotkaController(mongoose, app);
         app.subjectController = new SubjectController(mongoose, app);
         app.profileController = new ProfileController(mongoose, app);
+        app.placesController = new PlacesController(mongoose, app);
         app.pupilsController = new PupilsController(mongoose, app);
 
         require('../routes/adminRoutes')(app);

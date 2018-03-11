@@ -90,7 +90,7 @@
             var self = this;
             this.getList(0, function (err, docs, main) {
                 res.render(self.viewPath + 'frontlist.jade', {
-                    docs: docs,
+                    docs: docs.slice(0, 6),
                     main: main
                 });
             });
@@ -115,8 +115,8 @@
             this.Collection
                 .find()
                 .sort('-createdAt')
-                .skip(page * 6)
-                .limit(6)
+              //  .skip(page * 6)
+              //  .limit(6)
                 .exec(onListFound);
 
             function onListFound(err, docs) {

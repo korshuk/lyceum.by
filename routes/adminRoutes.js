@@ -15,5 +15,6 @@ module.exports = function (app) {
     require('../routes/adminImages')(app);
     require('../routes/adminSubjects')(app);
     require('../routes/adminProfiles')(app);
+    require('../routes/adminPlaces')(app);
     require('../routes/adminPupils')(app);
 };

@@ -31,10 +31,14 @@ module.exports = function (app) {
 
         app.newsController.getList(page, function (err, ndocs, main) {
             app.congratulationsController.getList(page, function (err, cdocs) {
+                var startIndex = 9 * page;
+                var endIndex = startIndex + 9;
                 var docs = ndocs
                     .map(setNewsFlag)
                     .concat(cdocs)
-                    .sort(sortByDate);
+                    .sort(sortByDate)
+                    .slice(startIndex, endIndex);
+
                 var templateName = 'news/';
 
                 templateName += docs.length > 0 ? 'indexlist.jade' : 'nomore.jade';

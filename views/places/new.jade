@@ -1,0 +1,104 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        if doc.name
+            h1 Редактирование места
+        else
+            h1 Новое место
+
+    form(method='post', action= method === 'put' ? '/admin/pupils/places/' + doc.id : '/admin/pupils/places' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+
+        div.panel.panel-default
+            .row
+                .col-lg-12
+                    +field('text', "name", 'Название')(value= doc.name || '')
+                    +field('text', "address", 'Адрес')(value= doc.address || '')
+
+        div.panel.panel-default
+            .row
+                .col-lg-12
+                    .col-lg-12
+                        h3 Кабинеты
+            .row
+                .col-lg-12
+                    .col-lg-12
+                        .form-group
+                            button#addItem.btn.btn-primary Добавить
+            .row
+                .col-lg-12
+                    .col-lg-12
+                        table.table.table-hover
+                            tbody#audienceTable
+                                - each audience, index in doc.audience
+                                    tr
+                                        td
+                                            +field('text', "audience[" + index + "][name]", 'Название')(value= audience.name || '')
+                                        td(style="width: 400px")
+                                            +field('number', "audience[" + index + "][max]", 'Максимальное количество')(value= audience.max || 0)
+                                        td
+                                            .form-group
+                                                label &nbsp;
+                                                .row
+                                                    .col-lg-12
+                                                        button.delete-btn.btn.btn-warning Удалить
+                            tbody(style="display: none;")
+                                tr#template
+                                    td
+                                        +field('text', "", 'Название')(value= '', class='name-field')
+                                    td(style="width: 400px")
+                                        +field('number', "", 'Максимальное количество')(value= 0, class='max-field')
+                                    td
+                                        .form-group
+                                            label &nbsp;
+                                            .row
+                                                .col-lg-12
+                                                    button.delete-btn.btn.btn-warning Удалить
+        +buttonSet
+
+block scripts
+    include ../stuff/adminScriptBlock
+
+    script.
+        var $audienceTable = $('#audienceTable');
+        var $template = $('#template');
+
+
+        $(document).on('click', '#addItem', addItem);
+        $(document).on('click', '.delete-btn', deleteItem);
+
+        function deleteItem(e) {
+            e.preventDefault();
+            var $btn = $(e.currentTarget);
+            var $row = $btn.parents('tr');
+            $row.remove();
+
+            $audienceTable.find('tr').each(function (index, element) {
+                var $row = $(element);
+                setAttrs($row, index);
+            });
+        }
+
+        function setAttrs($row, index) {
+            $row.attr('id', 'data-row-' + index);
+
+            $row
+                .find('.name-field')
+                .attr('name', 'audience[' + index + '][name]')
+            $row
+                .find('.max-field')
+                .attr('name', 'audience[' + index + '][max]');
+        }
+
+        function addItem(e) {
+            e.preventDefault();
+            var $newRow = $template.clone();
+            var num = $audienceTable.find('tr').length;
+
+            setAttrs($newRow, num);
+
+            $newRow.appendTo($audienceTable)
+        }

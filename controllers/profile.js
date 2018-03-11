@@ -1,8 +1,22 @@
 var BaseController = require('./baseController').BaseController;
 
-var ProfileController = function(mongoose, app) {
+var ProfileController = function (mongoose, app) {
 
     var base = new BaseController('Profiles', '', mongoose, app, true);
+
+    base.list = function (req, res) {
+        var self = this;
+        this.Collection
+            .find()
+            .sort('-createdAt')
+            .populate('examPlace')
+            .exec(function (err, docs) {
+                res.render(self.viewPath + 'list.jade', {
+                    docs: docs,
+                    viewName: self.name.toLowerCase()
+                });
+            });
+    };
 
     base.create = function (req, res) {
         var self = this,
@@ -14,50 +28,55 @@ var ProfileController = function(mongoose, app) {
             doc = new self.Collection();
         }
         app.subjectController.Collection.find(function (err, subjects) {
-            subjects = subjects.map(function(subject) {
-                return {
-                    name: subject.name,
-                    value: subject.name
-                }
-            });
-            res.render(self.viewPath + 'new.jade', {
-                doc: doc,
-                subjects: subjects,
-                method: 'post',
-                viewName: 'profile'
-            });
-        })
-    };
 
-    base.edit = function (req, res) {
-        var self = this;
-        this.Collection.findByReq(req, res, function (doc) {
-            app.subjectController.Collection.find(function (err, subjects) {
-                subjects = subjects.map(function(subject) {
-                    return {
-                        name: subject.name,
-                        value: subject.name
-                    }
-                });
+            subjects = createListForSelect(subjects, 'name');
+
+            app.placesController.Collection.find(function (err, places) {
+
+                places = createListForSelect(places, 'id');
+
                 res.render(self.viewPath + 'new.jade', {
                     doc: doc,
                     subjects: subjects,
-                    method: 'put',
+                    places: places,
+                    method: 'post',
                     viewName: 'profile'
                 });
             });
         });
     };
 
-    base.save = function(req, res) {
+    base.edit = function (req, res) {
+        var self = this;
+        this.Collection.findByReq(req, res, function (doc) {
+            app.subjectController.Collection.find(function (err, subjects) {
+
+                subjects = createListForSelect(subjects, 'name');
+
+                app.placesController.Collection.find(function (err, places) {
+
+                    places = createListForSelect(places, 'id');
+
+                    res.render(self.viewPath + 'new.jade', {
+                        doc: doc,
+                        subjects: subjects,
+                        places: places,
+                        method: 'put',
+                        viewName: 'profile'
+                    });
+                });
+            });
+        });
+    };
+
+    base.save = function (req, res) {
         var self = this;
         var doc = new this.Collection(req.body);
         doc.olympExams = [];
         for (subject in req.body.olympExams) {
-            console.log(subject, req.body.olympExams[subject]);
             doc.olympExams.push(subject);
         }
-        doc.save(function(err) {
+        doc.save(function (err) {
             if (err) {
                 req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
                 req.session.locals = {doc: doc};
@@ -70,22 +89,23 @@ var ProfileController = function(mongoose, app) {
         });
     };
 
-    base.update = function(req, res) {
+    base.update = function (req, res) {
         var self = this;
 
-        this.Collection.findByReq(req, res, function(doc){
+        this.Collection.findByReq(req, res, function (doc) {
             doc.name = req.body.name;
             doc.code = req.body.code;
             doc.subcode = req.body.subcode;
             doc.ammount = req.body.ammount;
+
+            doc.examPlace = req.body.examPlace;
+
             doc.firstExamName = req.body.firstExamName;
             doc.firstExamDate = req.body.firstExamDate;
-            doc.firstExamPlace = req.body.firstExamPlace;
             doc.firstExamAppelationDate = req.body.firstExamAppelationDate;
             doc.firstIsFirst = req.body.firstIsFirst === 'on';
             doc.secondExamName = req.body.secondExamName;
             doc.secondExamDate = req.body.secondExamDate;
-            doc.secondExamPlace = req.body.secondExamPlace;
             doc.secondExamAppelationDate = req.body.secondExamAppelationDate;
 
             doc.firstUploaded = req.body.firstUploaded === 'on';
@@ -100,7 +120,7 @@ var ProfileController = function(mongoose, app) {
                 console.log(subject, req.body.olympExams[subject]);
                 doc.olympExams.push(subject);
             }
-            doc.save(function(err) {
+            doc.save(function (err) {
                 if (err) {
                     req.session.error = 'Не получилось обновить профиль(( Возникли следующие ошибки: <p>' + err + '</p>';
                     req.session.locals = {doc: doc};
@@ -114,11 +134,11 @@ var ProfileController = function(mongoose, app) {
         });
     };
 
-    base.remove = function(req, res) {
+    base.remove = function (req, res) {
         var self = this;
-        this.Collection.findByReq(req, res, function(doc){
+        this.Collection.findByReq(req, res, function (doc) {
             var name = doc.name;
-            doc.remove(function() {
+            doc.remove(function () {
                 req.session.success = 'Профиль <strong>' + name + '</strong> успешно удалён';
                 res.redirect(self.path);
             });
@@ -128,8 +148,16 @@ var ProfileController = function(mongoose, app) {
     base.constructor = arguments.callee;
 
     return base;
-};
 
+    function createListForSelect(array, fieldName) {
+        return array.map(function (item) {
+            return {
+                name: item.name,
+                value: item[fieldName]
+            }
+        });
+    }
+};
 
 
 exports.ProfileController = ProfileController;

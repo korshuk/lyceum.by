@@ -23,7 +23,8 @@ module.exports = function (app) {
                     app.congratulationsController.getList(0, function (err, cdocs) {
                         var docs = ndocs
                             .concat(cdocs)
-                            .sort(sortByDate);
+                            .sort(sortByDate)
+                            .slice(0, 9);
 
                         newDate = new Date();
                         newDate.setTime(dateNow.getTime() + (1200000));

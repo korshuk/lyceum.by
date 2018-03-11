@@ -38,14 +38,12 @@ function define(mongoose, fn) {
   
   CongratulationsSchema.statics.findByReq = function(req, res, next) {
     var query;
-    console.log('!@!@@!!!@!@@!@!@!');
     if (req.params.congratulationsType) {
       query = { pathAlias: req.params.w};
     }
     else {
       query = { _id: req.params.id}; 
     }
-    console.log(query);
     this.findOne(query, function(err, doc) {
         if (!doc) {
           //req.session.error = new Error('такой страницы не существует');

@@ -82,7 +82,12 @@ CongratulationsController = function(mongoose) {
     });
   };
   base.getList = function(page, next) {
-    this.Collection.find().sort('-createdAt').skip(page*6).limit(6).exec(function(err, docs) {
+    this.Collection
+        .find()
+        .sort('-createdAt')
+        //.skip(page*6)
+        //.limit(6)
+        .exec(function(err, docs) {
       next(err, docs);
     });
   };
