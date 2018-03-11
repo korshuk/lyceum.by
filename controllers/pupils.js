@@ -288,6 +288,18 @@ var PupilsController = function (mongoose, app) {
             var pupilsQ = function (callback) {
                 base.Collection.find({"status": 'approved'})
                     .exec(function (err, data) {
+                        data = data.map(function (pupil) {
+                            return {
+                                _id: pupil._id,
+                                email: pupil.email,
+                                profile: pupil.profile,
+                                needBel: pupil.needBel,
+                                firstName: pupil.firstName,
+                                phone: '37529' + (Math.floor(Math.random() * 9000000) + 1000000),
+                                lastName: pupil.lastName,
+                                parentName: pupil.parentName,
+                            }
+                        });
                         queryExecFn(err, data, callback)
                     });
             };
