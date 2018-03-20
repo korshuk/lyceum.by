@@ -21,7 +21,11 @@ function define(mongoose, fn) {
         'email4': String,
         'email4Pass': String,
         'superPassword': String,
-        'reSiteKey': String
+        'reSiteKey': String,
+        'smsAPIKey': String,
+        'smsAPILogin': String,
+        'smsAPIName': String,
+        'smsAPISecretCode': String
     });
 
     mongoose.model('Settings', SettingsSchema);

@@ -1,8 +1,10 @@
 dialog#settingsDialog.mdl-dialog
     .modal-settings-container
-    .mdl-dialog__actions
+    .mdl-dialog__actions.dialog__actions-for-everything
         button#saveSettings.mdl-button Сохранить
         button.mdl-button.close-dialog.mdl-button--colored Закрыть
+    .mdl-dialog__actions.dialog__actions-for-phone
+        button#saveSettingsPhone.mdl-button Закрыть
 
     .cs-loader.loading-start
         div.mdl-spinner.mdl-js-spinner.is-active

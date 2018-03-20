@@ -12,6 +12,8 @@ var MailController = function (mongoose, app) {
     base.update = update;
     base.mailPassRequest = mailPassRequest;
     base.mailRegisterConfirm = mailRegisterConfirm;
+    base.mailDisapproved = mailDisapproved;
+    base.mailApproved = mailApproved;
 
     function mailPassRequest(mailTo, param) {
         prepareMail(mailTo, 'mails/passwordRequest.jade', param, 'Запрос пароля');
@@ -19,6 +21,14 @@ var MailController = function (mongoose, app) {
 
     function mailRegisterConfirm(mailTo, param) {
         prepareMail(mailTo, 'mails/registerConfirm.jade', param, 'Подтверждение регистрации');
+    }
+
+    function mailDisapproved(mailTo, param) {
+        prepareMail(mailTo, 'mails/mailDisapproved.jade', param, 'Кабинет абитуриента: отказ в регистрации');
+    }
+
+    function mailApproved(mailTo, param) {
+        prepareMail(mailTo, 'mails/mailApproved.jade', param, 'Кабинет абитуриента: сообщение о регистрации');
     }
 
     function prepareMail(mailTo, viewPath, param, subject) {

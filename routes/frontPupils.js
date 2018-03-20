@@ -69,6 +69,8 @@ module.exports = function (app) {
     app.post('/api/pupils/profile', passport.authenticate('bearer', {session: false}), updateProfile);
     app.post('/api/pupils/profileready', passport.authenticate('bearer', {session: false}), profileReady);
     app.post('/api/pupils/password', passport.authenticate('bearer', {session: false}), updatePassword);
+    app.post('/api/pupils/phone', passport.authenticate('bearer', {session: false}), updatePhone);
+    app.post('/api/pupils/code', passport.authenticate('bearer', {session: false}), updateCode);
 
     function requestPasswordPost(req, res) {
         app.pupilsController.Collection.findOne({
@@ -217,6 +219,8 @@ module.exports = function (app) {
 
     function savePupil(res, err, pupil) {
         console.log('saved pupil', pupil);
+        var pupilToSend = JSON.parse(JSON.stringify(pupil));
+        pupilToSend.phoneCode = '';
         if (err) {
             res.send({
                 message: 'error' + err
@@ -224,7 +228,7 @@ module.exports = function (app) {
         } else {
             res.send({
                 message: 'ok',
-                pupil: pupil
+                pupil: pupilToSend
             });
         }
     }
@@ -398,6 +402,29 @@ module.exports = function (app) {
     function updatePassword(req, res) {
         var pupil = req.user;
         pupil.password = req.body.password;
+        pupil.save(function (err, pupil) {
+            savePupil(res, err, pupil);
+        })
+    }
+
+    function updatePhone(req, res) {
+        var pupil = req.user;
+        pupil.phone = req.body.phone;
+        pupil.phoneCode =  Math.floor(100000 + Math.random() * 900000);
+        pupil.codeValid = false;
+
+        app.smsController.sendVerificationCode(pupil.phone, pupil.phoneCode);
+
+        pupil.save(function (err, pupil) {
+            savePupil(res, err, pupil, true);
+        })
+    }
+
+    function updateCode(req, res) {
+        var pupil = req.user;
+        var code = req.body.code;
+        pupil.codeValid =  (code === pupil.phoneCode) || (code === app.siteConfig.smsAPISecretCode);
+
         pupil.save(function (err, pupil) {
             savePupil(res, err, pupil);
         })

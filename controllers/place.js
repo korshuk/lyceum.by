@@ -30,6 +30,7 @@ var PlacesController = function(mongoose, app) {
             doc.address = req.body.address;
             doc.audience = [];
             for (var i=0; i < req.body.audience.length; i++) {
+                req.body.audience[i].bel = req.body.audience[i].bel === 'on';
                 doc.audience.push(req.body.audience[i]);
             }
             doc.save(function(err) {

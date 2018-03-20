@@ -1,0 +1,25 @@
+-function prettyDate(dateString){
+    -var d = dateString.getDate();
+    -var monthNames = [ "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря" ];
+    -var m = monthNames[dateString.getMonth()];
+    -var y = dateString.getFullYear();
+    -var dayNames = ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"];
+    -var day = dayNames[dateString.getDay()];
+    -return d+' '+m+', '+day;
+-}
+
+!!! transitional
+html
+    head
+        meta(http-equiv = 'Content-Type', content = 'text/html; charset=UTF-8')
+        title= subject
+        body
+            h2.h2 Уважаемый #{param.firstName} #{param.lastName}!
+
+            p Вы зарегистрированы на вступительные испытания в Лицей БГУ по профилю: #{param.profile}.
+            p После завершения приема документов в Лицей БГУ (#{prettyDate(param.registrationEndDate)}) в <a href="http://www.lyceum.by/abiturientu.html" target="_blank">личном кабинете абитуриента</a> следите за обновлениями информации места и времени проведения вступительных испытаний.
+
+            hr
+            p С уважением,
+            p Приемная комиссия
+            p Лицея БГУ

@@ -34,6 +34,9 @@ function define(mongoose, fn) {
         parentName: String,
         requestImg: String,
         diplomImg: String,
+        phone: String,
+        phoneCode: String,
+        codeValid: Boolean,
 
         night: Boolean,
         distant: Boolean,

@@ -35,6 +35,8 @@ div#startView.visibleView
 
                 include ./partials/fioSettings
 
+                include ./partials/phoneSettings
+
                 include ./partials/regionSettings
 
                 include ./partials/requestSettings
@@ -43,7 +45,7 @@ div#startView.visibleView
 
                 include ./partials/diplomSettings
 
-            if (profile && user.firstName && user.lastName && user.parentName && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
+            if (profile && user.firstName && user.lastName && user.parentName && user.phone && user.codeValid && user.region && user.requestImg && typeof user.night !== 'undefined' && typeof user.distant !== 'undefined')
                 button#sendRequestBtn.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Подать заявку
             else
                 p Чтобы подать заявку надо заполнить всё
@@ -84,6 +86,8 @@ div#startView.visibleView
         include ./partials/diplomDialog
 
         include ./partials/additionalDialog
+
+        include ./partials/phoneDialog
 
         div#region
             h3.mdl-dialog__title Адрес (регион) проживания

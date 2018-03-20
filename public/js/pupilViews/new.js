@@ -14,9 +14,12 @@ ready(function () {
     } else {
         window.pupilViews.newView = null;
         $(document).off('click', '#saveSettings');
+        $(document).off('click', '#saveSettingsPhone');
         $(document).off('click', '.settings-list-item.editable');
         $(document).off('click', '#sendRequestBtn');
         $(document).off('click', '#saveRequest');
+        $(document).off('click', '#checkPhone');
+        $(document).off('click', '#checkCode');
         $(document).off('change', '#profileInput');
         window.pupilViews.newView = new NewView();
     }
@@ -30,6 +33,7 @@ ready(function () {
         var errorNameP = false;
 
         $(document).on('click', '#saveSettings', saveSettings);
+        $(document).on('click', '#saveSettingsPhone', saveSettingsPhone);
         $(document).on('click', '#saveRequest', saveRequest);
         $(document).on('click', '.settings-list-item.editable', openSettingsDialog);
         $(document).on('click', '#sendRequestBtn', openSendRequestDialog);
@@ -69,6 +73,10 @@ ready(function () {
                     }
                 });
             }
+        }
+
+        function saveSettingsPhone() {
+            $(document).trigger('lyceum:needReload');
         }
 
         function saveSettings() {
@@ -157,8 +165,140 @@ ready(function () {
             if (settingView === 'logout') {
                 $(document).trigger('lyceum:logout');
             } else {
+                $('.dialog__actions-for-phone').hide();
+                $('.dialog__actions-for-everything').hide();
+
                 $(document).trigger('lyceum:openDialog', $dialogContent.find('#' + settingView).html());
+
+                if (settingView === 'phone') {
+                    setPhoneLogick();
+                    $('.dialog__actions-for-phone').show();
+                } else {
+                    $('.dialog__actions-for-everything').show();
+                }
             }
+        }
+
+        function setPhoneLogick() {
+            var $checkPhoneBtn = $('#checkPhone');
+            var $phoneInput = $('#newPhoneInput');
+            var $codeInput = $('#newCodeInput');
+            var $phoneCodeContainer = $('#phone-code-container');
+            $(document).off('click', '#checkPhone');
+            $(document).off('click', '#checkCode');
+
+            $(document).on('click', '#checkPhone', checkPhone);
+            $(document).on('click', '#checkCode', checkCode);
+
+            $phoneInput.inputmask("phone", {
+                oncomplete: function () {
+                },
+                onincomplete: function () {
+                },
+                oncleared: function () {
+                },
+                onKeyValidation: validatePhoneNumber,
+                onUnMask: function(maskedValue, unmaskedValue) {
+                    return unmaskedValue;
+                }
+            });
+
+            function validatePhoneNumber() {
+                var maskedPhone = $phoneInput.val();
+                var isValid = Inputmask.isValid(maskedPhone, { alias: "phone"});
+                $checkPhoneBtn.attr('disabled', !isValid);
+
+                return isValid;
+            }
+
+            function checkCode() {
+                var code = $codeInput.val();
+                console.log(code)
+                if (code.length) {
+                    updateCode({
+                        code: code
+                    })
+                }
+            }
+
+            function checkPhone () {
+                var phone = $phoneInput.val();
+
+                var isValid = validatePhoneNumber();
+
+                if (isValid) {
+                    updatePhone({
+                        phone: phone
+                    });
+                }
+            }
+        }
+
+        function updateCode(data) {
+            sendUpdateRequest('/api/pupils/code', data, function (response) {
+                var $codeInput = $('#newCodeInput');
+
+                if (response.message === 'ok') {
+                    var pupil = response.pupil;
+                    if (!pupil.codeValid) {
+                        $codeInput.parent('.form-input-group').addClass('is-invalid');
+                    } else {
+                        $('#phone-code-container').fadeOut();
+                        $('#phone-valid-container').fadeIn();
+                    }
+                    //TODO loadingEnd();
+                  //  $('#newPhoneInput').val(pupil.phone);
+                  //  $(document).trigger('lyceum:showNotification', 'Телефон сохранен');
+                  //  $('#phone-code-container').fadeIn();
+                    //  $(document).trigger('lyceum:needReload');
+                } else {
+                    //  auth.login(response.access_token, response.refresh_token);
+                    // signInView.hide();
+                    //  getUser();
+                }
+            });
+        }
+
+        function updatePhone(data) {
+           sendUpdateRequest('/api/pupils/phone', data, function (response) {
+                if (response.message === 'ok') {
+                    var pupil = response.pupil;
+                    //TODO loadingEnd();
+                    $('#newPhoneInput').val(pupil.phone);
+                    $('#newCodeInput').val('');
+                    $(document).trigger('lyceum:showNotification', 'Телефон сохранен, СМС отпралено');
+                    $('#phone-code-container').fadeIn();
+                    $('#phone-valid-container').fadeOut();
+                } else {
+                    //  auth.login(response.access_token, response.refresh_token);
+                    // signInView.hide();
+                    //  getUser();
+                }
+           });
+        }
+
+        function sendUpdateRequest(url, data, onSuccess) {
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: data,
+                statusCode: {
+                    200: onSuccess,
+                    401: function (response) {
+                        $(document).trigger('lyceum:needReload');
+                    },
+                    403: function (response) {
+                        console.log(response);
+                        //TODO Error handle
+                        if (response.responseText === '{"error":"invalid_grant","error_description":"Invalid resource owner credentials"}') {
+                            loadingEnd();
+                        }
+                        if (response.responseJSON.message === 'email exists') {
+                            loadingEnd();
+                        }
+                    }
+                }
+            });
         }
 
         function profileInputChange() {

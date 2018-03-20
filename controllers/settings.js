@@ -42,6 +42,10 @@ SettingsController = function(mongoose, app) {
             doc.email4Pass = req.body.email4Pass;
             doc.superPassword = req.body.superPassword;
             doc.reSiteKey = req.body.reSiteKey;
+            doc.smsAPIKey = req.body.smsAPIKey;
+            doc.smsAPILogin = req.body.smsAPILogin;
+            doc.smsAPISecretCode = req.body.smsAPISecretCode;
+            doc.smsAPIName = req.body.smsAPIName;
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;

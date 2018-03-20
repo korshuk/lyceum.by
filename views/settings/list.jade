@@ -55,6 +55,23 @@ block content
                 input#email4.form-control(name="email4", type="text", value=(docs && docs.email4))
                 label Четвертый email - пароль
                 input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
+        hr
+        h3 WEBSMS
+        .row
+            .form-group.col-lg-6
+                label Login
+                input#websmsLogin.form-control(name="smsAPILogin", type="text", value=(docs && docs.smsAPILogin))
+            .form-group.col-lg-6
+                label API-key(
+                    a(href="https://websms.by/") можно узнать тут
+                    | )
+                input#websmsKey.form-control(name="smsAPIKey", type="text", value=(docs && docs.smsAPIKey))
+            .form-group.col-lg-6
+                label От этого имени придут смс
+                input#websmsName.form-control(name="smsAPIName", type="text", value=(docs && docs.smsAPIName))
+            .form-group.col-lg-6
+                label Секретный код подтверждения
+                input#websmsSecretCode.form-control(name="smsAPISecretCode", type="text", value=(docs && docs.smsAPISecretCode))
 
         hr
         h3 reCAPTCHA

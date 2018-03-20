@@ -109,6 +109,7 @@ block content
                         th.sortable(sortable="lastName") lastName&nbsp;
                         th.sortable(sortable="parentName") parentName&nbsp;
                         th.sortable(sortable="email") email&nbsp;
+                        th.sortable(sortable="phone") телефон&nbsp;
                         th.sortable(sortable="region") region&nbsp;
                         th.sortable(sortable="night") ВЛ&nbsp;
                         th.sortable(sortable="distant") ДК&nbsp;
@@ -129,6 +130,8 @@ block content
                         td {{item.lastName}}
                         td {{item.parentName}}
                         td {{item.email}}
+                        td(ng-class="item.codeValid ? '' : 'text-danger'")
+                           | {{item.phone}}
                         td {{item.region}}
                         td {{item.night}}
                         td {{item.distant}}

@@ -1,0 +1,40 @@
+div#phone
+    h3.mdl-dialog__title Номер телефона
+    div.mdl-dialog__content
+        p 1. Введи свой номер телефона
+          br
+          | 2. Нажми на кнопку "Послать СМС"
+          br
+          | 3. Мы пришлём тебе сообщение с кодом, котороый нужно ввести в поле ниже
+
+        div(style="display:flex")
+            .form-input-group.mdl-textfield.mdl-textfield--floating-label.is-focused.is-upgraded
+                input#newPhoneInput.form-input.mdl-textfield__input(type="tel", value=(user.phone))
+                label.mdl-textfield__label(for="newPhoneInput") Номер телефона
+                span.error-message.mdl-textfield__error Заплоните поле не латинскими символами!
+            .form-input-group
+                div(style="width: 30px")
+            .form-input-group
+                button#checkPhone.mdl-button.mdl-js-button.mdl-button--raised Послать СМС
+
+        div#phone-code-container(style=(user.phone && !user.codeValid ? 'display:block' : "display:none"))
+
+            .form-input-group.mdl-textfield
+
+            p Введи код из СМС-сообщения и нажми "Проверить код"
+
+            div(style="display:flex")
+                .form-input-group.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#newCodeInput.form-input.mdl-textfield__input(type="text")
+                    label.mdl-textfield__label(for="newCodeInput") Код из СМС
+                    span.error-message.mdl-textfield__error Вы ввели неправильный код
+                .form-input-group
+                    div(style="width: 30px")
+                .form-input-group
+                    button#checkCode.mdl-button.mdl-js-button.mdl-button--raised Проверить код
+
+        div#phone-valid-container(style=(user.phone && user.codeValid ? 'display:block' : "display:none"))
+            h3 Телефон прошел проверку!
+            p Если ты изменишь свой номер телефона,
+              br
+              | то нужно будет пройти проверку снова

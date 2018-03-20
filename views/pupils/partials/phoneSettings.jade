@@ -1,0 +1,18 @@
+div.settings-list-item-holder
+    a.settings-list-item.editable(href="phone")
+        div.settings-list-item-container
+            div.settings-list-content
+                div.setting-name
+                    div.step-sign(class=(user.phone && user.codeValid ? 'ready': ''))
+                        if (user.phone && user.codeValid)
+                            i.material-icons.done-icon done
+                        else
+                            | 3
+                    b Телефон
+                div.setting-value
+                    | #{user.phone || 'надо заполнить'}
+                    if (user.phone && !user.codeValid)
+                        br
+                        | Телефон не прошел проверку
+                div.settings-list-next-sign
+                    i.material-icons keyboard_arrow_right

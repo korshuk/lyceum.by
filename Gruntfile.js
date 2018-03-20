@@ -37,7 +37,7 @@ module.exports = function (grunt) {
 
         concat: {
             dist: {
-                src: ['public/js/pupils/ready.js', 'public/js/pupils/dropify.js', 'public/js/pupils/material.js', 'public/js/pupils/storage.js', 'public/js/pupils/oauth.js', 'public/js/pupils/ui.js', 'public/js/pupils/app.js'],
+                src: ['public/js/pupils/ready.js', 'public/js/pupils/dropify.js', 'public/js/pupils/material.js', 'public/js/pupils/storage.js', 'public/js/pupils/oauth.js', 'public/js/pupils/ui.js', 'public/js/pupils/masking-input.js', 'public/js/pupils/app.js'],
                 dest: 'public/js/results.js',
             },
             main: {

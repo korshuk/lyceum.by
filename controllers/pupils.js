@@ -237,6 +237,21 @@ var PupilsController = function (mongoose, app) {
                         }
                         else {
                             req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
+                            if (doc.status === 'approved') {
+                                app.mailController.mailApproved(doc.email, {
+                                    firstName: doc.firstName,
+                                    lastName: doc.lastName,
+                                    profile: profile.name,
+                                    registrationEndDate: app.siteConfig.registrationEndDate
+                                });
+                            }
+                            if (doc.status === 'disapproved') {
+                                app.mailController.mailDisapproved(doc.email, {
+                                    firstName: doc.firstName,
+                                    lastName: doc.lastName
+                                });
+                            }
+
                             res.redirect(returnUrl);
                         }
                     });

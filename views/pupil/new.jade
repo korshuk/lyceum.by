@@ -31,6 +31,10 @@ block content
                 li.list-group-item.row
                     .col-md-12
                         .form-group= doc.email
+                        .form-group
+                            | Телефон: #{doc.phone} #{doc.codeValid ? 'подтвержден' : 'не подтвержден'}
+                            br
+                            | Код подтверждения: #{doc.phoneCode}
                 li.list-group-item.row
                     .col-md-12
                         .form-group= doc.created

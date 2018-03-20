@@ -11,6 +11,7 @@ function define(mongoose, fn) {
                     type: Number,
                     default: 0
                 },
+                'bel': Boolean,
                 'max': Number
             }],
             'createdAt': {

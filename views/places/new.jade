@@ -41,7 +41,9 @@ block content
                                         td(style="width: 400px")
                                             +field('number', "audience[" + index + "][max]", 'Максимальное количество')(value= audience.max || 0)
                                         td
-                                            .form-group
+                                                label &nbsp;
+                                                +field('checkbox', "audience[" + index + "][bel]", 'Бел')(checked= audience.bel || false)
+                                        td
                                                 label &nbsp;
                                                 .row
                                                     .col-lg-12
@@ -52,6 +54,9 @@ block content
                                         +field('text', "", 'Название')(value= '', class='name-field')
                                     td(style="width: 400px")
                                         +field('number', "", 'Максимальное количество')(value= 0, class='max-field')
+                                    td
+                                            label &nbsp;
+                                            +field('checkbox', "", 'Бел')(checked=false, class='bel-field')
                                     td
                                         .form-group
                                             label &nbsp;
@@ -92,6 +97,9 @@ block scripts
             $row
                 .find('.max-field')
                 .attr('name', 'audience[' + index + '][max]');
+            $row
+                .find('.bel-field')
+                .attr('name', 'audience[' + index + '][bel]');
         }
 
         function addItem(e) {

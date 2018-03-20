@@ -19,7 +19,8 @@
         PlacesController = require('../controllers/place').PlacesController,
         PupilsController = require('../controllers/pupils').PupilsController,
         SotkaController = require('../controllers/sotka').SotkaController,
-        MailController = require('../controllers/mail').MailController;
+        MailController = require('../controllers/mail').MailController,
+        smsController = require('../controllers/smsController').smsController;
         
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -43,6 +44,7 @@
         require('../routes/frontRoutes')(app);
 
         app.mailController = new MailController(mongoose, app);
+        app.smsController = new smsController(mongoose, app);
         app.menuController = new MenuController(app);
         app.userController = new UserController(mongoose);
         app.pageController = new PageController(mongoose, app);
