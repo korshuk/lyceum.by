@@ -515,7 +515,7 @@ var PupilsController = function (mongoose, app) {
                     status = 'newClear';
                 }
                 if (status === 'approved') {
-                    viewData.pupilViewName = createApprovedPupilView(pupil, profile);
+                    viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
                 }
                 viewName = 'pupils/' + status + '.jade';
 
