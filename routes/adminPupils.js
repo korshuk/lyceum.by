@@ -32,6 +32,13 @@ module.exports = function(app) {
         app.mailController.list(req, res);
     });
 
+    router.get('/reset', app.userController.Pass, function(req, res) {
+        app.pupilsController.resetPage(req, res);
+    });
+    router.post('/reset', app.userController.Pass, function(req, res) {
+        app.pupilsController.resetData(req, res);
+    });
+
     //router.get('/create', app.userController.Pass, function(req, res) {
     //    app.profileController.create(req, res);
     //});

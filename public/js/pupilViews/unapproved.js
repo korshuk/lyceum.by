@@ -55,10 +55,12 @@ ready(function () {
             e.preventDefault();
             e.stopPropagation();
             settingView = $(e.currentTarget).attr('href');
-
+            $('.dialog__actions-for-phone').hide();
+            $('.dialog__actions-for-everything').hide();
             if (settingView === 'logout') {
                 $(document).trigger('lyceum:logout');
             } else {
+                $('.dialog__actions-for-everything').show();
                 $(document).trigger('lyceum:openDialog', $dialogContent.find('#' + settingView).html());
             }
         }

@@ -24,6 +24,10 @@ var PupilsController = function (mongoose, app) {
 
         base.testPage = testPage;
 
+        base.resetPage = resetPage;
+
+        base.resetData = resetData;
+
         base.getUserData = getUserData;
 
         base.changeStatus = changeStatus;
@@ -470,6 +474,52 @@ var PupilsController = function (mongoose, app) {
         function testPage(req, res) {
             res.locals.siteConfig = app.siteConfig;
             res.render('pupil/test.jade', {});
+        }
+
+        function resetPage(req, res) {
+            res.locals.siteConfig = app.siteConfig;
+            res.render('pupil/reset.jade', {});
+        }
+
+        function resetData(req, res) {
+            var self = this;
+            app.profileController.Collection
+                .find()
+                .exec(function (err, profiles) {
+                   var i = 0;
+                   var profile;
+                   var length = profiles.length;
+
+                   for (i; i < length; i++) {
+                       profile = profiles[i];
+                       profile.countArray = [];
+                       profile.halfDelta = 0;
+                       profile.halfPupils = 0;
+                       profile.halfpass = 0;
+                       profile.maxF = 0;
+                       profile.maxS = 0;
+                       profile.maxT = 0;
+                       profile.minF = 0;
+                       profile.minS = 0;
+                       profile.minT = 0;
+                       profile.olymp = 0;
+                       profile.passF = 0;
+                       profile.passS = 0;
+                       profile.passT = 0;
+
+                       console.log(profile);
+                       profile.save()
+                   }
+
+                    base.Collection.remove({}, function (err) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect(self.path);
+                        }
+                    })
+                });
+
         }
 
         function getUserData(req, res) {
