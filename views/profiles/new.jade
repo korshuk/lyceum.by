@@ -27,6 +27,7 @@ block content
             +field('text', "firstExamDate", 'Дата')(value= doc.firstExamDate || '')#firstExamDate
             +field('text', "firstExamAppelationDate", 'Дата ознакомления')(value= doc.firstExamAppelationDate || '')#firstExamAppelationDate
             +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
+            +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
 
         div.panel.panel-default.row
             .col-lg-12
@@ -34,6 +35,7 @@ block content
             +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
             +field('text', "secondExamDate", 'Дата')(value= doc.secondExamDate || '')#secondExamDate
             +field('text', "secondExamAppelationDate", 'Дата ознакомления')(value= doc.secondExamAppelationDate || '')#secondExamAppelationDate
+            +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
 
         div.panel.panel-default.row
             .col-lg-12
