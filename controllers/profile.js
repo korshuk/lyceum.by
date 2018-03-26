@@ -108,6 +108,9 @@ var ProfileController = function (mongoose, app) {
             doc.secondExamDate = req.body.secondExamDate;
             doc.secondExamAppelationDate = req.body.secondExamAppelationDate;
 
+            doc.secondExamPlace = req.body.secondExamPlace;
+            doc.firstExamPlace = req.body.firstExamPlace;
+
             doc.firstUploaded = req.body.firstUploaded === 'on';
             doc.firstExamNoStats = req.body.firstExamNoStats === 'on';
             doc.secondUploaded = req.body.secondUploaded === 'on';
