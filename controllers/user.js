@@ -1,7 +1,7 @@
 var model = require('../models/user');
 var qs = require('querystring');
 
-UserController = function (mongoose) {
+var UserController = function (mongoose) {
     var self = this;
     this.name = 'User';
     this.viewPath = 'users/';
@@ -16,10 +16,10 @@ UserController = function (mongoose) {
 
 UserController.prototype.Pass = function (req, res, next) {
     if (req.session.user) {
-      next();
+        next();
     } else {
-      req.session.error = 'Access denied!';
-      res.redirect('/admin');
+        req.session.error = 'Access denied!';
+        res.redirect('/admin');
     }
 };
 

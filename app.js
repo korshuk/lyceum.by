@@ -14,13 +14,13 @@
 
     setTimeout(function () {
         app.use(function (err, req, res, next) {
-            console.log('err', err)
+            console.log('err', err);
             res.redirect('404.html');
         });
         if (!module.parent) {
             var date = new Date();
             app.listen(app.portNum);
-            fs.appendFile("start-times.log", date.toISOString() + '\n', function (err) {
+            fs.appendFile('start-times.log', date.toISOString() + '\n', function (err) {
                 if (err) {
                     throw 'error writing file: ' + err;
                 }

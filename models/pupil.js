@@ -23,11 +23,22 @@ function define(mongoose, fn) {
         resetPasswordToken: String,
         resetPasswordExpires: Date,
         confirmMailToken: String,
+        examStatus: String,
 
         profile: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Profiles'
         },
+        place1: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Places'
+        },
+        place2: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Places'
+        },
+        audience1: String,
+        audience2: String,
         needBel: Boolean,
         firstName: String,
         lastName: String,

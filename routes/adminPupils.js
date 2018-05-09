@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 
 module.exports = function(app) {
 
@@ -15,7 +16,7 @@ module.exports = function(app) {
     router.get('/api/list', app.userController.Pass, function(req, res) {
         app.pupilsController.apiList(req, res);
     });
-
+    
     router.get('/api/list-export', app.userController.Pass, function(req, res) {
         app.pupilsController.apiListExport(req, res);
     });
@@ -48,16 +49,26 @@ module.exports = function(app) {
     });
 
     router.get('/edit/:id', app.userController.Pass, function(req, res) {
-        console.log('edit', req.params.id, req.query);
         app.pupilsController.edit(req, res);
     });
 
     router.post('/edit/:id', app.userController.Pass, function(req, res) {
-        console.log('post pupil save', req.params.id, req.query, req.body);
         app.pupilsController.changeStatus(req, res);
     });
+    
+    router.options('/api/examStatus/:id', cors());
+    router.post('/api/examStatus/:id', cors(), function(req, res) {
+        app.pupilsController.setExamStatus(req, res);
+    });
 
-   // router.post('/', app.userController.Pass, function(req, res) {
+    router.options('/api/savepupilseats/:examNum', cors());
+    router.post('/api/savepupilseats/:examNum', cors(), function(req, res) {
+        app.pupilsController.savePupilSeats(req, res);
+    });
+
+    
+
+    // router.post('/', app.userController.Pass, function(req, res) {
     //    app.profileController.save(req, res);
     //});
 

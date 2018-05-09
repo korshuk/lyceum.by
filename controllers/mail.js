@@ -14,6 +14,36 @@ var MailController = function (mongoose, app) {
     base.mailRegisterConfirm = mailRegisterConfirm;
     base.mailDisapproved = mailDisapproved;
     base.mailApproved = mailApproved;
+    base.sendExamEnvite = sendExamEnvite;
+
+    function sendExamEnvite(examNum) {
+        app.pupilsController.Collection
+            .find({status: 'approved'})
+            .populate('profile')
+            .populate('place1')
+            .populate('place2')
+            .exec(onPupilsFound);
+
+        function onPupilsFound(err, pupils) {
+            var i = 0, length = pupils.length, pupil;
+
+            for (i; i < length; i++) {
+                pupil = pupils[i];
+                mailExamEnvites(pupil, examNum);
+            }
+        }
+    }
+
+    function mailExamEnvites(pupil, examNum) {
+
+        var param = {
+            examNum: examNum,
+            pupil: pupil
+        };
+        setTimeout(function(){
+            prepareMail(pupil.email, 'mails/examEnvite.jade', param, 'Кабинет абитуриента: приглашение на экзамен');
+        }, 1000);
+    }
 
     function mailPassRequest(mailTo, param) {
         prepareMail(mailTo, 'mails/passwordRequest.jade', param, 'Запрос пароля');
@@ -45,11 +75,12 @@ var MailController = function (mongoose, app) {
                 subject: subject,
                 html: html
             };
-            sendEmail(mailOptions)
+            sendEmail(mailOptions);
         }
 
     }
-
+    var errorCounter = 0;
+    var listsCounter = 0;
     function sendEmail(mailOptions) {
         var num = transportCounter;
 
@@ -60,25 +91,37 @@ var MailController = function (mongoose, app) {
         mailOptions.from = 'Лицей БГУ Приемная Комиссия <' + senderEmails[num] + '>';
 
         transporters[num].sendMail(mailOptions, function (error, info) {
-            var email = {
-                error: error,
-                messageId: info.messageId,
-                response: info.response,
-                from: mailOptions.from,
-                to: mailOptions.to,
-                subject: mailOptions.subject,
-                html: mailOptions.html
-            };
-
-            var doc = new base.Collection(email);
-            doc.save(function(err) {
-                console.log('!!!!!!!!', arguments);
-            });
-
+            var email = {};
             if (error) {
-                return console.log(error);
+                errorCounter = errorCounter + 1;
+                console.log(error);
+                if (error.code === 'EENVELOPE' || error.code === 'ECONNECTION') {
+                    setTimeout(function(){
+                        var options = mailOptions;
+                        options.wasError = true;
+                        sendEmail(mailOptions);
+                    }, 1000);
+                    return;
+                }
+                email.error = error;
+            } else {  
+                email.messageId = info.messageId;
+                email.response = info.response;
             }
-            console.log('Message %s sent: %s', info.messageId, info.response);
+
+            email.from = mailOptions.from;
+            email.to = mailOptions.to;
+            email.subject = mailOptions.subject;
+            email.html = mailOptions.html;
+            var doc = new base.Collection(email);
+
+            if (mailOptions.wasError) {
+                listsCounter = listsCounter + 1;
+            }
+            doc.save(function(err) {
+                console.log('Message %s sent: %s was error %s; ecount - %s; lists - %s', email.from, email.to, mailOptions.wasError, errorCounter, listsCounter);
+            });
+        
         });
     }
 

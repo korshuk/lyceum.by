@@ -41,24 +41,31 @@
             'sum'
         ];
 
+        vm.examStatuses = {
+            0: 'ok',
+            1: 'неявка',
+            2: 'плохой',
+            3: 'хороший',
+        };
+
         getProfiles()
             .then(function (resp) {
                 vm.profileOptions = resp.data;
                 vm.statusOptions = [
                     {
-                        name: "new"
+                        name: 'new'
                     },
                     {
-                        name: "new clear"
+                        name: 'new clear'
                     },
                     {
-                        name: "unapproved"
+                        name: 'unapproved'
                     },
                     {
-                        name: "disapproved"
+                        name: 'disapproved'
                     },
                     {
-                        name: "approved"
+                        name: 'approved'
                     }
                 ]
             });
@@ -99,7 +106,7 @@
         }
 
         function getProfiles() {
-            return $http.get('/front/rest/sotka')
+            return $http.get('/front/rest/sotka');
         }
         
         function exportCSV() {
@@ -120,12 +127,12 @@
                     exam1: item.exam1,
                     exam2: item.exam2,
                     sum: item.sum
-                }
+                };
             });
         }
 
         function getFileName() {
-            return $filter('date')(Date.now(), "yyyy-MM-dd_HH:mm:ss") + '-pupil-list.csv';
+            return $filter('date')(Date.now(), 'yyyy-MM-dd_HH:mm:ss') + '-pupil-list.csv';
         }
     }
 

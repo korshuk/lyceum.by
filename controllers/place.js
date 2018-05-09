@@ -4,6 +4,10 @@ var PlacesController = function(mongoose, app) {
 
     var base = new BaseController('Places', '', mongoose, app, true);
 
+    base.showSeats = showSeats;
+
+    base.hideSeats = hideSeats;
+
     base.save = function(req, res) {
         var self = this;
         var doc = new this.Collection(req.body);
@@ -61,6 +65,53 @@ var PlacesController = function(mongoose, app) {
     base.constructor = arguments.callee;
 
     return base;
+
+    function showSeats(req, res) {
+        var self = this;
+        var showFlagName = 'showExamSeats' + req.params.examNum;
+        var enableFlag = false;
+        var params = {
+            showExamSeats1: app.siteConfig.showExamSeats1 || false,
+            showExamSeats2: app.siteConfig.showExamSeats2 || false
+        };
+
+        if (params[showFlagName] !== true) {
+            enableFlag = true;
+            params[showFlagName] = true;
+            app.settingsController.saveSeatsFlag(params, sendResponce);
+
+            app.mailController.sendExamEnvite(req.params.examNum);
+
+        } 
+        function sendResponce(err) {
+            console.log('send resp')
+            if (!err) {
+                req.session.success = 'Включили рассадку <strong>' + req.params.examNum + '</strong> экзамена';
+            } else {
+                req.session.error = 'Не получилось(( Возникли следующие ошибки: <p>' + err + '</p>';
+            }
+
+            res.redirect(self.path);
+        }
+    }
+
+    function hideSeats(req, res) {
+        var self = this;
+        var params = {
+            showExamSeats1: false,
+            showExamSeats2: false
+        };
+        app.settingsController.saveSeatsFlag(params, sendResponce);
+        function sendResponce(err) {
+            if (!err) {
+                req.session.success = 'Выключили рассадку';
+            } else {
+                req.session.error = 'Не получилось(( Возникли следующие ошибки: <p>' + err + '</p>';
+            }
+
+            res.redirect(self.path);
+        }
+    }
 };
 
 

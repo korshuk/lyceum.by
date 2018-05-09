@@ -20,6 +20,14 @@ module.exports = function(app) {
         app.placesController.edit(req, res);
     });
 
+    router.get('/showSeats/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.showSeats(req, res);
+    });
+
+    router.get('/hideSeats', app.userController.Pass, function(req, res) {
+        app.placesController.hideSeats(req, res);
+    });
+
     router.post('/', app.userController.Pass, function(req, res) {
         app.placesController.save(req, res);
     });

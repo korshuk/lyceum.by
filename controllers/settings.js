@@ -1,12 +1,13 @@
 var BaseController = require('./baseController').BaseController;
 
-SettingsController = function(mongoose, app) {
+var SettingsController = function(mongoose, app) {
 
     var base = new BaseController('Settings', 'settings', mongoose, app);
 
     base.list = function(req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function(err, docs) {
+            console.log(docs[0])
             res.render(self.viewPath + 'list.jade', {
                 docs: docs[0],
                 viewName: 'settings'
@@ -57,6 +58,18 @@ SettingsController = function(mongoose, app) {
         });
     };
 
+    base.saveSeatsFlag = function(params, next) {
+        this.Collection.find().sort('-createdAt').exec(function(err, docs) {
+            var doc = docs[0];
+            doc.showExamSeats1 = params.showExamSeats1;
+            doc.showExamSeats2 = params.showExamSeats2;
+            doc.save(function(err, d){
+                app.siteConfig = d;
+                next(err);
+            });
+        });
+    };
+
     base.constructor = arguments.callee;
 
     base.Collection.find().sort('-createdAt').exec(function(err, docs) {
@@ -70,7 +83,7 @@ SettingsController = function(mongoose, app) {
         base.app.siteConfig = doc;
         base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
-        console.log(base.app.siteConfig);
+        console.log('siteConfig', base.app.siteConfig);
     });
 
 

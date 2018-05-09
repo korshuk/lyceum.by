@@ -23,12 +23,25 @@ p Напоминаем Вам, что следующий экзамен по п�
     nobr
         b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
         +space()
-    if ((profile.firstIsFirst && profile.secondExamPlace) || (!profile.firstIsFirst && profile.firstExamPlace))
-        | по адресу
-        +space()
-        nobr
-            b #{profile.firstIsFirst ? profile.secondExamPlace : profile.firstExamPlace}
-        +space()
-        | начало экзамена в
-        +space()
-        b 9:00
+    if (user.place2 && user.place2.address) 
+            br
+            | по адресу:
+            +space()
+            | #{user.place2.name},
+            +space()
+            | #{user.place2.address}
+            
+            if (siteConfig.showExamSeats2) 
+                - var audience = '';
+                - for (var i = 0; i < user.place2.audience.length; i++) {
+                -   if ('' + user.place2.audience[i]._id === user.audience2) {
+                -    audience = user.place2.audience[i].name
+                -   }
+                - }
+                br
+                | Вы будете писать экзамен в аудитории <b>#{audience}</b>
+            
+            br
+            | начало экзамена в
+            +space()
+            b 9:00

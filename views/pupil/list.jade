@@ -61,7 +61,7 @@ block content
                                     option(value="") Все профили
                                     option(ng-repeat="option in app.profileOptions track by $index",
                                         value="{{option._id}}") {{option.name}}
-                        .col-md-2
+                        .col-md-1
                             .form-group
                                 label Фильтр статуса
                                 select.form-control.order-search-box(placeholder="Фильтр статуса",
@@ -72,7 +72,18 @@ block content
                                     option(value="") Все статусы
                                     option(ng-repeat="option in app.statusOptions track by $index",
                                             value="{{option.name}}") {{option.name}}
-                        .col-md-2
+                        .col-md-1
+                            .form-group
+                                label Статус экзамена
+                                select.form-control.order-search-box(placeholder="Статус экзамена",
+                                                                        ng-change="filter()",
+                                                                        ng-model="examStatus",
+                                                                        filter-by="examStatus",
+                                                                        filter-type="select")
+                                    option(value="") Все статусы
+                                    option(ng-repeat="(key, value) in app.examStatuses track by $index",
+                                            value="{{key}}") {{value}}                    
+                        .col-md-1
                             .form-group.has-error
                                 label.control-label Поиск дупликатов
                                 select.form-control.order-search-box(placeholder="Поиск дупликатов",
@@ -100,7 +111,6 @@ block content
                                         | &nbsp;
                                         button.btn.btn-primary(type="button", ng-click="app.saveChanges()")
                                             | Сохранить
-
             table.table.table-hover.table-striped
                 thead
                     tr
@@ -122,11 +132,12 @@ block content
                         th.sortable(sortable="exam1") Э-1&nbsp;
                         th.sortable(sortable="exam2") Э-2&nbsp;
                         th.sortable(sortable="sum") Сумма&nbsp;
+                        th.sortable(sortable="examStatus") Экз-статус&nbsp;
                         th
                 tbody
                     tr(grid-item)
                         td {{$index + 1}}
-                        td {{item.firstName}}
+                        td {{item.firstName}} 
                         td {{item.lastName}}
                         td {{item.parentName}}
                         td {{item.email}}
@@ -148,6 +159,10 @@ block content
                             span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2}}
                             input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
                         td {{item.sum}}
+                        td {{app.examStatuses[item.examStatus || '0']}}
+                            br(ng-if='item.audience1 || item.audience2')
+                            span(ng-if='item.audience1') 1
+                            span(ng-if='item.audience2') 2
                         td
                             a(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}") Edit
 
