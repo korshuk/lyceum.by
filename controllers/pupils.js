@@ -362,18 +362,22 @@ var PupilsController = function (mongoose, app) {
         var pupilsQ = function (callback) {
             base.Collection.find({'status': 'approved'})
                 .exec(function (err, data) {
-                    data = data.map(function (pupil) {
-                        return {
-                            _id: pupil._id,
-                            email: pupil.email,
-                            profile: pupil.profile,
-                            needBel: pupil.needBel,
-                            firstName: pupil.firstName,
-                            phone: pupil.phone,
-                            lastName: pupil.lastName,
-                            parentName: pupil.parentName,
-                        };
-                    });
+                    data = data
+                        .filter(function (pupil) {
+                            return pupil.passOlymp !== true;
+                        })
+                        .map(function (pupil) {
+                            return {
+                                _id: pupil._id,
+                                email: pupil.email,
+                                profile: pupil.profile,
+                                needBel: pupil.needBel,
+                                firstName: pupil.firstName,
+                                phone: pupil.phone,
+                                lastName: pupil.lastName,
+                                parentName: pupil.parentName,
+                            };
+                        })
                     queryExecFn(err, data, callback);
                 });
         };
