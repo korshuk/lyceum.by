@@ -79,8 +79,7 @@ var MailController = function (mongoose, app) {
         }
 
     }
-    var errorCounter = 0;
-    var listsCounter = 0;
+    
     function sendEmail(mailOptions) {
         var num = transportCounter;
 
@@ -93,7 +92,6 @@ var MailController = function (mongoose, app) {
         transporters[num].sendMail(mailOptions, function (error, info) {
             var email = {};
             if (error) {
-                errorCounter = errorCounter + 1;
                 console.log(error);
                 if (error.code === 'EENVELOPE' || error.code === 'ECONNECTION') {
                     setTimeout(function(){
@@ -115,11 +113,8 @@ var MailController = function (mongoose, app) {
             email.html = mailOptions.html;
             var doc = new base.Collection(email);
 
-            if (mailOptions.wasError) {
-                listsCounter = listsCounter + 1;
-            }
             doc.save(function(err) {
-                console.log('Message %s sent: %s was error %s; ecount - %s; lists - %s', email.from, email.to, mailOptions.wasError, errorCounter, listsCounter);
+                console.log('Message %s sent: %s was error %s; ecount - %s; lists - %s', email.from, email.to, mailOptions.wasError);
             });
         
         });

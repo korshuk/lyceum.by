@@ -262,6 +262,7 @@ var PupilsController = function (mongoose, app) {
             doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
             doc.diplomExamName = req.body.diplomExamName;
             doc.message = req.body.message;
+            doc.email = req.body.email;
             if (req.body.profile) {
                 doc.profile = req.body.profile;
             }

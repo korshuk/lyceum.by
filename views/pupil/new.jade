@@ -29,8 +29,9 @@ block content
                                 option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
                                 option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
                 li.list-group-item.row
+                    .form-group
+                        +field('text', "email", 'email')(value= doc.email || '')
                     .col-md-12
-                        .form-group= doc.email
                         .form-group
                             | Телефон: #{doc.phone} #{doc.codeValid ? 'подтвержден' : 'не подтвержден'}
                             br
