@@ -98,7 +98,7 @@ var PlacesController = function(mongoose, app) {
 
             
             csvData = json2csv(exportData, opts);
-            res.attachment('filename.csv');
+            res.attachment('exam-seats-' + examNum +'.csv');
             res.status(200).send(csvData);
         }
 
