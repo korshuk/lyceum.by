@@ -9,12 +9,24 @@ var MailController = function (mongoose, app) {
     var senderEmails = [];
     var transportCounter = 0;
 
+    base.list = list;
     base.update = update;
     base.mailPassRequest = mailPassRequest;
     base.mailRegisterConfirm = mailRegisterConfirm;
     base.mailDisapproved = mailDisapproved;
     base.mailApproved = mailApproved;
     base.sendExamEnvite = sendExamEnvite;
+
+    function list(req, res) {
+        var self = this;
+        this.Collection.find().sort('-createdAt').limit(200).exec(function (err, docs) {
+            res.render(self.viewPath + 'list.jade', {
+                docs: docs,
+                viewName: self.name.toLowerCase(),
+                siteConfig: self.app.siteConfig
+            });
+        });
+    }
 
     function sendExamEnvite(examNum) {
         app.pupilsController.Collection
@@ -24,9 +36,13 @@ var MailController = function (mongoose, app) {
             .populate('place2')
             .exec(onPupilsFound);
 
-        function onPupilsFound(err, pupils) {
+        function onPupilsFound(err, data) {
+            var pupils = data.filter(function(pupil){
+                return pupil.passOlymp !== true;
+            });
             var i = 0, length = pupils.length, pupil;
 
+            console.log(data.length, pupils.length)
             for (i; i < length; i++) {
                 pupil = pupils[i];
                 mailExamEnvites(pupil, examNum);

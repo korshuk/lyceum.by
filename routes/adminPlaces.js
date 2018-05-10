@@ -24,6 +24,10 @@ module.exports = function(app) {
         app.placesController.showSeats(req, res);
     });
 
+    router.get('/:examNum/seats-email-export.csv', app.userController.Pass, function(req, res) {
+        app.placesController.seatsEmailExport(req, res);
+    });
+
     router.get('/hideSeats', app.userController.Pass, function(req, res) {
         app.placesController.hideSeats(req, res);
     });

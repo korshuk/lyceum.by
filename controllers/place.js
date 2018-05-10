@@ -1,3 +1,4 @@
+var json2csv = require('json2csv').parse;
 var BaseController = require('./baseController').BaseController;
 
 var PlacesController = function(mongoose, app) {
@@ -7,6 +8,8 @@ var PlacesController = function(mongoose, app) {
     base.showSeats = showSeats;
 
     base.hideSeats = hideSeats;
+
+    base.seatsEmailExport = seatsEmailExport;
 
     base.save = function(req, res) {
         var self = this;
@@ -66,6 +69,65 @@ var PlacesController = function(mongoose, app) {
 
     return base;
 
+    function seatsEmailExport(req, res) {
+        var examNum = req.params.examNum;
+
+        app.pupilsController.Collection
+            .find({status: 'approved'})
+            .populate('profile')
+            .populate('place1')
+            .populate('place2')
+            .exec(onPupilsFound);
+
+        function onPupilsFound(err, data) {
+            var fields = ['firstName', 'lastName', 'profile', 'date', 'placeName', 'placeAddress', 'audience'];
+            var opts = { fields: fields };
+            var exportData = [];
+            var csvData;
+            
+            var pupils = data.filter(function(pupil){
+                return pupil.passOlymp !== true;
+            });
+
+            var i = 0, length = pupils.length, pupil;
+
+            for (i; i < length; i++) {
+                pupil = pupils[i];
+                exportData.push(createExportData(pupil, examNum));
+            }
+
+            
+            csvData = json2csv(exportData, opts);
+            res.attachment('filename.csv');
+            res.status(200).send(csvData);
+        }
+
+        function createExportData(pupil, examNum) {
+            var examName = examNum === '1' ? 'firstExamDate' : 'secondExamDate';
+            var i = 0;
+            var audience = '';
+            var pupilAudience = pupil['audience' + examNum];
+            var place = pupil['place' + examNum];
+            var audienceLength = place.audience.length;
+            for (i; i < audienceLength; i++) {
+                if ('' + place.audience[i]._id === pupilAudience) {
+                    audience = place.audience[i].name
+                }
+            }
+            return {
+                firstName: pupil.firstName,
+                lastName: pupil.lastName,
+                profile: pupil.profile.name,
+                date: prettyDate(pupil.profile[examName]),
+                placeName: place.name,
+                placeAddress: place.address,
+                audience: audience,
+            };
+
+            
+        }
+    }
+
     function showSeats(req, res) {
         var self = this;
         var showFlagName = 'showExamSeats' + req.params.examNum;
@@ -79,12 +141,9 @@ var PlacesController = function(mongoose, app) {
             enableFlag = true;
             params[showFlagName] = true;
             app.settingsController.saveSeatsFlag(params, sendResponce);
-
-            app.mailController.sendExamEnvite(req.params.examNum);
-
         } 
         function sendResponce(err) {
-            console.log('send resp')
+            console.log('send resp');
             if (!err) {
                 req.session.success = 'Включили рассадку <strong>' + req.params.examNum + '</strong> экзамена';
             } else {
@@ -112,6 +171,17 @@ var PlacesController = function(mongoose, app) {
             res.redirect(self.path);
         }
     }
+
+    function prettyDate(dateString){
+        var d = dateString.getDate();
+        var monthNames = [ "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря" ];
+        var m = monthNames[dateString.getMonth()];
+        var y = dateString.getFullYear();
+        var dayNames = ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"];
+        var day = dayNames[dateString.getDay()];
+        return d+' '+m;
+    }
+    
 };
 
 

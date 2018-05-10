@@ -10,6 +10,13 @@ block content
         a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
         &nbsp;
         a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
+        
+        &nbsp;
+        &nbsp;
+        a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv', disabled=!siteConfig.showExamSeats1, target="_blank") .csv для 1 экзамена 
+        &nbsp;
+        a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv', disabled=!siteConfig.showExamSeats2, target="_blank") .csv для 2 экзамена 
+    
     table.table.table-hover
         tr
             th Код
