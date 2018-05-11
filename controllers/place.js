@@ -80,7 +80,7 @@ var PlacesController = function(mongoose, app) {
             .exec(onPupilsFound);
 
         function onPupilsFound(err, data) {
-            var fields = ['firstName', 'lastName', 'profile', 'date', 'placeName', 'placeAddress', 'audience'];
+            var fields = ['email', 'firstName', 'lastName', 'profile', 'date', 'placeName', 'placeAddress', 'audience'];
             var opts = { fields: fields };
             var exportData = [];
             var csvData;
@@ -115,6 +115,7 @@ var PlacesController = function(mongoose, app) {
                 }
             }
             return {
+                email: pupil.email,
                 firstName: pupil.firstName,
                 lastName: pupil.lastName,
                 profile: pupil.profile.name,
