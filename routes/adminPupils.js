@@ -66,6 +66,10 @@ module.exports = function(app) {
         app.pupilsController.savePupilSeats(req, res);
     });
 
+    router.post('/api/list', app.userController.Pass, function(req, res) {
+        app.pupilsController.saveExams(req, res);
+    });
+
     
 
     // router.post('/', app.userController.Pass, function(req, res) {
