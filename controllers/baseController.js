@@ -41,7 +41,7 @@
             res.render(self.viewPath + 'list.jade', {
                 docs: docs,
                 viewName: self.name.toLowerCase(),
-                siteConfig: self.app.siteConfig
+                siteConfig: self.app ? self.app.siteConfig : {}
             });
         });
     };
