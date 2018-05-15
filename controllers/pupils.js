@@ -14,6 +14,7 @@ var PupilsController = function (mongoose, app) {
     base.RefreshTokenModel = require('../models/pupil').RefreshTokenModel;
     base.HistoryModel = require('../models/pupil').HistoryModel;
 
+    base.examresults = examresults;
     base.apiList = apiList;
 
     base.apiListExport = apiListExport;
@@ -174,10 +175,21 @@ var PupilsController = function (mongoose, app) {
 
     return base;
 
+    function examresults (req, res) {
+        var self = this;
+        this.Collection.find().sort('-createdAt').exec(function (err, docs) {
+            res.render(self.viewPath + 'examresults.jade', {
+                docs: docs,
+                viewName: self.name.toLowerCase(),
+                siteConfig: self.app ? self.app.siteConfig : {}
+            });
+        });
+    }
+
     function setExamStatus(req, res) {
         this.Collection.findByReq(req, res, function (doc) {
             doc.examStatus = req.body.examStatus;
-            doc.save(function (err, doc) {
+            doc.save(function (err) {
                 if (err) {
                     res.json(err);
                 }
@@ -376,6 +388,7 @@ var PupilsController = function (mongoose, app) {
                                 phone: pupil.phone,
                                 lastName: pupil.lastName,
                                 parentName: pupil.parentName,
+                                requestImg: pupil.requestImg
                             };
                         })
                     queryExecFn(err, data, callback);

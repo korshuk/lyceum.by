@@ -9,6 +9,10 @@ module.exports = function(app) {
         app.pupilsController.list(req, res);
     });
 
+    router.get('/examresults', app.userController.Pass, function(req, res) {
+        app.pupilsController.examresults(req, res);
+    });
+
     router.get('/api/list', app.userController.Pass, function(req, res) {
         app.pupilsController.apiList(req, res);
     });
@@ -17,7 +21,7 @@ module.exports = function(app) {
         app.pupilsController.apiList(req, res);
     });
     
-    router.get('/api/list-export', app.userController.Pass, function(req, res) {
+    router.get('/api/list-export.json', app.userController.Pass, function(req, res) {
         app.pupilsController.apiListExport(req, res);
     });
 
