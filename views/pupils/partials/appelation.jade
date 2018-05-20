@@ -1,0 +1,21 @@
+mixin appelationInfo(date, noResultFlag)
+    -var d = new Date();
+    -var appDate = date.setHours(0,0,0,0)
+    -var currDate = d.setHours(0,0,0,0)
+
+    if (noResultFlag)
+        p
+            b Результаты экзамена появятся в личном кабинете #{prettyDate(date)} в 14:00.
+
+        p
+            | Кроме того #{prettyDate(date)} в Лицее БГУ с 14:00 по 17:30 вы можете ознакомиться с результатами проверки вашей работы.
+            br
+            | В другое время ознакомление с работами <nobr class="underline">не проводится</nobr>.
+            br
+            | Вход в здание Лицея БГУ в это время осуществляется <span class="underline">по предъявлению документа, удостоверяющего личность</span>.
+    else
+        small
+            p
+                | #{prettyDate(date)} в Лицее БГУ состоялось ознакомление с результатами проверки вашей работы.
+                br
+                | В другое время ознакомление с работами <nobr class="underline">не проводится</nobr>.

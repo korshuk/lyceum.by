@@ -5,6 +5,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
     p
         b *
         | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ первого экзамена
+    +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
 else
     +absent('первый')
 
@@ -15,8 +16,11 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
     p
         b *
         | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ второго экзамена
+
+    +appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, false)    
 else
     +absent('второй')
+
 
 hr.dotted
 if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.exam1 >= 0))

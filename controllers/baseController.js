@@ -12,7 +12,6 @@
         this.viewPath = this.name.toLowerCase() + '/';
         this.path = adminPath + path.toLowerCase();
         this.model = require('../models/' + this.name.toLowerCase());
-        console.log(this.name.toLowerCase());
         this.model.define(mongoose, function () {
             self.Collection = mongoose.model(self.name);
         });
@@ -20,7 +19,7 @@
 
     BaseController.prototype.setId = require('./menu').menuReqHelper;
 
-    BaseController.prototype.show = function (req, res, next) {
+    BaseController.prototype.show = function (req, res) {
         var self = this,
             cashObj;
         this.setId(req, res);
@@ -82,7 +81,7 @@
             for (i = 0; i < doc.body.ru.data.length; i++) {
                 block = doc.body[lang].data[i];
                 if (block != undefined && block.type === 'table') {
-                    lines = block.data.text.split("\n");
+                    lines = block.data.text.split('\n');
                     lastline = lines[lines.length - 1];
                     if (lastline.match(caption_re)) {
                         if (lastline.match(caption_re)[1] === 'table' || lastline.match(caption_re)[1] === 'olymp') {

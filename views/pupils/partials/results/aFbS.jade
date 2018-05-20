@@ -9,6 +9,8 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
         p
             b *
             | - текущий проходной балл по первому экзамену
+        
+        +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
 else
     +absent('первый')
 
