@@ -137,10 +137,10 @@ block content
                         td {{!!item.requestImg}}
                         td {{item.passOlymp ? 'БЭ' : ''}}
                         td
-                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1}}
+                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
                             input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
                         td
-                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2}}
+                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
                             input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
                         td {{item.sum}}
                         td {{app.examStatuses[item.examStatus || '0']}}

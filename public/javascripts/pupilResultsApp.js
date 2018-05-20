@@ -91,10 +91,20 @@
         }
 
         function minimizePupil(pupil) {
+            var exam1 = Number.parseInt(pupil.exam1);
+            var exam2 = Number.parseInt(pupil.exam2);
+
+            if (isNaN(exam1) && pupil.exam1 && pupil.exam1.length > 0) {
+                exam1 = -2;
+            }
+            if (isNaN(exam2) && pupil.exam2 && pupil.exam2.length > 0) {
+                exam2 = -2;
+            }
+
             return {
                 _id: pupil._id,
-                exam1: pupil.exam1,
-                exam2: pupil.exam2
+                exam1: exam1,
+                exam2: exam2
             };
         }
 
