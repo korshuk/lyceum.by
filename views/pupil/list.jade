@@ -12,6 +12,9 @@ block content
                     button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
                     | &nbsp;
                     a.btn.btn-primary(href="/admin/pupils/api/list-export.json", target="_blank") JSON-export
+                    | &nbsp;
+                    button.btn.btn-warning(type="button", ng-click="app.seedRecommended()") Автоматическое зачисление
+
                 .col.col-md-4
 
                 .col.col-md-6.text-right
@@ -94,6 +97,17 @@ block content
                                     option(value="") Поиск дупликатов
                                     option(value="false") Off
                                     option(value="true") On
+                        .col-md-2
+                            .form-group
+                                label.control-label Фильтр зачисленных
+                                select.form-control.order-search-box(placeholder="Фильтр зачисленных",
+                                                                        ng-change="filter()",
+                                                                        ng-model="recommended",
+                                                                        filter-by="recommended",
+                                                                        filter-type="select")
+                                    option(value="") Все
+                                    option(value="false") В пролёте
+                                    option(value="true") Зачисленные            
 
             table.table.table-hover.table-striped
                 thead
@@ -116,6 +130,7 @@ block content
                         th.sortable(sortable="exam1") Э-1&nbsp;
                         th.sortable(sortable="exam2") Э-2&nbsp;
                         th.sortable(sortable="sum") Сумма&nbsp;
+                        th.sortable(sortable="recommended") Зачислен&nbsp;
                         th.sortable(sortable="examStatus") Экз-статус&nbsp;
                         th
                 tbody
@@ -143,6 +158,7 @@ block content
                             span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
                             input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
                         td {{item.sum}}
+                        td {{item.recommended}}
                         td {{app.examStatuses[item.examStatus || '0']}}
                             br(ng-if='item.audience1 || item.audience2')
                             span(ng-if='item.audience1') 1

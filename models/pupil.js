@@ -63,7 +63,12 @@ function define(mongoose, fn) {
         exam2: Number,
         sum: Number,
         region: String,
-        message: String
+        message: String,
+
+        recommended: {
+            type: Boolean,
+            default: false
+        },
     });
 
     PupilSchema.methods.encryptPassword = function (password) {

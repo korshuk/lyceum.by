@@ -74,7 +74,9 @@ module.exports = function(app) {
         app.pupilsController.saveExams(req, res);
     });
 
-    
+    router.post('/api/seed-recommended', app.userController.Pass, function(req, res) {
+        app.pupilsController.seedReccommended(req, res);
+    });
 
     // router.post('/', app.userController.Pass, function(req, res) {
     //    app.profileController.save(req, res);

@@ -37,6 +37,8 @@ var PupilsController = function (mongoose, app) {
 
     base.savePupilSeats = savePupilSeats;
 
+    base.seedReccommended = seedReccommended;
+
     base.create = function (req, res) {
         var self = this,
             doc;
@@ -116,6 +118,7 @@ var PupilsController = function (mongoose, app) {
         this.Collection.findByReq(req, res, function (doc) {
             doc.name = req.body.name;
             doc.code = req.body.code;
+            doc.recommended = req.body.recommended === 'on';
             doc.subcode = req.body.subcode;
             doc.ammount = req.body.ammount;
             doc.firstExamName = req.body.firstExamName;
@@ -262,6 +265,7 @@ var PupilsController = function (mongoose, app) {
         }
         this.Collection.findByReq(req, res, function (doc) {
             doc.night = req.body.night === 'on';
+            doc.recommended = req.body.recommended === 'on';
             doc.distant = req.body.distant === 'on';
             doc.region = req.body.region;
             doc.firstName = req.body.firstName;
@@ -308,7 +312,7 @@ var PupilsController = function (mongoose, app) {
                     }
                     else {
                         req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                        if (doc.status === 'approved') {
+                        if (req.body.action === 'pupil_approve') {
                             app.mailController.mailApproved(doc.email, {
                                 firstName: doc.firstName,
                                 lastName: doc.lastName,
@@ -316,7 +320,7 @@ var PupilsController = function (mongoose, app) {
                                 registrationEndDate: app.siteConfig.registrationEndDate
                             });
                         }
-                        if (doc.status === 'disapproved') {
+                        if (req.body.action === 'pupil_disapprove') {
                             app.mailController.mailDisapproved(doc.email, {
                                 firstName: doc.firstName,
                                 lastName: doc.lastName
@@ -367,6 +371,33 @@ var PupilsController = function (mongoose, app) {
                 }
             });
 
+    }
+
+    function seedReccommended(req, res) {
+        
+        base.Collection
+            .find({'status': 'approved'})
+            .populate('profile')
+            .exec(function (err, pupils) {
+                if (err) res.status(500).send(err);
+
+                else {
+                    async.eachSeries(pupils, function (pupil, asyncdone) {
+                        pupil.recommended = pupil.recommended || false;
+                        if (pupil.sum >= pupil.profile.passT) {
+                            pupil.recommended = true;
+                        }
+                        if (pupil.passOlymp === true) {
+                            pupil.recommended = true;
+                        }
+                        pupil.save(asyncdone);
+                    }, function (err) {
+                        if (err) return res.status(500).send(err);
+                        res.status(200).send('ok');
+                    });
+                }
+                
+            });
     }
 
     function apiListExport(req, res) {
@@ -438,6 +469,7 @@ var PupilsController = function (mongoose, app) {
             examStatus: req.query.examStatus,
             firstName: req.query.firstName,
             email: req.query.email,
+            recommended: req.query.recommended,
             itemsPerPage: req.query.itemsPerPage || 100,
             page: req.query.page || 1
         };
@@ -506,6 +538,10 @@ var PupilsController = function (mongoose, app) {
         if (req.queryParams.examStatus) {
             query.find({"examStatus": req.queryParams.examStatus});
         }
+        if (req.queryParams.recommended) {
+            query.find({"recommended": req.queryParams.recommended});
+        }
+
 
         countQuery = query;
 

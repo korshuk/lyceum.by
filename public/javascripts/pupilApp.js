@@ -16,6 +16,7 @@
         vm.getFileName = getFileName;
         vm.disableEditMode = disableEditMode;
         vm.saveChanges = saveChanges;
+        vm.seedRecommended = seedRecommended;
 
         vm.gridOptions = {
             data: [],
@@ -26,6 +27,7 @@
         vm.scvHeader = [
             'created',
             'email',
+            'phone',
             'firstName',
             'lastName',
             'parentName',
@@ -48,6 +50,17 @@
             3: 'хороший',
         };
 
+        function seedRecommended() {
+            $http.post('/admin/pupils/api/seed-recommended')
+                .then(function() {
+                    window.location.reload();
+                })
+                .catch(function(err){
+                    console.log(err);
+                    alert('Беда!!!! что-то сломалось');
+                });
+        }
+
         getProfiles()
             .then(function (resp) {
                 vm.profileOptions = resp.data;
@@ -67,7 +80,7 @@
                     {
                         name: 'approved'
                     }
-                ]
+                ];
             });
 
 
@@ -114,6 +127,7 @@
                 return {
                     created: item.created,
                     email: item.email,
+                    phone: item.phone,
                     firstName: item.firstName,
                     lastName: item.lastName,
                     parentName: item.parentName,

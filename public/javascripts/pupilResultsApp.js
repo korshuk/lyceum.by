@@ -28,6 +28,7 @@
         vm.scvHeader = [
             'created',
             'email',
+            'phone',
             'firstName',
             'lastName',
             'parentName',
@@ -65,7 +66,7 @@
                 }); 
             }
             return profile[0];
-        }    
+        }
 
         function calculate() {
             $http.get('/admin/settings/calculateStats')
@@ -146,6 +147,7 @@
                 return {
                     created: item.created,
                     email: item.email,
+                    phone: item.phone,
                     firstName: item.firstName,
                     lastName: item.lastName,
                     parentName: item.parentName,
