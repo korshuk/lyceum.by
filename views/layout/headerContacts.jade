@@ -13,7 +13,7 @@ html(lang= locals.lang || "ru")
         link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
         link(rel="icon", href="/favicon.ico", type="image/x-icon")    
         
-        link(href='http://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
+        link(href='https://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
         link(rel='stylesheet', href='/css/style.css')
         
         include social/script
@@ -24,7 +24,7 @@ html(lang= locals.lang || "ru")
             function initialize(){var b=new google.maps.LatLng(53.896601,27.565727),a={center:b,zoom:15},a=new google.maps.Map(document.getElementById("map-canvas"),a);new google.maps.Marker({position:b,map:a,title:"\u041b\u0438\u0446\u0435\u0439 \u0411\u0413\u0423",icon:"/img/map.png"})}google.maps.event.addDomListener(window,"load",initialize);
     body
         //div#flash
-        div(itemscope, itemtype="http://schema.org/LocalBusiness")#container
+        div(itemscope, itemtype="https://schema.org/LocalBusiness")#container
             include sidebar
             block content
         block footer

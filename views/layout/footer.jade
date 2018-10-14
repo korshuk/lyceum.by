@@ -13,7 +13,7 @@ footer
             br
             | #{translate('Все права защищены.')}
             br
-        small(itemprop="address", itemscope, itemtype="http://schema.org/PostalAddress")
+        small(itemprop="address", itemscope, itemtype="https://schema.org/PostalAddress")
             span(itemprop="addressCountry")= translate("Беларусь")
             , 
             span(itemprop="postalCode")= '220030'
@@ -38,7 +38,7 @@ footer
 if (siteConfig.showPupilCabinet && (locals.doc && doc.pathAlias === 'abiturientu'))
     include ../results/widgetDialogs
 
-script(src='http://code.jquery.com/jquery-1.11.0.min.js')
+script(src='https://code.jquery.com/jquery-1.11.0.min.js')
 script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)
 
 script(src='/js/script.min.js?timestamp=' + siteConfig.startTime)

@@ -12,7 +12,7 @@ html(lang= locals.lang || "ru")
         link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
         link(rel="icon", href="/favicon.ico", type="image/x-icon")    
             
-        link(href='http://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
+        link(href='https://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Sans+Caption&subset=latin,cyrillic', rel='stylesheet', type='text/css')
         link(rel='stylesheet', href='/css/style.css')
         
         block script
@@ -24,12 +24,12 @@ html(lang= locals.lang || "ru")
     body
         div#fb-root
         //div#flash
-        div(itemscope, itemtype="http://schema.org/LocalBusiness")#container
+        div(itemscope, itemtype="https://schema.org/LocalBusiness")#container
             div#sidebar
                 header
                     a(href='#')
                         img(itemprop="image", src="/img/logo.png")#logo 
                         h1(itemprop="name")!= 'Лицей Белорусского государственного университета'.split(' ').join('<br>')
             block content
-        script(src='http://code.jquery.com/jquery-1.11.0.min.js')
+        script(src='https://code.jquery.com/jquery-1.11.0.min.js')
         script(src='/js/script.js')
