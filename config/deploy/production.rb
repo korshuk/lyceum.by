@@ -6,9 +6,13 @@
 # Don't declare `role :all`, it's a meta role
 set :stage, :production
 
-role :app, %w{lyceum@178.159.244.43}
-role :web, %w{lyceum@178.159.244.43}
-role :db,  %w{lyceum@178.159.244.43}
+# role :app, %w{lyceum@178.159.244.43}
+# role :web, %w{lyceum@178.159.244.43}
+# role :db,  %w{lyceum@178.159.244.43}
+
+role :app, %w{lyceum@185.179.83.146}
+role :web, %w{lyceum@185.179.83.146}
+role :db,  %w{lyceum@185.179.83.146}
 
 # Extended Server Syntax
 # ======================
@@ -16,7 +20,8 @@ role :db,  %w{lyceum@178.159.244.43}
 # definition into the server list. The second argument
 # something that quacks like a hash can be used to set
 # extended properties on the server.
-server '178.159.244.43', user: 'lyceum', roles: %w{web app}, my_property: :my_value
+# server '178.159.244.43', user: 'lyceum', roles: %w{web app}, my_property: :my_value
+server '185.179.83.146', user: 'lyceum', roles: %w{web app}, my_property: :my_value
 
 # you can set custom ssh options
 # it's possible to pass any option but you need to keep in mind that net/ssh understand limited list of options
@@ -28,8 +33,9 @@ server '178.159.244.43', user: 'lyceum', roles: %w{web app}, my_property: :my_va
 #    auth_methods: %w(password)
 #  }
 # and/or per server
- server '178.159.244.43',
-   user: 'lyceum',
+# server '178.159.244.43',
+ server '185.179.83.146', 
+  user: 'lyceum',
    roles: %w{web app},
    ssh_options: {
 #     user: 'user_name', # overrides user setting above
