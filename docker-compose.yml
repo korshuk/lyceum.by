@@ -1,0 +1,24 @@
+version: '3.7'
+services: 
+  app:  
+    image: node:4
+    container_name: lyceum  
+    build: .
+#    restart: always
+    command: npm run dev
+    ports: 
+      - '80:3000'
+    volumes:
+      - C:\Users\nastyasinkevich\Documents\GitHub\lyceum.by\:/user/src/app/
+      - C:\Users\nastyasinkevich\Documents\Basketball website\img:/user/src/app/sinkevich
+    working_dir: /user/src/app/
+  #   links:
+  #     - mongo
+  #   depends_on:
+  #     - mongo
+  # mongo:
+  #   image: mongo
+  #   volumes:
+  #     - C:\Users\nastyasinkevich\Documents\example:/data/db
+  #   ports:
+  #   - '27017:27017'

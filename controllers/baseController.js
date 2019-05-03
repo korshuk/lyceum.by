@@ -37,7 +37,7 @@
     BaseController.prototype.list = function (req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {
-            res.render(self.viewPath + 'list.jade', {
+                res.render(self.viewPath + 'list.jade', {
                 docs: docs,
                 viewName: self.name.toLowerCase(),
                 siteConfig: self.app ? self.app.siteConfig : {}

@@ -1,7 +1,7 @@
 /*jslint node: true */
 (function () {
     'use strict';
-    var app = {},
+ 	var app = {},
         url = require('url'),
         fs = require('fs'),
         localization = require('./modules/localization').localization;

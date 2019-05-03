@@ -1,0 +1,27 @@
+body{
+    font-size: 15px;
+    width: 790px;
+}
+.headline{
+    text-align: center;    
+    font-weight: bold;
+}
+p{
+    margin: 5px;
+}
+table{
+    font-size: 12px;
+    margin: 20px;
+    text-align: center; 
+    border-collapse: collapse;   
+}
+table tbody{
+    font-size: 11px;
+}
+
+th,
+td {border: 1px solid black;}
+
+li{
+    font-style: italic;
+}
