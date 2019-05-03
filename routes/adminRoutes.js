@@ -1,5 +1,6 @@
 module.exports = function (app) {
     'use strict';
+  
     require('../routes/adminSettings')(app);
     require('../routes/adminSotka')(app);
     require('../routes/adminCash')(app);
@@ -17,4 +18,6 @@ module.exports = function (app) {
     require('../routes/adminProfiles')(app);
     require('../routes/adminPlaces')(app);
     require('../routes/adminPupils')(app);
+    //////////////////////////////////////
+    require('../routes/adminReport')(app);
 };

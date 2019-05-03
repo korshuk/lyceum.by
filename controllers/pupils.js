@@ -39,6 +39,9 @@ var PupilsController = function (mongoose, app) {
 
     base.seedReccommended = seedReccommended;
 
+    base.pupilsList = pupilsList;
+
+
     base.create = function (req, res) {
         var self = this,
             doc;
@@ -178,6 +181,18 @@ var PupilsController = function (mongoose, app) {
 
     return base;
 
+
+    function pupilsList(profile) {
+        var query = base.Collection.find();
+
+        query.find({"status": 'aproved'});
+        query.find({"profile": profile});
+        
+       query
+            .sort('firstName')
+            .populate('profile')
+    }
+    
     function examresults (req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {

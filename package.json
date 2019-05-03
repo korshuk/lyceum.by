@@ -3,7 +3,8 @@
   "version": "0.11.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon --legacy-watch app.js"
   },
   "dependencies": {
     "async": "1.0.0",
@@ -28,7 +29,8 @@
     "passport-oauth2-client-password": "*",
     "password-generator": "*",
     "usage": "*",
-    "winston": "*"
+    "winston": "*",
+    "nodemon": "^1.17.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.6",

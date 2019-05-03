@@ -34,13 +34,13 @@
 
             app.use(express.static('./public'));
 
-            app.set('db-uri', 'mongodb://localhost/lyceum');
+            app.set('db-uri', 'mongodb://host.docker.internal:27017/lyceum');
             db = mongoose.connect(app.set('db-uri'));
 
             app.use('/admin', express.cookieParser('shhhh, very secret'));
             app.use('/admin', express.session({
                 store: new MongoStore({
-                    url: 'mongodb://localhost/lyceum'
+                    url: 'mongodb://host.docker.internal:27017/lyceum'
                 }),
                 secret: 'secret secret'
             }));

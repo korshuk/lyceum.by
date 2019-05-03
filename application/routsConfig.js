@@ -20,7 +20,9 @@
         PupilsController = require('../controllers/pupils').PupilsController,
         SotkaController = require('../controllers/sotka').SotkaController,
         MailController = require('../controllers/mail').MailController,
-        smsController = require('../controllers/smsController').smsController;
+        smsController = require('../controllers/smsController').smsController,
+        ReportController = require('../controllers/report').ReportController;
+
         
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -55,6 +57,7 @@
         app.profileController = new ProfileController(mongoose, app);
         app.placesController = new PlacesController(mongoose, app);
         app.pupilsController = new PupilsController(mongoose, app);
+        app.reportController = new ReportController('Report', '', mongoose, app, true);
 
         require('../routes/adminRoutes')(app);
         return app;
