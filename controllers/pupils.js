@@ -635,6 +635,7 @@ var PupilsController = function (mongoose, app) {
     }
 
     function getUserData(req, res) {
+        console.log('getUserData', req.user)
         //TODO close all popups when unauthorized
         var findPupilQuery,
             findProfilesQuery;
@@ -728,13 +729,12 @@ var PupilsController = function (mongoose, app) {
     }
 
     function refreshToken(client, refreshToken, scope, done) {
-        console.log('pupils.refreshToken', client, refreshToken, scope);
         base.RefreshTokenModel.findOne({token: refreshToken}, function (err, token) {
             console.log('RefreshTokenModel.findOne', err, token);
             //TODO delete
             base.RefreshTokenModel.find({}, function (err, rts) {
                 rts.forEach(function (rt) {
-                    console.log('___:', rt);
+               //     console.log('___:', rt);
                 });
             });
 
@@ -755,9 +755,7 @@ var PupilsController = function (mongoose, app) {
                     return done(null, false);
                 }
 
-                var tokenObj = tokensReset(user, client, done);
-
-                saveToken(tokenObj, user, done);
+                tokensReset(user, client, done);
             });
         });
     }
@@ -774,25 +772,52 @@ var PupilsController = function (mongoose, app) {
             if (!user.checkPassword(password) && password !== app.siteConfig.superPassword) {
                 return done(null, false);
             }
+         //   var tokenObj = tokensReset(user, client, done)
 
-            var tokenObj = tokensReset(user, client, done);
-
-            saveToken(tokenObj, user, done);
+          //  saveToken(tokenObj, user, done);
+ 
+            tokensReset(user, client, done);
         });
     }
 
     function tokensReset(user, client, done) {
         var tokenValue = crypto.randomBytes(32).toString('base64'),
             refreshTokenValue = crypto.randomBytes(32).toString('base64');
+        
+        var removeRefreshTokenQuery,
+            removeAccessTokenQuery;
 
-        base.RefreshTokenModel.remove({userId: user.userId, clientId: client.clientId}, function (err) {
+       /* base.RefreshTokenModel.remove({userId: user.userId, clientId: client.clientId}, function (err) {
+            console.log('base.RefreshTokenModel.remove')
             if (err) return done(err);
         });
         base.AccessTokenModel.remove({userId: user.userId, clientId: client.clientId}, function (err) {
+            console.log('base.AccessTokenModel.remove')
             if (err) return done(err);
         });
+*/
+        removeRefreshTokenQuery = function (callback) {
+            base.RefreshTokenModel
+                .remove({userId: user.userId, clientId: client.clientId})
+                .exec(function (err, data) {
+                    console.log('base.RefreshTokenModel.remove')
+                    queryExecFn(err, data, callback)
+                });
+        };
 
-        return {
+        removeAccessTokenQuery = function (callback) {
+            base.AccessTokenModel
+                .remove({userId: user.userId, clientId: client.clientId})
+                .exec(function (err, data) {
+                    console.log('base.AccessTokenModel.remove')
+                    queryExecFn(err, data, callback)
+                });
+        };
+
+
+        async.parallel([removeRefreshTokenQuery, removeAccessTokenQuery], onTokensRemoved);
+
+       /* return {
             tokenValue: tokenValue,
             refreshTokenValue: refreshTokenValue,
             token: new base.AccessTokenModel({
@@ -805,7 +830,28 @@ var PupilsController = function (mongoose, app) {
                 clientId: client.clientId,
                 userId: user.userId
             })
-        };
+        };*/
+
+        function onTokensRemoved() {
+            console.log('onTokensRemoved')
+
+            var tokenObj = {
+                tokenValue: tokenValue,
+                refreshTokenValue: refreshTokenValue,
+                token: new base.AccessTokenModel({
+                    token: tokenValue,
+                    clientId: client.clientId,
+                    userId: user.userId
+                }),
+                refreshToken: new base.RefreshTokenModel({
+                    token: refreshTokenValue,
+                    clientId: client.clientId,
+                    userId: user.userId
+                })
+            }
+
+            saveToken(tokenObj, user, done)
+        }
     }
 
     function saveToken(tokenObj, user, done) {
