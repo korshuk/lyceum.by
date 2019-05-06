@@ -47,6 +47,16 @@ function define(mongoose, fn) {
         'firstUploaded': Boolean,
         'secondUploaded': Boolean,
         'totalUploaded': Boolean,
+        'committee': {
+            'first': {
+                'head': String,
+                'staff': String
+            },
+            'second': {
+                'head': String,
+                'staff': String
+            }
+        }
     });
 
     ProfilesSchema.virtual('id').get(function() {

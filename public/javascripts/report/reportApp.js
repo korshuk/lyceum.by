@@ -1,8 +1,15 @@
 'use strict';
 
-var reportApp = angular.module('reportApp', ['ui.router','templateControllers']);
+var reportApp = angular.module('reportApp', ['ui.router', 'ui.bootstrap', 'templateControllers']);
 
 reportApp.config(function($stateProvider) {
+    var list = {
+        name: 'list',
+        url: '/',
+        templateUrl: '/templates/list.html',
+        controller: 'listController',
+        controllerAs: 'app'
+    };
     var report1 = {
         name: 'report1',
         url: '/report1',
@@ -19,6 +26,7 @@ reportApp.config(function($stateProvider) {
         controllerAs: 'app'
     };
 
+    $stateProvider.state(list);
     $stateProvider.state(report1);
     $stateProvider.state(report2);
 });

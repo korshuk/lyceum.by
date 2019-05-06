@@ -188,9 +188,9 @@ var PupilsController = function (mongoose, app) {
         query.find({"status": 'aproved'});
         query.find({"profile": profile});
         
-       query
-            .sort('firstName')
-            .populate('profile')
+        return query
+                .sort('firstName')
+                .populate('profile')
     }
     
     function examresults (req, res) {

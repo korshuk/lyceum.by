@@ -1,44 +1,76 @@
   <h2>Настройки протокола вступительного испытания</h2>
 
-  <div>
-    <form name="app.entranceTestForm" action="" ng-submit="$event.preventDefault()"> 
-      <h3>Профиль</h3>
-          <select  name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)" ng-model="app.data.profile" required>
+  <div class="row">
+    <form name="app.entranceTestForm" action="" ng-submit="$event.preventDefault()">
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label>Профиль</label>
+          <select name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)"
+            ng-model="app.data.profile" required>
             <option ng-repeat="x in app.profiles" ng-value="x.name">{{x.name}}</option>
-          </select>    
-          <span style="color: red" ng-show="app.entranceTestForm.profile.$error.required && app.entranceTestForm.$submitted">Выберите профиль</span>
+          </select>
+          <span style="color: red"
+            ng-show="app.entranceTestForm.profile.$error.required && app.entranceTestForm.$submitted">Выберите
+            профиль</span>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label>Предмет</label>
+          <select name="subject" class="form-control" ng-model="app.data.subject" required>
+            <option ng-repeat="x in app.subjects" ng-value="x">{{x}}</option>
+          </select>
+          <span style="color: red"
+            ng-show="app.entranceTestForm.subject.$error.required && app.entranceTestForm.$submitted">Выберите
+            предмет</span>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label>Начало испытания</label>
+          <div uib-timepicker ng-model="app.data.startTime" hour-step="1" minute-step="1" show-meridian="false"></div>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label>Конец испытания</label>
+          <div uib-timepicker ng-model="app.data.endTime" hour-step="1" minute-step="1" show-meridian="false"></div>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <div class="row">
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label>Дата внесения оценок в протокол</label>
+              <div class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="dt"
+                  is-open="app.datePopup.opened" datepicker-options="app.dateOptions" ng-required="true"
+                  close-text="Close" />
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="app.openDatePopup()"><i
+                      class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label>Название текста диктанта (номер варианта контрольной работы) </label>
+          <input name="variant" class="form-control" type="text" ng-model="app.data.testVariant" required>
+          <span style="color: red"
+            ng-show="app.entranceTestForm.variant.$error.required && app.entranceTestForm.$submitted">Укажите название
+            текста диктанта (номер варианта контрольной работы)</span>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <div class="form-group">
+          <button class="btn btn-success" ng-click="app.onFormSubmit()" type="submit">Получить протокол</button>
+          <a class="btn btn-warning" ui-sref="list">Отмена</a>
+        </div>
+      </div>
 
-      <h3>Предмет</h3>
-        <select name="subject" class="form-control" ng-model="app.data.subject" required >
-          <option ng-repeat="x in app.subjects" ng-value="x">{{x}}</option>
-        </select>  
-      <span style="color: red" ng-show="app.entranceTestForm.subject.$error.required && app.entranceTestForm.$submitted">Выберите предмет</span>
-     
-      <h3>Начало испытания</h3>
-        <p>Часы</p>
-            <input class="form-control" type="number" min='0' max='24' ng-model="app.data.startHour" required>
-    <br/>
-        <p>Минуты</p>
-            <input class="form-control" type="number" min='0' max='59' ng-model="app.data.startMinutes" required>
-    <br/>
-       
-      <h3>Конец испытания</h3>
-        <p>Часы</p>
-            <input class="form-control" type="number" min='0' max='24' ng-model="app.data.endHour" required>
-    <br/>
-        <p>Минуты</p>
-          <input class="form-control" type="number" min='0' max='59' ng-model="app.data.endMinutes" required>
-    <br/>
-        <h3>Название текста диктанта (номер варианта контрольной работы) </h3>
-            <input name="variant" class="form-control" type="text" ng-model="app.data.testVariant" required>
-        <span style="color: red" ng-show="app.entranceTestForm.variant.$error.required && app.entranceTestForm.$submitted">Укажите название текста диктанта (номер варианта контрольной работы)</span>
+    </form>
 
-    <br/>
-    <br/>
-
-    <button class="btn btn-primary" ng-click="app.onFormSubmit()" type="submit"> Получить протокол</button>
-
-  </form>  
-
- </span>
-  
+    </span>

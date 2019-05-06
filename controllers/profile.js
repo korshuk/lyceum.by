@@ -117,6 +117,17 @@ var ProfileController = function (mongoose, app) {
             doc.totalUploaded = req.body.totalUploaded === 'on';
             doc.olympExams = [];
 
+            doc.committee = {
+                first: {
+                    head: req.body['committee.first.head'] || '',
+                    staff: req.body['committee.first.staff'] || ''
+                },
+                second: {
+                    head: req.body['committee.second.head'] || '',
+                    staff: req.body['committee.second.staff'] || ''
+                }
+            };
+
             doc.order = req.body.order;
             doc.belLang = req.body.belLang === 'on';
             for (subject in req.body.olympExams) {

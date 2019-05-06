@@ -6,6 +6,7 @@
         MongoStore = require('connect-mongo')(express),
         db,
         fs = require('fs'),
+        mongoUrl = process.env.MONGO_URL || 'localhost',
         logfile = fs.createWriteStream('./logfile.log', {
             flags: 'a'
         });
@@ -34,13 +35,13 @@
 
             app.use(express.static('./public'));
 
-            app.set('db-uri', 'mongodb://host.docker.internal:27017/lyceum');
+            app.set('db-uri', 'mongodb://'+mongoUrl+':27017/lyceum');
             db = mongoose.connect(app.set('db-uri'));
 
             app.use('/admin', express.cookieParser('shhhh, very secret'));
             app.use('/admin', express.session({
                 store: new MongoStore({
-                    url: 'mongodb://host.docker.internal:27017/lyceum'
+                    url: 'mongodb://'+mongoUrl+':27017/lyceum'
                 }),
                 secret: 'secret secret'
             }));

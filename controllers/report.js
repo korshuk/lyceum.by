@@ -42,8 +42,10 @@
         self.app.pupilsController.pupilsList(doc.profile).exec(function (err, list) {
             console.log('err',err);
             console.log('list',list);
-        self.app.render(`reports/generatedReport${doc.type}.jade`, data, onRendered);
-    })
+        
+            self.app.render(`reports/generatedReport${doc.type}.jade`, data, onRendered);
+    
+        });
 
         function onRendered(err, html) {
             doc.html = html;
