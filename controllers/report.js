@@ -38,13 +38,14 @@
         var self = this;
         var data = req.body;
         var doc = new this.Collection(req.body);
+        var examNum = 'exam'+data.examNumber;
 
-        self.app.pupilsController.pupilsList(doc.profile).exec(function (err, list) {
-            console.log('err',err);
-            console.log('list',list);
-        
-            self.app.render(`reports/generatedReport${doc.type}.jade`, data, onRendered);
-    
+        self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
+            data.list = list;             
+            data.absentList = list.filter(pupil => pupil[examNum]===-2); 
+            data.withoutExams = list.filter(pupil => pupil[examNum]===-1); 
+            data.num = 0;
+            self.app.render(`reports/generatedReport${doc.type}.jade`, data, onRendered);    
         });
 
         function onRendered(err, html) {

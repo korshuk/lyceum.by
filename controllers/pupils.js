@@ -185,8 +185,7 @@ var PupilsController = function (mongoose, app) {
     function pupilsList(profile) {
         var query = base.Collection.find();
 
-        query.find({"status": 'aproved'});
-        query.find({"profile": profile});
+        query.find({"status": 'approved', "profile": profile});
         
         return query
                 .sort('firstName')

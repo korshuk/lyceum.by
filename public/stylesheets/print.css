@@ -1,27 +1,45 @@
-body{
+body {
     font-size: 15px;
     width: 790px;
 }
-.headline{
+
+.headline {
     text-align: center;    
     font-weight: bold;
 }
-p{
+
+p {
     margin: 5px;
 }
-table{
+
+table {
     font-size: 12px;
-    margin: 20px;
     text-align: center; 
     border-collapse: collapse;   
 }
-table tbody{
+
+table tbody {
     font-size: 11px;
 }
 
 th,
-td {border: 1px solid black;}
+td {
+    border: 1px solid black;
+}
 
-li{
+li {
+    font-style: italic;
+}
+
+.info {    
+    display: flex;
+    justify-content: space-between;
+}
+
+.protocol {
+    margin: 20px;
+}
+
+.italics-text {
     font-style: italic;
 }

@@ -81,12 +81,15 @@ function template1Controller(dataService, $filter) {
                 examNumber = 2;
             }
             vm.data.examNumber = examNumber;
+            vm.data.profileId = currentProfile._id;
             vm.data.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
             vm.data.startTimeString =  $filter('date')(vm.data.startTime, "HH часов mm минут");
             vm.data.endTimeString =  $filter('date')(vm.data.endTime, "HH часов mm минут");
+            console.log(vm.data);
+
             dataService.postData(vm.data).then(function (res) {
                 if (res.data.id) {
-                   // window.location = '/admin/report/generated/' + res.data.id;
+                    window.location = '/admin/report/generated/' + res.data.id;
                 }
             })
         }
@@ -98,7 +101,6 @@ function template1Controller(dataService, $filter) {
         for (var i = 0; i < vm.profiles.length; i++) {
             vm.map[vm.profiles[i].name] = [vm.profiles[i].firstExamName, vm.profiles[i].secondExamName]
         };
-        console.log(vm.map)
     }
 }
 
