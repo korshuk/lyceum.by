@@ -46,18 +46,8 @@ function define(mongoose, fn) {
         'belLang': Boolean,
         'firstUploaded': Boolean,
         'secondUploaded': Boolean,
-        'totalUploaded': Boolean,
-        'committee': {
-            'first': {
-                'head': String,
-                'staff': String
-            },
-            'second': {
-                'head': String,
-                'staff': String
-            }
-        }
-    });
+        'totalUploaded': Boolean
+    }, { usePushEach: true });
 
     ProfilesSchema.virtual('id').get(function() {
         return this._id.toHexString();

@@ -1,0 +1,94 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='x-ua-compatible', content='ie=edge')
+    title Статистика экзамена по предмету #{subject} на #{profile.name} профиль
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=PT+Sans")
+    link(rel='stylesheet', href='/stylesheets/report2Print.css')
+    link(rel="stylesheet", href="/stylesheets/print.css")
+    style
+      @page { size: A3 }
+  body.A3
+    section.sheet
+      header
+        .info
+          p Лицей БГУ
+          p #{entryDateStr}
+        h1 #{subject}
+        nav
+          p Общая информация
+          p.centered Явка
+          p Результаты
+      aside
+        .site-bar
+          .subsection
+            h2 Информация
+            p
+              | Для поступления на <b>#{profile.name}</b> профиль необходимо сдать два
+              | экзамена: <b>#{profile.firstExamName}</b> (<b>#{profile.firstExamDateStr}</b>) и <b>#{profile.secondExamName}</b> (<b>#{profile.secondExamDateStr}</b>).
+            p
+              | На <b>#{profile.ammount}</b> мест было подано <b>#{profile.countArray[profile.countArray.length-1].count}</b> заявлений из них <b>#{profile.olymp}</b> заявлений от призеров
+              | заключительного этапа республиканской предметной олимпиады, которые
+              | рекомендуются к зачислению без экзаменов. Таким образом по итогам
+              | подачи документов конкурс составил <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b> человека на место. К
+              | вступительным испытаниям допущено <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b> абитуриента.
+          .subsection
+            h2 Явка на экзамен
+            p
+              | Из <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b> допущеных к экзаменам абитуриентов в экзамене по предмету #{subject}
+              | приняло участие <b>#{list.length - profile.olymp - absentList.length}</b> абитуриентов, <b>#{absentList.length}</b> абитуриентов не явилось.
+          .subsection
+            h2 Результаты
+            .result
+              p Максимальный балл
+              p <b>#{max}</b>
+            .result
+              p Минимальный балл
+              p <b>#{min}</b>
+            .result
+              p Средний балл
+              p <b>#{average}</b>
+            .result
+              p Медианный балл
+              p <b>#{mediana}</b>
+            .result
+              p Текущий проходной
+              p <b>#{pass}</b>
+      main#main-content.main
+        h3 Распределение результатов экзамена по баллам
+        .content
+          .diagram
+            each data, index in gistogram
+              div.data-bar(style="height:#{data * 10}px")
+                .count #{data > 0 ? data : ''}
+                .points #{10*index}-#{10*index+9}
+          h2 Итоги экзамена
+          
+          p
+            | Гистограмма отражает распределение баллов по итогам экзамена и
+            | показывает количество работ, которые оценены в определенном интервале
+            | баллов. Например, в диапазоне от 66 до 75 баллов находится 4 работы
+            | абитуриентов, а более 76 баллов по математике набрали 3 абитуриента
+            | математического профиля.
+          h4 Текущий проходной балл - #{pass}
+          div.resultsLine
+            div.line
+                div.result-line(style="left:#{min}%;right:#{100 - max}%")
+                div.not-pass-line(style="left:#{min}%;right:#{100 - pass}%")
+                div.badge.range-badge.left-range <b>0</b>
+                div.badge.minBadge.with-tooltip(id="minBadge",style="left:#{min}%")<b>#{min}</b>
+                    div.arrow-up
+                div.badge.maxBadge.with-tooltip(id="maxBadge",style="left:#{max}%")<b>#{max}</b>
+                    div.arrow-up
+                div.badge.range-badge.right-range <b>100</b>
+                div.badge.passBadge.with-tooltip(id="passBadge",style="left:#{pass}%")<b>#{pass}</b>
+                    div.arrow-down  
+          p
+            | Свой собственный результат Вы можете узнать в личном кабинете
+            | абитуриента на официальном сайте Лицея БГУ в разделе абитуриенту.
+          img.pencils(src='/img/pencils.png')
+      footer.info
+        p Вступительная кампания #{new Date().getFullYear()}
+        p #{profile.name}

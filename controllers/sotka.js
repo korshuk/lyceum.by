@@ -50,7 +50,7 @@ SotkaController = function(mongoose, application) {
                                       indexOfPass,
                                       lastIndexOf;
 
-                                  profile.countArray.push({
+                                    profile.countArray = profile.countArray.concat({
                                       count: pupils.length,
                                       date: new Date()
                                   });
@@ -122,7 +122,9 @@ SotkaController = function(mongoose, application) {
                                       }
 
                                   }
-                                  profile.save(function (err, doc) {});
+                                  profile.save(function (err, doc) {
+                                      console.log('profile save', err, profile.name)
+                                  });
                           });
                       });
           });

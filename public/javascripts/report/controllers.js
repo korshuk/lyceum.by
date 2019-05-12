@@ -1,6 +1,6 @@
 'use strict';
 const EXAM_REPORT_TYPE = 1,
-      ENROLLMENT_REPORT_TYPE = 2;
+      STATS_REPORT_TYPE = 2;
 
 const EXAM_NUMBER_NAMES = {
         1: 'first', 
@@ -68,8 +68,10 @@ function template1Controller(dataService, $filter) {
     function onFormSubmit() {
         vm.entranceTestForm.$submitted = true;
         if (vm.entranceTestForm.$valid) {
+            var url = `/admin/report/show/${vm.data.type}?`;
+            var props = {};
             var currentProfile;
-            var examNumber;
+            var examNumber = 2;
             for (var i = 0; i < vm.profiles.length; i++) {
                 if (vm.profiles[i].name == vm.data.profile) {
                     currentProfile = vm.profiles[i];
@@ -77,21 +79,27 @@ function template1Controller(dataService, $filter) {
             }
             if (currentProfile.firstExamName == vm.data.subject) {
                 examNumber = 1;
-            } else {
-                examNumber = 2;
-            }
-            vm.data.examNumber = examNumber;
-            vm.data.profileId = currentProfile._id;
-            vm.data.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
-            vm.data.startTimeString =  $filter('date')(vm.data.startTime, "HH часов mm минут");
-            vm.data.endTimeString =  $filter('date')(vm.data.endTime, "HH часов mm минут");
-            console.log(vm.data);
+            } 
+            props.examNumber = examNumber;
+            props.subject = vm.data.subject;
+            props.profile = currentProfile.name;
+            props.profileId = currentProfile._id;
+            props.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
+            props.startTimeString =  $filter('date')(vm.data.startTime, "HH часов mm минут");
+            props.endTimeString =  $filter('date')(vm.data.endTime, "HH часов mm минут");
+            props.testVariant = vm.data.testVariant;
+            props.entryDate = vm.data.entryDate;
+            console.log(props, queryStringFromObj(props), url + queryStringFromObj(props));
 
-            dataService.postData(vm.data).then(function (res) {
+            openInNewTab(url + queryStringFromObj(props))
+
+            
+            
+            /*dataService.postData(vm.data).then(function (res) {
                 if (res.data.id) {
                     window.location = '/admin/report/generated/' + res.data.id;
                 }
-            })
+            })*/
         }
     }
 
@@ -105,8 +113,79 @@ function template1Controller(dataService, $filter) {
 }
 
 
-function template2Controller() {
-    console.log('temp2');
+function template2Controller(dataService, $filter) {
+    var vm = this;
+
+    vm.dateOptions = {
+        dateDisabled: false,
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        minDate: new Date(),
+        startingDay: 1
+    };
+    vm.datePopup = {};
+    vm.statsForm = {};
+    vm.data = {
+        type: STATS_REPORT_TYPE,
+    };
+    
+    vm.map;
+
+    vm.onProfileChange = onProfileChange;
+    vm.onFormSubmit = onFormSubmit;
+    vm.openDatePopup = openDatePopup;
+
+    dataService.getProfiles().then(getProfilesToSubjectMap)
+
+    function openDatePopup() {
+        vm.datePopup.opened = true;
+    };
+
+    function onProfileChange(selectedProfile) {
+        vm.subjects = vm.map[selectedProfile];
+    }
+
+    function onFormSubmit() {
+        vm.statsForm.$submitted = true;
+        if (vm.statsForm.$valid) {
+            var url = `/admin/report/show/${vm.data.type}?`;
+            var props = {};
+            var currentProfile;
+            var examNumber = 2;
+            for (var i = 0; i < vm.profiles.length; i++) {
+                if (vm.profiles[i].name == vm.data.profile) {
+                    currentProfile = vm.profiles[i];
+                }
+            }
+            if (currentProfile.firstExamName == vm.data.subject) {
+                examNumber = 1;
+            } 
+            props.examNumber = examNumber;
+            props.subject = vm.data.subject;
+            props.profile = currentProfile.name;
+            props.profileId = currentProfile._id;
+            props.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
+            props.entryDate = vm.data.entryDate;
+
+            openInNewTab(url + queryStringFromObj(props))
+            
+            
+            /*dataService.postData(vm.data).then(function (res) {
+                if (res.data.id) {
+                    window.location = '/admin/report/generated/' + res.data.id;
+                }
+            })*/
+        }
+    }
+
+    function getProfilesToSubjectMap(resp) {
+        vm.map = {};
+        vm.profiles = resp.data;
+        for (var i = 0; i < vm.profiles.length; i++) {
+            vm.map[vm.profiles[i].name] = [vm.profiles[i].firstExamName, vm.profiles[i].secondExamName]
+        };
+    }
+
 }
 
 function listController() {
@@ -127,3 +206,14 @@ function dataService($http) {
         return $http.get('/front/rest/sotka');
     }
 }
+
+function openInNewTab(url) {
+    var win = window.open(url, '_blank');
+    win.focus();
+  }
+
+function queryStringFromObj(params) {
+    return Object.keys(params).map(function(key) {
+        return key + '=' + params[key]
+    }).join('&');
+}  

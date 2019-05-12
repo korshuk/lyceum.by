@@ -11,6 +11,7 @@
         this.name = name;
         this.viewPath = this.name.toLowerCase() + '/';
         this.path = adminPath + path.toLowerCase();
+        console.log('this.path', this.path)
         this.model = require('../models/' + this.name.toLowerCase());
         this.model.define(mongoose, function () {
             self.Collection = mongoose.model(self.name);

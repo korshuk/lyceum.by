@@ -1,0 +1,63 @@
+body {
+    font-size: 15px;
+    line-height: 1.4;
+    width: 790px;
+}
+
+.headline {
+    text-align: center;    
+    font-weight: bold;
+}
+
+p {
+    text-indent: 20px; 
+}
+.no-indent {
+    text-indent: 0; 
+}
+table {
+    font-size: 12px;
+    text-align: center; 
+    border-collapse: collapse;   
+}
+
+table tbody {
+    font-size: 11px;
+}
+
+th,
+td {
+    border: 1px solid black;
+}
+h3 {
+    margin: 0;
+}
+p {
+    margin: 0;
+}
+ol {
+    margin: 0;
+    padding-left: 20px;
+}
+li {
+    font-style: italic;
+}
+
+.info {    
+    display: flex;
+    justify-content: space-between;
+}
+
+.protocol {
+    margin: 20px;
+}
+
+.italics-text {
+    font-style: italic;
+}
+.name-cell {
+    text-align: left;
+}
+.exam-cell {
+    text-align: right
+}

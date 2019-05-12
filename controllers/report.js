@@ -2,7 +2,13 @@
 (function (exports, require) {
     'use strict';
 
+    var moment = require('moment');
+    moment.locale('ru');
+    var DateFormat = require('date-fns/format');
+    var ruLocale = {locale: require('date-fns/locale/ru')};
+
     require('../modules/date.js');
+    
 
     var ReportController;
 
@@ -24,7 +30,7 @@
 
     };
 
-    function show(req, res) {
+    function generate(req, res) {
         this.Collection
             .findOne({ _id : req.params.id})
             .exec(function(err,doc){
@@ -34,29 +40,83 @@
         })
     }
 
-    function generate(req, res) {
+    function show(req, res) {
         var self = this;
-        var data = req.body;
-        var doc = new this.Collection(req.body);
-        var examNum = 'exam'+data.examNumber;
-
-        self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
-            data.list = list;             
-            data.absentList = list.filter(pupil => pupil[examNum]===-2); 
-            data.withoutExams = list.filter(pupil => pupil[examNum]===-1); 
-            data.num = 0;
-            self.app.render(`reports/generatedReport${doc.type}.jade`, data, onRendered);    
-        });
-
-        function onRendered(err, html) {
-            doc.html = html;
-            doc.save(function(err, doc) {
-                res.send({
-                    id: doc._id
+        var type = req.params.type;
+        var data = req.query;
+        console.log(data)
+       // var doc = new this.Collection(req.body);
+        
+        if (type === '1') {
+            var examNum = 'exam'+data.examNumber;
+            self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
+                self.app.subjectController.Collection.findOne({name: data.subject}).exec(function(err, subject) {
+                    self.app.committeesController.Collection.findOne({subject: subject.id}).exec(function(err, committee) {
+                        data.committee = committee;
+                        data.list = list.filter(pupil => true);         
+                        data.absentList = list.filter(pupil => pupil[examNum]===-2); 
+                        data.withoutExams = list.filter(pupil => pupil[examNum]===-1); 
+                        data.num = 0;
+                        data.committee.staffArr = data.committee.staff.split(';')
+                        console.log(data.absentList)
+                        data.dateStr = moment(data.date).format('LL');
+                        data.entryDateStr = moment(data.entryDate).format('LL');//DateFormat(data.entryDate, '"DD" MMMM YYYY г.', ruLocale);
+                        res.render(`reports/generatedReport${type}.jade`, data);    
+                    })
                 })
-            })
-            
-        }        
+                
+                
+            });
+        }
+        if (type === '2') {
+            var examNum = 'exam'+data.examNumber;
+            var pupil;
+            var i = 0;
+            var results = [];
+            var average = 0;
+            var medianaPlace;
+            var examName = data.examNumber === '1' ? 'F': 'S';
+            var gistogram = [0,0,0,0,0,0,0,0,0,0];
+            self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
+                self.app.profileController.Collection.findOne({_id: data.profileId}).exec(function(err, profile) {
+                    console.log(profile)
+                    data.list = list.filter(pupil => true);         
+                    data.absentList = list.filter(pupil => pupil[examNum]===-2); 
+                    for (i ; i < list.length; i++) {
+                        pupil = list[i];
+                        if (pupil[examNum] > -1) {
+                            results.push(+pupil[examNum]);
+                            average = average + +pupil[examNum];
+                        }
+                    }
+
+                    results.sort(function(a, b) {
+                        return a - b;
+                    });
+                    results.map(function(points) {
+                        var place = Math.floor(points * 0.1);
+                        gistogram[place] = gistogram[place] + 1;
+                    })
+
+                    medianaPlace = Math.floor(results.length * 0.5);
+                    data.average = Math.floor(average / results.length);
+                    data.mediana =  Math.floor((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
+                    data.min = profile[`min${examName}`];
+                    data.max = profile[`max${examName}`];
+                    data.pass = profile[`pass${examName}`];
+                    console.log('res', results, examName, data.examNumber)
+                    data.results = results;
+                    data.gistogram = gistogram;
+                    data.profile = profile;
+                    data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');
+                    data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
+                    data.entryDateStr = moment(data.entryDate).format('LL');
+                    res.render(`reports/generatedReport${type}.jade`, data);    
+                });
+            });
+                    
+        }
+        
     }
 
     function report (req, res) {

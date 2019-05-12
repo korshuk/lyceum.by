@@ -15,6 +15,7 @@
         ExamsController = require('../controllers/exams').ExamsController,
         SettingsController = require('../controllers/settings').SettingsController,
         SubjectController = require('../controllers/subject').SubjectController,
+        CommitteesController = require('../controllers/committees').CommitteesController,
         ProfileController = require('../controllers/profile').ProfileController,
         PlacesController = require('../controllers/place').PlacesController,
         PupilsController = require('../controllers/pupils').PupilsController,
@@ -54,6 +55,7 @@
         app.settingsController = new SettingsController(mongoose, app);
         app.sotkaController = new SotkaController(mongoose, app);
         app.subjectController = new SubjectController(mongoose, app);
+        app.committeesController = new CommitteesController(mongoose, app);
         app.profileController = new ProfileController(mongoose, app);
         app.placesController = new PlacesController(mongoose, app);
         app.pupilsController = new PupilsController(mongoose, app);
