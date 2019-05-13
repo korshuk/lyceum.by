@@ -46,8 +46,8 @@ function define(mongoose, fn) {
         'belLang': Boolean,
         'firstUploaded': Boolean,
         'secondUploaded': Boolean,
-        'totalUploaded': Boolean,
-    });
+        'totalUploaded': Boolean
+    }, { usePushEach: true });
 
     ProfilesSchema.virtual('id').get(function() {
         return this._id.toHexString();

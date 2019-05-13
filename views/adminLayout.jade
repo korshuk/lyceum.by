@@ -1,7 +1,7 @@
 doctype 5
 html
   head
-    title title
+    title Админка
     
     //link(rel='stylesheet', href='/stylesheets/bootstrap.css')
 
@@ -48,6 +48,8 @@ html
                     li
                       a(href="/admin/pupils/subjects") Предметы
                     li
+                      a(href="/admin/pupils/committees") Комиссии  
+                    li
                       a(href="/admin/pupils/history") История
                     li
                         a(href="/admin/pupils/emails") Список посланных писем
@@ -62,6 +64,8 @@ html
                   a(href="/admin/settings") Настройки
                 li
                   a(href="/admin/cash") Посмотреть кэш
+                li
+                  a(href="/admin/report") Тестовая страница
               p.navbar-text.pull-right
                 a.navbar-link(href="/admin/logout") Logout
     div(class= (locals.viewName && locals.viewName === 'pupil') ? 'container-fluid' : 'container')

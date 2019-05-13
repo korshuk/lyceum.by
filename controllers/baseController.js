@@ -11,6 +11,7 @@
         this.name = name;
         this.viewPath = this.name.toLowerCase() + '/';
         this.path = adminPath + path.toLowerCase();
+        console.log('this.path', this.path)
         this.model = require('../models/' + this.name.toLowerCase());
         this.model.define(mongoose, function () {
             self.Collection = mongoose.model(self.name);
@@ -37,7 +38,7 @@
     BaseController.prototype.list = function (req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {
-            res.render(self.viewPath + 'list.jade', {
+                res.render(self.viewPath + 'list.jade', {
                 docs: docs,
                 viewName: self.name.toLowerCase(),
                 siteConfig: self.app ? self.app.siteConfig : {}

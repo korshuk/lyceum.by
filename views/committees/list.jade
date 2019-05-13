@@ -1,0 +1,21 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Список комиссий
+        a.btn.btn-primary(href='/admin/pupils/committees/create') Добавить комиссию
+    table.table.table-hover
+        tr
+            th Предмет
+            th Председатель
+            th Комиссия
+            th
+        - each doc in docs
+            tr
+                td= doc.subject.name
+                td= doc.head
+                td= doc.staff
+                td
+                    a(href="/admin/pupils/committees/edit/"+doc.id) Редактировать
+                    br
+                    a(href="/admin/pupils/committees/delete/"+doc.id) Удалить

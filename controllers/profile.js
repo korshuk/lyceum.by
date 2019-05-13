@@ -120,7 +120,6 @@ var ProfileController = function (mongoose, app) {
             doc.order = req.body.order;
             doc.belLang = req.body.belLang === 'on';
             for (subject in req.body.olympExams) {
-                console.log(subject, req.body.olympExams[subject]);
                 doc.olympExams.push(subject);
             }
             doc.save(function (err) {

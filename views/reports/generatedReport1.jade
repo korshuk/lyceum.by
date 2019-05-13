@@ -1,0 +1,75 @@
+doctype html
+html
+  head
+      meta(charset='utf-8')
+      meta(http-equiv='x-ua-compatible', content='ie=edge')
+      title ПРОТОКОЛ вступительного испытания
+      meta(name='viewport', content='width=device-width, initial-scale=1')
+      link(rel="stylesheet", href="/stylesheets/print.css")
+      link(rel="stylesheet", href="/stylesheets/report1Print.css")
+      style
+        @page { size: A4 }
+  body.A4   
+    div.protocol
+        h3.headline ПРОТОКОЛ <br>вступительного испытания
+        p.no-indent по учебному предмету 
+            span.italics-text #{subject} в 10 класс (#{profile} профиль) 
+            br
+            span государственного учреждения образования 
+            span.italics-text Лицей Белорусского государственного университета
+        p Председатель экзаменационной комиссии: <span class="italics-text">#{committee.head}</span>
+        p Члены экзаменационной комиссии: <span class="italics-text">#{committee.staffArr}</span>
+        p На вступительное испытание явились <span class="italics-text">#{list.length - withoutExams.length - absentList.length}</span> чел., не явились <span class="italics-text">#{absentList.length}</span> чел.
+        ol
+          each pupil in absentList
+            li=pupil.firstName +' '+ pupil.lastName + ' ' + pupil.parentName
+        p Вступительное испытание началось в <span class="italics-text">#{startTimeString}</span>.
+        p Вступительное испытание закончилось в <span class="italics-text">#{endTimeString}</span>.
+        p Название текста диктанта (номер варианта контрольной работы): <span class="italics-text">#{testVariant}</span>
+        table
+          thead
+          tr
+            th N п/п
+            th Фамилия
+            th Имя
+            th Отчество
+            th(style="width:12%") Количество баллов, полученных на вступительном испытании
+            th(style="width:15%") Примечание (при необходимости решение апелляционной комиссии о повышении отметки, дата и номер протокола)
+            tbody
+            each pupil in list
+              tr
+                td=num=num+1
+                td.name-cell=pupil.firstName
+                td.name-cell=pupil.lastName
+                td.name-cell=pupil.parentName
+                if pupil[`exam${examNumber}`] === -2
+                  td.exam-cell неявка
+                else if pupil[`exam${examNumber}`] === -1
+                  td.exam-cell Б/Э
+                else
+                  td.exam-cell=pupil[`exam${examNumber}`] 
+                td 
+
+
+        div.info
+          p.no-indent Дата проведения вступительного испытания         
+          p.no-indent #{dateStr}
+        div.info 
+          p.no-indent Дата внесения отметок в протокол                        
+          p.no-indent #{entryDateStr}
+        br  
+        .info 
+          div(style="width:40%")
+            p.no-indent Председатель <br> экзаменационной комиссии
+          div.info(style="width:60%")
+            p.no-indent __________________
+            p.no-indent #{committee.head}
+        br
+        .info 
+          div(style="width:40%")
+            p.no-indent Члены <br>экзаменационной комиссии:
+          div(style="width:60%")  
+            each person in committee.staffArr 
+              div.info(style="width:100%")  
+                p.no-indent __________________
+                p.no-indent #{person} 

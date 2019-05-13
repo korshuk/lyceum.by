@@ -11,7 +11,6 @@
 
         vm.getServerData = getServerData;
         vm.location = $location;
-
         vm.exportCSV = exportCSV;
         vm.getFileName = getFileName;
         vm.disableEditMode = disableEditMode;
