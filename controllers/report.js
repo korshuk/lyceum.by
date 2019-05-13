@@ -61,7 +61,7 @@
                         console.log(data.absentList)
                         data.dateStr = moment(data.date).format('LL');
                         data.entryDateStr = moment(data.entryDate).format('LL');//DateFormat(data.entryDate, '"DD" MMMM YYYY г.', ruLocale);
-                        res.render(`reports/generatedReport${type}.jade`, data);    
+                        res.render('reports/generatedReport1.jade', data);    
                     })
                 })
                 
@@ -101,9 +101,9 @@
                     medianaPlace = Math.floor(results.length * 0.5);
                     data.average = Math.floor(average / results.length);
                     data.mediana =  Math.floor((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
-                    data.min = profile[`min${examName}`];
-                    data.max = profile[`max${examName}`];
-                    data.pass = profile[`pass${examName}`];
+                    data.min = profile['min'+examName];
+                    data.max = profile['max'+examName];
+                    data.pass = profile['pass'+examName];
                     data.results = results;
                     data.gistogramMax = Math.max.apply(null, gistogram);                    
                     data.division = Math.ceil(data.gistogramMax/5);
@@ -113,7 +113,7 @@
                     data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');
                     data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
                     data.entryDateStr = moment(data.entryDate).format('LL');
-                    res.render(`reports/generatedReport${type}.jade`, data);    
+                    res.render('reports/generatedReport1.jade', data);    
                 });
             });
                     
