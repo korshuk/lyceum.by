@@ -53,9 +53,9 @@
                 self.app.subjectController.Collection.findOne({name: data.subject}).exec(function(err, subject) {
                     self.app.committeesController.Collection.findOne({subject: subject.id}).exec(function(err, committee) {
                         data.committee = committee;
-                        data.list = list.filter(pupil => true);         
-                        data.absentList = list.filter(pupil => pupil[examNum]===-2); 
-                        data.withoutExams = list.filter(pupil => pupil[examNum]===-1); 
+                        data.list = list.filter(function(pupil) { return true });         
+                        data.absentList = list.filter(function(pupil) { return pupil[examNum]===-2}); 
+                        data.withoutExams = list.filter(function(pupil) { return pupil[examNum]===-1}); 
                         data.num = 0;
                         data.committee.staffArr = data.committee.staff.split(';')
                         console.log(data.absentList)
@@ -79,8 +79,8 @@
             var gistogram = [0,0,0,0,0,0,0,0,0,0];
             self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
                 self.app.profileController.Collection.findOne({_id: data.profileId}).exec(function(err, profile) {
-                    data.list = list.filter(pupil => true);         
-                    data.absentList = list.filter(pupil => pupil[examNum]===-2); 
+                    data.list = list.filter(function(pupil) { return true });         
+                    data.absentList = list.filter(function(pupil) { return pupil[examNum]===-2}); 
                     for (i ; i < list.length; i++) {
                         pupil = list[i];
                         if (pupil[examNum] > -1) {
