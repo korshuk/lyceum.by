@@ -42,12 +42,12 @@ html
                 td.name-cell=pupil.firstName
                 td.name-cell=pupil.lastName
                 td.name-cell=pupil.parentName
-                if pupil['exam'+examNumber'] === -2
+                if pupil['exam'+examNumber] === -2
                   td.exam-cell неявка
-                else if pupil['exam'+examNumber'] === -1
+                else if pupil['exam'+examNumber] === -1
                   td.exam-cell Б/Э
                 else
-                  td.exam-cell=pupil['exam'+examNumber'] 
+                  td.exam-cell=pupil['exam'+examNumber] 
                 td 
 
 

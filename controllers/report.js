@@ -58,9 +58,9 @@
                         data.withoutExams = list.filter(function(pupil) { return pupil[examNum]===-1}); 
                         data.num = 0;
                         data.committee.staffArr = data.committee.staff.split(';')
-                        console.log(data.absentList)
                         data.dateStr = moment(data.date).format('LL');
                         data.entryDateStr = moment(data.entryDate).format('LL');//DateFormat(data.entryDate, '"DD" MMMM YYYY г.', ruLocale);
+                        console.log('render 1')
                         res.render('reports/generatedReport1.jade', data);    
                     })
                 })
@@ -113,7 +113,7 @@
                     data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');
                     data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
                     data.entryDateStr = moment(data.entryDate).format('LL');
-                    res.render('reports/generatedReport1.jade', data);    
+                    res.render('reports/generatedReport2.jade', data);    
                 });
             });
                     
