@@ -63,13 +63,21 @@ html
         h3 Распределение результатов экзамена по баллам
         .content
           .diagram
+            .grid
+                - for (i=0;i<6;i++){
+                  span.segment(style="bottom:#{i*Math.ceil(division)*(350/gistogramMax)}px")   
+                        span #{i*Math.ceil(division)}
+                        span.scale_division
+                - }
             each data, index in gistogram
-              div.data-bar(style="height:#{data * 10}px")
+              div.data-bar(style="height:#{data*350/gistogramMax}px")
                 .count #{data > 0 ? data : ''}
                 if index == 0
                   .points 0-#{10*index+10}
                 else 
-                  .points #{10*index+1}-#{10*index+10}
+                  .points #{10*index+1}-#{10*index+10}                  
+
+
 
           h2 Итоги экзамена
           
@@ -87,7 +95,7 @@ html
                     count = count + gistogram[i];
               - }
                         
-            | #{count} абитуриента #{profile.name.slice(0,-2)+'ого'} профиля.
+            | #{count} абитуриентов.
           h4 Текущий проходной балл - #{pass}
           div.resultsLine
             div.line

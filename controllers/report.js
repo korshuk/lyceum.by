@@ -79,7 +79,6 @@
             var gistogram = [0,0,0,0,0,0,0,0,0,0];
             self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
                 self.app.profileController.Collection.findOne({_id: data.profileId}).exec(function(err, profile) {
-                    console.log(profile)
                     data.list = list.filter(pupil => true);         
                     data.absentList = list.filter(pupil => pupil[examNum]===-2); 
                     for (i ; i < list.length; i++) {
@@ -94,7 +93,8 @@
                         return a - b;
                     });
                     results.map(function(points) {
-                        var place = Math.floor(points * 0.1);
+                        var place = Math.floor((points-1) * 0.1);
+                        if(place === -1){place=0};
                         gistogram[place] = gistogram[place] + 1;
                     })
 
@@ -104,8 +104,10 @@
                     data.min = profile[`min${examName}`];
                     data.max = profile[`max${examName}`];
                     data.pass = profile[`pass${examName}`];
-                    console.log('res', results, examName, data.examNumber)
                     data.results = results;
+                    data.gistogramMax = Math.max.apply(null, gistogram);                    
+                    data.division = Math.ceil(data.gistogramMax/5);
+                    data.gistogramMax = data.division * 5;
                     data.gistogram = gistogram;
                     data.profile = profile;
                     data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');

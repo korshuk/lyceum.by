@@ -667,6 +667,7 @@ aside {
 }
 .diagram {
     display: flex;
+    position: relative;
     justify-content: space-between;
     align-items: flex-end;
     margin:0 30px 30px 0;
@@ -695,4 +696,23 @@ aside {
     font-weight: bold;
     left: -13px;
     text-align: center;
+}
+.grid{
+    display: flex;
+    flex-direction: column-reverse;
+    position: absolute;
+    bottom: 0;
+    left: 2px;
+}
+.scale_division {
+    background: lightgray;
+    content: ' ';
+    height: 1.5px;
+    width: 650px;
+    white-space: pre;
+}
+.segment{
+    display: flex;
+    position: absolute;
+    align-items: flex-end;
 }
