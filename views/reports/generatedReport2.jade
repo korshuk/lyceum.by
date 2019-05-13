@@ -16,7 +16,10 @@ html
         .info
           p Лицей БГУ
           p #{entryDateStr}
-        h1 #{subject}
+        if subject.length > 12 
+          h1.smallh1 #{subject}
+        else
+          h1 #{subject}
         nav
           p Общая информация
           p.centered Явка
@@ -63,15 +66,28 @@ html
             each data, index in gistogram
               div.data-bar(style="height:#{data * 10}px")
                 .count #{data > 0 ? data : ''}
-                .points #{10*index}-#{10*index+9}
+                if index == 0
+                  .points 0-#{10*index+10}
+                else 
+                  .points #{10*index+1}-#{10*index+10}
+
           h2 Итоги экзамена
           
           p
             | Гистограмма отражает распределение баллов по итогам экзамена и
             | показывает количество работ, которые оценены в определенном интервале
-            | баллов. Например, в диапазоне от 66 до 75 баллов находится 4 работы
-            | абитуриентов, а более 76 баллов по математике набрали 3 абитуриента
-            | математического профиля.
+            | баллов. Например, в диапазоне
+            if gistogram[6] !== 0 
+              span от #{10*6+1} до #{10*6+10} баллов находится #{gistogram[6]} работы 
+            else 
+              span от #{10*7+1} до #{10*7+10} баллов находится #{gistogram[7]} работы  
+            |  абитуриентов, а более #{10*6+10} баллов по предмету #{subject} набрали 
+            -var count = 0;
+              - for (var i=7; i < gistogram.length; i++){
+                    count = count + gistogram[i];
+              - }
+                        
+            | #{count} абитуриента #{profile.name.slice(0,-2)+'ого'} профиля.
           h4 Текущий проходной балл - #{pass}
           div.resultsLine
             div.line

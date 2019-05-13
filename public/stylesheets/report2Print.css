@@ -398,6 +398,10 @@ header h1 {
     font-weight: 300;
 }
 
+.smallh1 {
+    font-size: 70px;
+}
+
 .info {
     margin: 0px 40px;
     display: flex;
@@ -677,7 +681,7 @@ aside {
 .points {
     position: absolute;
     bottom: -30px;
-    width: 55px;
+    width: 62px;
     font-size: 19px;
     font-weight: bold;
     left: -13px;
