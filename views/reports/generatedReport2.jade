@@ -32,16 +32,22 @@ html
               | Для поступления на <b>#{profile.name}</b> профиль необходимо сдать два
               | экзамена: <b>#{profile.firstExamName}</b> (<b>#{profile.firstExamDateStr}</b>) и <b>#{profile.secondExamName}</b> (<b>#{profile.secondExamDateStr}</b>).
             p
-              | На <b>#{profile.ammount}</b> мест было подано <b>#{profile.countArray[profile.countArray.length-1].count}</b> заявлений из них <b>#{profile.olymp}</b> заявлений от призеров
+              | На <b>#{profile.ammount}</b> места было подано <b>#{profile.countArray[profile.countArray.length-1].count}</b> заявлений из них <b>#{profile.olymp}</b> заявлений от призеров
               | заключительного этапа республиканской предметной олимпиады, которые
               | рекомендуются к зачислению без экзаменов. Таким образом по итогам
-              | подачи документов конкурс составил <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b> человека на место. К
-              | вступительным испытаниям допущено <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b> абитуриента.
+              | подачи документов конкурс составил <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b> человека на место.
           .subsection
             h2 Явка на экзамен
-            p
-              | Из <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b> допущеных к экзаменам абитуриентов в экзамене по предмету #{subject}
-              | приняло участие <b>#{list.length - profile.olymp - absentList.length}</b> абитуриентов, <b>#{absentList.length}</b> абитуриентов не явилось.
+            .result
+              p Допущено
+              p <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b>
+            .result
+              p Приняли участие
+              p <b>#{list.length - profile.olymp - absentList.length}</b>  
+            .result
+              p Не явились
+              p <b>#{absentList.length}</b>  
+            .result    
           .subsection
             h2 Результаты
             .result
@@ -85,13 +91,13 @@ html
             | Гистограмма отражает распределение баллов по итогам экзамена и
             | показывает количество работ, которые оценены в определенном интервале
             | баллов. Например, в диапазоне
-            if gistogram[6] !== 0 
-              span #{' '}от #{10*6+1} до #{10*6+10} баллов находится #{gistogram[6]} работ 
+            if gistogram[2] !== 0 
+              span #{' '}от #{10*2+1} до #{10*2+10} баллов находится #{gistogram[2]} работ 
             else 
-              span #{' '}от #{10*7+1} до #{10*7+10} баллов находится #{gistogram[7]} работ  
-            |  абитуриентов, а более #{10*6+10} баллов по предмету #{subject} набрали 
+              span #{' '}от #{10*4+1} до #{10*4+10} баллов находится #{gistogram[4]} работ  
+            |  абитуриентов, а более #{10*3+10} баллов по предмету #{subject} набрали 
             -var count = 0;
-              - for (var i=7; i < gistogram.length; i++){
+              - for (var i=4; i < gistogram.length; i++){
                     count = count + gistogram[i];
               - }
                         
