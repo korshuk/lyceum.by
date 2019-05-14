@@ -29,8 +29,6 @@ block content
             +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
             +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
             
-            +field('text', "committee.first.head", 'Председатель')(value= doc.committee.first.head || '')#committeeАirstРead
-
         div.panel.panel-default.row
             .col-lg-12
                 h3 Второй экзамен
