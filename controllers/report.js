@@ -120,6 +120,7 @@
         }
         if (type === '3') {
             var pupil;
+            var sum;
             var i = 0;
             var results = [];
             var average = 0;
@@ -149,8 +150,12 @@
                     for (i ; i < list.length; i++) {
                         pupil = list[i];
                         if (pupil.sum > -1) {
-                            results.push(+pupil.sum);
-                            average = average + +pupil.sum;
+                            sum = +pupil.sum;
+                            if (pupil.exam1 < 0 || pupil.exam2 < 0) {
+                                sum = sum + 2;
+                            }
+                            results.push(+sum);
+                            average = average + +sum;
                         }
                     }
 
@@ -159,7 +164,6 @@
                     });
                     results.map(function(points) {
                         var place = Math.floor((points-1) * 0.1);
-                        console.log(place, points)
                         if(place === -1){place=0};
                         gistogram[place] = (gistogram[place] || 0) + 1;
                     })
