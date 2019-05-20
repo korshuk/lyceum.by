@@ -1,8 +1,8 @@
-<h2>Настройки статистики</h2>
+<h2>Статистика по двум экзаменам</h2>
 
 <div class="row">
   <form name="app.statsForm" action="" ng-submit="$event.preventDefault()">
-    <div class="col-xs-6">
+    <div class="col-xs-4">
       <div class="form-group">
         <label>Профиль</label>
         <select name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)"
@@ -12,17 +12,6 @@
         <span style="color: red"
           ng-show="app.statsForm.profile.$error.required && app.statsForm.$submitted">Выберите
           профиль</span>
-      </div>
-    </div>
-    <div class="col-xs-6">
-      <div class="form-group">
-        <label>Предмет</label>
-        <select name="subject" class="form-control" ng-model="app.data.subject" required>
-          <option ng-repeat="x in app.subjects" ng-value="x">{{x}}</option>
-        </select>
-        <span style="color: red"
-          ng-show="app.statsForm.subject.$error.required && app.statsForm.$submitted">Выберите
-          предмет</span>
       </div>
     </div>
     <div class="col-xs-12">
@@ -47,7 +36,8 @@
             </div>
             </div>
             </div>
-        
+            
+    
     <div class="col-xs-12">
       <div class="row">
         <div class="col-xs-4">

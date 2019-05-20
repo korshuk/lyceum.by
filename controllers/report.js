@@ -99,8 +99,8 @@
                     })
 
                     medianaPlace = Math.floor(results.length * 0.5);
-                    data.average = Math.floor(average / results.length);
-                    data.mediana =  Math.floor((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
+                    data.average = Math.round(average / results.length);
+                    data.mediana =  Math.round((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
                     data.min = profile['min'+examName];
                     data.max = profile['max'+examName];
                     data.pass = profile['pass'+examName];
@@ -114,6 +114,73 @@
                     data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
                     data.entryDateStr = moment(data.entryDate).format('LL');
                     res.render('reports/generatedReport2.jade', data);    
+                });
+            });
+                    
+        }
+        if (type === '3') {
+            var pupil;
+            var i = 0;
+            var results = [];
+            var average = 0;
+            var medianaPlace;
+            var gistogram = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            var absent = {
+                f: 0,
+                s: 0,
+                t: 0
+            }
+            self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
+                self.app.profileController.Collection.findOne({_id: data.profileId}).exec(function(err, profile) {
+                    data.list = list.filter(function(pupil) { return true });         
+                    list.map(function(pupil) {
+
+                        if (pupil.exam1===-2) {
+                            absent.f = absent.f + 1;
+                        }
+                        if (pupil.exam2===-2) {
+                            absent.s = absent.s + 1;
+                        }
+                        if (pupil.sum===-4) {
+                            absent.t = absent.t + 1;
+                        }
+                    }); 
+                    
+                    for (i ; i < list.length; i++) {
+                        pupil = list[i];
+                        if (pupil.sum > -1) {
+                            results.push(+pupil.sum);
+                            average = average + +pupil.sum;
+                        }
+                    }
+
+                    results.sort(function(a, b) {
+                        return a - b;
+                    });
+                    results.map(function(points) {
+                        var place = Math.floor((points-1) * 0.1);
+                        console.log(place, points)
+                        if(place === -1){place=0};
+                        gistogram[place] = (gistogram[place] || 0) + 1;
+                    })
+
+                    medianaPlace = Math.floor(results.length * 0.5);
+                    data.absent = absent
+                    data.average = Math.round(average / results.length);
+                    data.mediana =  Math.round((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
+                    data.min = profile.minT;
+                    data.max = profile.maxT;
+                    data.pass = profile.passT;
+                    data.results = results;
+                    data.gistogramMax = Math.max.apply(null, gistogram);                    
+                    data.division = Math.ceil(data.gistogramMax/5);
+                    data.gistogramMax = data.division * 5;
+                    data.gistogram = gistogram;
+                    data.profile = profile;
+                    data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');
+                    data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
+                    data.entryDateStr = moment(data.entryDate).format('LL');
+                    res.render('reports/generatedReport3.jade', data);    
                 });
             });
                     

@@ -1,25 +1,26 @@
+include ./partials/getNoun
+
 doctype html
 html
   head
     meta(charset='utf-8')
     meta(http-equiv='x-ua-compatible', content='ie=edge')
-    title Статистика экзамена по предмету #{subject} на #{profile.name} профиль
+    title Статистика по ldev двум экзаменам на #{profile.name} профиль
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=PT+Sans")
     link(rel='stylesheet', href='/stylesheets/report2Print.css')
     link(rel="stylesheet", href="/stylesheets/print.css")
     style
       @page { size: A3 }
-  body.A3
+  body.A3.total
     section.sheet
       header
         .info
           p Лицей БГУ
           p #{entryDateStr}
-        if subject.length > 12 
-          h1.smallh1 #{subject}
-        else
-          h1 #{subject}
+        
+        h1.smallh1 #{profile.name} профиль
+        
         nav
           p Общая информация
           p.centered Явка
@@ -31,25 +32,41 @@ html
             p
               | Для поступления на <b>#{profile.name}</b> профиль необходимо сдать два
               | экзамена: <b>#{profile.firstExamName}</b> (<b>#{profile.firstExamDateStr}</b>) и <b>#{profile.secondExamName}</b> (<b>#{profile.secondExamDateStr}</b>).
-            p
-              | На <b>#{profile.ammount}</b> места было подано <b>#{profile.countArray[profile.countArray.length-1].count}</b> заявлений из них <b>#{profile.olymp}</b> заявлений от призеров
-              | заключительного этапа республиканской предметной олимпиады, которые
-              | рекомендуются к зачислению без экзаменов. Таким образом по итогам
-              | подачи документов конкурс составил <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b> человека на место.
+            .result
+             p Всего мест
+             p <b>#{profile.ammount}</b>
+            .result
+             p Подано заявлений
+             p <b>#{profile.countArray[profile.countArray.length-1].count}</b>
+            .result
+             p Олимпиадников
+             p <b>#{profile.olymp}</b>
+            .result
+             p Конкурс
+             p <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b>
           .subsection
-            h2 Явка на экзамен
+            h2 Явка на экзамены
             .result
               p Допущено
               p <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b>
             .result
-              p Приняли участие
-              p <b>#{list.length - profile.olymp - absentList.length}</b>  
+              p Приняли участие в первом экзамене
+              p <b>#{list.length - profile.olymp - absent.f}</b>  
             .result
-              p Не явились
-              p <b>#{absentList.length}</b>  
+              p Приняли участие во втором экзамене
+              p <b>#{list.length - profile.olymp - absent.s}</b>    
+            .result
+              p Не явились на первый экзамен
+              p <b>#{absent.f}</b>  
+            .result
+              p Не явились на второй экзамен
+              p <b>#{absent.s}</b> 
+            .result
+              p Не явились на оба экзамена
+              p <b>#{absent.t}</b>    
             .result    
           .subsection
-            h2 Результаты
+            h2 Результаты двух экзаменов
             .result
               p Максимальный балл
               p <b>#{max}</b>
@@ -63,10 +80,15 @@ html
               p Медианный балл
               p <b>#{mediana}</b>
             .result
-              p Текущий проходной
+              p Текущий проходной**
               p <b>#{pass}</b>
+          .subsection
+            .result
+              p **без учета результатов процедуры ознакомления с работами и резервного дня
+              p
+            .result  
       main#main-content.main
-        h3 Распределение результатов экзамена по баллам
+        h3 Распределение результатов двух экзаменов по баллам
         .content
           .diagram
             .grid
@@ -79,21 +101,22 @@ html
               div.data-bar(style="height:#{data*350/gistogramMax}px")
                 .count #{data > 0 ? data : ''}
                 if index == 0
-                  .points 0-#{10*index+10}
+                  .points #{10*index+10}  
                 else 
-                  .points #{10*index+1}-#{10*index+10}                  
+                  .points #{10*index+10}  
+                                  
           
-          - var type = 'one';
           
+          - var type = 'all';
           include ./partials/gistogramInfo
-
-          -var lineMin = min;
-          -var lineMax = max;
-          -var linePass = pass;
-          -var lineTotal = 100;
+         
+          -var lineMin = min * 0.5;
+          -var lineMax = max * 0.5;
+          -var linePass = pass * 0.5;
+          -var lineTotal = 200;
           
           include ./partials/statsLine
-
+          
           include ./partials/yourResultInfo
 
       include ./partials/statsFooter

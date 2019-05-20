@@ -1,0 +1,13 @@
+h4 Текущий проходной балл - #{pass}#{type === 'all' ? '**' : ''}
+div.resultsLine
+    div.line
+        div.result-line(style="left:#{lineMin}%;right:#{100 - lineMax}%")
+        div.not-pass-line(style="left:#{lineMin}%;right:#{100 - linePass}%")
+        div.badge.range-badge.left-range <b>0</b>
+        div.badge.minBadge.with-tooltip(id="minBadge",style="left:#{lineMin}%")<b>#{min}</b>
+            div.arrow-up
+        div.badge.maxBadge.with-tooltip(id="maxBadge",style="left:#{lineMax}%")<b>#{max}</b>
+            div.arrow-up
+        div.badge.range-badge.right-range <b>#{lineTotal}</b>
+        div.badge.passBadge.with-tooltip(id="passBadge",style="left:#{linePass}%")<b>#{pass}</b>
+            div.arrow-down  

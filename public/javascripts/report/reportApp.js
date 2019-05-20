@@ -26,7 +26,16 @@ reportApp.config(function($stateProvider) {
         controllerAs: 'app'
     };
 
+    var report3 = {
+        name: 'report3',
+        url: '/report3',
+        templateUrl: '/templates/report-template3.html',
+        controller: 'template3Controller',
+        controllerAs: 'app'
+    };
+
     $stateProvider.state(list);
     $stateProvider.state(report1);
     $stateProvider.state(report2);
+    $stateProvider.state(report3);
 });

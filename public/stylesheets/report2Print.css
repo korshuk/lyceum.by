@@ -720,3 +720,25 @@ aside {
     top: -10px;
     font-size: 18px;
 }
+
+.total .points {
+    position: absolute;
+    bottom: -25px;
+    width: 40px;
+    font-size: 14px;
+    font-weight: bold;
+    left: 23px;
+    text-align: left;
+}
+.total .data-bar {
+    width: 27px;
+}
+.total .points::before {
+    content: ' ';
+    width: 2px;
+    height: 8px;
+    background: lightgray;
+    position: absolute;
+    top: -9px;
+    left: 7px;
+}
