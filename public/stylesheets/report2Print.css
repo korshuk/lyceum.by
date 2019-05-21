@@ -727,11 +727,12 @@ aside {
     width: 40px;
     font-size: 14px;
     font-weight: bold;
-    left: 23px;
+    left: 19px;
     text-align: left;
 }
 .total .data-bar {
     width: 27px;
+    background: #ef6b48;
 }
 .total .points::before {
     content: ' ';
@@ -741,4 +742,11 @@ aside {
     position: absolute;
     top: -9px;
     left: 7px;
+}
+.total header h1 {
+    color: #68a123;
+    text-shadow: 1px 1px 1px black;
+}
+.total #main-content h3 { 
+    font-size: 28px;
 }
