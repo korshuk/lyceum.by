@@ -22,7 +22,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
         | - текущий проходной балл (это минимальный результат среди лучших 
         | <b>#{profile.ammount - profile.olymp}</b> #{GetNoun(profile.ammount - profile.olymp, 'работы', 'работ', 'работ')} первого экзамена, с учетом того, что на 
         | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
-        | <b>#{profile.olymp}</b> #{GetNoun(profile.ammount, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
+        | <b>#{profile.olymp}</b> #{GetNoun(profile.olymp, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
     +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
 else
     +absent('первый')
@@ -36,7 +36,7 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
         | - текущий проходной балл (это минимальный результат среди лучших 
         | <b>#{profile.ammount - profile.olymp}</b> #{GetNoun(profile.ammount - profile.olymp, 'работы', 'работ', 'работ')} второго экзамена, с учетом того, что на 
         | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
-        | <b>#{profile.olymp}</b> #{GetNoun(profile.ammount, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
+        | <b>#{profile.olymp}</b> #{GetNoun(profile.olymp, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
 
     +appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, false)    
 else
