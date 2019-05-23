@@ -1,10 +1,28 @@
+-GetNoun = function(number, one, two, five) {
+    -number = Math.abs(number);
+    -number %= 100;
+    -if (number >= 5 && number <= 20) {
+        -return five;
+    -}
+    -number %= 10;
+    -if (number == 1) {
+        -return one;
+    -}
+    -if (number >= 2 && number <= 4) {
+        -return two;
+    -}
+    -return five;
+-} 
 h3 Второй экзамен закончился
 
 if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.exam2 >= 0))
     +resultLine(profile, user, 1)
     p
         b *
-        | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ первого экзамена
+        | - текущий проходной балл (это минимальный результат среди лучших 
+        | <b>#{profile.ammount - profile.olymp}</b> #{GetNoun(profile.ammount - profile.olymp, 'работы', 'работ', 'работ')} первого экзамена, с учетом того, что на 
+        | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
+        | <b>#{profile.olymp}</b> #{GetNoun(profile.ammount, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
     +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
 else
     +absent('первый')
@@ -15,7 +33,10 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
     +resultLine(profile, user, 2)
     p
         b *
-        | - минимальный результат среди лучших <b>#{profile.ammount - profile.olymp}</b> работ второго экзамена
+        | - текущий проходной балл (это минимальный результат среди лучших 
+        | <b>#{profile.ammount - profile.olymp}</b> #{GetNoun(profile.ammount - profile.olymp, 'работы', 'работ', 'работ')} второго экзамена, с учетом того, что на 
+        | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
+        | <b>#{profile.olymp}</b> #{GetNoun(profile.ammount, 'заявление', 'заявления', 'заявлений')} от олимпиадников) 
 
     +appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, false)    
 else
@@ -30,8 +51,8 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
         | - текущий проходной балл по итогам двух вступительных испытаний без учета процедуры ознакомления с результатами и резервного дня
 
 hr.dotted
-h4 Абитуриенты, рекомендованные к зачислению, будут определены после подведения итогов резервного дня (29 мая).
+h4 Абитуриенты, рекомендованные к зачислению, будут определены после подведения итогов резервного дня (25 мая).
 p
-    |Списки рекомендованных к зачислению будут размещены на сайте Лицея БГУ <nobr><b>31 мая в 14:00</b></nobr>.
+    //- |Списки рекомендованных к зачислению будут размещены на сайте Лицея БГУ <nobr><b>31 мая в 14:00</b></nobr>.
     br
-    |Кроме того, с 14:00 31 мая в личном кабинете вы сможете ознакомиться с итогами вступительной кампании, проходным и полупроходным баллами на выбранный вами профиль.
+    |31 мая, с 14:00 в личном кабинете вы сможете ознакомиться с итогами вступительной кампании, проходным и полупроходным баллами на выбранный вами профиль.
