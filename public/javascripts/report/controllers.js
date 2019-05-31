@@ -37,7 +37,8 @@ function template1Controller(dataService, $filter) {
     vm.entranceTestForm = {};
     vm.data = {
         type: EXAM_REPORT_TYPE,
-        testVariant: 'Вариант А и Вариант В',   
+        testVariant: 'Вариант А и Вариант В', 
+        showPlaces: true  
     };
     
     vm.map;
@@ -92,6 +93,7 @@ function template1Controller(dataService, $filter) {
             props.endTimeString =  $filter('date')(vm.data.endTime, "HH часов mm минут");
             props.testVariant = vm.data.testVariant;
             props.entryDate = vm.data.entryDate;
+            props.showPlaces = vm.data.showPlaces;
             console.log(props, queryStringFromObj(props), url + queryStringFromObj(props));
 
             openInNewTab(url + queryStringFromObj(props))
