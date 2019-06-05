@@ -722,6 +722,11 @@ var PupilsController = function (mongoose, app) {
             if (pupil.passOlymp) {
                 tail = 'passOlymp';
             }
+            if (date >= secondExamDate) { 
+                if (profile.totalUploaded) {
+                    tail = 'passOlympTotal';
+                }
+            }
             templateName = templateName + tail;
         } else {
             if (date < firstExamDate) {

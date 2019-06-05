@@ -1,0 +1,14 @@
+p
+    | Вы подали диплом победителя республиканской олимпиады
+    +space()
+    nobr
+        | по предмету <b>#{user.diplomExamName}</b>
+p
+    | Поздравляем, мы возьмем вас без экзаменов, так как диплом
+    +space()
+    nobr по предмету <b>#{user.diplomExamName}</b>
+    +space()
+    | позволяет поступить
+    +space()
+    nobr на <b class="uppercase">#{profile.name}</b> профиль.
+include abiturientInfo
