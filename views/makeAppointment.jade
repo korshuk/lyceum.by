@@ -1,0 +1,32 @@
+include stuff/mixins/form-helper
+
+extends layout/headerContacts
+
+block content
+    link(rel='stylesheet', href='/css/makeAppointment.css')
+    main(role='main')#main.page
+        include menu/breadcrumbs-contacts
+        hr.colored
+        h1= translate('Запись на приём к ' + doc.name.ru)
+        section#content.col-2
+            p
+                = translate('Беларусь, 220030, Минск, Ульяновская, 8')
+                br
+                = translate('телефон приёмной: 2095265, факс: 2260050')
+                br
+                br
+                != translate('р\/с BY39BLBB36320100557342001001')
+                br
+                != translate('Дирекция&nbsp;ОАО&nbsp;&quot;Белинвестбанк&quot; по&nbsp;г.Минску&nbsp;и&nbsp;Минской&nbsp;области, код&nbsp;BLBBBY2X г.Минск,&nbsp;ул.&nbsp;Коллекторная,&nbsp;11 УНН&nbsp;100557342, ОКПО&nbsp;37360809')
+        form(method='post', action='/makeAppointment')
+            +field('text', 'fullName', 'ФИО')
+            +field('number', 'phone', 'Телефон')
+            +field('text', 'email', 'email')
+            +field('date', 'date', 'Дата приёма')
+            +field('time', 'time', 'Время приёма')
+
+            +buttonSet
+
+
+block scripts
+    include stuff/adminScriptBlock
