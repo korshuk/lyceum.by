@@ -33,5 +33,7 @@ block content
                                 if (doc.email)
                                     br
                                     a(href="mailto:" + doc.email)= doc.email
+                                br
+                                a(href="/contact/enroll/"+doc._id)= translate('Записаться на приём')
             include ../layout/asidesmall
         include ../layout/asideIndex
