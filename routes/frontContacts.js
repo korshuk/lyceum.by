@@ -25,4 +25,13 @@ module.exports = function(app) {
     app.contactsController.showList(req, res);
   });
 
+  app.get('/contact/enroll/:id', localization, function(req, res) {
+    res.locals.MainMenu = app.menuController.getMainMenu();
+    res.locals.path = '/makeAppointment';
+    res.locals.siteConfig = app.siteConfig;
+    metatags(res);
+    app.contactsController.Collection.findByReq(req,res,function(doc){
+        res.render('makeAppointment',{doc: doc});
+    });
+  });
 }
