@@ -27,11 +27,9 @@ module.exports = function(app) {
 
   app.get('/contact/enroll/:id', localization, function(req, res) {
     res.locals.MainMenu = app.menuController.getMainMenu();
-    res.locals.path = '/makeAppointment';
+    res.locals.path = '/contact/enroll/' + req.param.id;
     res.locals.siteConfig = app.siteConfig;
     metatags(res);
-    app.contactsController.Collection.findByReq(req,res,function(doc){
-        res.render('makeAppointment',{doc: doc});
-    });
+    app.contactsController.getAppointmentForm(req, res);
   });
 }
