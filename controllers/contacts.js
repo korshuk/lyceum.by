@@ -75,6 +75,12 @@ ContactsController = function(mongoose, application) {
     });
   };
 
+  base.getAppointmentForm = function(req, res){
+    this.Collection.findByReq(req,res,function(doc){
+      res.render('makeAppointment',{doc: doc});
+    });
+  }
+
   base.constructor = arguments.callee;
 
   return base;
