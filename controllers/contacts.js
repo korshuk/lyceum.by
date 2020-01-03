@@ -29,6 +29,7 @@ ContactsController = function(mongoose, application) {
       doc.phone = req.body['phone'];
       doc.email = req.body['email'];
       doc.place = req.body['place'];
+      doc.calendarapi = req.body['calendarapi'];
       doc.order = req.body['order'] || 0;
       
       doc.save(function(err) {
