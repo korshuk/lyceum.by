@@ -19,6 +19,7 @@ function define(mongoose, fn) {
     'phone': Number,
     'order': Number,
     'email': {type: String},
+    'calendarapi': {type: String},
     'createdAt': {type: Date, default: Date.now}
   });
   
