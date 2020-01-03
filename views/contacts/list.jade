@@ -12,6 +12,7 @@ block content
         th Кабинет
         th Телефон
         th Почта
+        th CalendarApi
         th
       - each doc in docs
           tr
@@ -21,6 +22,7 @@ block content
             td= doc.place
             td= doc.phone
             td= doc.email
+            td= doc.calendarapi
             td
               a(href="/admin/contacts/"+doc.id+"/edit") Редактировать 
               br
