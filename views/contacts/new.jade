@@ -7,7 +7,7 @@ block content
             h1 Редактирование контакта
         else
             h1 Новый контакт
-    form.form-horizontal(method='post', action= method === 'put' ? '/admin/contacts/' + doc.id : '/admin/contacts' )
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/contacts/' + doc.id : '/admin/contacts', enctype='multipart/form-data' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")
         div.row
@@ -36,7 +36,9 @@ block content
         +field('number', 'place', 'Кабинет')(value= doc.place || 000)
         +field('text', 'email', 'email')(value= doc.email || '')
         +field('number', 'order', 'Order')(value= doc.order || 0)
-        +field('text', 'calendarapi', 'CalendarApi')(value= doc.calendarapi || '')
+        +field('text', 'client_secret', 'ClientSecret')(value= doc.client_secret || '')
+        +field('text', 'client_id', 'ClientId')(value= doc.client_secret || '')
+        +field('text', 'redirect_uris', 'RedirectUris')(value= doc.client_secret || '')
         
         +buttonSet
 
