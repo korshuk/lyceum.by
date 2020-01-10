@@ -32,4 +32,12 @@ module.exports = function(app) {
     metatags(res);
     app.contactsController.getAppointmentForm(req, res);
   });
+
+  app.post('/contact/enroll/:id', localization, function(req, res) {
+    res.locals.MainMenu = app.menuController.getMainMenu();
+    res.locals.path = '/contact/enroll/' + req.param.id;
+    res.locals.siteConfig = app.siteConfig;
+    metatags(res);
+    app.contactsController.postAppointmentForm(req, res);
+  });
 }
