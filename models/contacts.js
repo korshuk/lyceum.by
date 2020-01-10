@@ -19,7 +19,9 @@ function define(mongoose, fn) {
     'phone': Number,
     'order': Number,
     'email': {type: String},
-    'calendarapi': {type: String},
+    'client_secret': {type: String},
+    'client_id': {type: String},
+    'redirect_uris': {type: String},
     'createdAt': {type: Date, default: Date.now}
   });
   
