@@ -28,7 +28,7 @@ UserController.prototype.createHash = function (pwd, fn) {
     self.crypto.randomBytes(self.len, function (err, salt) {
         if (err) return fn(err);
         salt = salt.toString('base64');
-        self.crypto.pbkdf2(pwd, salt, self.iterations, self.len, /*'sha512',*/ function (err, hash) {
+        self.crypto.pbkdf2(pwd, salt, self.iterations, self.len, 'sha512', function (err, hash) {
             if (err) return fn(err);
             fn(null, salt, (new Buffer(hash, 'binary')).toString('base64'));
         });
@@ -37,7 +37,7 @@ UserController.prototype.createHash = function (pwd, fn) {
 
 UserController.prototype.checkHash = function (pwd, salt, fn) {
     var self = this;
-    this.crypto.pbkdf2(pwd, salt, self.iterations, self.len, /*'sha512',*/ function (err, hash) {
+    this.crypto.pbkdf2(pwd, salt, self.iterations, self.len, 'sha512', function (err, hash) {
         fn(err, (new Buffer(hash, 'binary')).toString('base64'));
     });
 };
