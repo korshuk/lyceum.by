@@ -1,5 +1,11 @@
 var BaseController = require('./baseController').BaseController,
-    translit = require('../modules/translit').translit;
+    translit = require('../modules/translit').translit,
+    fs = require('fs'),
+    readline = require('readline'),
+    {google} = require('googleapis'),
+    SCOPES = ['https://www.googleapis.com/auth/calendar'],
+    redirect_uris = 'localhost:3000/',
+    privatekey = require('./calendar-1b98abb101cf.json');
 
 ContactsController = function(mongoose, application) {
  
@@ -31,7 +37,6 @@ ContactsController = function(mongoose, application) {
       doc.place = req.body['place'];
       doc.client_id = req.body['client_id'];
       doc.client_secret = req.body['client_secret'];
-      doc.redirect_uris = req.body['redirect_uris'];
 
       doc.order = req.body['order'] || 0;
       
@@ -100,79 +105,13 @@ ContactsController = function(mongoose, application) {
 
         'email': doc.email,
         'client_secret': doc.client_secret,
-        'client_id': doc.client_id,
-        'redirect_uris': doc.redirect_uris
+        'client_id': doc.client_id
       }
-      createEvent(client);
+      //authorize(client, newEvent);
+      newEvent(client);
       res.render('makeAppointment',{doc: doc});
     });
   }
-
-  createEvent = async function(client){
-    var event = {
-      'summary': client.discription,
-      'description': client.discription,
-      'start': {
-        'dateTime': client.startdate
-      },
-      'end': {
-        'dateTime': client.enddate
-      },
-      'attendees':[
-        {'email': client.clientemail},
-        {'email': client.email}
-      ]
-    }
-
-    var fs = require('fs');
-    var readline = require('readline');
-    var {google} = require('googleapis');
-    var SCOPES = ['https://www.googleapis.com/auth/calendar'];
-    var TOKEN_PATH = client.id+'.json';
-    authorize(client, newEvent);
-    function authorize(client, callback) {
-      // var {client_secret, client_id, redirect_uris} = credentials.installed;
-      var oAuth2Client = new google.auth.OAuth2(
-        client.client_id, client.client_secret, client.redirect_uris);
-      fs.readFile(TOKEN_PATH, (err, token) => {
-        if (err) return getAccessToken(oAuth2Client, callback);
-        oAuth2Client.setCredentials(JSON.parse(token));
-        callback(oAuth2Client);
-      });
-    }
-    function getAccessToken(oAuth2Client, callback) {
-      var authUrl = oAuth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES,
-      });
-      console.log('Authorize this app by visiting this url:', authUrl);
-      var rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-      rl.question('Enter the code from that page here: ', (code) => {
-        rl.close();
-        oAuth2Client.getToken(code, (err, token) => {
-          if (err) return console.error('Error retrieving access token', err);
-          oAuth2Client.setCredentials(token);
-          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-            if (err) return console.error(err);
-            console.log('Token stored to', TOKEN_PATH);
-          });
-          callback(oAuth2Client);
-        });
-      });
-    }
-    function newEvent(auth) {
-      var calendar = google.calendar({version: 'v3', auth});
-      calendar.events.insert({
-        'calendarId': 'primary',
-        'resource': event
-      }, function() {
-        console.log('Event created');
-      });
-    }
-  };
 
   base.constructor = arguments.callee;
 
@@ -180,3 +119,88 @@ ContactsController = function(mongoose, application) {
 };
 
 exports.ContactsController = ContactsController;
+
+// function authorize(client, callback) {
+//   var oAuth2Client = new google.auth.OAuth2(
+//     client.client_id, client.client_secret, redirect_uris);
+//   var TOKEN_PATH = client.id+'.json';
+//   fs.readFile(TOKEN_PATH, (err, token) => {
+//     if (err) return getAccessToken(oAuth2Client, callback, client);
+//     oAuth2Client.setCredentials(JSON.parse(token));
+//     callback(oAuth2Client, client);
+//   });
+
+// }
+// function getAccessToken(oAuth2Client, callback, client) {
+//   var authUrl = oAuth2Client.generateAuthUrl({
+//     access_type: 'offline',
+//     scope: SCOPES,
+//   });
+//   console.log('Authorize this app by visiting this url:', authUrl);
+//   var rl = readline.createInterface({
+//     input: process.stdin,
+//     output: process.stdout,
+//   });
+//   rl.question('Enter the code from that page here: ', (code) => {
+//     rl.close();
+//     oAuth2Client.getToken(code, (err, token) => {
+//       if (err) return console.error('Error retrieving access token', err);
+//       oAuth2Client.setCredentials(token);
+//       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+//         if (err) return console.error(err);
+//         console.log('Token stored to', TOKEN_PATH);
+//       });
+//       callback(oAuth2Client, client);
+//     });
+//   });
+// }
+function newEvent(/*auth,*/ client) {
+  var event = {
+    'summary': client.discription,
+    'description': client.discription,
+    'start': {
+      'dateTime': client.startdate
+    },
+    'end': {
+      'dateTime': client.enddate
+    },
+    'attendees':[
+      {'email': client.clientemail},
+      {'email': client.email}
+    ]
+  }
+  var oAuth2Client = new google.auth.OAuth2(
+    client.client_id, client.client_secret, redirect_uris);
+  var jwtClient = new google.auth.JWT(
+    privatekey.client_email,
+    null,
+    privatekey.private_key,
+    ['https://www.googleapis.com/auth/calendar']);
+  jwtClient.authorize(function(err, tokens) {
+      if (err) {
+        console.log(err);
+        return;
+      } else {
+        console.log("Successfully connected!");
+        var token = {
+          'access_token': tokens.access_token,
+          'scope': SCOPES[0],
+          'token_type': tokens.token_type,
+          'expiry_date': tokens.expiry_date
+        };
+        oAuth2Client.setCredentials(token);
+        var calendar = google.calendar({
+          version:'v3',
+          auth: oAuth2Client});
+        // console.log(oAuth2Client);
+        calendar.events.insert({
+          auth: oAuth2Client,
+          'calendarId': 'primary',
+          'resource': event
+        }, function(err) {
+          if (err) console.log(err)
+          else console.log('Event created');
+        });
+      }
+  });
+}
