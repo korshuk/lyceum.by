@@ -1,11 +1,15 @@
 var BaseController = require('./baseController').BaseController,
     translit = require('../modules/translit').translit,
-    fs = require('fs'),
-    readline = require('readline'),
     {google} = require('googleapis'),
     SCOPES = ['https://www.googleapis.com/auth/calendar'],
     redirect_uris = 'localhost:3000/',
-    privatekey = require('./calendar-1b98abb101cf.json');
+    privatekey = require('./calendar-1b98abb101cf.json'),
+    client = {
+      'private_key': privatekey.private_key,
+      'client_email': privatekey.client_email,
+      'client_secret': 'Q--XCQCB3j1CaznN6THCtpQn',
+      'client_id': '323312103424-shb5k2p6iaisk10eb8uelttn3jgivosh.apps.googleusercontent.com'
+    };
 
 ContactsController = function(mongoose, application) {
  
@@ -35,8 +39,6 @@ ContactsController = function(mongoose, application) {
       doc.phone = req.body['phone'];
       doc.email = req.body['email'];
       doc.place = req.body['place'];
-      doc.client_id = req.body['client_id'];
-      doc.client_secret = req.body['client_secret'];
 
       doc.order = req.body['order'] || 0;
       
@@ -65,7 +67,6 @@ ContactsController = function(mongoose, application) {
       } 
       else {
         req.session.success = 'Контакт <strong>' + doc.name.ru + '</strong> создан ' + doc.createdAt;
-        if (doc.token != '') upload.single('token');
         res.redirect(self.path);
       }
     });
@@ -96,17 +97,12 @@ ContactsController = function(mongoose, application) {
     this.Collection.findByReq(req,res,function(doc){
       var endDate = new Date(req.body.date + " " + req.body.time);
       endDate.setMinutes(endDate.getMinutes()+20);
-      var client = {
-        'id': doc._id,
-        'startdate': (new Date(req.body.date + " " + req.body.time)).toISOString(),
-        'enddate': endDate.toISOString(),
-        'clientemail': req.body.email,
-        'discription': 'Встреча с ' + req.body.fullName + ', телефон: ' + req.body.phone,
-
-        'email': doc.email,
-        'client_secret': doc.client_secret,
-        'client_id': doc.client_id
-      }
+      client.id = doc._id;
+      client.startdate = (new Date(req.body.date + " " + req.body.time)).toISOString();
+      client.enddate = endDate.toISOString();
+      client.clientemail = req.body.email;
+      client.discription = 'Встреча с ' + req.body.fullName + ', телефон: ' + req.body.phone;
+      client.email = doc.email;
       //authorize(client, newEvent);
       newEvent(client);
       res.render('makeAppointment',{doc: doc});
@@ -120,41 +116,7 @@ ContactsController = function(mongoose, application) {
 
 exports.ContactsController = ContactsController;
 
-// function authorize(client, callback) {
-//   var oAuth2Client = new google.auth.OAuth2(
-//     client.client_id, client.client_secret, redirect_uris);
-//   var TOKEN_PATH = client.id+'.json';
-//   fs.readFile(TOKEN_PATH, (err, token) => {
-//     if (err) return getAccessToken(oAuth2Client, callback, client);
-//     oAuth2Client.setCredentials(JSON.parse(token));
-//     callback(oAuth2Client, client);
-//   });
-
-// }
-// function getAccessToken(oAuth2Client, callback, client) {
-//   var authUrl = oAuth2Client.generateAuthUrl({
-//     access_type: 'offline',
-//     scope: SCOPES,
-//   });
-//   console.log('Authorize this app by visiting this url:', authUrl);
-//   var rl = readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout,
-//   });
-//   rl.question('Enter the code from that page here: ', (code) => {
-//     rl.close();
-//     oAuth2Client.getToken(code, (err, token) => {
-//       if (err) return console.error('Error retrieving access token', err);
-//       oAuth2Client.setCredentials(token);
-//       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-//         if (err) return console.error(err);
-//         console.log('Token stored to', TOKEN_PATH);
-//       });
-//       callback(oAuth2Client, client);
-//     });
-//   });
-// }
-function newEvent(/*auth,*/ client) {
+function newEvent(client) {
   var event = {
     'creator': client.email,
     'summary': client.discription,
@@ -168,19 +130,14 @@ function newEvent(/*auth,*/ client) {
       'dateTime': client.enddate,
       'timeZone': 'Europe/Minsk',
     },
-    'visibility': 'public',
-    // 'attendees':
-    // [
-    //   {'email': client.clientemail},
-    //   {'email': client.email}
-    // ]
+    'visibility': 'public'
   }
   var oAuth2Client = new google.auth.OAuth2(
     client.client_id, client.client_secret, redirect_uris);
   var jwtClient = new google.auth.JWT(
-    privatekey.client_email,
+    client.client_email,
     null,
-    privatekey.private_key,
+    client.private_key,
     ['https://www.googleapis.com/auth/calendar']);
   jwtClient.authorize(function(err, tokens) {
       if (err) {
