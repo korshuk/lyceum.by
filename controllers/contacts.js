@@ -98,8 +98,8 @@ ContactsController = function(mongoose, application) {
       endDate.setMinutes(endDate.getMinutes()+20);
       var client = {
         'id': doc._id,
-        'startdate': new Date(req.body.date + " " + req.body.time),
-        'enddate': endDate,
+        'startdate': (new Date(req.body.date + " " + req.body.time)).toISOString(),
+        'enddate': endDate.toISOString(),
         'clientemail': req.body.email,
         'discription': 'Встреча с ' + req.body.fullName + ', телефон: ' + req.body.phone,
 
@@ -156,18 +156,24 @@ exports.ContactsController = ContactsController;
 // }
 function newEvent(/*auth,*/ client) {
   var event = {
+    'creator': client.email,
     'summary': client.discription,
+    'location':'Лицей БГУ',
     'description': client.discription,
     'start': {
-      'dateTime': client.startdate
+      'dateTime': client.startdate,
+      'timeZone': 'Europe/Minsk',
     },
     'end': {
-      'dateTime': client.enddate
+      'dateTime': client.enddate,
+      'timeZone': 'Europe/Minsk',
     },
-    'attendees':[
-      {'email': client.clientemail},
-      {'email': client.email}
-    ]
+    'visibility': 'public',
+    // 'attendees':
+    // [
+    //   {'email': client.clientemail},
+    //   {'email': client.email}
+    // ]
   }
   var oAuth2Client = new google.auth.OAuth2(
     client.client_id, client.client_secret, redirect_uris);
@@ -192,14 +198,16 @@ function newEvent(/*auth,*/ client) {
         var calendar = google.calendar({
           version:'v3',
           auth: oAuth2Client});
-        // console.log(oAuth2Client);
         calendar.events.insert({
           auth: oAuth2Client,
-          'calendarId': 'primary',
+          'calendarId': client.email,
           'resource': event
-        }, function(err) {
-          if (err) console.log(err)
-          else console.log('Event created');
+        }, function(err, event) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(event.data.htmlLink);
         });
       }
   });
