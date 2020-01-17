@@ -47,6 +47,21 @@ var SettingsController = function(mongoose, app) {
             doc.smsAPILogin = req.body.smsAPILogin;
             doc.smsAPISecretCode = req.body.smsAPISecretCode;
             doc.smsAPIName = req.body.smsAPIName;
+            doc.private_key = req.body.privateKey.replace(new RegExp('\\r', 'g'), '');
+            doc.client_email = req.body.client_email;
+            doc.client_secret = req.body.client_secret;
+            doc.client_id = req.body.client_id;
+            doc.redirect_uris = req.body.redirect_uris;
+            doc.scope = req.body.scope;
+
+
+            base.client.private_key = doc.privateKey;
+            base.client.client_email = doc.client_email;
+            base.client.client_secret = doc.client_secret;
+            base.client.client_id = doc.client_id;
+            base.client.redirect_uris = doc.redirect_uris;
+            base.client.scope = doc.scope;
+            console.log(base.client);
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;
@@ -80,10 +95,17 @@ var SettingsController = function(mongoose, app) {
             doc = new base.Collection();
             doc.save();
         }
+        base.client.private_key = doc.private_key;
+        base.client.client_email = doc.client_email;
+        base.client.client_secret = doc.client_secret;
+        base.client.client_id = doc.client_id;
+        base.client.redirect_uris = doc.redirect_uris;
+        base.client.scope = doc.scope;
+        base.app.contactsController.client = base.client;
+
         base.app.siteConfig = doc;
         base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
-        console.log('siteConfig', base.app.siteConfig);
     });
 
 

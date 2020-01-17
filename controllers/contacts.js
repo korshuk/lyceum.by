@@ -1,15 +1,6 @@
 var BaseController = require('./baseController').BaseController,
     translit = require('../modules/translit').translit,
-    {google} = require('googleapis'),
-    SCOPES = ['https://www.googleapis.com/auth/calendar'],
-    redirect_uris = 'localhost:3000/',
-    privatekey = require('./calendar-1b98abb101cf.json'),
-    client = {
-      'private_key': privatekey.private_key,
-      'client_email': privatekey.client_email,
-      'client_secret': 'Q--XCQCB3j1CaznN6THCtpQn',
-      'client_id': '323312103424-shb5k2p6iaisk10eb8uelttn3jgivosh.apps.googleusercontent.com'
-    };
+    {google} = require('googleapis');
 
 ContactsController = function(mongoose, application) {
  
@@ -97,14 +88,13 @@ ContactsController = function(mongoose, application) {
     this.Collection.findByReq(req,res,function(doc){
       var endDate = new Date(req.body.date + " " + req.body.time);
       endDate.setMinutes(endDate.getMinutes()+20);
-      client.id = doc._id;
-      client.startdate = (new Date(req.body.date + " " + req.body.time)).toISOString();
-      client.enddate = endDate.toISOString();
-      client.clientemail = req.body.email;
-      client.discription = 'Встреча с ' + req.body.fullName + ', телефон: ' + req.body.phone;
-      client.email = doc.email;
-      //authorize(client, newEvent);
-      newEvent(client);
+      base.client.id = doc._id;
+      base.client.startdate = (new Date(req.body.date + " " + req.body.time)).toISOString();
+      base.client.enddate = endDate.toISOString();
+      base.client.clientemail = req.body.email;
+      base.client.discription = 'Встреча с ' + req.body.fullName + ', телефон: ' + req.body.phone;
+      base.client.email = doc.email;
+      newEvent(base.client);
       res.render('makeAppointment',{doc: doc});
     });
   }
@@ -116,12 +106,12 @@ ContactsController = function(mongoose, application) {
 
 exports.ContactsController = ContactsController;
 
-function newEvent(client) {
+function newEvent(client, str) {
   var event = {
     'creator': client.email,
     'summary': client.discription,
     'location':'Лицей БГУ',
-    'description': client.discription,
+    'description': client.discription + ' email:' + client.clientemail,
     'start': {
       'dateTime': client.startdate,
       'timeZone': 'Europe/Minsk',
@@ -133,12 +123,12 @@ function newEvent(client) {
     'visibility': 'public'
   }
   var oAuth2Client = new google.auth.OAuth2(
-    client.client_id, client.client_secret, redirect_uris);
+    client.client_id, client.client_secret, client.redirect_uris);
   var jwtClient = new google.auth.JWT(
     client.client_email,
     null,
     client.private_key,
-    ['https://www.googleapis.com/auth/calendar']);
+    client.scope);
   jwtClient.authorize(function(err, tokens) {
       if (err) {
         console.log(err);
@@ -147,7 +137,7 @@ function newEvent(client) {
         console.log("Successfully connected!");
         var token = {
           'access_token': tokens.access_token,
-          'scope': SCOPES[0],
+          'scope': client.scope,
           'token_type': tokens.token_type,
           'expiry_date': tokens.expiry_date
         };
