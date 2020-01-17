@@ -7,6 +7,7 @@
     BaseController = function (name, path, mongoose, application, adminInPath) {
         var self = this;
         var adminPath = adminInPath ? '' : 'admin/';
+        this.client = {};
         this.app = application;
         this.name = name;
         this.viewPath = this.name.toLowerCase() + '/';
