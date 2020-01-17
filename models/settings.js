@@ -28,6 +28,12 @@ function define(mongoose, fn) {
             'smsAPISecretCode': String,
             'showExamSeats1': Boolean,
             'showExamSeats2': Boolean,
+            'private_key': String,
+            'client_email': String,
+            'client_secret': String,
+            'client_id': String,
+            'redirect_uris': String,
+            'scope': String,
         });
 
     mongoose.model('Settings', SettingsSchema);
