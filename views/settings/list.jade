@@ -92,6 +92,28 @@ block content
         div.form-group
             label clientAppSecret
             input#clientAppSecret.form-control(name="clientAppSecret", type="text", value=(docs && docs.clientAppSecret))
+        
+        h3 ConsoleAPI
+        div.form-group
+            label Private Key            
+            textarea#privateAPIKey.form-control(name="privateKey", rows=5) #{docs.private_key}
+                
+        div.form-group
+            label Client Email            
+            input#clientAPIEmail.form-control(name="client_email", type="text", value=(docs && docs.client_email))
+        div.form-group
+            label Client Secret            
+            input#clientAPISecret.form-control(name="client_secret", type="text", value=(docs && docs.client_secret))
+        div.form-group
+            label Client Id            
+            input#clientAPIId.form-control(name="client_id", type="text", value=(docs && docs.client_id))
+        div.form-group
+            label Redirect Uri            
+            input#redirectURI.form-control(name="redirect_uris", type="text", value=(docs && docs.redirect_uris))
+        div.form-group
+            label Scope            
+            input#scope.form-control(name="scope", type="text", value=(docs && docs.scope))
+
         div.row
             div.col.col-lg-12
                 input.btn.btn-default(type='submit', value='Save')
