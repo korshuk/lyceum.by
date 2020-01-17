@@ -106,7 +106,7 @@ ContactsController = function(mongoose, application) {
 
 exports.ContactsController = ContactsController;
 
-function newEvent(client, str) {
+function newEvent(client) {
   var event = {
     'creator': client.email,
     'summary': client.discription,

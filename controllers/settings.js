@@ -106,6 +106,7 @@ var SettingsController = function(mongoose, app) {
         base.app.siteConfig = doc;
         base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
+	console.log('siteConfig', base.app.siteConfig);
     });
 
 
