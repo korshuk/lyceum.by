@@ -2,7 +2,7 @@ var crypto = require('crypto');
 var mongoose = require('mongoose');
 
 function define(mongoose, fn) {
-    var PupilSchema = new mongoose.Schema({
+    var PupilResSchema = new mongoose.Schema({
         email: {
             type: String,
             required: true
@@ -60,7 +60,15 @@ function define(mongoose, fn) {
 
         passOlymp: Boolean,
         exam1: Number,
+        exam1id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ExamResults'
+        },
         exam2: Number,
+        exam2id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ExamResults'
+        },
         sum: Number,
         region: String,
         message: String,
@@ -71,24 +79,24 @@ function define(mongoose, fn) {
         },
     });
 
-    PupilSchema.methods.encryptPassword = function (password) {
+    PupilResSchema.methods.encryptPassword = function (password) {
         return crypto
             .createHmac('sha1', this.salt)
             .update(password)
             .digest('hex');
     };
 
-    PupilSchema.virtual('userId')
+    PupilResSchema.virtual('userId')
         .get(function () {
             return this.id;
         });
 
-    PupilSchema.virtual('FIO')
+    PupilResSchema.virtual('FIO')
         .get(function () {
             return [this.firstName, this.lastName, this.parentName].join(' ');
         });
 
-    PupilSchema.virtual('password')
+    PupilResSchema.virtual('password')
         .set(function (password) {
             this._plainPassword = password;
             this.salt = crypto.randomBytes(32).toString('base64');
@@ -100,11 +108,11 @@ function define(mongoose, fn) {
         });
 
 
-    PupilSchema.methods.checkPassword = function (password) {
+    PupilResSchema.methods.checkPassword = function (password) {
         return this.encryptPassword(password) === this.hashedPassword;
     };
 
-    PupilSchema.statics.findByReq = function(req, res, next) {
+    PupilResSchema.statics.findByReq = function(req, res, next) {
         this.findOne({ _id: req.params.id}, function(err, doc) {
             if (!doc) {
                 req.session.error = new Error('такой страницы не существует');
@@ -115,7 +123,7 @@ function define(mongoose, fn) {
         });
     };
 
-    mongoose.model('Pupil', PupilSchema);
+    mongoose.model('Pupil', PupilResSchema);
     fn();
 }
 
