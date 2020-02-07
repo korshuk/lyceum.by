@@ -9,7 +9,19 @@
         mongoUrl = process.env.MONGO_URL || 'localhost',
         logfile = fs.createWriteStream('./logfile.log', {
             flags: 'a'
-        });
+        }),
+        multer = require('multer'),
+        bodyParser = require('body-parser');
+
+    var storageConfig = multer.diskStorage({
+        destination: function (req, file, cb){
+            cb(null, "./public/files/");
+        },
+        filename: function (req, file, cb) {
+            //timestemp из даты
+            cb(null, Date.now() + '_' + file.originalname);
+        }
+    });
 
     exports.configure = function (app) {
         
@@ -30,7 +42,9 @@
                 stream: logfile
             }));
 
-            app.use(express.bodyParser());
+            // app.use(express.bodyParser());
+            app.use(bodyParser.json()); 
+            app.use(bodyParser.urlencoded({ extended: true }));
             app.use(express.methodOverride());
 
             app.use(express.static('./public'));
@@ -45,6 +59,8 @@
                 }),
                 secret: 'secret secret'
             }));
+
+            app.use(multer({storage:storageConfig}).array("fileupload"));
         });
 
         app.configure('development', function () {
