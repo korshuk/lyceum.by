@@ -201,8 +201,6 @@ var PupilsController = function (mongoose, app) {
         return query
                 .sort('firstName')
                 .populate('profile')
-                .populate('exam1')
-                .populate('exam2')
     }
     
     function examresults (req, res) {
@@ -856,8 +854,6 @@ var PupilsController = function (mongoose, app) {
                 .populate('profile')
                 .populate('place1')
                 .populate('place2')
-                .populate('exam1')
-                .populate('exam2')
                 .exec(function (err, data) {
                     queryExecFn(err, data, callback);
                 });
