@@ -7,6 +7,12 @@ var PupilsController = function (mongoose, app) {
 
     var base = new BaseController('Pupil', '', mongoose, app, true);
 
+    var ResultsCollection =  app.profileController.ResultsCollection;
+
+    // resultsModel.define(mongoose, function(){
+    //     ResultsCollection = mongoose.mongoose('ExamResults')
+    // });
+
     base.TOKENLIFE = 3600;
 
     base.ClientAppModel = require('../models/pupil').ClientAppModel;
@@ -15,11 +21,16 @@ var PupilsController = function (mongoose, app) {
     base.HistoryModel = require('../models/pupil').HistoryModel;
 
     base.examresults = examresults;
+    base.examresultsNew = examresultsNew;
     base.apiList = apiList;
+
+    base.apiListNew = apiListNew;
 
     base.apiListExport = apiListExport;
 
     base.saveExams = saveExams;
+
+    base.saveExamsNew = saveExamsNew;
 
     base.historyList = historyList;
 
@@ -190,12 +201,25 @@ var PupilsController = function (mongoose, app) {
         return query
                 .sort('firstName')
                 .populate('profile')
+                .populate('exam1')
+                .populate('exam2')
     }
     
     function examresults (req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {
             res.render(self.viewPath + 'examresults.jade', {
+                docs: docs,
+                viewName: self.name.toLowerCase(),
+                siteConfig: self.app ? self.app.siteConfig : {}
+            });
+        });
+    }
+
+    function examresultsNew (req, res) {
+        var self = this;
+        this.Collection.find().sort('-createdAt').exec(function (err, docs) {
+            res.render(self.viewPath + 'examresultsnew.jade', {
                 docs: docs,
                 viewName: self.name.toLowerCase(),
                 siteConfig: self.app ? self.app.siteConfig : {}
@@ -380,6 +404,60 @@ var PupilsController = function (mongoose, app) {
                         user.save(asyncdone);
                     }, function (err) {
                         if (err) return res.status(500).send(err);
+                        res.status(200).send('ok');
+                    });
+                }
+            });
+
+    }
+
+    function saveExamsNew(req, res) {
+        var reqUser;
+        var i;
+        var userIds = [];
+        var reqUsers = [];
+        for (i in req.body) {
+            reqUser = req.body[i];
+            if (reqUser._id) {
+                userIds.push(new mongoose.Types.ObjectId(reqUser._id));
+                reqUsers[reqUser._id] = reqUser;
+            }
+        }
+        base.Collection
+            .find({_id: {$in: userIds}})
+            .exec(function (err, users) {
+                if (err) res.status(500).send(err);
+                else {
+                    async.eachSeries(users, function (user, asyncdone) {
+                        reqUser = reqUsers[user._id];
+                        ResultsCollection.find({profileId: user.profile}).exec(function(err, docs){
+                            if (reqUser.exam1id || reqUser.exam1id === 0) {
+                                for (var i = 0; i < docs.length; i++){
+                                    if (docs[i].numberexzam === 1 && docs[i].StudentId == reqUser.exam1id){
+                                        user.exam1 = docs[i].Points;
+                                        user.exam1id = docs[i]._id;
+                                    }
+                                }
+                            }
+                            if (reqUser.exam2id || reqUser.exam2id === 0) {
+                                for (var i = 0; i < docs.length; i++){
+                                    if (docs[i].numberexzam === 2 && docs[i].StudentId == reqUser.exam2id){
+                                        user.exam2 = docs[i].Points;
+                                        user.exam2id = docs[i]._id;
+                                    }
+                                }
+                            }
+                            if (reqUser.exam1 || reqUser.exam2 || reqUser.exam1 === 0 || reqUser.exam2 === 0) {
+                                user.sum = user.exam1 + user.exam2;
+                            }
+    
+                            user.save(asyncdone);
+                        });
+                    }, function (err) {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).send(err);
+                        }
                         res.status(200).send('ok');
                     });
                 }
@@ -585,6 +663,122 @@ var PupilsController = function (mongoose, app) {
         });
     }
 
+    function apiListNew(req, res) {
+        var sortObj = req.query.sort ? req.query.sort.split('-') : ['created', 'asc'];
+
+        req.queryParams = {
+            sortObj: sortObj,
+            sortField: sortObj[0],
+            sortDirection: sortObj[1] === 'asc' ? '' : '-',
+            profile: req.query.profile,
+            status: req.query.status,
+            examStatus: req.query.examStatus,
+            firstName: req.query.firstName,
+            email: req.query.email,
+            recommended: req.query.recommended,
+            itemsPerPage: req.query.itemsPerPage || 100,
+            page: req.query.page || 1
+        };
+
+        if (req.query.duplicates && req.query.duplicates === 'true') {
+            duplicatesSearchNew(req, res);
+        } else {
+            simpleSearchNew(req, res, base.Collection.find());
+        }
+    }
+
+    function duplicatesSearchNew(req, res) {
+        var group = {
+            $group:
+                {
+                    _id: {firstName: "$firstName"},
+                    uniqueIds: {$addToSet: "$_id"},
+                    count: {$sum: 1}
+                }
+        };
+        var match = {
+            $match: {
+                count: {"$gt": 1}
+            }
+        };
+        var sort = {
+            $sort: {
+                count: -1
+            }
+        };
+
+        base.Collection
+            .aggregate([group, match, sort], onDuplicatesFoundNew);
+
+        function onDuplicatesFoundNew(err, results) {
+            var query;
+            var uniqueIds = [];
+
+            results.forEach(function (result) {
+                result.uniqueIds.forEach(function (id) {
+                    uniqueIds.push(id);
+                })
+            });
+
+            query = base.Collection
+                .find({_id: {$in: uniqueIds}});
+
+            simpleSearchNew(req, res, query);
+        }
+    }
+
+    function simpleSearchNew(req, res, query) {
+        var countQuery;
+        if (req.queryParams.firstName) {
+            query.find({"firstName": new RegExp(req.queryParams.firstName, 'i')});
+        }
+        if (req.queryParams.email) {
+            query.find({"email": new RegExp(req.queryParams.email, 'i')});
+        }
+        if (req.queryParams.status) {
+            query.find({"status": req.queryParams.status});
+        }
+        if (req.queryParams.profile) {
+            query.find({"profile": req.queryParams.profile});
+        }
+        if (req.queryParams.examStatus) {
+            query.find({"examStatus": req.queryParams.examStatus});
+        }
+        if (req.queryParams.recommended) {
+            query.find({"recommended": req.queryParams.recommended});
+        }
+
+
+        countQuery = query;
+
+        query
+            .sort(req.queryParams.sortDirection + req.queryParams.sortField)
+            .skip(req.queryParams.itemsPerPage * (req.queryParams.page - 1))
+            .limit(req.queryParams.itemsPerPage)
+            .populate('profile')
+            .populate('exam1id')
+            .populate('exam2id');
+
+        var firstQ = function (callback) {
+            query
+                .exec(function (err, data) {
+                    queryExecFn(err, data, callback)
+                });
+        };
+
+        var secondQ = function (callback) {
+            countQuery
+                .count()
+                .exec(function (err, data) {
+                    queryExecFn(err, data, callback)
+                });
+        };
+
+        async.parallel([firstQ, secondQ], function (err, results) {
+            res.json({pupils: results[0], count: results[1]});
+        });
+    }
+
     function historyList(req, res) {
         base.HistoryModel
             .find()
@@ -662,6 +856,8 @@ var PupilsController = function (mongoose, app) {
                 .populate('profile')
                 .populate('place1')
                 .populate('place2')
+                .populate('exam1')
+                .populate('exam2')
                 .exec(function (err, data) {
                     queryExecFn(err, data, callback);
                 });
