@@ -1,0 +1,161 @@
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1 Внесение результатов
+    div(ng-app="pupilApp", ng-controller="pupilController as app")
+        div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
+            div.row
+                .col.col-md-2
+                    span.items {{paginationOptions.totalItems}} items total
+                .col.col-md-4
+                    button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
+                .col.col-md-4
+
+                .col.col-md-6.text-right
+                    form.form-inline.pull-right.margin-bottom-basic
+                        .form-group
+                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                        .form-group.items-per-page
+                            label(for="itemsOnPageSelect1") Items per page:
+                            select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                option 2
+                                option 30
+                                option 50
+                                option 100
+                                option 500
+                                option 1000
+                                option 2000
+                                option 3000
+            .panel.panel-default
+                .panel-body
+                    div.row
+                        .col-md-3
+                            .form-group
+                                label Поиск по фамилии
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по фамилии"
+                                                                    ng-change="filter()"
+                                                                    ng-model="firstName"
+                                                                    filter-by="firstName"
+                                                                    filter-type="text")
+                        .col-md-3
+                            .form-group
+                                label Поиск по email
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по email"
+                                                                    ng-change="filter()"
+                                                                    ng-model="email"
+                                                                    filter-by="email"
+                                                                    filter-type="text")
+                        .col-md-3
+                            .form-group
+                                label Фильтр профиля
+                                select.form-control.order-search-box(placeholder="Фильтр профиля",
+                                                                    ng-change="filter()",
+                                                                    ng-model="profile",
+                                                                    filter-by="profile",
+                                                                    filter-type="select")
+                                    option(value="") Все профили
+                                    option(ng-repeat="option in app.profileOptions track by $index",
+                                        value="{{option._id}}") {{option.name}}
+                        .col-md-3
+                            .form-group
+                                label Статус экзамена
+                                select.form-control.order-search-box(placeholder="Статус экзамена",
+                                                                        ng-change="filter()",
+                                                                        ng-model="examStatus",
+                                                                        filter-by="examStatus",
+                                                                        filter-type="select")
+                                    option(value="") Все статусы
+                                    option(ng-repeat="(key, value) in app.examStatuses track by $index",
+                                            value="{{key}}") {{value}}                    
+                    div.row
+                        .col-md-8
+                            .form-group
+                                label.control-label &nbsp;
+                                .row
+                                    .col-xs-12
+                                        a.btn.btn-primary(ng-click="app.calculate()") Пересчитать статистику
+                            .row
+                                .col-xs-12        
+                                    table.table
+                                        tbody
+                                            td
+                                                | pass: {{app.getProfile(profile).passF}}
+                                                br
+                                                | min:{{app.getProfile(profile).minF}}
+                                                | max:{{app.getProfile(profile).maxF}}
+                                            td
+                                                | pass:{{app.getProfile(profile).passS}}
+                                                br
+                                                | min:{{app.getProfile(profile).minS}}
+                                                | max:{{app.getProfile(profile).maxS}}
+                                            td
+                                                | pass:{{app.getProfile(profile).passT}}
+                                                br
+                                                |  min:{{app.getProfile(profile).minT}}
+                                                |  max:{{app.getProfile(profile).maxT}}
+                                            td
+                                                | Проходной:&nbsp;{{app.getProfile(profile).passT}}
+                                                br
+                                                | Полупроходной:&nbsp;{{app.getProfile(profile).halfpass}}
+                                                br
+                                                | С полупроходным:&nbsp;{{app.getProfile(profile).halfPupils}}
+                                                br
+                                                | Дельта:&nbsp;{{app.getProfile(profile).halfDelta}}  
+                        .col-md-4
+                            .form-group.has-success.text-left
+                                label.control-label Добавить результаты
+                                .row(ng-show="!app.isEditMode1 && !app.isEditMode2")
+                                    .col-xs-6
+                                        button.btn.btn-success(type="button", ng-click="app.isEditMode1 = true")
+                                            | 1 Экзамен
+                                        | &nbsp;
+                                        button.btn.btn-success(type="button", ng-click="app.isEditMode2 = true")
+                                            | 2 Экзамен
+                                .row(ng-show="app.isEditMode1 || app.isEditMode2")  
+                                    .col-xs-6          
+                                    .col-xs-6
+                                        button.btn.btn-secondary(type="button", ng-click="app.disableEditMode()")
+                                            | Отмена
+                                        | &nbsp;
+                                        button.btn.btn-primary(type="button", ng-click="app.saveChanges()")
+                                            | Сохранить
+            table.table.table-hover.table-striped
+                thead
+                    tr
+                        th #&nbsp;
+                        th.sortable(sortable="firstName") firstName&nbsp;
+                        th.sortable(sortable="lastName") lastName&nbsp;
+                        th.sortable(sortable="parentName") parentName&nbsp;
+                        th.sortable(sortable="profile") profile&nbsp;
+                        th.sortable(sortable="passOlymp") БЭ&nbsp;
+                        th.sortable(sortable="exam1") Э-1&nbsp;
+                        //- th.sortable(sortable="exam1id") Номер бланка
+                        th.sortable(sortable="exam2") Э-2&nbsp;
+                        //- th.sortable(sortable="exam2id") Номер бланка
+                        th.sortable(sortable="sum") Сумма&nbsp;
+                        th.sortable(sortable="examStatus") Экз-статус&nbsp;
+                tbody
+                    tr(grid-item)
+                        td {{$index + 1}}
+                        td {{item.firstName}} 
+                        td {{item.lastName}}
+                        td {{item.parentName}}
+                        td {{item.profile.name}}
+                        td {{item.passOlymp ? 'БЭ' : ''}}
+                        //- td {{item.exam1id ? item.exam1id.Points : 'н'}}
+                        td
+                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1id ? item.exam1id.Points : 'н'}}
+                            input.form-control(type='text', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1id.StudentId")
+                        //- td {{item.exam2id ? item.exam2id.Points : 'н'}}
+                        td
+                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2id ? item.exam2id.Points : 'н'}}
+                            input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2id.StudentId")
+                        td {{item.sum}}
+                        td {{app.examStatuses[item.examStatus || '0']}}
+
+block scripts
+    include ../stuff/adminPupilScriptBlock
+    include pupilResultsAppNew
