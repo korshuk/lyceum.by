@@ -1,0 +1,33 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Результаты
+        form(action="/admin/pupils/profiles/results/"+number+"/"+id, method="post", enctype="multipart/form-data")
+          input(type="file", name="fileupload")
+          input(type="submit", value="Загрузить").btn.btn-primary
+
+    a(href="/admin/pupils/profiles", class="btn btn-primary") Назад
+    br
+    //- a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+    table.table.table-hover
+        tr
+            th ID
+            th Student
+            th Missed
+            th Points
+            th Possible
+            th Score
+            th Image
+        - each doc in docs
+            tr
+                td  #{doc.StudentId}
+                td  #{doc.Student}
+                td  #{doc.Missed}
+                td  #{doc.Points}
+                td  #{doc.Possible}
+                td  #{doc.Score}
+                td  
+                    if(doc.imageId)
+                        img(src='#{doc.imageId.url}', height='300px', weigth='300px')

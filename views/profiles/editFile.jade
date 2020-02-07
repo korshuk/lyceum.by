@@ -1,0 +1,10 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список файлов
+        form(action="/admin/pupils/profiles/upload/file/"+doc._id, method="post", enctype="multipart/form-data")
+            input(type="file", name="fileupload")
+            +field('text', 'name', 'Кодовое имя')(value = doc.name)
+            +buttonSet

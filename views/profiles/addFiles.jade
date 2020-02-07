@@ -1,0 +1,27 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+    div.page-header
+        h1: Список файлов
+        form(action="/admin/pupils/profiles/upload/"+number+"/"+id, method="post", enctype="multipart/form-data")
+          input(type="file", name="fileupload", multiple)
+          +field('text', 'startnumber', 'Начальное значение')
+          input(type="submit", value="Загрузить файлы").btn.btn-primary
+
+    a(href="/admin/pupils/profiles", class="btn btn-primary") Назад
+    br
+    a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+    table.table.table-hover
+        tr
+            th Код
+            th Изображение
+        - each doc in docs
+            tr
+                td  #{doc.name}
+                td 
+                    img(src='#{doc.url}', height='300px', weigth='300px')
+                td 
+                    a(href="/admin/pupils/profiles/upload/file/"+doc._id) Изменить
+                    br 
+                    a(href="/admin/pupils/profiles/delete/file/"+doc._id) Удалить

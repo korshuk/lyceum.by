@@ -13,6 +13,8 @@ block content
             th Сумма
             th Статистика
             th
+            th Загрузка картинок
+            th Загрузка результатов
         - each doc in docs
             tr
                 td  #{doc.name}
@@ -60,3 +62,15 @@ block content
                     a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
                     br
                     a(href="/admin/pupils/profiles/delete/"+doc.id) Удалить
+                
+                td
+                    br
+                    a(href="/admin/pupils/profiles/upload/1/"+doc.id) Первый экзамен
+                    br
+                    a(href="/admin/pupils/profiles/upload/2/"+doc.id) Второй экзамен
+                
+                td
+                    br
+                    a(href="/admin/pupils/profiles/results/1/"+doc.id) Первый экзамен
+                    br
+                    a(href="/admin/pupils/profiles/results/2/"+doc.id) Второй экзамен
