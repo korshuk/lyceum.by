@@ -97,14 +97,14 @@
 			}
 		},
 		value:'',
-		lang:'en',
-		format:'Y/m/d H:i',
+		lang:'ru',
+		format:'F d, Y',
 		formatTime:'H:i',
 		formatDate:'Y/m/d',
 		step:60,
 		closeOnDateSelect:0,
 		closeOnWithoutClick:true,
-		timepicker:true,
+		timepicker:false,
 		datepicker:true,
 		minDate:false,
 		maxDate:false,
@@ -125,14 +125,14 @@
 		hours12:false,
 		next:	'xdsoft_next',
 		prev : 'xdsoft_prev',
-		dayOfWeekStart:0,
+		dayOfWeekStart:1,
 		timeHeightInTimePicker:25,
 		timepickerScrollbar:true,
 		todayButton:true, // 2.1.0
 		defaultSelect:true, // 2.1.0
 		scrollMonth:true,
 		scrollTime:true,
-		scrollInput:true,
+		scrollInput:false,
 		mask:false,
 		validateOnBlur:true,
 		allowBlank:false,
@@ -985,7 +985,7 @@
 					datetimepicker.data('changed',true);
 				}else
 					ct = '';
-
+					
 				_xdsoft_datetime.setCurrentTime( ct?ct:0 );
 
 				datetimepicker.trigger('afterOpen.xdsoft');
@@ -1042,6 +1042,8 @@
 					ctrlDown = false;
 			});
 		return this.each(function() {
+			var formatedDate = new Date($(this).val()).dateFormat('F d, Y')
+			$(this).val(formatedDate)
 			var datetimepicker;
 			if( datetimepicker = $(this).data('xdsoft_datetimepicker') ) {
 				if( $.type(opt) === 'string' ) {

@@ -12,7 +12,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
         
         +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
 else
-    +absent('первый')
+    +absent('первый', siteConfig)
 
 hr.dotted
 

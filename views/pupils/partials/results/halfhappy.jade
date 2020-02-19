@@ -20,9 +20,9 @@
 h3.result-header Поздравляем! 
     br 
     | У&nbsp;Вас полупроходной&nbsp;балл
-p(style="margin-bottom: 10px;") Это значит, что на&nbsp;<b>#{profile.halfDelta}&nbsp;#{GetNoun(profile.halfDelta, 'оставшееся место', 'оставшихся места', 'оставшихся мест')}</b> претендует&nbsp;<b>#{profile.halfPupils}&nbsp;#{GetNoun(profile.halfPupils, 'абитуриент', 'абитуриента', 'абитуриентов')}</b>. <br>Для преодоления конкурса в&nbsp;соответствии с&nbsp;пунктом&nbsp;4.1&nbsp;правил&nbsp;приема в&nbsp;Лицей&nbsp;БГУ&nbsp;на&nbsp;#{year}&nbsp;год преимущественное право на зачисление при одинаковом количестве баллов, полученных по результатам вступительных испытаний, имеют:
+p(style="margin-bottom: 10px;") Это значит, что на&nbsp;<b>#{profile.halfDelta}&nbsp;#{GetNoun(profile.halfDelta, 'оставшееся место', 'оставшихся места', 'оставшихся мест')}</b> претендует&nbsp;<b>#{profile.halfPupils}&nbsp;#{GetNoun(profile.halfPupils, 'абитуриент', 'абитуриента', 'абитуриентов')}</b>. <br>Для преодоления конкурса в&nbsp;соответствии с&nbsp;пунктом&nbsp;#{siteConfig.rulesHalfPassPoint}&nbsp;правил&nbsp;приема в&nbsp;Лицей&nbsp;БГУ&nbsp;на&nbsp;#{year}&nbsp;год преимущественное право на зачисление при одинаковом количестве баллов, полученных по результатам вступительных испытаний, имеют:
 ul
-    li Победители III этапа республиканской олимпиады #{year}&nbsp;г. по&nbsp;учебным&nbsp;предметам, перечисленным в&nbsp;п.&nbsp;3.8 правил приема в&nbsp;Лицей&nbsp;БГУ
+    li Победители III этапа республиканской олимпиады #{year}&nbsp;г. по&nbsp;учебным&nbsp;предметам, перечисленным в&nbsp;п.&nbsp;#{siteConfig.rulesOlympPoint} правил приема в&nbsp;Лицей&nbsp;БГУ
     li Лица, имеющие более высокий средний балл свидетельства&nbsp;об&nbsp;общем&nbsp;базовом&nbsp;образовании
     li Лица, имеющие в&nbsp;свидетельстве&nbsp;об&nbsp;общем&nbsp;базовом&nbsp;образовании более высокий средний&nbsp;балл&nbsp;по&nbsp;учебным&nbsp;предметам, по&nbsp;которым проводятся вступительные испытания.
-h4 Просим в&nbsp;срок&nbsp;до&nbsp;21&nbsp;июня предоставить свидетельство&nbsp;об&nbsp;общем&nbsp;базовом&nbsp;образовании и&nbsp;дипломы&nbsp;III&nbsp;этапа (областная,&nbsp;Минская&nbsp;городская) Республиканской олимпиады #{year}&nbsp;г. (при&nbsp;их&nbsp;наличии).
+h4 Просим в&nbsp;срок&nbsp;#{prettyDate(siteConfig.endDocumentsDate)} г. предоставить свидетельство&nbsp;об&nbsp;общем&nbsp;базовом&nbsp;образовании и&nbsp;дипломы&nbsp;III&nbsp;этапа (областная,&nbsp;Минская&nbsp;городская) Республиканской олимпиады #{year}&nbsp;г. (при&nbsp;их&nbsp;наличии).

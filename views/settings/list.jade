@@ -4,6 +4,10 @@ block content
     div.page-header
         h1 Настройки
     form(method='post', action='/admin/settings/')
+        .form-group
+            h2 Настройки личного кабинета
+        div.form-group
+            a.btn.btn-primary(href='/admin/settings/calculateStats') Пересчитать статистику    
         div.form-group
             .checkbox
                 label
@@ -14,26 +18,78 @@ block content
                 label
                     input#showStats(name="showStats", type="checkbox", checked=(docs && docs.showStats))
                     | Показать конкурс на главной
-
-        div.form-group
-            label Дата конца регистрации
-            input#registrationEndDate.form-control(name="registrationEndDate", type="text", value=(docs && docs.registrationEndDate))
-        div.form-group
-            label Дата конца регистрации, когда уже точно нельзя будет подать заявку
-            input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
-        div.form-group
-            a.btn.btn-primary(href='/admin/settings/calculateStats') Пересчитать статистику
         hr
-        div.form-group
-            label Ссылка на правила приёма
-            input#rulesLink.form-control(name="rulesLink", type="text", value=(docs && docs.rulesLink))
+        .form-group
+            h3 Даты
+        .row
+            .col-sm-12
+                h4 Регистрация
+            div.form-group.col-sm-6
+                label Конец регистрации
+                input#registrationEndDate.form-control(name="registrationEndDate", type="text", value=(docs && docs.registrationEndDate))
+            div.form-group.col-sm-6
+                label Уже точно конец
+                input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
+        .row
+            .col-sm-12
+                h4 Резарвный день
+            div.form-group.col-sm-6
+                label Дата резервного дня
+                input#reservedDayDate.form-control(name="reservedDayDate", type="text", value=(docs && docs.reservedDayDate))   
+            div.form-group.col-sm-6
+                label Дата конца приема справок
+                input#absentDocumentsDate.form-control(name="absentDocumentsDate", type="text", value=(docs && docs.absentDocumentsDate))    
+        .row
+            .col-sm-12
+                h4 Итоги вступительной кампании
+            div.form-group.col-sm-6
+                label Дата появления итогов
+                input#totalResultsDate.form-control(name="totalResultsDate", type="text", value=(docs && docs.totalResultsDate))
+            div.form-group.col-sm-6
+                label Дата до конца приема документов поступивших
+                input#endDocumentsDate.form-control(name="endDocumentsDate", type="text", value=(docs && docs.endDocumentsDate))        
+            
+        hr
+        .form-group
+            h3 Правила приёма
+        .row    
+            div.form-group.col-sm-12
+                label Ссылка на правила приёма
+                input#rulesLink.form-control(name="rulesLink", type="text", value=(docs && docs.rulesLink))
+            div.form-group.col-sm-6
+                label Пункт правил про олимпиадные предметы
+                input#rulesOlympPoint.form-control(name="rulesOlympPoint", type="text", value=(docs && docs.rulesOlympPoint)) 
+            div.form-group.col-sm-6
+                label Пункт правил про преимущественное право на зачисление
+                input#rulesHalfPassPoint.form-control(name="rulesHalfPassPoint", type="text", value=(docs && docs.rulesHalfPassPoint))        
         div.form-group
             label Правила приёма
             textarea#rulesHTML.form-control(name="rulesHTML", rows="10")
                 | #{docs && docs.rulesHTML}
 
         hr
-        h3 eMails
+        div.form-group
+            label Супер пароль
+            input#superPassword.form-control(name="superPassword", type="text", value=(docs && docs.superPassword))
+        hr
+        .form-group
+            h3 Для зачисленных
+        .row
+            .form-group.col-sm-6
+                label Анкета для рекомендованных к зачислению
+                p (ссылка на google doc)
+                input#anketaLink.form-control(name="anketaLink", type="text", value=(docs && docs.anketaLink))
+            .form-group.col-sm-6
+                label Сообщение, которое появится у всех зачисленных
+                p (например, приглашение на "Hello, карапузы")
+                textarea#helloMessage.form-control(name="helloMessage", rows="4")
+                    | #{docs && docs.helloMessage}
+        hr  
+        .form-group
+            h3 eMails
+            p Мы используем “application-specific password” для лучшей безопасности
+            p За подробностями можно оборатиться к 
+                a(href="https://lyceumbsu.atlassian.net/wiki/spaces/WEBSITE/pages/4030500/gmail", target="_blank") страничке на Confluence
         .row
             div.form-group.col-sm-6
                 label Первый email
@@ -56,7 +112,8 @@ block content
                 label Четвертый email - пароль
                 input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
         hr
-        h3 WEBSMS
+        .form-group
+            h3 WEBSMS
         .row
             .form-group.col-lg-6
                 label Login
@@ -74,18 +131,17 @@ block content
                 input#websmsSecretCode.form-control(name="smsAPISecretCode", type="text", value=(docs && docs.smsAPISecretCode))
 
         hr
-        h3 reCAPTCHA
+        .form-group
+            h2 Технические вещи
+        .form-group
+            h3 reCAPTCHA
         .row
             .form-group.col-lg-6
                 label Ключ (
                     a(href="https://www.google.com/recaptcha/admin") можно узнать тут
                     |)
                 input#reSiteKey.form-control(name="reSiteKey", type="text", value=(docs && docs.reSiteKey))
-        hr
-        div.form-group
-            label Супер пароль
-            input#superPassword.form-control(name="superPassword", type="text", value=(docs && docs.superPassword))
-        hr
+        hr    
         div.form-group
             label clientAppName
             input#clientAppName.form-control(name="clientAppName", type="text", value=(docs && docs.clientAppName))
@@ -102,3 +158,8 @@ block scripts
     script
         $('#registrationEndDate').datetimepicker();
         $('#confirmationEndDate').datetimepicker();
+        $('#absentDocumentsDate').datetimepicker();
+        $('#reservedDayDate').datetimepicker();
+        $('#totalResultsDate').datetimepicker();
+        $('#endDocumentsDate').datetimepicker();
+        

@@ -7,7 +7,7 @@ if ((profile.firstIsFirst && data.exam1 >= 0) || (!profile.firstIsFirst && data.
         b * 
         | - текущий проходной балл по первому экзамену
 else
-    +absent('первый')         
+    +absent('первый', siteConfig)         
 
 hr.dotted
 
@@ -17,7 +17,7 @@ if ((profile.firstIsFirst && data.exam2 >= 0) || (!profile.firstIsFirst && data.
         b * 
         | - текущий проходной балл по второму экзамену
 else
-    +absent('второй')
+    +absent('второй', siteConfig)
 
 hr.dotted
 h4 Абитуриенты, рекомендованные к зачислению, будут определены после подведения итогов резервного дня (29 мая). 

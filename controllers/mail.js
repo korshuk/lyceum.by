@@ -127,11 +127,11 @@ var MailController = function (mongoose, app) {
             email.to = mailOptions.to;
             email.subject = mailOptions.subject;
             email.html = mailOptions.html;
-            var doc = new base.Collection(email);
+            //var doc = new base.Collection(email);
 
-            doc.save(function(err) {
+           // doc.save(function(err) {
                 console.log('Message %s sent: %s was error %s; ecount - %s; lists - %s', email.from, email.to, mailOptions.wasError);
-            });
+           // });
         
         });
     }

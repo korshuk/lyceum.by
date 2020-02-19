@@ -257,93 +257,121 @@ var PupilsController = function (mongoose, app) {
     function changeStatus(req, res) {
         var self = this;
         var returnUrl = '/admin/pupils#/' + (urlParser.parse(req.originalUrl).query || '');
-        if (req.body.action === 'pupil_return') {
+        var isNextFlag = false;
+        var bodyAction = req.body.action;
+        if (bodyAction === 'pupil_return') {
             res.redirect(returnUrl);
             return;
         }
-        if (req.body.action === 'pupil_delete') {
-            this.Collection.findByReq(req, res, function (doc) {
-                doc.remove(function (err, doc) {
-                    if (err) {
-                        req.session.error = 'Не получилось удалить(( Возникли следующие ошибки: <p>' + err + '</p>';
-                        req.session.locals = {doc: doc};
-                        res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
-                    }
-                    else {
-                        req.session.success = 'Абитуриент удален';
-                        res.redirect(returnUrl);
-                    }
-                });
-            });
-            return;
+        
+        if (bodyAction.indexOf('_next') > -1) {
+            isNextFlag = true;
+            bodyAction = bodyAction.slice(0, bodyAction.indexOf('_next'));
         }
-        this.Collection.findByReq(req, res, function (doc) {
-            doc.night = req.body.night === 'on';
-            doc.recommended = req.body.recommended === 'on';
-            doc.distant = req.body.distant === 'on';
-            doc.region = req.body.region;
-            doc.firstName = req.body.firstName;
-            doc.lastName = req.body.lastName;
-            doc.parentName = req.body.parentName;
-            doc.requestImgLowQuality = req.body.requestImgLowQuality === 'on';
-            doc.requestImgNoPhoto = req.body.requestImgNoPhoto === 'on';
-            doc.requestImgStampError = req.body.requestImgStampError === 'on';
-            doc.requestImgNotApproved = (req.body.requestImgNotApproved === 'on') || doc.requestImgStampError || doc.requestImgLowQuality || doc.requestImgNoPhoto;
-            doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
-            doc.diplomExamName = req.body.diplomExamName;
-            doc.message = req.body.message;
-            doc.email = req.body.email;
-            if (req.body.profile) {
-                doc.profile = req.body.profile;
-            }
-
-            if (req.body.action === 'pupil_approve') {
-                doc.status = 'approved';
-            }
-            if (req.body.action === 'pupil_disapprove') {
-                doc.status = 'disapproved';
-            }
-
-            app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                if (doc.diplomImg && doc.status === 'approved') {
-                    if (profile.olympExams.indexOf(doc.diplomExamName) > -1) {
-                        doc.passOlymp = true;
-                        doc.exam1 = -1;
-                        doc.exam2 = -1;
-                        doc.sum = -1;
-                    } else {
-                        doc.passOlymp = false;
-                        doc.exam1 = 0;
-                        doc.exam2 = 0;
-                        doc.sum = 0;
+        base.Collection.simpleSearch(req, res, function (err, results) {
+            if (isNextFlag) {
+                var nextPupil;
+                if (results[0].length > 1) {
+                    for (var i=0; i < results[0].length; i++) {
+                        if (results[0][i]._id.toString() === req.params.id) {
+                            if (i+1 === results[0].length) {
+                                i = -1;
+                            }
+                            nextPupil = results[0][i+1];
+                            break;
+                        }
+                    }
+                    if (nextPupil) {
+                        returnUrl = '/admin/pupils/edit/' + nextPupil._id + '?'+ (urlParser.parse(req.originalUrl).query || '');
                     }
                 }
-                doc.save(function (err, doc) {
-                    if (err) {
-                        req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
-                        req.session.locals = {doc: doc};
-                        res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
-                    }
-                    else {
-                        req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                        if (req.body.action === 'pupil_approve') {
-                            app.mailController.mailApproved(doc.email, {
-                                firstName: doc.firstName,
-                                lastName: doc.lastName,
-                                profile: profile.name,
-                                registrationEndDate: app.siteConfig.registrationEndDate
-                            });
+            }
+            
+            
+            
+            base.Collection.findByReq(req, res, function (doc) {
+                if (bodyAction === 'pupil_delete') {
+                    doc.remove(function (err, doc) {
+                        if (err) {
+                            req.session.error = 'Не получилось удалить(( Возникли следующие ошибки: <p>' + err + '</p>';
+                            req.session.locals = {doc: doc};
+                            res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
                         }
-                        if (req.body.action === 'pupil_disapprove') {
-                            app.mailController.mailDisapproved(doc.email, {
-                                firstName: doc.firstName,
-                                lastName: doc.lastName
-                            });
+                        else {
+                            req.session.success = 'Абитуриент удален';
+                            res.redirect(returnUrl);
                         }
-
-                        res.redirect(returnUrl);
+                    });
+                } 
+                else {
+                    doc.night = req.body.night === 'on';
+                    doc.recommended = req.body.recommended === 'on';
+                    doc.distant = req.body.distant === 'on';
+                    doc.region = req.body.region;
+                    doc.firstName = req.body.firstName;
+                    doc.lastName = req.body.lastName;
+                    doc.parentName = req.body.parentName;
+                    doc.requestImgLowQuality = req.body.requestImgLowQuality === 'on';
+                    doc.requestImgNoPhoto = req.body.requestImgNoPhoto === 'on';
+                    doc.requestImgStampError = req.body.requestImgStampError === 'on';
+                    doc.requestImgNotApproved = (req.body.requestImgNotApproved === 'on') || doc.requestImgStampError || doc.requestImgLowQuality || doc.requestImgNoPhoto;
+                    doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
+                    doc.diplomExamName = req.body.diplomExamName;
+                    doc.message = req.body.message;
+                    doc.email = req.body.email;
+                    if (req.body.profile) {
+                        doc.profile = req.body.profile;
                     }
-                });
+        
+                    if (bodyAction === 'pupil_approve') {
+                        doc.status = 'approved';
+                    }
+                    if (bodyAction === 'pupil_disapprove') {
+                        doc.status = 'disapproved';
+                    }
+        
+                    app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
+                        if (doc.diplomImg && doc.status === 'approved') {
+                            if (profile.olympExams.indexOf(doc.diplomExamName) > -1) {
+                                doc.passOlymp = true;
+                                doc.exam1 = -1;
+                                doc.exam2 = -1;
+                                doc.sum = -1;
+                            } else {
+                                doc.passOlymp = false;
+                                doc.exam1 = 0;
+                                doc.exam2 = 0;
+                                doc.sum = 0;
+                            }
+                        }
+                        doc.save(function (err, doc) {
+                            if (err) {
+                                req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+                                req.session.locals = {doc: doc};
+                                res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
+                            }
+                            else {
+                                req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
+                                if (bodyAction === 'pupil_approve') {
+                                    app.mailController.mailApproved(doc.email, {
+                                        firstName: doc.firstName,
+                                        lastName: doc.lastName,
+                                        profile: profile.name,
+                                        registrationEndDate: app.siteConfig.registrationEndDate
+                                    });
+                                }
+                                if (bodyAction === 'pupil_disapprove') {
+                                    app.mailController.mailDisapproved(doc.email, {
+                                        firstName: doc.firstName,
+                                        lastName: doc.lastName
+                                    });
+                                }
+        
+                                res.redirect(returnUrl);
+                            }
+                        });
+                    });
+                }
             });
         });
     }
@@ -472,117 +500,17 @@ var PupilsController = function (mongoose, app) {
     }
 
     function apiList(req, res) {
-        var sortObj = req.query.sort ? req.query.sort.split('-') : ['created', 'asc'];
-
-        req.queryParams = {
-            sortObj: sortObj,
-            sortField: sortObj[0],
-            sortDirection: sortObj[1] === 'asc' ? '' : '-',
-            profile: req.query.profile,
-            status: req.query.status,
-            examStatus: req.query.examStatus,
-            firstName: req.query.firstName,
-            email: req.query.email,
-            recommended: req.query.recommended,
-            itemsPerPage: req.query.itemsPerPage || 100,
-            page: req.query.page || 1
-        };
-
+        var searchMethodName = 'simpleSearch';
+        
         if (req.query.duplicates && req.query.duplicates === 'true') {
-            duplicatesSearch(req, res);
-        } else {
-            simpleSearch(req, res, base.Collection.find());
+            searchMethodName = 'duplicatesSearch';
         }
-    }
+        
+        base.Collection[searchMethodName](req, res, sendResult);
 
-    function duplicatesSearch(req, res) {
-        var group = {
-            $group:
-                {
-                    _id: {firstName: "$firstName"},
-                    uniqueIds: {$addToSet: "$_id"},
-                    count: {$sum: 1}
-                }
-        };
-        var match = {
-            $match: {
-                count: {"$gt": 1}
-            }
-        };
-        var sort = {
-            $sort: {
-                count: -1
-            }
-        };
-
-        base.Collection
-            .aggregate([group, match, sort], onDuplicatesFound);
-
-        function onDuplicatesFound(err, results) {
-            var query;
-            var uniqueIds = [];
-
-            results.forEach(function (result) {
-                result.uniqueIds.forEach(function (id) {
-                    uniqueIds.push(id);
-                })
-            });
-
-            query = base.Collection
-                .find({_id: {$in: uniqueIds}});
-
-            simpleSearch(req, res, query);
-        }
-    }
-
-    function simpleSearch(req, res, query) {
-        var countQuery;
-        if (req.queryParams.firstName) {
-            query.find({"firstName": new RegExp(req.queryParams.firstName, 'i')});
-        }
-        if (req.queryParams.email) {
-            query.find({"email": new RegExp(req.queryParams.email, 'i')});
-        }
-        if (req.queryParams.status) {
-            query.find({"status": req.queryParams.status});
-        }
-        if (req.queryParams.profile) {
-            query.find({"profile": req.queryParams.profile});
-        }
-        if (req.queryParams.examStatus) {
-            query.find({"examStatus": req.queryParams.examStatus});
-        }
-        if (req.queryParams.recommended) {
-            query.find({"recommended": req.queryParams.recommended});
-        }
-
-
-        countQuery = query;
-
-        query
-            .sort(req.queryParams.sortDirection + req.queryParams.sortField)
-            .skip(req.queryParams.itemsPerPage * (req.queryParams.page - 1))
-            .limit(req.queryParams.itemsPerPage)
-            .populate('profile');
-
-        var firstQ = function (callback) {
-            query
-                .exec(function (err, data) {
-                    queryExecFn(err, data, callback)
-                });
-        };
-
-        var secondQ = function (callback) {
-            countQuery
-                .count()
-                .exec(function (err, data) {
-                    queryExecFn(err, data, callback)
-                });
-        };
-
-        async.parallel([firstQ, secondQ], function (err, results) {
+        function sendResult(err, results) {
             res.json({pupils: results[0], count: results[1]});
-        });
+        }
     }
 
     function historyList(req, res) {
@@ -632,8 +560,10 @@ var PupilsController = function (mongoose, app) {
                     profile.passF = 0;
                     profile.passS = 0;
                     profile.passT = 0;
+                    profile.firstUploaded = false,
+                    profile.secondUploaded = false,
+                    profile.totalUploaded = false
 
-                    console.log(profile);
                     profile.save()
                 }
 
@@ -649,7 +579,6 @@ var PupilsController = function (mongoose, app) {
     }
 
     function getUserData(req, res) {
-        console.log('getUserData', req.user)
         //TODO close all popups when unauthorized
         var findPupilQuery,
             findProfilesQuery;
@@ -697,7 +626,6 @@ var PupilsController = function (mongoose, app) {
                 viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
             }
             viewName = 'pupils/' + status + '.jade';
-
             res.render(viewName, viewData);
         }
     }

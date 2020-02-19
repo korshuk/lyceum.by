@@ -11,17 +11,25 @@ block content
             th I экзамен
             th II экзамен
             th Сумма
-            th Статистика
-            th
         - each doc in docs
             tr
-                td  #{doc.name}
+                td  
+                    strong #{doc.name}
+                    br
+                    a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
+                    br
                     br
                     | Мест #{doc.ammount}
                     br
                     | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}
                     br
                     | без экзаменов #{doc.olymp}
+                    br
+                    br
+                    br
+                    br
+                    br
+                    a(href="/admin/pupils/profiles/delete/"+doc.id) Удалить
 
                 td
                     - if(doc.examPlace)
@@ -31,32 +39,57 @@ block content
                         br
                         | #{doc.examPlace.address}
                         br
+                        br
                         | Кабинетов: #{doc.examPlace.audience.length}
 
                 td
-                    | pass:#{doc.passF}
+                    if (doc.firstUploaded)
+                        strong 1 экзамен готов
+                        br
+                        br
+                    | Предмет: <b>#{doc.firstExamName}</b>
                     br
-                    | min:#{doc.minF}
-                    | max:#{doc.maxF}
-                td
-                    | pass:#{doc.passS}
+                    | Дата: <b>#{doc.firstExamDate.format('dd.MM.yyyy')}</b>
                     br
-                    | min:#{doc.minS}
-                    | max:#{doc.maxS}
-                td
-                    | pass:#{doc.passT}
+                    | Дата ознакомления: <b>#{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</b>
+                    
                     br
-                    |  min:#{doc.minT}
-                    |  max:#{doc.maxT}
+                    br
+                    | pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
+                    br
+                    br
+                    - if (doc.firstIsFirst)
+                        | Первый экзамен является первым
+                    - else 
+                        | Первый экзамен является вторым    
                 td
+                    if (doc.secondUploaded)    
+                        strong 2 экзамен готов
+                        br
+                        br
+                    | Предмет: <b>#{doc.secondExamName}</b>
+                    br
+                    | Дата: <b>#{doc.secondExamDate.format('dd.MM.yyyy')}</b>
+                    br
+                    | Дата ознакомления: <b>#{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</b>
+                    
+                    br
+                    br
+                    | pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
+                    
+                td
+                    if (doc.totalUploaded)
+                        strong Зачисление готово
+                        br
+                        br
+                    | pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
+                    br
+                    br
                     | Проходной:&nbsp;#{doc.passT}
                     br
                     | Полупроходной:&nbsp;#{doc.halfpass}
                     br
-                    | С полупроходным:&nbsp;#{doc.halfPupils}
+                    | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
                     br
                     | Дельта:&nbsp;#{doc.halfDelta}
-                td
-                    a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
-                    br
-                    a(href="/admin/pupils/profiles/delete/"+doc.id) Удалить
+                    

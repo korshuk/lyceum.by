@@ -1,4 +1,4 @@
-var usage = require('usage');
+//var usage = require('usage');
 var fs = require('fs');
 
 module.exports = function (app) {
@@ -7,26 +7,28 @@ module.exports = function (app) {
         var props = Object.getOwnPropertyNames(app.superCash),
             docs = [],
             array = fs.readFileSync('start-times.log').toString().split("\n");
-        usage.lookup(process.pid, {
+       /* usage.lookup(process.pid, {
             keepHistory: true
         }, function (err, result) {
             if (err) {
                 result = err;
             }
-            props.forEach(function (name) {
-                docs.push({
-                    name: name,
-                    updatedAt: app.superCash[name].updatedAt,
-                    counter: app.superCash[name].counter,
-                    addedToCash: app.superCash[name].addedToCash
-                });
+           
+        });*/
+        var result = ' ';
+        props.forEach(function (name) {
+            docs.push({
+                name: name,
+                updatedAt: app.superCash[name].updatedAt,
+                counter: app.superCash[name].counter,
+                addedToCash: app.superCash[name].addedToCash
             });
-            res.render('cash/list.jade', {
-                result: result,
-                docs: docs,
-                starts: array,
-                viewName: 'cash'
-            });
+        });
+        res.render('cash/list.jade', {
+            result: result,
+            docs: docs,
+            starts: array,
+            viewName: 'cash'
         });
 
 

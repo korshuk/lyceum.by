@@ -160,9 +160,9 @@ block content
                         td {{item.sum}}
                         td {{item.recommended}}
                         td {{app.examStatuses[item.examStatus || '0']}}
-                            br(ng-if='item.audience1 || item.audience2')
-                            span(ng-if='item.audience1') 1
-                            span(ng-if='item.audience2') 2
+                            p(ng-if='item.audience1 || item.audience2') Ауд:
+                                span(ng-if='item.audience1') 1
+                                span(ng-if='item.audience2') 2
                         td
                             a(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}") Edit
 

@@ -14,28 +14,32 @@ block content
 
         div.panel.panel-default.row
             +field('text', "name", 'Название')(value= doc.name || '')
-            +field('text', "code", 'Код')(value= doc.code || '')
-            +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
+            .row
+                .col-sm-6
+                        +field('text', "code", 'Код')(value= doc.code || '')
+                .col-sm-6
+                        +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
+            
             +field('number', "ammount", 'Количество мест')(value= doc.ammount || '')
             +field('checkbox', "belLang", 'Есть возможность выбрать бел. язык')(checked=(doc.belLang))
             +field('number', "order", 'Порядок')(value= doc.order || '')
 
-        div.panel.panel-default.row
-            .col-lg-12
-                h3 Первый экзамен
-            +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
-            +field('text', "firstExamDate", 'Дата')(value= doc.firstExamDate || '')#firstExamDate
-            +field('text', "firstExamAppelationDate", 'Дата ознакомления')(value= doc.firstExamAppelationDate || '')#firstExamAppelationDate
-            +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
-            +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
-            
-        div.panel.panel-default.row
-            .col-lg-12
-                h3 Второй экзамен
-            +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
-            +field('text', "secondExamDate", 'Дата')(value= doc.secondExamDate || '')#secondExamDate
-            +field('text', "secondExamAppelationDate", 'Дата ознакомления')(value= doc.secondExamAppelationDate || '')#secondExamAppelationDate
-            +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
+        .row.panel.panel-default.row
+            .col-sm-6
+                    .col-lg-12
+                        h3 Первый экзамен
+                    +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
+                    +field('text', "firstExamDate", 'Дата')(value= doc.firstExamDate || '')#firstExamDate
+                    +field('text', "firstExamAppelationDate", 'Дата ознакомления')(value= doc.firstExamAppelationDate || '')#firstExamAppelationDate
+                    //- +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
+                    +field('checkbox', "firstIsFirst", 'Первый экзамен является первым')(checked=(doc.firstIsFirst))
+            .col-sm-6            
+                    .col-lg-12
+                        h3 Второй экзамен
+                    +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
+                    +field('text', "secondExamDate", 'Дата')(value= doc.secondExamDate || '')#secondExamDate
+                    +field('text', "secondExamAppelationDate", 'Дата ознакомления')(value= doc.secondExamAppelationDate || '')#secondExamAppelationDate
+                    //- +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
 
         div.panel.panel-default.row
             .col-lg-12
@@ -43,18 +47,20 @@ block content
             +field('select', "examPlace", 'Место проведение', places, doc.examPlace)(value= doc.examPlace || '')
 
         div.panel.panel-default.row
-            .col-lg-12
-                h3 Олимпадные предметы
-            each subject, index in subjects
-                +field('checkbox', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
+            .col-sm-6
+                .col-lg-12
+                    h3 Готовность результатов
 
-        div.panel.panel-default.row
-            .col-lg-12
-                h3 Готовность результатов
+                +field('checkbox', "firstUploaded", 'Первый экзамен готов')(checked=(doc.firstUploaded))
+                +field('checkbox', "secondUploaded", 'Второй экзамен готов')(checked=(doc.secondUploaded))
+                +field('checkbox', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
+            .col-sm-6
+                    .col-lg-12
+                        h3 Олимпадные предметы
+                    each subject, index in subjects
+                        +field('checkbox', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
 
-            +field('checkbox', "firstUploaded", 'Первый экзамен готов')(checked=(doc.firstUploaded))
-            +field('checkbox', "secondUploaded", 'Второй экзамен готов')(checked=(doc.secondUploaded))
-            +field('checkbox', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
+            
 
 
         +buttonSet

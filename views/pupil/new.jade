@@ -5,31 +5,41 @@ block content
     div.page-header
         h1 Абитуриент
     div.row
-        form.col-sm-4(method='post')
+        form.col-sm-5(method='post')
             input(type="hidden", name='return_query', value=query)
             ul.list-group
                 li.list-group-item.row
                     +field('text', "firstName", 'Фамилия')(value= doc.firstName || '')
                 li.list-group-item.row
-                    +field('text', "lastName", 'Имя')(value= doc.lastName || '')
+                    .col-sm-6
+                        .row
+                            +field('text', "lastName", 'Имя')(value= doc.lastName || '')
+                    .col-sm-6
+                        .row
+                            +field('text', "parentName", 'Отчество')(value= doc.parentName || '')
                 li.list-group-item.row
-                    +field('text', "parentName", 'Отчество')(value= doc.parentName || '')
-                li.list-group-item.row
-                    +field('checkbox', "recommended", 'Зачислен')(checked=(doc.recommended))    
+                    .col-sm-12
+                        h3 Статусы:
+                    .col-sm-6
+                        h2.form-group.bg-danger= doc.status
+                    .col-sm-6
+                        .row
+                            +field('checkbox', "recommended", 'Зачислен')(checked=(doc.recommended))    
                 li.list-group-item.row
                     .col-md-12
                         .form-group
-                            label.col-md-12 Регион:
+                            .row
+                                label.col-md-12 Регион:
                             select.form-control(name='region')
-                                option(value=undefined) Выберите регион
-                                option(value="г. Минск", selected=(doc.region === "г. Минск")) г. Минск
-                                option(value="Минская область", selected=(doc.region === "Минская область")) Минская область
-                                option(value="Брестская область", selected=(doc.region === "Брестская область")) Брестская область
-                                option(value="Витебская область", selected=(doc.region === "Витебская область")) Витебская область
-                                option(value="Гомельская область", selected=(doc.region === "Гомельская область")) Гомельская область
-                                option(value="Гродненская область", selected=(doc.region === "Гродненская область")) Гродненская область
-                                option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
-                                option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
+                                    option(value=undefined) Выберите регион
+                                    option(value="г. Минск", selected=(doc.region === "г. Минск")) г. Минск
+                                    option(value="Минская область", selected=(doc.region === "Минская область")) Минская область
+                                    option(value="Брестская область", selected=(doc.region === "Брестская область")) Брестская область
+                                    option(value="Витебская область", selected=(doc.region === "Витебская область")) Витебская область
+                                    option(value="Гомельская область", selected=(doc.region === "Гомельская область")) Гомельская область
+                                    option(value="Гродненская область", selected=(doc.region === "Гродненская область")) Гродненская область
+                                    option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
+                                    option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
                 li.list-group-item.row
                     .form-group
                         +field('text', "email", 'email')(value= doc.email || '')
@@ -40,26 +50,34 @@ block content
                             | Код подтверждения: #{doc.phoneCode}
                 li.list-group-item.row
                     .col-md-12
-                        .form-group= doc.created
+                        .form-group
+                            label Создан: 
+                            span  #{doc.created}
+            
+                li.list-group-item.row
+                    .col-sm-6
+                        .row
+                            +field('checkbox', "night", 'Вечерний Лицей')(checked=(doc.night))
+                    .col-sm-6
+                        .row
+                            +field('checkbox', "distant", 'Дистанционные курсы')(checked=(doc.distant))
                 li.list-group-item.row
                     .col-md-12
-                        h2.form-group.bg-danger= doc.status
-                li.list-group-item.row
-                    +field('checkbox', "night", 'Вечерний Лицей')(checked=(doc.night))
-                li.list-group-item.row
-                    +field('checkbox', "distant", 'Дистанционные курсы')(checked=(doc.distant))
-                li.list-group-item.row
-                    .col-md-12
-                        h5 профиль
+                        h3 профиль
                         h4= profile ? profile.name : 'Еще не выбран профиль'
-                    +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
-                li.list-group-item.row
-                    +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
+                    .col-sm-6
+                        .row
+                            +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
+                    .col-sm-6
+                        .row
+                            +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
             .row
                 .col-md-12
                     div#diplomAlert.alert.alert-danger(role="alert", style="display:none") А вот и нельзя апрувнуть, если у чувака есть диплом, а предмет диплома не выбран
                     .form-group
                         button#approveBtn.btn.btn-success(type='submit', name="action", value='pupil_approve') Подтвердить заявку
+                        | #{' '}
+                        button#approveBtn.btn.btn-success(type='submit', name="action", value='pupil_approve_next') Подтвердить заявку #{'->'}
             hr
             .row
                 +field('checkbox', "requestImgNotApproved", 'Справка НЕ подошла')(checked=(doc.requestImgNotApproved))
@@ -71,6 +89,8 @@ block content
                 .col-md-12
                     .form-group
                         button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+                        | #{' '}
+                        button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove_next') Отклонить заявку #{'->'}
 
 
             hr
@@ -79,9 +99,11 @@ block content
                 .col-md-6
                     .form-group
                         button.btn.btn-warning(type='submit', name="action", value='pupil_return') Вернуться без сохранения
-                .col-md-6
+                .col-md-12
                     .form-group
-                        button.btn.btn-default(type='submit', name="action", value='pupil_save') Просто сохранить
+                        button.btn.btn-default(type='submit', name="action", value='pupil_save') Просто сохранить 
+                        | #{' '}
+                        button.btn.btn-default(type='submit', name="action", value='pupil_save_next') Просто сохранить #{'->'}
             hr
             .row
                 .col-md-6
@@ -89,7 +111,7 @@ block content
                     .form-group
                         button.btn.btn-info(type='submit', name="action", value='pupil_delete') Удалить!!!            
 
-        .col-sm-8
+        .col-sm-7
             label Справка
             if (doc.requestImg)
                 if (doc.requestImg.substr(doc.requestImg.lastIndexOf('.') + 1) === 'pdf')
