@@ -12,6 +12,8 @@ div.settings-list-item-holder
                     b Профиль
                 div.setting-value
                     | #{profile ? profile.name : 'надо выбрать'}
+                    if (user.needBel)
+                        p(style="color: #888; margin: 0; line-height: 1.2; font-size: 14px;") Вы выбрали белорусский язык заданий
 
             div.settings-list-next-sign
                 i.material-icons keyboard_arrow_right

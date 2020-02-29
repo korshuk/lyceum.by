@@ -25,7 +25,7 @@ SotkaController = function(mongoose, application) {
       setTimeout(calculate, 10 * 60 * 60 * 1000);
   }
 
-  base.calculateStats = function (req, res) {
+  base.calculateStats = function (req, res, isAjax) {
       application.profileController.Collection.find().exec(function (err, profiles) {
           profiles
               .forEach(function(profile) {
@@ -129,7 +129,12 @@ SotkaController = function(mongoose, application) {
                       });
           });
       });
-      res.redirect('/admin/settings');
+      if (!isAjax) {
+        res.redirect('/admin/settings');
+      } else {
+          res.json({})
+      }
+      
   };
 
   base.restList = function (req, res) {

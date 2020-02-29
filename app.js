@@ -1,11 +1,14 @@
 /*jslint node: true */
 (function () {
     'use strict';
-   var app = {},
+    var path = require('path');
+    var app = {},
         url = require('url'),
         fs = require('fs'),
         localization = require('./modules/localization').localization;
-
+    
+    global.rootDir = path.resolve(__dirname);
+    
     app = require('./application/config.js').configure(app);
 
     app = require('./application/routsConfig.js').configure(app);

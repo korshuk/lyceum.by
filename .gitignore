@@ -17,3 +17,5 @@ public/files
 *.brackets.json
 nodeblog.sublime-workspace
 .idea/*
+
+.DS_Store

@@ -172,18 +172,16 @@ module.exports = function (app) {
 
                 ClientAppModel.findOne({clientId: 'mobileV1'}, function (err, client) {
 
-                    var tokenObj = app.pupilsController.authorize.tokensReset(pupil, client, function (err) {
+                    var tokenObj = app.pupilsController.authorize.tokensReset(pupil, client, function (err, access_token, refresh_token, tokenObj) {
                         console.log(err);
-                    });
-
-                    app.pupilsController.authorize.saveToken(tokenObj, pupil, function (err, access_token, refresh_token) {
-                        console.log(arguments);
-                        res.render('registerConfirmation', {
-                            access_token: access_token,
-                            refresh_token: refresh_token,
-                            pupil: pupil
-                        });
-                    });
+                       // app.pupilsController.authorize.saveToken(tokenObj, pupil, function (err, access_token, refresh_token) {
+                            res.render('registerConfirmation', {
+                                access_token: access_token,
+                                refresh_token: refresh_token,
+                                pupil: pupil
+                            });
+                       // });
+                    });                    
                 });
 
 
@@ -265,6 +263,7 @@ module.exports = function (app) {
 
     function profileReady(req, res) {
         var pupil = req.user;
+        pupil.agreement = req.body.agreement;
         pupil.status = 'unapproved';
         pupil.message = '';
         pupil.requestImgNotApproved = false;

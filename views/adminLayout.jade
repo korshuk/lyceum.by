@@ -54,7 +54,7 @@ html
                     li
                       a(href="/admin/pupils/history") История
                     li
-                        a(href="/admin/pupils/emails") Список посланных писем
+                        a(href="/admin/pupils/emails/list") Рассылка писем
                     li
                       a(href="/admin/pupils/test") Форма для тестов
                     li
@@ -69,7 +69,7 @@ html
                 
               p.navbar-text.pull-right
                 a.navbar-link(href="/admin/logout") Logout
-    div(class= (locals.viewName && locals.viewName === 'pupil') ? 'container-fluid' : 'container')
+    div(class= (locals.viewName && (locals.viewName === 'pupil' || locals.viewName === 'resultsAssign')) ? 'container-fluid' : 'container')
       div.row
         div.col.col-lg-8!= locals.message
       div.row

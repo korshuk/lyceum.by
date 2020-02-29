@@ -55,6 +55,8 @@ var SettingsController = function(mongoose, app) {
             doc.smsAPILogin = req.body.smsAPILogin;
             doc.smsAPISecretCode = req.body.smsAPISecretCode;
             doc.smsAPIName = req.body.smsAPIName;
+            doc.agreement = req.body.agreement;
+            doc.registrationVideoLink = req.body.registrationVideoLink
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;
@@ -91,7 +93,6 @@ var SettingsController = function(mongoose, app) {
         base.app.siteConfig = doc;
         base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
-        console.log('siteConfig', base.app.siteConfig);
     });
 
 

@@ -39,7 +39,8 @@
             'needBel',
             'exam1',
             'exam2',
-            'sum'
+            'sum',
+            'Согласие'
         ];
 
         vm.examStatuses = {
@@ -139,7 +140,8 @@
                     needBel: item.needBel,
                     exam1: item.exam1,
                     exam2: item.exam2,
-                    sum: item.sum
+                    sum: item.sum,
+                    agreement: item.agreement
                 };
             });
         }

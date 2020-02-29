@@ -133,6 +133,8 @@ block content
                         th.sortable(sortable="passOlymp") БЭ&nbsp;
                         th.sortable(sortable="exam1") Э-1&nbsp;
                         th.sortable(sortable="exam2") Э-2&nbsp;
+                        th.sortable(sortable="result1") Бланк 1&nbsp;
+                        th.sortable(sortable="result2") Бланк 2&nbsp;
                         th.sortable(sortable="sum") Сумма&nbsp;
                         th.sortable(sortable="examStatus") Экз-статус&nbsp;
                 tbody
@@ -144,11 +146,13 @@ block content
                         td {{item.profile.name}}
                         td {{item.passOlymp ? 'БЭ' : ''}}
                         td
-                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
-                            input.form-control(type='text', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
+                            span(ng-if='!app.isEditMode1 || item.passOlymp || item.result1.ID') {{item.exam1 === -2 ? 'н' : item.exam1}}
+                            input.form-control(type='text', ng-if='app.isEditMode1 && !item.passOlymp && !item.result1.ID', ng-model="item.exam1")
                         td
-                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
-                            input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
+                            span(ng-if='!app.isEditMode2 || item.passOlymp || item.result2.ID') {{item.exam2 === -2 ? 'н' : item.exam2}}
+                            input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp && !item.result2.ID', ng-model="item.exam2")
+                        td {{item.result1.ID}}
+                        td {{item.result2.ID}}
                         td {{item.sum}}
                         td {{app.examStatuses[item.examStatus || '0']}}
 

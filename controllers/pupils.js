@@ -20,6 +20,8 @@ var PupilsController = function (mongoose, app) {
     base.apiListExport = apiListExport;
 
     base.saveExams = saveExams;
+    base.saveExamsNew = saveExamsNew;
+    base.updatePupilResults = updatePupilResults;
 
     base.historyList = historyList;
 
@@ -376,6 +378,81 @@ var PupilsController = function (mongoose, app) {
         });
     }
 
+    
+    function saveExamsNew(req, res) {
+        var examNum = req.params.examNum;
+        var reqUser;
+        var i;
+        var userIds = [];
+        var resultIds = [];
+
+        var reqUsers = [];
+        for (i in req.body) {
+            reqUser = req.body[i];
+            if (reqUser._id) {
+                userIds.push(new mongoose.Types.ObjectId(reqUser._id));
+                reqUsers[reqUser._id] = reqUser;
+            }
+            if (reqUser.result) {
+                resultIds.push(new mongoose.Types.ObjectId(reqUser.result));
+            }
+        }
+        base.Collection
+            .find({_id: {$in: userIds}})
+            .exec(function (err, users) {
+                if (err) res.status(500).send(err);
+                else {
+                    app.profileController.ResultsCollection
+                        .find({_id: {$in: resultIds}})
+                        .exec(function (err, results) {
+                            if (err) res.status(500).send(err);
+                            else {
+                                var resultsObj = {};
+                                for (var i = 0; i < results.length; i++) {
+                                    resultsObj[results[i]._id] = results[i];
+                                }
+                                async.eachSeries(users, function (user, asyncdone) {
+                                    reqUser = reqUsers[user._id];
+                                    if (reqUser['exam' + examNum] == undefined) {
+                                        user['exam' + examNum] = undefined;
+                                    }
+                                    if (reqUser.result) {
+                                        user['result' + examNum] = reqUser.result;
+                                        user['exam' + examNum] = resultsObj[reqUser.result].Points
+                                        if (resultsObj[reqUser.result].AdditionalPoints > -1) {
+                                            user['exam' + examNum] = user['exam' + examNum] + resultsObj[reqUser.result].AdditionalPoints;
+                                        }
+                                    }
+                                    if (reqUser.result == undefined) {
+                                        user['result' + examNum] = undefined;
+                                        user['exam' + examNum] = undefined;
+                                    }
+                                    if (reqUser['exam' + examNum] === -2) {
+                                        user['exam' + examNum] = -2;
+                                    }
+                                    if (reqUser['exam' + examNum] === -1) {
+                                        user['exam' + examNum] = -1;
+                                    }
+                                    
+                                        
+                                    user.sum = (user.exam1 || 0) + (user.exam2 || 0);
+                                    user.save(asyncdone);
+                                }, function (err) {
+                                    if (err) return res.status(500).send(err);
+                                    res.status(200).send('ok');
+                                });
+                            }
+                        });
+                }
+            });
+
+    }
+    function updatePupilResults(pupil, record, examNumber, next) {
+        pupil['exam'+examNumber] = record.Points;
+        pupil.sum = (pupil.exam1 || 0) + (pupil.exam2 || 0);
+        pupil.save(next);
+    }
+
     function saveExams(req, res) {
         var reqUser;
         var i;
@@ -403,6 +480,44 @@ var PupilsController = function (mongoose, app) {
                         }
                         if (reqUser.exam1 || reqUser.exam2 || reqUser.exam1 === 0 || reqUser.exam2 === 0) {
                             user.sum = (reqUser.exam1 || 0) + (reqUser.exam2 || 0);
+                        }
+
+                        user.save(asyncdone);
+                    }, function (err) {
+                        if (err) return res.status(500).send(err);
+                        res.status(200).send('ok');
+                    });
+                }
+            });
+
+    }
+    function saveExams(req, res) {
+        var reqUser;
+        var i;
+        var userIds = [];
+        var reqUsers = [];
+        for (i in req.body) {
+            reqUser = req.body[i];
+            if (reqUser._id) {
+                userIds.push(new mongoose.Types.ObjectId(reqUser._id));
+                reqUsers[reqUser._id] = reqUser;
+            }
+        }
+        base.Collection
+            .find({_id: {$in: userIds}})
+            .exec(function (err, users) {
+                if (err) res.status(500).send(err);
+                else {
+                    async.eachSeries(users, function (user, asyncdone) {
+                        reqUser = reqUsers[user._id];
+                        if (!user.result1 && (reqUser.exam1 || reqUser.exam1 === 0)) {
+                            user.exam1 = reqUser.exam1;
+                        }
+                        if (!user.result2 && (reqUser.exam2 || reqUser.exam2 === 0)) {
+                            user.exam2 = reqUser.exam2;
+                        }
+                        if (user.exam1 || user.exam2 || user.exam1 === 0 || user.exam2 === 0) {
+                            user.sum = (user.exam1 || 0) + (user.exam2 || 0);
                         }
 
                         user.save(asyncdone);
@@ -816,7 +931,7 @@ var PupilsController = function (mongoose, app) {
                     {
                         expires_in: base.TOKENLIFE,
                         user: user
-                    });
+                    }, tokenObj);
             });
         });
 

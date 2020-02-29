@@ -8,8 +8,12 @@ module.exports = function(app) {
 	  app.settingsController.save(req, res);
 	});
 
-    app.get('/admin/settings/calculateStats', app.userController.Pass, function(req, res){
-        app.sotkaController.calculateStats(req, res);
-    });
+  app.get('/admin/settings/calculateStats', app.userController.Pass, function(req, res){
+      app.sotkaController.calculateStats(req, res);
+  });
+
+  app.get('/admin/settings/api/calculateStats', app.userController.Pass, function(req, res){
+    app.sotkaController.calculateStats(req, res, true);
+});
 
 }

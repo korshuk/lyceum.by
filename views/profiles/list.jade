@@ -49,13 +49,18 @@ block content
                         br
                     | Предмет: <b>#{doc.firstExamName}</b>
                     br
-                    | Дата: <b>#{doc.firstExamDate.format('dd.MM.yyyy')}</b>
+                    | Дата: <b><nobr>(#{doc.firstExamDate.dayToString()}) #{doc.firstExamDate.format('dd.MM.yyyy')}</nobr></b>
                     br
-                    | Дата ознакомления: <b>#{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</b>
+                    | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                     
                     br
                     br
                     | pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
+                    br
+                    br
+                    a(href="/admin/pupils/profiles/results/"+doc.id + "/1") Загрузка результатов
+                    br
+                    a(href="/admin/pupils/profiles/results/assign/"+doc.id + "/1") Расшифровка результатов
                     br
                     br
                     - if (doc.firstIsFirst)
@@ -69,13 +74,19 @@ block content
                         br
                     | Предмет: <b>#{doc.secondExamName}</b>
                     br
-                    | Дата: <b>#{doc.secondExamDate.format('dd.MM.yyyy')}</b>
+                    | Дата: <b><nobr>(#{doc.secondExamDate.dayToString()}) #{doc.secondExamDate.format('dd.MM.yyyy')}</nobr></b>
                     br
-                    | Дата ознакомления: <b>#{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</b>
+                    | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                     
                     br
                     br
                     | pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
+                    br
+                    br
+                    a(href="/admin/pupils/profiles/results/"+doc.id + "/2") Загрузка результатов
+                    br
+                    a(href="/admin/pupils/profiles/results/assign/"+doc.id + "/2") Расшифровка результатов
+                    
                     
                 td
                     if (doc.totalUploaded)

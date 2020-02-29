@@ -4,6 +4,7 @@ var cors = require('cors');
 module.exports = function(app) {
 
     var router = express();
+    var mailRouter = express();
 
     router.get('/', app.userController.Pass, function(req, res) {
         app.pupilsController.list(req, res);
@@ -11,10 +12,6 @@ module.exports = function(app) {
 
     router.get('/examresults', app.userController.Pass, function(req, res) {
         app.pupilsController.examresults(req, res);
-    });
-
-    router.get('/api/list', app.userController.Pass, function(req, res) {
-        app.pupilsController.apiList(req, res);
     });
 
     router.get('/api/list', app.userController.Pass, function(req, res) {
@@ -74,6 +71,10 @@ module.exports = function(app) {
         app.pupilsController.saveExams(req, res);
     });
 
+    router.post('/api/listNew/:examNum', app.userController.Pass, function(req, res) {
+        app.pupilsController.saveExamsNew(req, res);
+    });
+
     router.post('/api/seed-recommended', app.userController.Pass, function(req, res) {
         app.pupilsController.seedReccommended(req, res);
     });
@@ -85,6 +86,29 @@ module.exports = function(app) {
     router.put('/:id', app.userController.Pass, function(req, res) {
         app.pupilsController.update(req, res);
     });
+    
+    //Emails Sender
+    
+
+
+    mailRouter.get('/list', app.userController.Pass, function(req, res) {
+        app.mailController.emailSenderPage(req, res);
+    });
+    mailRouter.post('/new', app.userController.Pass, function(req, res) {
+        app.mailController.sendEmailsToNew(req, res);
+    });
+    mailRouter.get('/log/download', app.userController.Pass, function(req, res) {
+        app.mailController.logDownload(req, res);
+    });
+    mailRouter.get('/log/clear', app.userController.Pass, function(req, res) {
+        app.mailController.logClear(req, res);
+    });
+    mailRouter.post('/invitation/:profileId/:examNumber', app.userController.Pass, function(req, res) {
+        app.mailController.sendInvites(req, res);
+    });
+    
+
 
     app.use('/admin/pupils', router);
+    app.use('/admin/pupils/emails', mailRouter);
 };

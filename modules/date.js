@@ -1,3 +1,13 @@
+var DAYS = {
+  0: 'ВС',
+  1: 'ПН',
+  2: 'ВТ',
+  3: 'СР',
+  4: 'ЧТ',
+  5: 'ПТ',
+  6: 'СБ',
+}
+
 Date.prototype.format = function(format) //author: meizz
 {
   var o = {
@@ -17,6 +27,13 @@ Date.prototype.format = function(format) //author: meizz
       RegExp.$1.length==1 ? o[k] :
         ("00"+ o[k]).substr((""+ o[k]).length));
   return format;
+};
+
+Date.prototype.dayToString = function() //author: meizz
+{
+  var day = this.getDay();
+ 
+  return DAYS[day];
 };
 
 // https://www.xaprb.com/media/2005/12/date-formatting-demo.html

@@ -1,0 +1,159 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+	div(ng-app="assignApp", ng-controller="assignController as app")
+		div.page-header
+			h1 Внесение результатов
+			h2 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }
+				br
+				| бланков: {{app.resultsCount}}, абитуриентов: {{app.pupilsCount}}, олимпиадников: {{app.olympPupilsCoumt}}
+		//- a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+		.row
+			.col-md-7		
+				.panel.panel-default
+					.panel-heading
+						h3.panel-title статистика
+					table.table
+						tbody
+							td
+								b 1 экзамен
+								br
+								| pass: {{app.profile.passF}}
+								br
+								| min:{{app.profile.minF}}
+								| max:{{app.profile.maxF}}
+							td
+								b 2 экзамен
+								br
+								| pass:{{app.profile.passS}}
+								br
+								| min:{{app.profile.minS}}
+								| max:{{app.profile.maxS}}
+							td
+								b Сумма
+								br
+								| pass:{{app.profile.passT}}
+								br
+								|  min:{{app.profile.minT}}
+								|  max:{{app.profile.maxT}}
+							td
+								| Проходной:&nbsp;{{app.profile.passT}}
+								br
+								| Полупроходной:&nbsp;{{app.profile.halfpass}}
+								br
+								| С полупроходным:&nbsp;{{app.profile.halfPupils}}
+								br
+								| Дельта:&nbsp;{{app.profile.halfDelta}}
+							td
+								.form-group
+									br
+									a.btn.btn-primary(ng-click="app.calculate()") Пересчитать статистику
+			.col-md-5		
+				.panel.panel-default
+					.panel-heading
+						h3.panel-title Сохранить результаты	
+					.panel-body
+						.row
+							.col-xs-7
+								a.btn.btn-default(href="/admin/pupils/profiles") К списку профилей
+								| #{' '}
+								a.btn.btn-default(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank") К списку результатов
+
+							.col-xs-5.text-right
+								a.btn.btn-default(href="/admin/pupils/profiles/results/assign/#{profile.id}/#{examNumber}") Отмена
+								| #{' '}
+								button.btn.btn-success(ng-click="app.saveChanges()")  Сохранить
+
+		.row
+			.col-sm-7
+				.panel.panel-default
+					.panel-heading
+						h3.panel-title Результаты
+					.panel-body
+						p.bg-danger(style="padding: 15px;")	
+							| В списке селекта отсутвуют олимпиадники и те, кому мы поставили "Отсутсвовал (Н)"
+					table#resultsTable.table.table-hover
+						tr
+							th ID
+							th(style="width: 460px;") Абитуриент
+							th Class
+							th Points
+						tr(ng-repeat="result in app.results")
+							td 
+								h4 {{result.ID}}
+							td
+								.input-group
+									input.form-control(type="text", style="width: 416px;",ng-click="app.showresultInput(result)", ng-disabled="result.selectedPupil && result.selectedPupil._id", ng-if="!result.isEditable", ng-model="result.selectedPupil.fio")
+									a.input-group-addon(
+									href="#", 
+									title="очистить результат"
+									ng-click="app.clearResult(result); $event.preventDefault();", 
+									ng-if="!result.isEditable && result.selectedPupil && result.selectedPupil._id"
+									) &times;
+								oi-select(
+									ng-if="result.isEditable"
+									auto-focus="{{ result.isEditable }}"
+									oi-options="pupil.fio for pupil in app.pupils | pupilsFilter | limitTo: 10 track by pupil._id ",
+									ng-model="app.tempPupil",
+									ng-change="app.onResultInputChange(result, app.tempPupil)",
+									placeholder="Select")
+							td {{result.Class}} 
+								br
+								| {{result.Scanned  | date:'dd.MM.yyyy HH:mm'}}
+							td {{result.Points}} {{result.AdditionalPoints > -1 ? ' + ' + result.AdditionalPoints : ''}} 
+								br
+								| <b>{{result.Points + result.AdditionalPoints}}</b>
+			.col-sm-5
+				.panel.panel-default
+					.panel-heading
+						h3.panel-title Абитуриенты
+					.panel-body
+						p.bg-success(style="padding: 15px;")	
+							span.label.label-info
+								span.glyphicon.glyphicon-star
+							|  - так помечены олимпиадники
+						p.bg-danger(style="padding: 15px;")	
+							| Статус экзамена имеет информативный характер	
+						p.bg-warning(style="padding: 15px;")
+							| Статус экзамена поставлен только у тех абитуриентов, которым во время экзамена присвоен статус в приложении
+						p.bg-danger(style="padding: 15px;")	
+							| Даже, если статус экзамена "неявка", всё равно нужно отметить отсутвие
+					table#pupilsTable.table.table-hover.results-pupils-table
+						tr
+							th ФИО
+							th Экз-статус&nbsp;
+							th
+						tr(ng-repeat="pupil in app.pupils track by pupil._id", ng-if="!pupil.result", ng-class="{'bg-success': pupil.passOlymp, 'bg-danger': pupil.exam#{examNumber} === -2}")
+							td  
+								nobr
+									| <b>{{pupil.firstName}}</b> {{pupil.lastName}} {{pupil.parentName}}
+									span.label.label-info(ng-if="pupil.passOlymp")
+										span.glyphicon.glyphicon-star
+								
+							td {{app.examStatuses[pupil.examStatus]}}
+							td 
+								
+									div(ng-if="!pupil.passOlymp")
+										.input-group(ng-if="pupil.exam#{examNumber} === -2")
+											input.form-control(
+												type="text", 
+												ng-disabled="true"
+												value="Отсутсвовал")
+											a.input-group-addon(
+												href="#", 
+												title="очистить результат"
+												ng-click="app.removeAbsence(pupil); $event.preventDefault();"
+											) &times;
+										.input-group( ng-if="pupil.exam#{examNumber} !== -2")	
+											button.btn.btn-danger.btn-link(ng-click="app.addAbsence(pupil)") Поставить "Н"
+	block scripts
+	script
+		var PROFILE_ID = '#{profile.id}'
+		var EXUM_NUMBER = '#{examNumber}'
+	script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js')
+	script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js')
+	script(src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js")
+	script(src='/javascripts/data-grid/loading-bar.min.js')
+	script(src='/javascripts/select.js')		
+	script(src='/javascripts/resultsAssign.js')						

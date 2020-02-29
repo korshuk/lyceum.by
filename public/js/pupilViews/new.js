@@ -42,10 +42,14 @@ ready(function () {
 
         function saveRequest() {
             if ($('#rulesOk').prop('checked')) {
+                var data = {};
+                if ($('#agreeOk').length > 0) {
+                    data.agreement = $('#agreeOk').prop('checked');
+                }
                 $.ajax({
                     url: '/api/pupils/profileready',
                     method: 'POST',
-                    data: {},
+                    data: data,
                     statusCode: {
                         200: function (response) {
                             if (response.message === 'ok') {

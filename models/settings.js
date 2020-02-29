@@ -36,6 +36,8 @@ function define(mongoose, fn) {
             'smsAPISecretCode': String,
             'showExamSeats1': Boolean,
             'showExamSeats2': Boolean,
+            'agreement': String,
+            'registrationVideoLink': String
         });
 
     mongoose.model('Settings', SettingsSchema);

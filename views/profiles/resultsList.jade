@@ -1,0 +1,90 @@
+include ../stuff/mixins/form-helper
+extends ../adminLayout
+
+block content
+	div.page-header
+		h1 Загрузка результатов
+		h2 Профиль: #{profile.name}, номер экзамена: #{examNumber}, результатов: #{docs.length || 0}
+	//- a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+	.row
+		.col-md-8
+			.panel.panel-default
+				.panel-heading
+					h3.panel-title Загрузка файлов
+				.panel-body
+					.row
+						.col-xs-6
+							form(action="/admin/pupils/profiles/results/"+id+"/"+examNumber, method="post", enctype="multipart/form-data")
+								.form-group
+									label(for="resultsList") Загрузка csv файла с результатами
+									input(type="file", name="csvfile")
+								.form-group
+									input(type="submit", value="Загрузить").btn.btn-primary
+						.col-xs-6
+							form(action="/admin/pupils/profiles/results/scans/"+id+"/"+examNumber, method="post", enctype="multipart/form-data")
+								.form-group
+									label(for="resultScans") Загрузка сканов работ
+									input(type="file", name="resultScans", multiple)
+								.form-group	
+									label(for="resultScansStartNumber") С какого номера начать
+									input(type="number", name="resultScansStartNumber")
+								.form-group
+									input(type="submit", value="Загрузить").btn.btn-primary		
+		.col-md-4
+			.panel.panel-default
+				.panel-heading
+					h3.panel-title Действия
+				.panel-body		
+					.row
+						.col-xs-6	
+							a.btn.btn-default(href="/admin/pupils/profiles") К списку профилей
+						.col-xs-6	
+							a.btn.btn-success.pull-right(href="/admin/pupils/profiles/results/assign/" + id + "/" + examNumber) На "расшифровку"		
+	
+	form(action="/admin/pupils/profiles/results/addPoints/"+id+"/"+examNumber, method="post", enctype="multipart/form-data")
+		.row
+			.col-xs-12
+				.form-group
+					input.btn.btn-success.pull-right(type="submit", value="Сохранить дополнительный баллы")	
+		br
+		table.table.table-hover
+			tr
+				th Student
+				th ID
+				th GradeCamID
+				th Missed
+				th Points
+				th Add points
+				th Всего
+				th Image
+				th Scanned
+			- each doc in docs
+				tr
+					td #{doc.Student}
+						br
+						| #{doc.Class}
+					td 
+						h3 #{doc.ID}
+					td #{doc['GradeCam ID']}
+						br
+						| Version: #{doc.Version}
+					td #{doc.Missed}
+					td 
+						nobr #{doc.Points} / #{doc.Possible}
+					td 
+						.form-group
+							input.form-control(
+								type="number",
+								value="#{doc.AdditionalPoints}"
+								name="addpoints[#{doc._id}]")
+					td #{doc.Points + (doc.AdditionalPoints || 0)}
+					
+					td
+						if(doc.image)
+							a.resultScanImgContainer(href="/files/#{doc.image.name}", target="_blank")
+								img.resultScanImg(src='/files/#{doc.image.name}')
+					td #{doc.Scanned.format('h:m:s dd.MM.yyyy')}   
+						if(doc.image)
+							a.btn.btn-danger(href="/admin/pupils/profiles/results/scans/delete/#{id}/#{examNumber}/#{doc._id}") Удалить скан
+block scripts
+	script(src='/javascripts/Luminous.min.js')

@@ -38,6 +38,14 @@ function define(mongoose, fn) {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Places'
         },
+        result1: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ExamResults'
+        },
+        result2: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ExamResults'
+        },
         audience1: String,
         audience2: String,
         needBel: Boolean,
@@ -65,7 +73,10 @@ function define(mongoose, fn) {
         sum: Number,
         region: String,
         message: String,
-
+        agreement: {
+            type: Boolean,
+            default: false
+        },
         recommended: {
             type: Boolean,
             default: false
@@ -116,6 +127,12 @@ function define(mongoose, fn) {
         });
     };
 
+    PupilSchema.statics.findByResultAsigned = function(resultId, examNumber, next) {
+        var queryObj = {};
+        queryObj['result' + examNumber] = resultId
+
+        this.findOne(queryObj, next)
+    } 
 
     PupilSchema.statics.simpleSearch = function(req, res, next) {
         var query = this.find();
@@ -196,14 +213,18 @@ function define(mongoose, fn) {
         if (req.queryParams.recommended) {
             query.find({"recommended": req.queryParams.recommended});
         }
-
+        if (req.queryParams.agreement) {
+            query.find({"agreement": req.queryParams.agreement});
+        }
         countQuery = query;
 
         query
             .sort(req.queryParams.sortDirection + req.queryParams.sortField)
             .skip(req.queryParams.itemsPerPage * (req.queryParams.page - 1))
             .limit(req.queryParams.itemsPerPage)
-            .populate('profile');
+            .populate('profile')
+            .populate('result1')
+            .populate('result2')
 
         var firstQ = function (callback) {
             query
@@ -320,6 +341,7 @@ function generateQueryParams(req) {
         firstName: req.query.firstName,
         email: req.query.email,
         recommended: req.query.recommended,
+        agreement: req.query.agreement,
         itemsPerPage: req.query.itemsPerPage || 100,
         page: req.query.page || 1
     };

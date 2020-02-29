@@ -49,6 +49,25 @@ block content
                 label Дата до конца приема документов поступивших
                 input#endDocumentsDate.form-control(name="endDocumentsDate", type="text", value=(docs && docs.endDocumentsDate))        
             
+        .row
+            .col-sm-6
+                .row 
+                    .col-xs-12
+                        h4 Согласие абитуриента
+                    div.form-group.col-sm-12
+                        label Текст возле галочки
+                        p.bg-warning(style="padding: 15px") Если это поле заполнено, то абитуриенту при подаче заявки предложат поставить галочку и согласиться с текстом поля
+                        textarea#agreement.form-control(name="agreement", rows="2")
+                            | #{docs && docs.agreement}
+            .col-sm-6
+                .row 
+                    .col-xs-12 
+                        h4 Видео инструкция о регистрации
+                    div.form-group.col-sm-12
+                        label Ссылка на Youtube
+                        input#registrationVideoLink.form-control(name="registrationVideoLink", type="text", value=(docs && docs.registrationVideoLink))        
+
+
         hr
         .form-group
             h3 Правила приёма

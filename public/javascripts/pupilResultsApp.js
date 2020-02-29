@@ -69,7 +69,7 @@
         }
 
         function calculate() {
-            $http.get('/admin/settings/calculateStats')
+            $http.get('/admin/settings/api/calculateStats')
                 .then(function() {
                     getProfiles()
                         .then(function (resp) {
