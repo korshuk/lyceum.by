@@ -39,13 +39,13 @@ block content
                     +simpleCard('Даты', 12)
                         h5 Регистрация
                         +field('date', "registrationEndDate", 'Конец регистрации')(value=(docs && docs.registrationEndDate ))#registrationEndDate
-                        +field('text', "confirmationEndDate", 'Уже точно конец')(value=(docs && docs.confirmationEndDate))#confirmationEndDate
+                        +field('date', "confirmationEndDate", 'Уже точно конец')(value=(docs && docs.confirmationEndDate))#confirmationEndDate
                         h5 Резервный день
-                        +field('text', "reservedDayDate", 'Конец регистрации')(value=(docs && docs.reservedDayDate))#reservedDayDate
-                        +field('text', "absentDocumentsDate", 'Конец приема справок')(value=(docs && docs.absentDocumentsDate))#absentDocumentsDate
+                        +field('date', "reservedDayDate", 'Конец регистрации')(value=(docs && docs.reservedDayDate))#reservedDayDate
+                        +field('date', "absentDocumentsDate", 'Конец приема справок')(value=(docs && docs.absentDocumentsDate))#absentDocumentsDate
                         h5 Итоги вступительной кампании
-                        +field('text', "totalResultsDate", 'Появление итогов')(value=(docs && docs.totalResultsDate))#totalResultsDate
-                        +field('text', "endDocumentsDate", 'Конец приема документов поступивших')(value=(docs && docs.endDocumentsDate))#endDocumentsDate
+                        +field('date', "totalResultsDate", 'Появление итогов')(value=(docs && docs.totalResultsDate))#totalResultsDate
+                        +field('date', "endDocumentsDate", 'Конец приема документов поступивших')(value=(docs && docs.endDocumentsDate))#endDocumentsDate
                     +simpleCard('Правила приёма', 12)
                         +field('text', "rulesLink", 'Ссылка на правила')(value=(docs && docs.rulesLink))#rulesLink
                         h5 Пункты правил
