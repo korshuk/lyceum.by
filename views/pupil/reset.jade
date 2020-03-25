@@ -1,31 +1,36 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
-
+append menuVars
+	- var menuPage = 'reset';
+	- var menuSection = 'exams';
 block content
+	.row
+		+pageHeader()
+			| Сброс данных!!!
+	.row
+		+simpleCard('Сброс данных!!!', 6)
+			.jumbotron
+				.alert.alert-danger
+					h3 Если нажать эту кнопку, то всё!
+				p
+					a.btn.btn-danger.btn-lg( href="#", role="button", data-toggle="modal", data-target="#resetModal") Полный ресет!
 
-    .page-header
-        h1 Сброс данных!!!
-
-    .jumbotron
-        h1 Сброс данных!!!
-        p Если нажать эту кнопку, то всё!
-        p
-            a.btn.btn-danger.btn-lg( href="#", role="button", data-toggle="modal", data-target="#resetModal") Полный ресет!
-
-    div#resetModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
-        .modal-dialog(role='document')
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-label='Close')
-                        span(aria-hidden='true') ×
-                    h2#myModalLabel.modal-title Точно удаляем?
-                .modal-body
-                    h3 Пока не поздно можно нажать кнопку "Отмена"
-                .modal-footer
-                    form(method="post", action="/admin/pupils/reset")
-                        button.btn.btn-primary.btn-lg(type='button', data-dismiss='modal') Отмена
-                        button.btn.btn-danger(type="submit") Удалить всё вообще
+			div#resetModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+				.modal-dialog(role='document')
+					.modal-content
+						.modal-header
+							button.close(type='button', data-dismiss='modal', aria-label='Close')
+								span(aria-hidden='true') ×
+							h2#myModalLabel.modal-title Точно удаляем?
+						.modal-body
+							h3 Пока не поздно можно нажать кнопку "Отмена"
+						.modal-footer
+							form(method="post", action="/admin/pupils/reset")
+								button.btn.btn-primary.btn-lg(type='button', data-dismiss='modal') Отмена
+								button.btn.btn-danger(type="submit") Удалить всё вообще
 
 block scripts
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
+	script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+	script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')

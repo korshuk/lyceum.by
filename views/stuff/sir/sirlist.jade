@@ -1,1 +1,8 @@
-ul!= parse(block.data.text.replace(/^ - (.+)$/mg,"<li>$1</li>").replace(/\n/mg, ""))
+if block.data.style === "unordered"
+    ul
+        each item in block.data.items
+            li!= item
+else
+    ol
+        each item in block.data.items
+            li!= item            

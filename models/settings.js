@@ -37,7 +37,10 @@ function define(mongoose, fn) {
             'showExamSeats1': Boolean,
             'showExamSeats2': Boolean,
             'agreement': String,
-            'registrationVideoLink': String
+            'registrationVideoLink': String,
+            's3AccessKeyId': String,
+            's3SecretAccessKey': String,
+            's3Hostname': String,
         });
 
     mongoose.model('Settings', SettingsSchema);

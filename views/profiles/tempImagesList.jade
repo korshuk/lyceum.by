@@ -26,13 +26,16 @@ block content
 			padding: 5px;
 			color: black;
 		}
-	div.page-header
-		h1 Проверка загруженных фото
+	
+	h1 Проверка загруженных фото
 
 	.row
 		.col-xs-12
 			.form-group
-				input#fileupload(type="file", name="resultScans[]", data-url="/admin/pupils/profiles/results/tempImages/"+id+"/"+examNumber, multiple)
+			
+				input#fileupload(type="file", name="resultScan", data-url="/admin/pupils/profiles/results/tempImages/"+id+"/"+examNumber, multiple)
+				| "/admin/pupils/profiles/results/tempImages/"+id+"/"+examNumber
+				| "https://xfc65yvpd9.execute-api.ca-central-1.amazonaws.com/prod/upload"
 	.row
 		.col-xs-12
 			div#uploads
@@ -43,7 +46,7 @@ block content
 				td
 					.resultScanImgContainer
 						img.resultScanImg(src='/files/temp_#{doc.name}')
-				td
+		 		td
 					input(type="text", value=doc.ID, style="font-size: 20px;")
 
 block scripts
@@ -52,8 +55,11 @@ block scripts
 	script( src="/javascripts/jquery_fileupload/js/jquery.iframe-transport.js")
 	script( src="/javascripts/jquery_fileupload/js/jquery.fileupload.js")
 	script
+		
+
+		
 		$('#fileupload').fileupload({
-				dataType: "json",
+				multipart: "true",
 				add: function(e, data) {
 					data.context = $('<div class="file">')
 						.text(data.files[0].name + " " + "Загрузка...")
@@ -78,7 +84,13 @@ block scripts
 						//.end()
 						//.find("div")
 						.html("<div class='resultScanImgContainer'>" + 
-							"<img class='resultScanImg' src='/files/small_" + data.result.files[0].name + "'>" +
+							"<img class='resultScanImg' src='/admin/scanFiles/small_" + data.result.files[0].response.data.key + "'>" +
 							"</div>" + data.result.files[0].ID)
 				}
 		});
+		/*$('#fileupload').bind('fileuploadsubmit', function (e, data) {
+			console.log('e', e, data.files[0].name)
+			data.formData = {
+				filename: data.files[0].name
+			}
+		});*/

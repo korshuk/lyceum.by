@@ -5,7 +5,8 @@ module.exports = function (app) {
     var path = require('path'),
         fs = require('fs'),
         gm = require('gm'),
-        util = require('util');
+        util = require('util'),
+        Jimp = require('jimp');
 
     var localization = require('../modules/localization').localization;
     var passport = require('passport');
@@ -346,8 +347,32 @@ module.exports = function (app) {
             });
         } else {
             var filename = Date.now() + '-' + req.files.attachment.file.originalFilename;
+           
+            //TODO: move to image controller
+            new Jimp(req.files.attachment.file.path, function(err, image) {
+                if (err) throw err;
+    
+                fs.unlink(req.files.attachment.file.path);
 
-            gm(req.files.attachment.file.path)
+                image
+                .resize(800, Jimp.AUTO)
+                .write('./public/images/pupils/' + filename, function(err) {
+                    if (!err) {
+                        pupil.diplomImg = filename;
+                        pupil.diplomImgNotApproved = false;
+                        pupil.save(function (err, pupil) {
+                            savePupil(res, err, pupil);
+                        });
+                    }
+                    else {
+                        //TODO error handel
+                        console.log('desktop error ' + err);
+                    }
+                });
+            
+            });
+            
+            /*gm(req.files.attachment.file.path)
                 .quality(80)
                 .resize(800)
                 .write('./public/images/pupils/' + filename, function (err) {
@@ -365,7 +390,7 @@ module.exports = function (app) {
                         //TODO error handel
                         console.log('desktop error ' + err);
                     }
-                });
+                });*/
         }
     }
 
@@ -373,8 +398,34 @@ module.exports = function (app) {
         var pupil = req.user;
 
         var filename = Date.now() + '-' + req.files.attachment.file.originalFilename;
+        
+        //TODO: move to image controller
+        new Jimp(req.files.attachment.file.path, function(err, image) {
+            if (err) throw err;
 
-        gm(req.files.attachment.file.path)
+            fs.unlink(req.files.attachment.file.path);
+            
+            image
+                .resize(800, Jimp.AUTO)
+                .write('./public/images/pupils/' + filename, function(err) {
+                    if (!err) {
+                        pupil.requestImg = filename;
+                        pupil.requestImgNotApproved = false;
+                        pupil.requestImgNoPhoto = false;
+                        pupil.requestImgLowQuality = false;
+                        pupil.requestImgStampError = false;
+                        pupil.save(function (err, pupil) {
+                            savePupil(res, err, pupil);
+                        });
+                    }
+                    else {
+                        //TODO error handel
+                        console.log('desktop error ' + err);
+                    }
+                });
+        })
+        
+            /*gm(req.files.attachment.file.path)
             .quality(80)
             .resize(800)
             .write('./public/images/pupils/' + filename, function (err) {
@@ -395,7 +446,7 @@ module.exports = function (app) {
                     //TODO error handel
                     console.log('desktop error ' + err);
                 }
-            });
+            });*/
     }
 
     function updatePassword(req, res) {

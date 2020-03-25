@@ -1,6 +1,4 @@
 var express = require('express');
-//var usage = require('usage');
-var fs = require('fs');
 
 module.exports = function (app) {
     'use strict';

@@ -2,81 +2,206 @@ doctype 5
 html
   head
     title Админка
-    
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no', name='viewport')
+
     //link(rel='stylesheet', href='/stylesheets/bootstrap.css')
 
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
-    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
-    link(rel='stylesheet', href='/stylesheets/adminStyle.css')
-    link(rel='stylesheet', href='/stylesheets/sir-trevor.css')
-    link(rel='stylesheet', href='/stylesheets/sir-trevor-icons.css')
-    link(rel="stylesheet", href="/stylesheets/jquery.datetimepicker.css")
-    link(rel="stylesheet", href="/stylesheets/jquery.guillotine.css")
-    link(rel="stylesheet", href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css")
+    //link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    //link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+    //link(rel='stylesheet', href='/stylesheets/adminStyle.css')
+    //link(rel='stylesheet', href='/stylesheets/sir-trevor.css')
+    //link(rel='stylesheet', href='/stylesheets/sir-trevor-icons.css')
+    //link(rel="stylesheet", href="/stylesheets/jquery.datetimepicker.css")
+    
+    //link(rel="stylesheet", href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css")
 
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200")
+    link(rel="stylesheet", href="/assets/css/bootstrap.min.css")
+    //link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css")
+    link(rel="stylesheet", href="/stylesheets/fa.all.css")
+    link(rel="stylesheet", href="/assets/css/paper-dashboard.css?v=2.1.3")
+    link(rel="stylesheet", href="/stylesheets/jquery.guillotine.css")
+    //link(rel="stylesheet", href="/stylesheets/jquery.datetimepicker.css")
+    
+    //link(rel="stylesheet", href="/assets/demo/demo.css")
   body
-    div.navbar.navbar-inverse.bs-docs-nav
-      div.container-fluid
-        .navbar-header
-          a.navbar-brand(href="/admin") Админка
-        div.collapse.navbar-collapse.bs-navbar-collapse
+    .wrapper
+      .sidebar(data-color="white", data-active-color="danger")
+        .logo
+          a.simple-text.logo-mini(href="/admin") 
+            .logo-image-small
+              img( src="/img/logo.png")
+          a.simple-text.logo-normal(href="/admin") Админка
+
+        block menuVars      
+        div.sidebar-wrapper
             if (locals.logged === 'logged')
               ul.nav.navbar-nav
-                li
-                  a(href="/admin/news") Новости
-                li
-                  a(href="/admin/congratulations") Поздравления
-                li
-                  a(href="/admin/media") Лицей в СМИ
-                li
-                  a(href="/admin/pages") Страницы
-                li
-                  a(href="/admin/contacts") Контакты
-                li
-                  a(href="/admin/files") Файлы
-                li.dropdown
-                  a.dropdown-toggle(href="#", data-toggle="dropdown", role="button") Приёмная комиссия <span class="caret"></span>
-                  ul.dropdown-menu
-                    li
-                      a(href="/admin/pupils#/page=1&itemsPerPage=30") Абитуриенты
-                    li
-                      a(href="/admin/pupils/examresults#/page=1&itemsPerPage=30") Внесение оценок  
-                    li
-                      a(href="/admin/pupils/profiles") Профили
-                    li
-                      a(href="/admin/pupils/places") Места
-                    li
-                      a(href="/admin/pupils/subjects") Предметы
-                    li
-                      a(href="/admin/pupils/committees") Комиссии
-                    li
-                      a(href="/admin/report") Отчеты   
-                    li
-                      a(href="/admin/pupils/history") История
-                    li
-                        a(href="/admin/pupils/emails/list") Рассылка писем
-                    li
-                      a(href="/admin/pupils/test") Форма для тестов
-                    li
-                        a.text-red(href="/admin/pupils/reset") Очистка базы
+                li(class="#{menuSection === 'content' ? 'active' : ''}")
+                  a(href="#", data-toggle="collapse", href="#contentMenu", aria-expanded="#{menuSection === 'content'}" ) 
+                    i.fas.fa-file-alt
+                    p Содержание
+                      b.caret
+                  #contentMenu.collapse(class="#{menuSection === 'content' ? 'show' : ''}")
+                    ul.nav
+                      li(class="#{menuPage === 'news' ? 'active' : ''}")
+                        a(href="/admin/news") 
+                          span.sidebar-mini-icon
+                            i.fas.fa-rss
+                          span.sidebar-normal Новости
+                      li(class="#{menuPage === 'congratulations' ? 'active' : ''}")
+                        a(href="/admin/congratulations")
+                          span.sidebar-mini-icon 
+                            i.fas.fa-award
+                          span.sidebar-normal Поздравления
+                      li(class="#{menuPage === 'media' ? 'active' : ''}")
+                        a(href="/admin/media") 
+                          span.sidebar-mini-icon
+                            i.fas.fa-link
+                          span.sidebar-normal Лицей в СМИ
+                      li(class="#{menuPage === 'pages' ? 'active' : ''}")
+                        a(href="/admin/pages") 
+                          span.sidebar-mini-icon
+                            i.far.fa-file-word
+                          span.sidebar-normal Страницы
+                      li(class="#{menuPage === 'contacts' ? 'active' : ''}")
+                        a(href="/admin/contacts") 
+                          span.sidebar-mini-icon
+                            i.far.fa-address-book
+                          span.sidebar-normal Контакты    
+                      li(class="#{menuPage === 'files' ? 'active' : ''}")
+                        a(href="/admin/files") 
+                          span.sidebar-mini-icon
+                            i.far.fa-file
+                          span.sidebar-normal Файлы    
+                li(class="#{menuSection === 'exams' ? 'active' : ''}")
+                  a(href="#", data-toggle="collapse", href="#examsMenu", aria-expanded="#{menuSection === 'exams'}" )
+                    i.fas.fa-user-graduate
+                    p Экзамены
+                      b.caret
+                  #examsMenu.collapse(class="#{menuSection === 'exams' ? 'show' : ''}")
+                    ul.nav
+                      li(class="#{menuPage === 'pupils' ? 'active' : ''}")
+                        a(href="/admin/pupils#/page=1&itemsPerPage=30") 
+                          span.sidebar-mini-icon
+                            i.fas.fa-baby
+                          span.sidebar-normal Абитуриенты
+                      li(class="#{menuPage === 'examresults' ? 'active' : ''}")
+                        a(href="/admin/pupils/examresults#/page=1&itemsPerPage=30") 
+                          span.sidebar-mini-icon
+                            i.fas.fa-trophy
+                          span.sidebar-normal Внесение оценок  
+                      li(class="#{menuPage === 'profiles' ? 'active' : ''}")
+                        a(href="/admin/pupils/profiles") 
+                          span.sidebar-mini-icon
+                            i.fas.fa-chalkboard-teacher
+                          span.sidebar-normal Профили
+                      li(class="#{menuPage === 'places' ? 'active' : ''}")
+                        a(href="/admin/pupils/places")
+                          span.sidebar-mini-icon
+                            i.fas.fa-hotel
+                          span.sidebar-normal Места
+                      li(class="#{menuPage === 'subjects' ? 'active' : ''}")
+                        a(href="/admin/pupils/subjects")
+                          span.sidebar-mini-icon
+                            i.fas.fa-pencil-ruler
+                          span.sidebar-normal Предметы
+                      li(class="#{menuPage === 'committees' ? 'active' : ''}")
+                        a(href="/admin/pupils/committees")
+                          span.sidebar-mini-icon
+                            i.fas.fa-user-secret
+                          span.sidebar-normal Комиссии
+                      li(class="#{menuPage === 'report' ? 'active' : ''}")
+                        a(href="/admin/report")
+                          span.sidebar-mini-icon
+                            i.fas.fa-clipboard-list
+                          span.sidebar-normal Отчеты   
+                      li(class="#{menuPage === 'history' ? 'active' : ''}")
+                        a(href="/admin/pupils/history")
+                          span.sidebar-mini-icon
+                            i.fas.fa-history
+                          span.sidebar-normal История
+                      li(class="#{menuPage === 'emails' ? 'active' : ''}")
+                        a(href="/admin/pupils/emails/list")
+                          span.sidebar-mini-icon
+                            i.far.fa-envelope
+                          span.sidebar-normal Рассылка писем
+                      li(class="#{menuPage === 'test' ? 'active' : ''}")
+                        a(href="/admin/pupils/test")
+                          span.sidebar-mini-icon
+                            i.fas.fa-vial
+                          span.sidebar-normal Форма для тестов
+                      li(class="#{menuPage === 'reset' ? 'active' : ''}")
+                        a.text-red(href="/admin/pupils/reset")
+                          span.sidebar-mini-icon
+                            i.fas.fa-snowplow
+                          span.sidebar-normal Очистка базы
+                li(class="#{menuSection === 'users' ? 'active' : ''}")
+                  a(href="/admin/users")
+                    i.fas.fa-users-cog
+                    p Пользователи
+                li(class="#{menuSection === 'settings' ? 'active' : ''}")
+                  a(href="/admin/settings")
+                    i.fas.fa-cogs
+                    p Настройки
+                li(class="#{menuSection === 'cash' ? 'active' : ''}")
+                  a(href="/admin/cash")
+                    i.fas.fa-archive
+                    p Посмотреть кэш
 
-                li
-                  a(href="/admin/users") Пользователи
-                li
-                  a(href="/admin/settings") Настройки
-                li
-                  a(href="/admin/cash") Посмотреть кэш
-                
-              p.navbar-text.pull-right
-                a.navbar-link(href="/admin/logout") Logout
-    div(class= (locals.viewName && (locals.viewName === 'pupil' || locals.viewName === 'resultsAssign')) ? 'container-fluid' : 'container')
-      div.row
-        div.col.col-lg-8!= locals.message
-      div.row
-        div.col.col-lg-12
+      div(class= (locals.viewName && (locals.viewName === 'pupil' || locals.viewName === 'resultsAssign')) ? 'main-panel' : 'main-panel')
+        nav.navbar.navbar-expand-lg.navbar-absolute.fixed-top.navbar-transparent
+          .container-fluid
+            .navbar-wrapper
+              .navbar-minimize
+                button#minimizeSidebar.btn.btn-icon.btn-round
+                  i.nc-icon.nc-minimal-right.text-center.visible-on-sidebar-mini
+                  i.nc-icon.nc-minimal-left.text-center.visible-on-sidebar-regular
+              .navbar-toggle
+                button.navbar-toggler(type="button")
+                  span.navbar-toggler-bar.bar1
+                  span.navbar-toggler-bar.bar2
+                  span.navbar-toggler-bar.bar3
+              //a.navbar-brand(href="/") Lyceum.by
+            button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navigation", aria-controls="navigation-index", aria-expanded="false", aria-label="Toggle navigation")
+              span.navbar-toggler-bar.navbar-kebab
+              span.navbar-toggler-bar.navbar-kebab
+              span.navbar-toggler-bar.navbar-kebab
+            .collapse.navbar-collapse.justify-content-end
+              ul.navbar-nav
+                li.nav-item
+                  a.nav-link.btn-magnify(href="/admin/logout")
+                    i.nc-icon.nc-user-run
+                    p
+                      span.d-lg-none.d-md-block Выйти
+        .content 
+          div#alertMessage(style="display:none;")!= locals.message            
           block content
-    footer
-      p 
-        br
-        br
+
+    script(src="/assets/js/core/jquery.min.js")
+    script(src='/javascripts/underscore.js')
+    script(src='/javascripts/eventable.js')
+    script(src="/assets/js/core/popper.min.js")
+    script(src="/assets/js/core/bootstrap.min.js")
+    script(src="/assets/js/core/moment.min.js")
+    script(src="/assets/js/core/moment.locale.ru.js",  charset="UTF-8" )
+    script(src="/assets/js/plugins/perfect-scrollbar.jquery.min.js")
+    script(src="/assets/js/plugins/chartjs.min.js")
+    script(src="/assets/js/plugins/bootstrap-notify.js")
+    script(src="/assets/js/plugins/bootstrap-switch.js")
+    script(src="/assets/js/plugins/bootstrap-datetimepicker.js")
+    script(src="/assets/js/plugins/sweetalert2.all.js")
+    script( src="/javascripts/jquery_fileupload/js/vendor/jquery.ui.widget.js")
+    script( src="/javascripts/jquery_fileupload/js/jquery.iframe-transport.js")
+    script( src="/javascripts/jquery_fileupload/js/jquery.fileupload.js")
+    
+    // script(src='/javascripts/jquery.datetimepicker.js')
+    script(src='/javascripts/sir-trevor.js')
+    script(src="/assets/js/paper-dashboard.min.js?v=2.0.0" )
+    script(src="/javascripts/editor.js")
+    
+    script(src="/assets/demo/demo.js")
+
+    script(src="/javascripts/adminscripts.js")
+      
     block scripts

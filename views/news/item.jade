@@ -1,5 +1,3 @@
-include ../stuff/sir/sirparser
-
 - var isNews = d.isNews;
 - var colorClass = isNews ?  'style-blue' : 'style-green';
 - var hasName = translateObj(d.name) !== '';
@@ -14,20 +12,19 @@ else
 
 div(class= nameClass + ' ' + colorClass)
     span.time= d.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
-    - var block = translateNews(d.teaser).data[0];
-
+    - var block = translateNews(d.teasernew).blocks[0];
     if hasName
         a(href= ahref).to-full-page
             h3= translateObj(d.name)
         if d.image
-            - var image = JSON.parse(d.image).data[0].data;
+            - var image = d.imagenew
             a(href= ahref, title= block.data.text).imagelink
                 img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-        div.teaser.clearfix!= parse(block.data.text)
+        div.teaser.clearfix!= block.data.text
     else
         if d.image
-            - var image = JSON.parse(d.image).data[0].data;
+            - var image = d.imagenew
             a(href= ahref, title= block.data.text).imagelink
                 img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
         div.teaser.clearfix
-            a(href= ahref, title= block.data.text).to-full-page!= parse(block.data.text)
+            a(href= ahref, title= block.data.text).to-full-page!= block.data.text

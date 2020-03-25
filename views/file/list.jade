@@ -1,11 +1,54 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'files';
+  - var menuSection = 'content'
 
 block content
+    .row
+        .col-xl-7
+            .row
+                .col-sm-12
+                    h2 Файлы  
+    .row
+        +mainCard('Список файлов')
+            .table-responsive
+              table.table.table-hover
+                thead.text-primary
+                  tr
+                    th.text-center #
+                    th Файл
+                    th.text-right Действия
+                tbody    
+                  each doc, index in docs
+                    if doc    
+                      tr
+                        td.text-center= index+1
+                        td #{doc}
+                          br
+                          | #{"/files/"+doc}
+                        td.text-right 
+                          a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/files/"+doc+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                            i.fa.fa-times            
+        +simpleCard('Загрузить ещё', 5)
+          form(action="/admin/files", method="post", enctype="multipart/form-data").form-horizontal
+            .row
+              label.col-sm-3.col-form-label
+                | Новый файл:
+              .col-sm-9
+                input(type="file", name="fileupload")
+                .form-group
+                  
+                  button(type="submit").btn.btn-primary.btn-magnify
+                    i.fas.fa-cloud-upload-alt
+                    | #{'  '}
+                    | Загрузить файл
+    
     div.page-header
         h1: Список файлов
-        form(action="/admin/files", method="post", enctype="multipart/form-data")
-          input(type="file", name="fileupload")
-          input(type="submit", value="Загрузить файл").btn.btn-primary
+        
     table.table.table-hover
       tr
         th Имя

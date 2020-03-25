@@ -1,28 +1,46 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
-mixin render_list(json, pref)
+mixin render_list(json, pref, num)
     each doc, i in json
-        tr
-            td!= pref + doc.name.ru
-            td= doc.order || 0
-            td= doc.pathAlias + '.html'
-            td
-                a(href="/admin/pages/"+doc.id+"/edit") Редактировать 
-                br
-                a(href="/admin/pages/"+doc.id+"/delete") Удалить
-        if doc.children && doc.children.length > 0
-            mixin render_list(doc.children, pref + '&mdash; ')
+        li
+            .row.form-group
+                .col-sm-10
+                    .row(style="margin-left:#{pref}px")  
+                        .col-sm-1.text-right
+                            if doc.children && doc.children.length > 0
+                                a.btn.btn-outline-primary.btn-round.btn-icon.btn-sm(data-toggle='collapse', href='#{"#" + doc.pathAlias}', aria-expanded='true', aria-controls='collapseOne')
+                                    i.fa.fa-chevron-down
+                        .col-sm-11            
+                            b!= doc.name.ru
+                            br
+                            |  #{'#' + num + doc.order || 0} /#{doc.pathAlias + '.html'}
+                     
+                .col-sm-2.text-right
+                    a.btn.btn-primary.btn-icon.btn-sm(href="/admin/pages/create?id=#{doc.id}", type='button', rel='tooltip', data-original-title='Добавить вложенную страницу', title='Добавить вложенную страницу')
+                        i.fas.fa-folder-plus
+                    | #{' '}
+                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pages/"+doc.id+"/edit", type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                        i.fa.fa-edit
+                    | #{' '}    
+                    a.btn.btn-danger.btn-icon.btn-sm(href="/admin/pages/"+doc.id+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                        i.fa.fa-times 
+            
+            if doc.children && doc.children.length > 0
+                .row(id='#{doc.pathAlias}').collapse.show
+                    ul.list-unstyled.col-sm-12  
+                        mixin render_list(doc.children, pref + 30, num + doc.order + '.')
+                        //'&mdash; '
+append menuVars
+  - var menuPage = 'pages';
+  - var menuSection = 'content'
 
 block content
-    div.page-header
-        h1: Список страниц
-        a.btn.btn-primary(href='/admin/pages/create') Добавить страницу
-    table.table.table-hover
+    +listPageHeader('Страницы', 'Добавить новую', '/admin/pages/create')       
+    .row
+        +mainCard('Список')           
+            ul.list-unstyled.col-sm-12     
+                mixin render_list(pages, 0, '')
         
-    table.table.table-hover
-        tr
-            th Название
-            th Уровень
-            th Путь
-            th
-        mixin render_list(pages, '')
+        

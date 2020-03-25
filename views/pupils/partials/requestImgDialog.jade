@@ -9,5 +9,6 @@ div#request
                | Справка должна быть с твоей фотографией и печатью школы (гимназии) на фотографии
             li Сфотографируй или отсканируй справку.
             li Загрузи изображение справки сюда.
+        h5 Внмание! Подходят только файлы-изображения (.jpg, .png, .bmp)! .pdf-файл загрузить не получится!
         div.form-input-group
             input#fileUploadRequest.dropify(type="file", data-default-file=user.requestImg ? '/images/pupils/' + user.requestImg : undefined, data-show-remove="false", data-max-file-size="20M", data-allowed-file-extensions="pdf png jpg jpeg gif bmp")

@@ -1,15 +1,14 @@
-include ../stuff/sir/sirparser 
 div.news-item
     if (locals.lang) 
         - var ahref = '/' + locals.lang + '/congratulations/' + d.pathAlias + '.html';
     else
         - var ahref = '/congratulations/' + d.pathAlias + '.html';
     span.time= d.createdAt.format('dd.MM.yyyy ' + translate ('в') + ' hh:mm')
-    - var block = translateNews(d.teaser).data[0];
+    - var block = translateNews(d.teasernew).blocks[0];
     a(href= ahref).to-full-page
         h3= translateObj(d.name)
     if d.image
-        - var image = JSON.parse(d.image).data[0].data;
+        - var image = d.imagenew;
         a(href= ahref, title= block.data.text).imagelink
             img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)
-    div.teaser.clearfix!= parse(block.data.text) 
+    div.teaser.clearfix!= block.data.text 

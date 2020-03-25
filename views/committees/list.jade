@@ -1,21 +1,33 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+  - var menuPage = 'committees';
+  - var menuSection = 'exams';
 block content
-    div.page-header
-        h1 Список комиссий
-        a.btn.btn-primary(href='/admin/pupils/committees/create') Добавить комиссию
-    table.table.table-hover
-        tr
-            th Предмет
-            th Председатель
-            th Комиссия
-            th
-        - each doc in docs
-            tr
-                td= doc.subject.name
-                td= doc.head
-                td= doc.staff
-                td
-                    a(href="/admin/pupils/committees/edit/"+doc.id) Редактировать
-                    br
-                    a(href="/admin/pupils/committees/delete/"+doc.id) Удалить
+    +listPageHeader('Комиссии', 'Добавить комиссию', '/admin/pupils/committees/create')
+    .row
+        +mainCard('Список')
+            .table-responsive
+                table.table.table-hover
+                    thead.text-primary
+                        tr
+                            th.text-center #
+                            th Предмет
+                            th Председатель
+                            th Комиссия
+                            th.text-right Действия
+                    tbody
+                        each doc, index in docs
+                            tr
+                                td.text-center #{index + 1}
+                                td= doc.subject.name
+                                td= doc.head
+                                td= doc.staff
+                                td.text-right 
+                                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/committees/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                        i.fa.fa-edit
+                                    | #{' '}    
+                                    a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/committees/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                        i.fa.fa-times     

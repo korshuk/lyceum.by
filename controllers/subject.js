@@ -32,7 +32,7 @@ var SubjectController = function(mongoose, app) {
                     res.redirect(self.path + '/' + doc.id + '/edit');
                 }
                 else {
-                    req.session.success = 'Предмет <strong>' + doc.name.ru + '</strong> обновлен';
+                    req.session.success = 'Предмет <strong>' + doc.name + '</strong> обновлен';
                     res.redirect(self.path);
                 }
             });

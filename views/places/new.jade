@@ -1,72 +1,87 @@
-include ../stuff/mixins/form-helper
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'places';
+  - var menuSection = 'exams';
 
 block content
-    div.page-header
-        if doc.name
-            h1 Редактирование места
-        else
-            h1 Новое место
-
     form(method='post', action= method === 'put' ? '/admin/pupils/places/' + doc.id : '/admin/pupils/places' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")
-
-        div.panel.panel-default
-            .row
-                .col-lg-12
-                    +field('text', "code", 'Код')(value= doc.code || '')
-                    +field('text', "name", 'Название')(value= doc.name || '')
-                    +field('text', "address", 'Адрес')(value= doc.address || '')
-
-        div.panel.panel-default
-            .row
-                .col-lg-12
-                    .col-lg-12
-                        h3 Кабинеты
-            .row
-                .col-lg-12
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование места
+                else
+                    | Новое место
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/pupils/places') 
+        .row
+            +simpleCard('Основное', 5)
+                +field('text', "code", 'Код')(value= doc.code || '')
+                +field('text', "name", 'Название')(value= doc.name || '')
+                +field('text', "address", 'Адрес')(value= doc.address || '')
+            +simpleCard('Кабинеты', 5)
+                .row
                     .col-lg-12
                         .form-group
                             button#addItem.btn.btn-primary Добавить
-            .row
-                .col-lg-12
-                    .col-lg-12
-                        table.table.table-hover
-                            tbody#audienceTable
-                                - each audience, index in doc.audience
-                                    tr
-                                        td
-                                            +field('text', "audience[" + index + "][name]", 'Название')(value= audience.name || '')
-                                        td(style="width: 400px")
-                                            +field('number', "audience[" + index + "][max]", 'Максимальное количество')(value= audience.max || 0)
-                                        td
-                                                label &nbsp;
-                                                +field('checkbox', "audience[" + index + "][bel]", 'Бел')(checked= audience.bel || false)
-                                        td
-                                                label &nbsp;
-                                                .row
-                                                    .col-lg-12
-                                                        button.delete-btn.btn.btn-warning Удалить
-                            tbody(style="display: none;")
-                                tr#template
-                                    td
-                                        +field('text', "", 'Название')(value= '', class='name-field')
-                                    td(style="width: 400px")
-                                        +field('number', "", 'Максимальное количество')(value= 0, class='max-field')
-                                    td
-                                            label &nbsp;
-                                            +field('checkbox', "", 'Бел')(checked=false, class='bel-field')
+                .table-responsive
+                    table.table.table-hover
+                        tbody#audienceTable
+                            - each audience, index in doc.audience
+                                tr
                                     td
                                         .form-group
-                                            label &nbsp;
-                                            .row
-                                                .col-lg-12
-                                                    button.delete-btn.btn.btn-warning Удалить
-        +buttonSet
+                                            label Название:
+                                            input.form-control(type='text', name="audience[" + index + "][name]", value= audience.name || '')
+                                    td
+                                        .form-group
+                                            label Максимальное количество:
+                                            input.form-control(type='number', name="audience[" + index + "][max]", value= audience.max || 0)
+                                    td
+                                        .form-group 
+                                            label Бел:
+                                            br
+                                            input.bootstrap-switch(type="checkbox", name="audience[" + index + "][bel]", data-toggle="switch", data-on-label="<i class='nc-icon nc-check-2'></i>", data-off-label="<i class='nc-icon nc-simple-remove'></i>", data-on-color="success", data-off-color="success", checked= audience.bel || false)                 
+                                
+                                    td
+                                        .form-group 
+                                            label #{' '}
+                                            br
+                                            button.delete-btn.btn.btn-danger.btn-icon.btn-sm 
+                                                span.btn-label
+                                                    i.fa.fa-times
+                        tbody(style="display: none;")
+                            tr#template
+                                td
+                                    
+                                    .form-group
+                                        label Название:
+                                        input.name-field.form-control(type='text', name="", value= '')
+                                td
+                                    .form-group
+                                            label Максимальное количество:
+                                            input.max-field.form-control(type='number', name="", value= 0)
+                                        
+                                td
+                                    .form-group 
+                                            label Бел:
+                                            br
+                                            input.bel-field(type="checkbox", name="", data-toggle="switch", data-on-label="<i class='nc-icon nc-check-2'></i>", data-off-label="<i class='nc-icon nc-simple-remove'></i>", data-on-color="success", data-off-color="success", checked= false)                 
+                                
+                                td
+                                    .form-group 
+                                        label #{' '}
+                                        br
+                                        button.delete-btn.btn.btn-danger.btn-icon.btn-sm
+                                            span.btn-label
+                                                i.fa.fa-times
 
 block scripts
-    include ../stuff/adminScriptBlock
 
     script.
         var $audienceTable = $('#audienceTable');
@@ -100,6 +115,18 @@ block scripts
             $row
                 .find('.bel-field')
                 .attr('name', 'audience[' + index + '][bel]');
+            $row
+                .find('.bel-field').each(function() {
+                    $this = $(this);
+                    data_on_label = $this.data('on-label') || '';
+                    data_off_label = $this.data('off-label') || '';
+
+                    $this.bootstrapSwitch({
+                    onText: data_on_label,
+                    offText: data_off_label
+                    });
+                }); 
+
         }
 
         function addItem(e) {

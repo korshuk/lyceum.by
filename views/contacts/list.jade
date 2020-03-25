@@ -1,27 +1,41 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+  - var menuPage = 'contacts';
+  - var menuSection = 'content'
 block content
-    div.page-header
-        h1 Список контактов
-        a.btn.btn-primary(href='/admin/contacts/create') Добавить контакт
-    table.table.table-hover
-      tr
-        th Имя
-        th Должность
-        th Порядок
-        th Кабинет
-        th Телефон
-        th Почта
-        th
-      - each doc in docs
-          tr
-            td= doc.name.ru
-            td= doc.occupation.ru
-            td= doc.order || 0
-            td= doc.place
-            td= doc.phone
-            td= doc.email
-            td
-              a(href="/admin/contacts/"+doc.id+"/edit") Редактировать 
-              br
-              a(href="/admin/contacts/"+doc.id+"/delete") Удалить
+    +listPageHeader('Список контактов', 'Добавить контакт', '/admin/contacts/create')
+    .row
+      +mainCard('Список')  
+          .table-responsive
+            table.table.table-hover
+              thead.text-primary
+                tr
+                  th.text-center #
+                  th Имя / Должность
+                  th Порядок
+                  th Инфо
+                  th.text-right Действия
+              tbody    
+                  each doc, index in docs
+                    if doc    
+                      tr
+                        td.text-center= index+1
+                        td
+                          strong #{doc.name.ru}
+                          br
+                          | #{doc.occupation.ru}
+                        td= doc.order || 0
+                        td  Кабинет: #{doc.place}
+                          br
+                          | Тел.: #{doc.phone}
+                          br
+                          | Email: #{doc.email}
+                        td.text-right
+                          a.btn.btn-success.btn-icon.btn-sm(href="/admin/contacts/"+doc.id+"/edit", type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                            i.fa.fa-edit
+                          | #{' '}    
+                          a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/contacts/"+doc.id+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                            i.fa.fa-times  

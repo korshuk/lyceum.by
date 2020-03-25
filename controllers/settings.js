@@ -57,6 +57,9 @@ var SettingsController = function(mongoose, app) {
             doc.smsAPIName = req.body.smsAPIName;
             doc.agreement = req.body.agreement;
             doc.registrationVideoLink = req.body.registrationVideoLink
+            doc.s3AccessKeyId = req.body.s3AccessKeyId
+            doc.s3SecretAccessKey = req.body.s3SecretAccessKey
+            doc.s3Hostname = req.body.s3Hostname
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;

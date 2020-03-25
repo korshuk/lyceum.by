@@ -1,43 +1,56 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'pupils';
+  - var menuSection = 'exams';
 
 block content
-    div.page-header
-        h1 Список абитуриентов
-    div(ng-app="pupilApp", ng-controller="pupilController as app")
-        div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
-            .row   
-                .col.col-md-6
-                    button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
-                    | &nbsp;
-                    a.btn.btn-primary(href="/admin/pupils/api/list-export.json", target="_blank") JSON-export
-                    | &nbsp;
-                    button.btn.btn-warning(type="button", ng-click="app.seedRecommended()") Автоматическое зачисление
-                .col.col-md-6.text-right
-                    button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") Послать приглашения на 1 экзамен
+    +listHeader('Вступительная кампания');
+    .row
+        +simpleCard('Список абитуриентов', 12)
+            div(ng-app="pupilApp", ng-controller="pupilController as app")
+                div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
+                    .row   
+                        .col.col-md-6
+                            button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
+                            | &nbsp;
+                            a.btn.btn-primary(href="/admin/pupils/api/list-export.json", target="_blank") JSON-export
+                            | &nbsp;
+                            button.btn.btn-warning(type="button", ng-click="app.seedRecommended()") Автоматическое зачисление
+                        .col.col-md-6.text-right
+                            button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") Послать приглашения на 1 экзамен
 
-            br
-            br
-            .row
-                .col.col-md-12.text-right
-                    form.form-inline.pull-right.margin-bottom-basic
-                        .form-group
-                            label.items {{paginationOptions.totalItems}} items total #{'   '}
-                        .form-group.items-per-page
-                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
-                        .form-group.items-per-page
-                            label(for="itemsOnPageSelect1") Items per page:
-                            select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
-                                option 2
-                                option 30
-                                option 50
-                                option 100
-                                option 500
-                                option 1000
-                                option 2000
-                                option 3000
-            .panel.panel-default
-                .panel-body
-                    div.row
+                    br
+                    br
+                    .row
+                        .col.col-md-12.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                    .col
+                                    div
+                                        label.items.col-form-label {{paginationOptions.totalItems}} items total #{'   '}
+                                    div
+                                        .form-group.items-per-page
+                                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                    div     
+                                        .row
+                                            label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                                nobr Items per page:
+                                            .col-sm-6
+                                                .form-group
+                                                    select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                        option 2
+                                                        option 30
+                                                        option 50
+                                                        option 100
+                                                        option 500
+                                                        option 1000
+                                                        option 2000
+                                                        option 3000
+                                            .col-sm-1            
+                    
+                    .row
                         .col-md-2
                             .form-group
                                 label Поиск по фамилии
@@ -122,66 +135,92 @@ block content
                                     option(value="") Все
                                     option(value="false") Не согласные
                                     option(value="true") Согласные                     
-
-            table.table.table-hover.table-striped
-                thead
-                    tr
-                        th #&nbsp;
-                        th.sortable(sortable="firstName") firstName&nbsp;
-                        th.sortable(sortable="lastName") lastName&nbsp;
-                        th.sortable(sortable="parentName") parentName&nbsp;
-                        th.sortable(sortable="email") email&nbsp;
-                        th.sortable(sortable="phone") телефон&nbsp;
-                        th.sortable(sortable="region") region&nbsp;
-                        th.sortable(sortable="night") ВЛ&nbsp;
-                        th.sortable(sortable="distant") ДК&nbsp;
-                        th.sortable(sortable="status") status&nbsp;
-                        th.sortable(sortable="created") created&nbsp;
-                        th.sortable(sortable="profile") profile&nbsp;
-                        th.sortable(sortable="needBel") Бел.яз&nbsp;
-                        th.sortable(sortable="agreement") Согласие&nbsp;
-                        th.sortable(sortable="requestImg") Есть картинка&nbsp;
-                        th.sortable(sortable="passOlymp") БЭ&nbsp;
-                        th.sortable(sortable="exam1") Э-1&nbsp;
-                        th.sortable(sortable="exam2") Э-2&nbsp;
-                        th.sortable(sortable="sum") Сумма&nbsp;
-                        th.sortable(sortable="recommended") Зачислен&nbsp;
-                        th.sortable(sortable="examStatus") Экз-статус&nbsp;
-                        th
-                tbody
-                    tr(grid-item)
-                        td {{$index + 1}}
-                        td {{item.firstName}} 
-                        td {{item.lastName}}
-                        td {{item.parentName}}
-                        td {{item.email}}
-                        td(ng-class="item.codeValid ? '' : 'text-danger'")
-                           | {{item.phone}}
-                        td {{item.region}}
-                        td {{item.night}}
-                        td {{item.distant}}
-                        td {{item.status}}
-                        td {{item.created | date:'dd-MM-yy HH:mm:ss'}}
-                        td {{item.profile.name}}
-                        td {{item.needBel}}
-                        td {{item.agreement}}
-                        td {{!!item.requestImg}}
-                        td {{item.passOlymp ? 'БЭ' : ''}}
-                        td
-                            span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
-                            input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
-                        td
-                            span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
-                            input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
-                        td {{item.sum}}
-                        td {{item.recommended}}
-                        td {{app.examStatuses[item.examStatus || '0']}}
-                            p(ng-if='item.audience1 || item.audience2') Ауд:
-                                span(ng-if='item.audience1') 1
-                                span(ng-if='item.audience2') 2
-                        td
-                            a(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}") Edit
-
+                    .table-responsive
+                        table.table.table-hover.table-striped.table-bordered.dtr-inline.dataTable
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th.sortable(sortable="firstName") firstName&nbsp;
+                                    th.sortable(sortable="lastName") lastName&nbsp;
+                                    th.sortable(sortable="parentName") parentName&nbsp;
+                                    th.sortable(sortable="email") email&nbsp;
+                                    th.sortable(sortable="phone") телефон&nbsp;
+                                    th.sortable(sortable="region") region&nbsp;
+                                    th.sortable(sortable="night") ВЛ&nbsp;
+                                    th.sortable(sortable="distant") ДК&nbsp;
+                                    th.sortable(sortable="status") status&nbsp;
+                                    th.sortable(sortable="created") created&nbsp;
+                                    th.sortable(sortable="profile") profile&nbsp;
+                                    th.sortable(sortable="needBel") Бел.яз&nbsp;
+                                    th.sortable(sortable="agreement") Согласие&nbsp;
+                                    th.sortable(sortable="requestImg") Есть картинка&nbsp;
+                                    th.sortable(sortable="passOlymp") БЭ&nbsp;
+                                    th.sortable(sortable="exam1") Э-1&nbsp;
+                                    th.sortable(sortable="exam2") Э-2&nbsp;
+                                    th.sortable(sortable="sum") Сумма&nbsp;
+                                    th.sortable(sortable="recommended") Зачислен&nbsp;
+                                    th.sortable(sortable="examStatus") Экз-статус&nbsp;
+                                    th.text-right Действия
+                            tbody
+                                tr(grid-item)
+                                    td.text-center {{$index + 1}}
+                                    td {{item.firstName}} 
+                                    td {{item.lastName}}
+                                    td {{item.parentName}}
+                                    td {{item.email}}
+                                    td(ng-class="item.codeValid ? '' : 'text-danger'")
+                                    | {{item.phone}}
+                                    td {{item.region}}
+                                    td {{item.night}}
+                                    td {{item.distant}}
+                                    td {{item.status}}
+                                    td {{item.created | date:'dd-MM-yy HH:mm:ss'}}
+                                    td {{item.profile.name}}
+                                    td {{item.needBel}}
+                                    td {{item.agreement}}
+                                    td {{!!item.requestImg}}
+                                    td {{item.passOlymp ? 'БЭ' : ''}}
+                                    td
+                                        span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
+                                        input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
+                                    td
+                                        span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
+                                        input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
+                                    td {{item.sum}}
+                                    td {{item.recommended}}
+                                    td {{app.examStatuses[item.examStatus || '0']}}
+                                        p(ng-if='item.audience1 || item.audience2') Ауд:
+                                            span(ng-if='item.audience1') 1
+                                            span(ng-if='item.audience2') 2
+                                    td.text-right
+                                        a.btn.btn-success.btn-icon.btn-sm(ng-href="{{'/admin/pupils/edit/' + item._id + app.location.path().replace('/', '?')}}")
+                                            i.fa.fa-edit
+                    .row
+                        .col.col-md-12.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                
+                                    .col
+                                    div
+                                        label.items.col-form-label {{paginationOptions.totalItems}} items total #{'   '}
+                                    div
+                                        .form-group.items-per-page
+                                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                    div     
+                                        .row
+                                            label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                                nobr Items per page:
+                                            .col-sm-6
+                                                .form-group
+                                                    select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                        option 2
+                                                        option 30
+                                                        option 50
+                                                        option 100
+                                                        option 500
+                                                        option 1000
+                                                        option 2000
+                                                        option 3000
+                                            .col-sm-1   
 block scripts
-    include ../stuff/adminPupilScriptBlock
+    //include ../stuff/adminPupilScriptBlock
     include pupilApp

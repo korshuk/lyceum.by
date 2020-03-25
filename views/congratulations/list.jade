@@ -1,21 +1,43 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'congratulations';
+  - var menuSection = 'content'
 
 block content
-    div.page-header
-        h1 Список поздравлений
-        a.btn.btn-primary(href='/admin/congratulations/create') Добавить новое
-    table.table.table-hover
-      tr
-        th Название
-        th Создана
-        th Обновлена
-        th
-      each n in docs
-          tr
-            td= n.name.ru
-            td= n.createdAt.format('dd-MM-yyyy hh:mm:ss')
-            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
-            td  
-              a(href="/admin/congratulations/edit/"+n.id) Редактировать
-              br
-              a(href="/admin/congratulations/delete/"+n.id) Удалить
+    +listPageHeader('Список поздравлений', 'Добавить новое', '/admin/congratulations/create')
+    .row
+        +mainCard('Список')  
+            .row
+              .col-sm-12.col-md-12.text-right
+                  +contentPaginationInfo()
+              .col-sm-12.col-md-12
+                  +contentPagination('/admin/congratulations')
+            .table-responsive      
+              table.table.table-hover
+                thead.text-primary
+                  tr
+                    th.text-center #
+                    th Название
+                    th Создано
+                    th Обновлено
+                    th.text-right Действия
+                tbody    
+                  each doc, index in docs
+                    if doc
+                      tr
+                        td.text-center= index+1 + pageNum *20
+                        td= doc.name.ru
+                        td= doc.createdAt.format('dd-MM-yyyy hh:mm:ss')
+                        td= doc.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+                        td.text-right
+                          a.btn.btn-success.btn-icon.btn-sm(href="/admin/congratulations/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                            i.fa.fa-edit
+                          | #{' '}    
+                          a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/congratulations/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                            i.fa.fa-times
+            .row
+              .col-lg-12
+                +contentPagination('/admin/congratulations')

@@ -1,44 +1,66 @@
 include ../stuff/mixins/form-helper
-extends ../adminLayout
+include ../stuff/adminIntarface/cards
+include ../stuff/adminIntarface/lang-selector-tabs-nav
 
+extends ../adminLayout
+append menuVars
+  - var menuPage = 'media';
+  - var menuSection = 'content'
 block content
-    div.page-header
-        if method === 'put'
-            h1 Редактирование новости про СМИ
-        else
-            h1 Новая новость про СМИ
     form.form-horizontal(method='post', action= method === 'put' ? '/admin/media/' + doc.id : '/admin/media' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")  
-
-            +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker
-
-        +field('textarea', 'image', 'Картинка к новости')#mediaimage
-            !=doc.image || ''
-
-        div.row
-            div.panel.panel-default
-                ul.nav.nav-tabs#tabNav
-                    li.active 
-                        a(href='#ru', data-toggle="tab") RU
-                    li 
-                        a(href='#by', data-toggle="tab") BY
-                    li 
-                        a(href='#en', data-toggle="tab") EN
-                br
-                div.tab-content
-                    div.tab-pane.fade.in.active#ru
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование новости про СМИ
+                else
+                    | Новая новость про СМИ
+            .col-md-5.text-right
+                +buttonSet('/admin/media')
+        .row
+            +mainCard('Содержание')
+                +langTabs()
+                    +langTab('ru')  
                         +field('text', "name.ru", 'Название источника')(value= doc.name.ru || '')
                         +field('text', "body.ru", 'Название статьи')(value= doc.body.ru || '')
-                    div.tab-pane.fade#by
-                        +field('text', "name.by", 'Название источника')(value= doc.name['by'] || '')
-                        +field('text', "body.by", 'Название статьи')(value= doc.body.by || '')        
-                    div.tab-pane.fade#en
-                        +field('text', "name.en", 'Название источника')(value= doc.name['en'] || '')
+                    +langTab('by')  
+                        +field('text', "name.by", 'Название источника')(value= doc.name.by || '')
+                        +field('text', "body.by", 'Название статьи')(value= doc.body.by || '') 
+                    +langTab('en')  
+                        +field('text', "name.en", 'Название источника')(value= doc.name.en || '')
                         +field('text', "body.en", 'Название статьи')(value= doc.body.en || '')
-        
-        +field('text', "link", 'Ссылка')(value= doc.link || '')
-        +buttonSet
+
+                +field('text', "link", 'Ссылка')(value= doc.link || '')
+            
+            +simpleCard('Дополнительно', 5)
+                .row
+                    - var className = "fileinput-new"
+                    - var inputValue = ''
+                    if doc && doc.imagenew && doc.imagenew.file
+                        - className = "fileinput-exists";
+                        - inputValue = JSON.stringify(doc.imagenew)
+                        
+                    label.col-sm-3.col-form-label Картинка к новости:
+                    .col-sm-9
+                        #fileInputContainer.form-group(class=className)
+                            .thumbnail
+                                if doc && doc.imagenew && doc.imagenew.file
+                                    img#fileInputThumbnail(src='#{doc.imagenew.file.url}', alt='...')
+                                else
+                                    img#fileInputThumbnail(src='/assets/img/image_placeholder.jpg', alt='...')
+                                .progress(style="display: none")
+                                    .progress-bar(role="progressbar", style="width: 0%", aria-valuenow="0", aria-valuemin="0", aria-valuemax="100")
+                            
+                            span.btn.btn-success.btn-file.btn-magnify
+                                i.fas.fa-cloud-upload-alt
+                                | #{'  '}
+                                span.fileinput-new Загрузить
+                                span.fileinput-exists Изменить
+                                input( type="hidden",  value=inputValue, name="imagenew")#imagenew
+                                input#fileuploadImg(type="file", name="fileupload", data-url="/admin/images/mediaupload")
+
+                if method === 'put'
+                    +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker 
 
 block scripts
-    include ../stuff/adminScriptBlock

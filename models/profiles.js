@@ -25,6 +25,7 @@ function define(mongoose, fn) {
     	    type: Boolean,
             default: true
         },
+        'guidePage': String,
         'olympExams': [String],
         'minF': Number,
         'maxF': Number,

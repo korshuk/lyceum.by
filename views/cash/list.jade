@@ -1,38 +1,41 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+	- var menuPage = 'cash';
+	- var menuSection = 'cash';
 block content
-    div.row
-        div.col-lg-12
-            div.alert.alert-info
-                if result.memoryInfo
-                    strong!= Math.round(1000 * result.memoryInfo.rss / (1024 * 1024)) / 1000
-                    |&nbsp;MB;&nbsp;
-                    strong!= Math.round(1000 * result.memoryInfo.rss * 100 / result.memoryInfo.vsize) / 1000 
-                    |&nbsp;% of Memory usage;&nbsp;
-                    strong!= Math.round(1000 * result.cpu) / 1000
-                    |&nbsp;% of CPU usage;&nbsp;
-                else
-                    p!= result
-    div.page-header
-        h1 Вот что в кэше
-        a.btn.btn-primary(href='/admin/cash/deleteAll') Почистить всё
-    table.table.table-hover
-      tr
-        th Ссылка
-        th Последнее изменеие в
-        th Добавлено в кэш
-        th За это время просмотров:
-        th
-      each n in docs
-          tr
-            td= n.name
-            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
-            td= n.addedToCash.format('dd-MM-yyyy hh:mm:ss')
-            td= n.counter
-            td
-              a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить 
-    h3 Времена старта сервера
-    table.table.table-hover
-        each n in starts
-            tr
-                td!= (new Date(n)).format('dd-MM-yyyy hh:mm:ss')
+	.row    
+		+pageHeader()
+			| Вот что в кэше
+		.col-xl-5.text-right
+			a.btn.btn-info.btn-move-left(href='/admin/cash/deleteAll')
+				span.btn-label
+					i.fas.fa-broom
+				| #{'  '}Почистить всё
+			
+	.row
+		+mainCard('Страницы в кэше')
+			.table-responsive
+				table.table.table-hover
+					tr
+						th Ссылка
+						th Последнее изменеие в
+						th Добавлено в кэш
+						th За это время просмотров:
+						th
+					each n in docs
+						tr
+							td= n.name
+							td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+							td= n.addedToCash.format('dd-MM-yyyy hh:mm:ss')
+							td= n.counter
+							td
+							a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить
+		+simpleCard('Времена старта сервера', 4)
+			.table-responsive
+				table.table.table-hover
+					each n in starts
+						tr
+							td!= (new Date(n)).format('dd-MM-yyyy hh:mm:ss')

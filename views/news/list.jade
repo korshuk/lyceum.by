@@ -1,22 +1,44 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'news';
+  - var menuSection = 'content'
 
 block content
-    div.page-header
-        h1 Список новостей
-        a.btn.btn-primary(href='/admin/news/create') Добавить новую
-    table.table.table-hover
-      tr
-        th Название
-        th Создана
-        th Обновлена
-        th
-      each n in docs
-          tr
-            td= n.name.ru
-            td= n.createdAt.format('dd-MM-yyyy hh:mm:ss')
-            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
-            td  
-              a(href="/admin/news/"+n.id+"/edit") Редактировать
-              br
-              a(href="/admin/news/"+n.id+"/delete") Удалить 
-            
+    +listPageHeader('Новости', 'Добавить новую', '/admin/news/create')
+    .row
+        +mainCard('Список')  
+            .row
+              .col-sm-12.col-md-12.text-right
+                  +contentPaginationInfo()
+              .col-sm-12.col-md-12
+                  +contentPagination('/admin/news')
+            .table-responsive
+              table.table.table-hover
+                thead.text-primary
+                  tr
+                    th.text-center #
+                    th Название
+                    th Создана
+                    th Обновлена
+                    th.text-right Действия
+                tbody    
+                  each doc, index in docs
+                    if doc
+                      tr
+                        td.text-center= index+1 + pageNum *20
+                        td= doc.name.ru
+                        td= doc.createdAt.format('dd-MM-yyyy hh:mm:ss')
+                        td= doc.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+                        td.text-right
+                          a.btn.btn-success.btn-icon.btn-sm(href="/admin/news/"+doc.id+"/edit", type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                            i.fa.fa-edit
+                          | #{' '}    
+                          a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/news/"+doc.id+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                            i.fa.fa-times
+            .row
+              .col-lg-12
+                +contentPagination('/admin/news')                
+              

@@ -1,24 +1,46 @@
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+include ../stuff/adminIntarface/lang-selector-tabs-nav
+
 extends ../adminLayout
+append menuVars
+  - var menuPage = 'media';
+  - var menuSection = 'content'
 
 block content
-    div.page-header
-        h1 Список новостей про Лицей в СМИ
-        a.btn.btn-primary(href='/admin/media/create') Добавить новую
-    table.table.table-hover
-      tr
-        th Название источника
-        th Название статьи
-        th Создана
-        th Обновлена
-        th
-      each n in docs
-          tr
-            td= n.name.ru
-            td= n.body.ru
-            td= n.createdAt.format('dd-MM-yyyy hh:mm:ss')
-            td= n.updatedAt.format('dd-MM-yyyy hh:mm:ss')
-            td  
-              a(href="/admin/media/"+n.id+"/edit") Редактировать
-              br
-              a(href="/admin/media/"+n.id+"/delete") Удалить 
-            
+    +listPageHeader('Новости про Лицей в СМИ', 'Добавить новую', '/admin/media/create')
+    .row
+        +mainCard('Список')  
+            .row
+              .col-sm-12.col-md-12.text-right
+                  +contentPaginationInfo()
+              .col-sm-12.col-md-12
+                  +contentPagination('/admin/media')
+            .table-responsive
+              table.table.table-hover
+                thead.text-primary
+                  tr
+                    th.text-center #
+                    th Источник
+                    th Название статьи
+                    th Создана
+                    th Обновлена
+                    th.text-right Действия
+                tbody    
+                  each doc, index in docs
+                    if doc
+                      tr
+                        td.text-center= index+1 + pageNum *20
+                        td= doc.name.ru
+                        td= doc.body.ru
+                        td= doc.createdAt.format('dd-MM-yyyy hh:mm:ss')
+                        td= doc.updatedAt.format('dd-MM-yyyy hh:mm:ss')
+                        td.text-right
+                            a.btn.btn-success.btn-icon.btn-sm(href="/admin/media/"+doc.id+"/edit", type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                              i.fa.fa-edit
+                            | #{' '}    
+                            a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/media/"+doc.id+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                              i.fa.fa-times
+            .row
+              .col-lg-12
+                +contentPagination('/admin/media')         

@@ -1,0 +1,61 @@
+mixin mainCard(caption)
+    .col-xl-7  
+        .card
+            .card-header
+                h3.card-title #{caption}
+            .card-body
+                block    
+
+mixin simpleCard(caption, columnWidth)
+    div(class="col-xl-#{columnWidth}")    
+        .card
+            .card-header
+                h3.card-title #{caption}
+            .card-body
+                block                 
+
+mixin pageHeader()
+    .col-xl-7 
+        h2
+            block
+
+mixin listPageHeader(pageName, btnName, addUrl)
+    .row
+        .col-xl-7
+            .row
+                .col-sm-8
+                    h2 #{pageName}    
+                .col-sm-4.text-right
+                    +addNewDocBtn(btnName, addUrl)
+
+mixin listHeader(pageName, btnName, addUrl)
+    .row
+        .col-xl-7
+            .row
+                .col-sm-8
+                    h2 #{pageName}                      
+
+mixin contentPaginationInfo()
+    #datatable_info.dataTables_info(role='status', aria-live='polite') Показаны с #{1 + pageNum *20}-ой по #{ pageNum *20 + docs.length}-ую записи из #{docksCount}
+
+mixin contentPagination(baseUrl)
+    #datatable_paginate.dataTables_paginate.paging_full_numbers
+        ul.pagination
+            li#datatable_previous.paginate_button.page-item.previous(class="#{+pageNum === 0 ? 'disabled' : ''}")
+                a.page-link(href='#{baseUrl}?page=#{+pageNum - 1}', aria-controls='datatable', data-dt-idx='0', tabindex='0') 
+                    i.fas.fa-arrow-left
+                    | #{' '}Сюда
+            - var n = 0
+            while n < pagesCount
+                li.paginate_button.page-item(class="#{+pageNum === n ? 'active' : ''}")
+                    a.page-link(href='#{baseUrl}?page=#{n}', aria-controls='datatable', data-dt-idx='#{0 + n}', tabindex='0') #{n + 1}
+                - n++
+            li#datatable_next.paginate_button.page-item.next(class="#{+pageNum === pagesCount - 1 ? 'disabled' : ''}")
+                a.page-link(href='#{baseUrl}?page=#{+pageNum + 1}', aria-controls='datatable', data-dt-idx='#{0 + n}', tabindex='0') 
+                    | Туда#{' '}
+                    i.fas.fa-arrow-right
+mixin infoBlock()
+    .alert.alert-info.alert-with-icon
+        span.fas.fa-info-circle(data-notify="icon")
+        span(data-notify="message")
+            block

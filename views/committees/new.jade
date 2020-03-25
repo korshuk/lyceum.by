@@ -1,23 +1,30 @@
-include ../stuff/mixins/form-helper
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+  - var menuPage = 'committees';
+  - var menuSection = 'exams';
 block content
-    div.page-header
-        if doc.name
-            h1 Редактирование комиссии
-        else
-            h1 Новая комиссия
     form.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/committees/' + doc.id : '/admin/pupils/committees' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")
-        div.row
-            div.panel.panel-default
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование комиссии
+                else
+                    | Новая комиссия
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/pupils/committees') 
+        
+        .row
+            +mainCard('Информация')
                 +field('select', "subject", 'Предмет', subjects, doc.subject)(value= doc.subject || '')
                 +field('text', "head", 'Председатель')(value= doc.head || '')
-                +field('textarea', "staff", 'Члены')
+                +field('textarea', "staff", 'Члены')(rows=5)
                     !=(doc.staff || '')
         
-        +buttonSet
 
 block scripts
-    include ../stuff/adminScriptBlock

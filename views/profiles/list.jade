@@ -1,106 +1,130 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'profiles';
+  - var menuSection = 'exams';
 
 block content
-    div.page-header
-        h1 Список профилей
-        a.btn.btn-primary(href='/admin/pupils/profiles/create') Добавить профиль
-    table.table.table-hover
-        tr
-            th Название
-            th Место
-            th I экзамен
-            th II экзамен
-            th Сумма
-        - each doc in docs
-            tr
-                td  
-                    strong #{doc.name}
-                    br
-                    a(href="/admin/pupils/profiles/edit/"+doc.id) Редактировать
-                    br
-                    br
-                    | Мест #{doc.ammount}
-                    br
-                    | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}
-                    br
-                    | без экзаменов #{doc.olymp}
-                    br
-                    br
-                    br
-                    br
-                    br
-                    a(href="/admin/pupils/profiles/delete/"+doc.id) Удалить
+    .row
+        .col-xl-12
+            .row
+                .col-sm-8
+                    h2 Профили   
+                .col-sm-4.text-right
+                    +addNewDocBtn('Добавить профиль', '/admin/pupils/profiles/create')
+    .row
+        +simpleCard('Список', 12) 
+            .table-responsive
+                table.table.table-hover
+                    thead.text-primary
+                        tr
+                            th Название
+                            th Место
+                            th I экзамен
+                            th II экзамен
+                            th Сумма
+                    tbody
+                        each doc, index in docs
+                            tr
+                                td  
+                                    p
+                                        span.h6 #{doc.name} 
+                                        a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/profiles/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                            i.fa.fa-edit
+                                        | #{' '} 
+                                        a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/profiles/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                            i.fa.fa-times
+                                    p
+                                        | Мест #{doc.ammount}
+                                        br
+                                        | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}
+                                        br
+                                        | без экзаменов #{doc.olymp}
+                                    p
+                                        strong Страница с гайдом: 
+                                        | #{doc.guidePage || 'не назначена'}
+                                    .form-group
+                                        span.badge.badge-pill(class="#{doc.firstIsFirst ? 'badge-success' : 'badge-danger'}")
+                                            - if (doc.firstIsFirst)
+                                                | Первый экзамен является первым
+                                            - else 
+                                                | Первый экзамен является вторым 
 
-                td
-                    - if(doc.examPlace)
-                        | #{doc.examPlace.code}
-                        br
-                        | #{doc.examPlace.name}
-                        br
-                        | #{doc.examPlace.address}
-                        br
-                        br
-                        | Кабинетов: #{doc.examPlace.audience.length}
+                                td
+                                    - if(doc.examPlace)
+                                        | #{doc.examPlace.code}
+                                        br
+                                        | #{doc.examPlace.name}
+                                        br
+                                        | #{doc.examPlace.address}
+                                        br
+                                        br
+                                        | Кабинетов: #{doc.examPlace.audience.length}
 
-                td
-                    if (doc.firstUploaded)
-                        strong 1 экзамен готов
-                        br
-                        br
-                    | Предмет: <b>#{doc.firstExamName}</b>
-                    br
-                    | Дата: <b><nobr>(#{doc.firstExamDate.dayToString()}) #{doc.firstExamDate.format('dd.MM.yyyy')}</nobr></b>
-                    br
-                    | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
-                    
-                    br
-                    br
-                    | pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
-                    br
-                    br
-                    a(href="/admin/pupils/profiles/results/"+doc.id + "/1") Загрузка результатов
-                    br
-                    a(href="/admin/pupils/profiles/results/assign/"+doc.id + "/1") Расшифровка результатов
-                    br
-                    br
-                    - if (doc.firstIsFirst)
-                        | Первый экзамен является первым
-                    - else 
-                        | Первый экзамен является вторым    
-                td
-                    if (doc.secondUploaded)    
-                        strong 2 экзамен готов
-                        br
-                        br
-                    | Предмет: <b>#{doc.secondExamName}</b>
-                    br
-                    | Дата: <b><nobr>(#{doc.secondExamDate.dayToString()}) #{doc.secondExamDate.format('dd.MM.yyyy')}</nobr></b>
-                    br
-                    | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
-                    
-                    br
-                    br
-                    | pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
-                    br
-                    br
-                    a(href="/admin/pupils/profiles/results/"+doc.id + "/2") Загрузка результатов
-                    br
-                    a(href="/admin/pupils/profiles/results/assign/"+doc.id + "/2") Расшифровка результатов
-                    
-                    
-                td
-                    if (doc.totalUploaded)
-                        strong Зачисление готово
-                        br
-                        br
-                    | pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
-                    br
-                    br
-                    | Проходной:&nbsp;#{doc.passT}
-                    br
-                    | Полупроходной:&nbsp;#{doc.halfpass}
-                    br
-                    | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
-                    br
-                    | Дельта:&nbsp;#{doc.halfDelta}
-                    
+
+                                td
+                                    if (doc.firstUploaded)
+                                        p
+                                            strong 1 экзамен готов
+                                    p
+                                        | Предмет: <b>#{doc.firstExamName}</b>
+                                        br
+                                        | Дата: <b><nobr>(#{doc.firstExamDate.dayToString()}) #{doc.firstExamDate.format('dd.MM.yyyy')}</nobr></b>
+                                        br
+                                        | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
+                                        
+                                    p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
+                                    br
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}Загрузка результатов
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/1")
+                                            span.btn-label
+                                                i.fas.fa-table
+                                            | #{'  '}Расшифровка результатов   
+                                td
+                                    if (doc.secondUploaded)    
+                                        p
+                                            strong 2 экзамен готов
+                                    p
+                                        | Предмет: <b>#{doc.secondExamName}</b>
+                                        br
+                                        | Дата: <b><nobr>(#{doc.secondExamDate.dayToString()}) #{doc.secondExamDate.format('dd.MM.yyyy')}</nobr></b>
+                                        br
+                                        | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
+                                    
+                                    p
+                                        | pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
+                                    br
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/"+doc.id + "/2")
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}Загрузка результатов
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/2")
+                                            span.btn-label
+                                                i.fas.fa-table
+                                            | #{'  '}Расшифровка результатов  
+                                    
+                                td
+                                    if (doc.totalUploaded)
+                                        strong Зачисление готово
+                                        br
+                                        br
+                                    | pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
+                                    br
+                                    br
+                                    | Проходной:&nbsp;#{doc.passT}
+                                    br
+                                    | Полупроходной:&nbsp;#{doc.halfpass}
+                                    br
+                                    | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
+                                    br
+                                    | Дельта:&nbsp;#{doc.halfDelta}
+                                    

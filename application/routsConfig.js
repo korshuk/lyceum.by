@@ -22,7 +22,8 @@
         SotkaController = require('../controllers/sotka').SotkaController,
         MailController = require('../controllers/mail').MailController,
         smsController = require('../controllers/smsController').smsController,
-        ReportController = require('../controllers/report').ReportController;
+        ReportController = require('../controllers/report').ReportController,
+        S3filesController = require('../controllers/s3filesController').S3filesController;
 
         
     exports.configure = function (app) {
@@ -43,6 +44,7 @@
         app.congratulationsController = new CongratulationsController(mongoose);
         app.contactsController = new ContactsController(mongoose, app);
         app.resultsController = new ResultsController(mongoose, app);
+        app.s3filesController = new S3filesController(mongoose, app);
 
         require('../routes/frontRoutes')(app);
 
@@ -60,7 +62,7 @@
         app.placesController = new PlacesController(mongoose, app);
         app.pupilsController = new PupilsController(mongoose, app);
         app.reportController = new ReportController('Report', '', mongoose, app, true);
-
+        
         require('../routes/adminRoutes')(app);
         return app;
     };

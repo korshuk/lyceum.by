@@ -1,34 +1,76 @@
-mixin field(type, name, label, options, selected)
+mixin field(type, name, label, options, selected, caption)
     case type
+        when 'editor'
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        div(id="#{name.split('.').join('')}")
+                        input(name="#{name}", id="#{name.split('.').join('')}Data", hidden="hidden", attributes)
         when 'textarea'
-            .form-group
-                label.col-md-12 #{label}:
-            .col-md-12
-                .form-group
-                    textarea.form-control(name='#{name}', attributes)
-                        block
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        textarea.form-control(name='#{name}', attributes)
+                            block
         when 'select'
-            .col-md-12
-                .form-group
-                    label #{label}:
-                    select.form-control(name='#{name}', attributes)
-                        option(value="") ---
-                        each obj in options
-                            option(value="#{obj.value}", selected=(selected == obj.value)) #{obj.name}
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        select.form-control(name='#{name}', attributes)
+                            option(value="") ---
+                            each obj in options
+                                option(value="#{obj.value}", selected=(selected == obj.value)) #{obj.name}
         when 'checkbox'
-            .col-md-12
-                .checkbox
-                    label
-                        input(type="checkbox", name='#{name}', attributes)
-                        | #{label}
+            .row
+                label.col-sm-3.col-form-label #{caption}:
+                .col-sm-9.checkbox-radios
+                    .form-check
+                        label.form-check-label
+                            input.form-check-input(type="checkbox", name='#{name}', attributes)
+                            span.form-check-sign
+                            | #{label}
+        when 'checkboxSimple'
+            .form-check
+                label.form-check-label
+                    input.form-check-input(type="checkbox", name='#{name}', attributes)
+                    span.form-check-sign
+                    | #{label}
 
+        when 'switch'
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        input.bootstrap-switch(type="checkbox", name='#{name}', data-toggle="switch", data-on-label="<i class='nc-icon nc-check-2'></i>", data-off-label="<i class='nc-icon nc-simple-remove'></i>", data-on-color="success", data-off-color="success", attributes)                 
+        when 'date'
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        input.form-control.datepicker(id="attributes.id", type='text', name='#{name}', value="#{moment(attributes.value).format('DD MMMM (ddd) YYYY')}")
         default
-            .col-md-12
-                .form-group
-                    label #{label}:
-                    input.form-control(type='#{type}', name='#{name}', attributes)
+            .row
+                label.col-sm-3.col-form-label #{label}:
+                .col-sm-9
+                    .form-group
+                        input.form-control(type='#{type}', name='#{name}', attributes)
 
-mixin buttonSet
-    div.row
-        div.col-md-12
-            input.btn.btn-default(type='submit', value='Save')
+mixin buttonSet(backUrl)
+    .form-group
+        a.btn.btn-info.btn-move-left(href="#{backUrl}")
+            span.btn-label
+                i.fa.fa-undo
+            | #{'  '}Отмена
+        button.btn.btn-success.btn-move-left(type='submit', value='Save')
+            span.btn-label
+                i.fa.fa-save
+            | #{'  '}Сохранить    
+
+mixin addNewDocBtn(title, url)
+    a.btn.btn-primary.btn-magnify(href='#{url}')
+        span.btn-label
+            i.fa.fa-plus
+        | #{'  ' + title}

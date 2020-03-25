@@ -23,9 +23,9 @@ CongratulationsController = function (mongoose) {
             doc.name.ru = req.body['name.ru'];
             doc.name.by = req.body['name.by'];
             doc.name.en = req.body['name.en'];
-            doc.image = req.body['image'];
+            doc.imagenew = JSON.parse(req.body['imagenew']);
             doc = self.sirToJsonDoc(doc, req, 'body');
-            doc = self.sirToJsonDoc(doc, req, 'teaser');
+            doc = self.sirToJsonDoc(doc, req, 'teaser');     
             doc = self.checkWidth(doc);
             doc.createdAt = req.body['createdAt'];
             doc.pathAlias = doc.createdAt.format('ddMMyyyyhhmmss');
@@ -52,7 +52,7 @@ CongratulationsController = function (mongoose) {
         var date = new Date();
         doc.pathAlias = date.format('ddMMyyyyhhmmss');
         doc = self.checkWidth(doc);
-        console.log(doc.pathAlias);
+        doc.imagenew = JSON.parse(req.body['imagenew']);
         doc.save(function (err) {
             if (err) {
                 req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';

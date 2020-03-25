@@ -1,38 +1,36 @@
-- var markdown = block.data.text;
 - var html = '';//<table><caption contenteditable></caption><thead><tr></tr></thead><tbody></tbody></table>';
-- var lines = markdown.split("\n");
+- var lines = block.data.content;
 - var caption_re = /\[(.*)\]/;
-- var lastline;
+- var lastlineFirstColumn;
 - var clss;
 - var row;
 - var rowcells;
 - var cellcontent;
 - var medals;
       
-- lastline = lines[lines.length-1];
-if lastline.match(caption_re)
-    - clss = lastline.match(caption_re)[1];
+- lastlineFirstColumn = lines[lines.length-1][0];
+if lastlineFirstColumn.match(caption_re)
+    - clss = lastlineFirstColumn.match(caption_re)[1];
     - lines = lines.slice(0, lines.length-1);
 - html += '<thead><tr>';
-- var captioncells = lines[0].split(" | ");
+- var captioncells = lines[0];
 each content in captioncells
-    - html += '<th>' + parse(content) + '</th>';
+    - html += '<th>' + content + '</th>';
 - html += '</tr></thead>';
 
 - html +='<tbody>';
                 
-- var rows = lines.slice(2, lines.length)
+- var rows = lines.slice(1, lines.length)
     each line in rows
         - row = '<tr>';
-        - rowcells = line.split(" | ");
-        each content in rowcells //(line.split(" | "), function(content) {
-            - cellcontent = parse(content);
+        - rowcells = line;
+        each cellcontent in rowcells //(line.split(" | "), function(content) {
             if locals.olympic
                 - medals = [];
-                if cellcontent === 'n'
+                if cellcontent.trim() === 'n'
                     - cellcontent = '<span class="o-n"></span>';
                 else
-                    - medals = cellcontent.split(' ');
+                    - medals = cellcontent.trim().split(' ');
                     if medals.length === 4
                         - cellcontent = '';
                         if medals[0] != 0
@@ -43,11 +41,11 @@ each content in captioncells
                             - cellcontent += '<span class="o-b">' + medals[2] + '</span>';
                         if medals[3] != 0
                             - cellcontent += '<span class="o-d">' + medals[3] + '</span>';
-            - row += '<td>' + cellcontent + '</th>';
+            - row += '<td>' + cellcontent + '</td>';
         - row += '</tr>';
         - html += row;
 - html += '</tbody>';
 if locals.type
     table(class = locals.type + ' ' + locals.olympic)!= html
 else
-    table(class= clss)!= html
+    table(class= clss)!= html 

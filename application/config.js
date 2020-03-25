@@ -5,6 +5,7 @@
         mongoose = require('mongoose'),
         MongoStore = require('connect-mongo')(express),
         db,
+        moment = require('moment'),
         fs = require('fs'),
         mongoUrl = process.env.MONGO_URL || 'localhost',
         logfile = fs.createWriteStream('./logfile.log', {
@@ -16,7 +17,7 @@
         require('../modules/date.js');
         
         app = express();
-        
+        app.locals.moment = moment;
         app.disable('x-powered-by');
 
         app.configure(function () {

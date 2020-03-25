@@ -1,8 +1,9 @@
   <h2>Настройки протокола вступительного испытания</h2>
 
-  <div class="row">
+
     <form name="app.entranceTestForm" action="" ng-submit="$event.preventDefault()">
-      <div class="col-xs-6">
+      <div class="row">
+      <div class="col-sm-6">
         <div class="form-group">
           <label>Профиль</label>
           <select name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)"
@@ -14,7 +15,7 @@
             профиль</span>
         </div>
       </div>
-      <div class="col-xs-6">
+      <div class="col-sm-6">
         <div class="form-group">
           <label>Предмет</label>
           <select name="subject" class="form-control" ng-model="app.data.subject" required>
@@ -25,21 +26,21 @@
             предмет</span>
         </div>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <label>Начало испытания</label>
           <div uib-timepicker ng-model="app.data.startTime" hour-step="1" minute-step="1" show-meridian="false"></div>
         </div>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <div class="form-group">
           <label>Конец испытания</label>
           <div uib-timepicker ng-model="app.data.endTime" hour-step="1" minute-step="1" show-meridian="false"></div>
         </div>
       </div>
-      <div class="col-xs-12">
+      <div class="col-sm-12">
         <div class="row">
-          <div class="col-xs-4">
+          <div class="col-sm-4">
             <div class="form-group">
               <label>Дата внесения оценок в протокол</label>
               <div class="input-group">
@@ -55,7 +56,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-4">
+          <div class="col-sm-4">
             <div class="checkbox">
                 <label>
                   <input type="checkbox" ng-model="app.data.showPlaces"> Добавить рассадку в таблицу?
@@ -64,7 +65,7 @@
           </div>
         </div>
       </div>
-      <div class="col-xs-6">
+      <div class="col-sm-6">
         <div class="form-group">
           <label>Название текста диктанта (номер варианта контрольной работы) </label>
           <input name="variant" class="form-control" type="text" ng-model="app.data.testVariant" required>
@@ -73,13 +74,12 @@
             текста диктанта (номер варианта контрольной работы)</span>
         </div>
       </div>
-      <div class="col-xs-12">
+      <div class="col-sm-12">
         <div class="form-group">
           <button class="btn btn-success" ng-click="app.onFormSubmit()" type="submit">Получить протокол</button>
           <a class="btn btn-warning" ui-sref="list">Отмена</a>
         </div>
       </div>
-
+      </div>
     </form>
 
-    </span>

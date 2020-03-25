@@ -22,12 +22,22 @@ function define(mongoose, fn) {
             'body': {
                 'ru.data': {
                     type: Array,
-                    required: true
                 },
                 'en.data': {
                     type: Array
                 }, //, required: true}},
                 'by.data': {
+                    type: Array
+                }, //, required: true}},
+            },
+            'bodynew': {
+                'ru.blocks': {
+                    type: Array,
+                },
+                'en.blocks': {
+                    type: Array
+                }, //, required: true}},
+                'by.blocks': {
                     type: Array
                 }, //, required: true}},
             },

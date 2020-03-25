@@ -51,13 +51,21 @@ $(function(){
                 var $table = $('#statsTable tbody');
                 var $tr;
                 var $td;
+                var $p;
                 var profile;
                 $table.html('');
                 for (i = 0; i < length; i++) {
                     profile = profiles[i];
                     $tr = $('<tr>');
-                    $td = $('<td>');
+                    $td = $('<td class="profile-name">');
                     $td.text(profile.name);
+                    if(profile.guidePage && profile.guidePage.length> 0) {
+                        console.log(profile.guidePage)
+                        $p = $('<p><a href="' + profile.guidePage + '" title="гид по профилю" target="_blank">гид по профилю</a></p>')
+                        console.log($p)
+                        $td.append($p);
+                    }
+                    
                     $tr.append($td);
 
                     $td = $('<td>');
@@ -75,7 +83,7 @@ $(function(){
                     $table.append($tr);
                 }
                 var updatedDate =new Date( profiles[0].countArray[profiles[0].countArray.length - 1].date );
-                $("<p>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d/m/Y') + "</p>")
+                $("<p>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
                     .css({
                         'text-align': 'right',
                         'padding-top': '20px'

@@ -1,8 +1,9 @@
 <h2>Статистика по двум экзаменам</h2>
 
-<div class="row">
+
   <form name="app.statsForm" action="" ng-submit="$event.preventDefault()">
-    <div class="col-xs-4">
+    <div class="row">
+    <div class="col-sm-4">
       <div class="form-group">
         <label>Профиль</label>
         <select name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)"
@@ -14,9 +15,9 @@
           профиль</span>
       </div>
     </div>
-    <div class="col-xs-12">
+    <div class="col-sm-12">
         <div class="row">
-          <div class="col-xs-3">
+          <div class="col-sm-3">
               <div class="form-group">
             <label>Столбик для описания</label>
             <select name="barNum" class="form-control"
@@ -25,7 +26,7 @@
             </select>
             </div>
           </div>
-          <div class="col-xs-4">
+          <div class="col-sm-4">
               <div class="form-group">
               <label>С какого балла посчитать до конца</label>
               <select name="barToEndNum" class="form-control"
@@ -38,9 +39,9 @@
             </div>
             
     
-    <div class="col-xs-12">
+    <div class="col-sm-12">
       <div class="row">
-        <div class="col-xs-4">
+        <div class="col-sm-4">
           <div class="form-group">
             <label>Дата</label>
             <div class="input-group">
@@ -57,13 +58,11 @@
       </div>
     </div>
     
-    <div class="col-xs-12">
+    <div class="col-sm-12">
       <div class="form-group">
         <button class="btn btn-success" ng-click="app.onFormSubmit()" type="submit">Получить статистику</button>
         <a class="btn btn-warning" ui-sref="list">Отмена</a>
       </div>
     </div>
-
+    </div>
   </form>
-
-  </span>

@@ -15,7 +15,11 @@ function define(mongoose, fn) {
       'en': {type: String},
       'by': {type: String},
     },
-    'image' : {type: String, required: true},
+    'image' : {type: String},
+    'imagenew': {
+      type: Object,
+      required: true
+    },
     'link' : {type: String, required: true},
 
    	'createdAt': {type: Date, default: Date.now},

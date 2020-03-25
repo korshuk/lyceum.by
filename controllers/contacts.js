@@ -60,6 +60,29 @@ ContactsController = function(mongoose, application) {
       }
     });
   };
+  base.list = function (req, res) {
+    var self = this;
+    this.Collection.find().sort('order').exec(function (err, docs) {
+            var docksCount = docs.length;
+            var pageNum = req.query.page || 0;
+            var pagesCount = Math.ceil(docksCount / 20);
+            var docsToRender = [];
+            for (var i = pageNum * 20; i < pageNum * 20 + 20; i++) {
+                if (docs[i] && docs[i]. _id) {
+                    docsToRender.push(docs[i])
+                }
+                
+            }
+            res.render(self.viewPath + 'list.jade', {
+                docs: docsToRender,
+                pageNum: pageNum,
+                pagesCount: pagesCount,
+                docksCount: docksCount,
+                viewName: self.name.toLowerCase(),
+                siteConfig: self.app ? self.app.siteConfig : {}
+            });
+    });
+};
 
   base.showList = function(req, res) {
       var self = this;

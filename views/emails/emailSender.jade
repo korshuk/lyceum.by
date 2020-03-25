@@ -1,40 +1,56 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+	- var menuPage = 'emails';
+	- var menuSection = 'exams';
 block content
-	div.page-header
-		h1 Рассылка писем
 	.row
-		.col-md-6
-			.panel.panel-default
-				.panel-heading
-					h3.panel-title Рассылка не подавшим заявку
-				.panel-body
+		+pageHeader()
+			| Рассылка писем
+	.row
+		.col-sm-6
+			.row
+				+simpleCard('Рассылка не подавшим заявку', 12)
 					.row
-						.col-xs-12 
+						.col-sm-12
 							p Сейчас <b>#{newPupilsCount}</b> абитуриентов имеют статус <b>"new"</b>
 							p Если нажать эту кнопку, то всем пошлются письма о напоминании подать заявку
 							p В предыдущий раз письма рассылались в <nobr><b>(#{toNewLastTime.dayToString()}) #{toNewLastTime.format('dd.MM.yyyy hh:mm')}</b></nobr>
-							p.bg-info(style="padding: 15px") Письма добавляются в очередь и рассылаются по одному через каждые 0.5 секунд.
-								br
-								| Это значит, что напоминания всем разошлются примерно за #{Math.round(newPupilsCount / 120)} мин.
+							.alert.alert-info.alert-with-icon
+								span(data-notify="icon").fas.fa-exclamation-triangle
+								span(data-notify="message")
+									| Письма добавляются в очередь и рассылаются по одному через каждые <nobr>0.5 секунд.</nobr>
+									br
+									| Это значит, что напоминания всем разошлются примерно за #{Math.round(newPupilsCount / 120)} мин.
 							form(method="POST", action="/admin/pupils/emails/new")
 								.form-group
 									button.btn.btn-danger Разослать письма
-		.col-md-6
-			.panel.panel-default
-				.panel-heading
-					h3.panel-title Рассылка о рассадке
-				.panel-body
-					.row
-						.col-xs-12
-							p Сейчас <b>#{approvedPupilsCount}</b> абитуриентов имеют статус "approved"
-							p Если нажать кнопку, то всем в профиле разошлются письма о месте проведения экзамена и кабинете
-							p.bg-warning(style="padding: 15px") Сервер сам определит на какой экзамен приглашать.
-								br 
-								| Кнопки может не быть либо потому, что еще не сохранена рассадка на соответсвующий экзамен, либо потому, что экзамены уже закончились.
-							p.bg-info(style="padding: 15px") Письма добавляются в очередь и рассылаются по одному через каждые 0.5 секунд.
+			.row
+				+simpleCard('Лог ошибок email', 8)
+					a.btn.btn-info(href="/admin/pupils/emails/log/download") Скачать файл
+					| #{' '}
+					a.btn.btn-danger(href="/admin/pupils/emails/log/clear") Очистить логи
+		+simpleCard('Рассылка о рассадке', 6)
+			.row
+				.col-sm-12
+					p Сейчас <b>#{approvedPupilsCount}</b> абитуриентов имеют статус "approved"
+					p Если нажать кнопку, то всем в профиле разошлются письма о месте проведения экзамена и кабинете
+					.alert.alert-success.alert-with-icon
+						span(data-notify="icon").fas.fa-exclamation-triangle
+						span(data-notify="message")
+							| Сервер сам определит на какой экзамен приглашать.
+							br
+							| Кнопки может не быть либо потому, что еще не сохранена рассадка на соответсвующий экзамен, либо потому, что экзамены уже закончились.
+					.alert.alert-info.alert-with-icon
+						span(data-notify="icon").fas.fa-exclamation-triangle
+						span(data-notify="message")
+							| Письма добавляются в очередь и рассылаются по одному через каждые 0.5 секунд.
+							if (Object.keys(profilesData)[3])
 								br
 								| Это значит, что напоминания для профиля "#{profilesData[Object.keys(profilesData)[3]].name}" разошлются примерно за #{Math.round(profilesData[Object.keys(profilesData)[3]].count / 120)} мин.
+			.table-responsive
 				table.table.table-hover
 					each profile in profilesData
 						tr
@@ -43,12 +59,12 @@ block content
 								| Всего: <b>#{profile.count}</b>, БЭ: <b>#{profile.olympCount}</b>
 								br
 								if (profile.firstDelta > 0 && profile.secondDelta > 0 && profile.audience1 > 0)
-									| Рассажено: <b>#{profile.audience1}</b> 
-								
+									| Рассажено: <b>#{profile.audience1}</b>
+
 								if (profile.firstDelta < 0 && profile.secondDelta > 0 && profile.audience2 > 0)
 									| Рассажено: <b>#{profile.audience2}</b>
-								br	
-							td 
+								br
+							td
 								if (profile.firstDelta > 0 && profile.secondDelta > 0)
 									| Приглашение на <b>1 экзамен</b>
 									br
@@ -57,7 +73,7 @@ block content
 											.form-group
 												button.btn.btn-danger Пригласить на 1 экзамен
 									else
-										| Ещё никто не рассажен		
+										| Ещё никто не рассажен
 								if (profile.firstDelta < 0 && profile.secondDelta > 0)
 									| Приглашение на <b>2 экзамен</b>
 									br
@@ -66,15 +82,7 @@ block content
 											.form-group
 												button.btn.btn-danger Пригласить на 2 экзамен
 									else
-										| Ещё никто не рассажен	
-								if (profile.firstDelta < 0 && profile.secondDelta < 0)	
-									| Экзамены закончились	
-		.col-md-12
-			.panel.panel-default
-				.panel-heading
-					h3.panel-title Лог ошибок email
-				.panel-body
-					a.btn.btn-info(href="/admin/pupils/emails/log/download") Скачать файл
-					| #{' '}
-					a.btn.btn-danger(href="/admin/pupils/emails/log/clear") Очистить логи
-						
+										| Ещё никто не рассажен
+								if (profile.firstDelta < 0 && profile.secondDelta < 0)
+									| Экзамены закончились
+					

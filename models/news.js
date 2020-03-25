@@ -22,12 +22,22 @@ function define(mongoose, fn) {
             'teaser': {
                 'ru.data': {
                     type: Array,
-                    required: true
                 },
                 'en.data': {
                     type: Array
                 }, //, required: true}},
                 'by.data': {
+                    type: Array
+                } //, required: true}},
+            },
+            'teasernew': {
+                'ru.blocks': {
+                    type: Array,
+                },
+                'en.blocks': {
+                    type: Array
+                }, //, required: true}},
+                'by.blocks': {
                     type: Array
                 } //, required: true}},
             },
@@ -42,8 +52,22 @@ function define(mongoose, fn) {
                     type: Array
                 } //, required: true}},
             },
+            'bodynew': {
+                'ru.blocks': {
+                    type: Array
+                },
+                'en.blocks': {
+                    type: Array
+                }, //, required: true}},
+                'by.blocks': {
+                    type: Array
+                } //, required: true}},
+            },
             'image': {
                 type: String
+            },
+            'imagenew': {
+                type: Object
             },
             'createdAt': {
                 type: Date,

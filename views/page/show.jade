@@ -6,7 +6,7 @@ block content
         hr.colored
 
         include ../menu/subMenu
-
+                
         -locals.type = '';
         -locals.olympic = '';
         if (translateObj(doc.type) === 'table') 
@@ -20,29 +20,8 @@ block content
             if (siteConfig.showPupilCabinet && doc.pathAlias === 'abiturientu')
                 include ../results/widget
             else
+                - var blocks = translateObj(doc.bodynew).blocks
                 include ../stuff/sir/sirparser 
-                each block in translateObj(doc.body).data
-                    if (!block.commented)
-                        case block.type
-                            when "heading"
-                                include ../stuff/sir/sirheading
-                            when "heading3"
-                                include ../stuff/sir/sirheading3
-                            when "heading4"
-                                include ../stuff/sir/sirheading4
-                            when "video"
-                                include ../stuff/sir/sirvideo
-                            when "list"
-                                include ../stuff/sir/sirlist
-                            when "table"
-                                include ../stuff/sir/sirtable 
-                            when "text"
-                                include ../stuff/sir/sirtext
-                            when "image"
-                                include ../stuff/sir/sirimage
-                            when "pagebreak"
-                                include ../stuff/sir/pagebreak
-                            when "shopbutton"
-                                include ../stuff/sir/shopbutton
+
                 include ../layout/asidesmall
         include ../layout/aside

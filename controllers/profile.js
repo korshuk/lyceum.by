@@ -77,6 +77,14 @@ var ProfileController = function (mongoose, app) {
     }
 
     function tempImagesUpload(req, res) {
+        var profileId = req.params.id;
+        var examNumber = req.params.examNumber;
+        var scanFile = req.files.resultScan
+
+        app.s3filesController.sendExamScan(scanFile, function(data){
+            scanFile.response = data;
+            res.json({files: [scanFile]})
+        })
     /*    const profileId = req.params.id;
         const examNumber = req.params.examNumber;
         const scanFile = req.files.resultScans[0]
@@ -530,6 +538,7 @@ var ProfileController = function (mongoose, app) {
             doc.totalUploaded = req.body.totalUploaded === 'on';
             doc.olympExams = [];
 
+            doc.guidePage = req.body.guidePage;
             doc.order = req.body.order;
             doc.belLang = req.body.belLang === 'on';
             for (subject in req.body.olympExams) {
@@ -539,11 +548,11 @@ var ProfileController = function (mongoose, app) {
                 if (err) {
                     req.session.error = 'Не получилось обновить профиль(( Возникли следующие ошибки: <p>' + err + '</p>';
                     req.session.locals = {doc: doc};
-                    res.redirect(self.path + '/edit/' + doc.id);
+                    res.redirect('/admin/pupils/profiles/edit/' + doc.id);
                 }
                 else {
                     req.session.success = 'Профиль <strong>' + doc.name + '</strong> обновлен';
-                    res.redirect(self.path);
+                    res.redirect('/admin/pupils/profiles/');
                 }
             });
         });

@@ -27,8 +27,9 @@
                 doc.name.ru = req.body['name.ru'];
                 doc.name.by = req.body['name.by'];
                 doc.name.en = req.body['name.en'];
-                doc.image = req.body['image'];
-
+                if (req.body['imagenew']) {
+                    doc.imagenew = JSON.parse(req.body['imagenew']);
+                }
                 doc = self.sirToJsonDoc(doc, req, 'body');
                 doc = self.sirToJsonDoc(doc, req, 'teaser');
 
@@ -61,11 +62,11 @@
 
             self.sirToJson(req, 'body');
             self.sirToJson(req, 'teaser');
-
+            
             doc = new this.Collection(req.body);
             doc.pathAlias = date.format('ddMMyyyyhhmmss');
             doc = self.checkWidth(doc);
-
+            doc.imagenew = JSON.parse(req.body['imagenew']);
             doc.save(function (err) {
                 if (err) {
                     req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';

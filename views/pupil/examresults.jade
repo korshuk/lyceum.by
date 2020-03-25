@@ -1,35 +1,48 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'examresults';
+  - var menuSection = 'exams';
 
 block content
-    div.page-header
-        h1 Внесение результатов
-    div(ng-app="pupilApp", ng-controller="pupilController as app")
-        div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
-            div.row
-                .col.col-md-2
-                    span.items {{paginationOptions.totalItems}} items total
-                .col.col-md-4
-                    button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
-                .col.col-md-4
+    +listHeader('Внесение результатов');
+    .row
+        +simpleCard('Список абитуриентов', 12)
+            div(ng-app="pupilApp", ng-controller="pupilController as app")
+                div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
+                    .row
+                        .col.text-left
+                            button.btn.btn-primary(type="button", ng-csv="app.exportCSV()", csv-header="app.scvHeader", filename="{{app.getFileName()}}") CSV-export
 
-                .col.col-md-6.text-right
-                    form.form-inline.pull-right.margin-bottom-basic
-                        .form-group
-                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
-                        .form-group.items-per-page
-                            label(for="itemsOnPageSelect1") Items per page:
-                            select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
-                                option 2
-                                option 30
-                                option 50
-                                option 100
-                                option 500
-                                option 1000
-                                option 2000
-                                option 3000
-            .panel.panel-default
-                .panel-body
-                    div.row
+                    .row
+                         .col.col-md-12.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                .col
+                                div
+                                    label.items.col-form-label {{paginationOptions.totalItems}} всего
+                                div
+                                    .form-group
+                                        grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                div     
+                                    .row
+                                        label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                            nobr Items per page:
+                                        .col-sm-6
+                                            .form-group    
+                                                select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                    option 2
+                                                    option 30
+                                                    option 50
+                                                    option 100
+                                                    option 500
+                                                    option 1000
+                                                    option 2000
+                                                    option 3000
+                                        .col-sm-1
+
+                    .row
                         .col-md-3
                             .form-group
                                 label Поиск по фамилии
@@ -70,15 +83,18 @@ block content
                                     option(value="") Все статусы
                                     option(ng-repeat="(key, value) in app.examStatuses track by $index",
                                             value="{{key}}") {{value}}                    
-                    div.row
-                        .col-md-8
-                            .form-group
-                                label.control-label &nbsp;
-                                .row
-                                    .col-xs-12
-                                        a.btn.btn-primary(ng-click="app.calculate()") Пересчитать статистику
+                    
+                    .row
+                        .col-md-6
                             .row
-                                .col-xs-12        
+                                .col-md-12
+                                    .form-group
+                                        a.btn.btn-primary.btn-move-left(href="#", ng-click="app.calculate()")
+                                            span.btn-label
+                                                i.fas.fa-chart-bar
+                                            | #{'  '} Пересчитать статистику
+                            .row
+                                .col-md-10        
                                     table.table
                                         tbody
                                             td
@@ -104,58 +120,86 @@ block content
                                                 | С полупроходным:&nbsp;{{app.getProfile(profile).halfPupils}}
                                                 br
                                                 | Дельта:&nbsp;{{app.getProfile(profile).halfDelta}}  
-                        .col-md-4
-                            .form-group.has-success.text-left
-                                label.control-label Добавить результаты
-                                .row(ng-show="!app.isEditMode1 && !app.isEditMode2")
-                                    .col-xs-6
+                        .col-md-6
+                            .row
+                                label.col-sm-5.col-form-label.text-right 
+                                    br
+                                    nobr Добавить результаты
+                                .col-sm-6
+                                    .form-group(ng-show="!app.isEditMode1 && !app.isEditMode2")
                                         button.btn.btn-success(type="button", ng-click="app.isEditMode1 = true")
                                             | 1 Экзамен
                                         | &nbsp;
                                         button.btn.btn-success(type="button", ng-click="app.isEditMode2 = true")
                                             | 2 Экзамен
-                                .row(ng-show="app.isEditMode1 || app.isEditMode2")  
-                                    .col-xs-6          
-                                    .col-xs-6
+                                    .form-group(ng-show="app.isEditMode1 || app.isEditMode2")  
                                         button.btn.btn-secondary(type="button", ng-click="app.disableEditMode()")
                                             | Отмена
                                         | &nbsp;
                                         button.btn.btn-primary(type="button", ng-click="app.saveChanges()")
                                             | Сохранить
-            table.table.table-hover.table-striped
-                thead
-                    tr
-                        th #&nbsp;
-                        th.sortable(sortable="firstName") firstName&nbsp;
-                        th.sortable(sortable="lastName") lastName&nbsp;
-                        th.sortable(sortable="parentName") parentName&nbsp;
-                        th.sortable(sortable="profile") profile&nbsp;
-                        th.sortable(sortable="passOlymp") БЭ&nbsp;
-                        th.sortable(sortable="exam1") Э-1&nbsp;
-                        th.sortable(sortable="exam2") Э-2&nbsp;
-                        th.sortable(sortable="result1") Бланк 1&nbsp;
-                        th.sortable(sortable="result2") Бланк 2&nbsp;
-                        th.sortable(sortable="sum") Сумма&nbsp;
-                        th.sortable(sortable="examStatus") Экз-статус&nbsp;
-                tbody
-                    tr(grid-item)
-                        td {{$index + 1}}
-                        td {{item.firstName}} 
-                        td {{item.lastName}}
-                        td {{item.parentName}}
-                        td {{item.profile.name}}
-                        td {{item.passOlymp ? 'БЭ' : ''}}
-                        td
-                            span(ng-if='!app.isEditMode1 || item.passOlymp || item.result1.ID') {{item.exam1 === -2 ? 'н' : item.exam1}}
-                            input.form-control(type='text', ng-if='app.isEditMode1 && !item.passOlymp && !item.result1.ID', ng-model="item.exam1")
-                        td
-                            span(ng-if='!app.isEditMode2 || item.passOlymp || item.result2.ID') {{item.exam2 === -2 ? 'н' : item.exam2}}
-                            input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp && !item.result2.ID', ng-model="item.exam2")
-                        td {{item.result1.ID}}
-                        td {{item.result2.ID}}
-                        td {{item.sum}}
-                        td {{app.examStatuses[item.examStatus || '0']}}
+                    
+                    .table-responsive
+                        table.table.table-hover.table-striped.table-bordered.dtr-inline.dataTable
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th.sortable(sortable="firstName") firstName&nbsp;
+                                    th.sortable(sortable="lastName") lastName&nbsp;
+                                    th.sortable(sortable="parentName") parentName&nbsp;
+                                    th.sortable(sortable="profile") profile&nbsp;
+                                    th.sortable(sortable="passOlymp") БЭ&nbsp;
+                                    th.sortable(sortable="exam1", style="width: 70px") Э-1&nbsp;
+                                    th.sortable(sortable="exam2", style="width: 70px") Э-2&nbsp;
+                                    th.sortable(sortable="result1") Бланк 1&nbsp;
+                                    th.sortable(sortable="result2") Бланк 2&nbsp;
+                                    th.sortable(sortable="sum") Сумма&nbsp;
+                                    th.sortable(sortable="examStatus") Экз-статус&nbsp;
+                            tbody
+                                tr(grid-item)
+                                    td.text-center {{$index + 1}}
+                                    td {{item.firstName}} 
+                                    td {{item.lastName}}
+                                    td {{item.parentName}}
+                                    td {{item.profile.name}}
+                                    td {{item.passOlymp ? 'БЭ' : ''}}
+                                    td
+                                        span(ng-if='!app.isEditMode1 || item.passOlymp || item.result1.ID') {{item.exam1 === -2 ? 'н' : item.exam1}}
+                                        input.form-control(type='text', ng-if='app.isEditMode1 && !item.passOlymp && !item.result1.ID', ng-model="item.exam1")
+                                    td
+                                        span(ng-if='!app.isEditMode2 || item.passOlymp || item.result2.ID') {{item.exam2 === -2 ? 'н' : item.exam2}}
+                                        input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp && !item.result2.ID', ng-model="item.exam2")
+                                    td {{item.result1.ID}}
+                                    td {{item.result2.ID}}
+                                    td {{item.sum}}
+                                    td {{app.examStatuses[item.examStatus || '0']}}
 
+                    .row
+                        .col.col-md-12.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                
+                                    .col
+                                    div
+                                        label.items.col-form-label {{paginationOptions.totalItems}} items total #{'   '}
+                                    div
+                                        .form-group.items-per-page
+                                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                    div     
+                                        .row
+                                            label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                                nobr Items per page:
+                                            .col-sm-6
+                                                .form-group
+                                                    select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                        option 2
+                                                        option 30
+                                                        option 50
+                                                        option 100
+                                                        option 500
+                                                        option 1000
+                                                        option 2000
+                                                        option 3000
+                                            .col-sm-1   
 block scripts
-    include ../stuff/adminPupilScriptBlock
+    //include ../stuff/adminPupilScriptBlock
     include pupilResultsApp

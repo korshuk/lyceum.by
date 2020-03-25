@@ -1,4 +1,2 @@
-- var html = parse(block.data.text.trim().replace(/(\r\n|\n|\r)/gm,""));
-
 div.shopbutton-container
-    a.shopbutton.mdl-button.mdl-js-button.mdl-js-ripple-effect(href=html, target="_blank", rel="external")!=translate('Купить')
+    a.shopbutton.mdl-button.mdl-js-button.mdl-js-ripple-effect(href=block.data.url, target="_blank", rel="external")!=translate('Купить')

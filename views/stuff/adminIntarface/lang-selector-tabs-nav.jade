@@ -1,0 +1,17 @@
+mixin langTabs()
+    ul#tabs.nav.nav-pills.nav-pills-primary.nav-pills-icons.justify-content-center(data-tabs="tablist") 
+        li.nav-item 
+            a.nav-link.active(href='#ru', data-toggle="tab", role="tab", aria-expanded="true", aria-selected="true")
+                | RU
+        li.nav-item 
+            a.nav-link(href='#by', data-toggle="tab", role="tab", aria-expanded="true", aria-selected="false")
+                | BY
+        li.nav-item 
+            a.nav-link(href='#en', data-toggle="tab", role="tab", aria-expanded="true", aria-selected="false")
+                | EN
+    .tab-content.tab-space
+        block    
+
+mixin langTab(lang)
+    .tab-pane(id="#{lang}", role="tabpanel", aria-expanded="#{lang === 'ru' ? 'true' : 'false'}", class="#{lang === 'ru' ? 'active' : ''}")
+        block

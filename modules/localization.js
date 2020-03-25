@@ -22,7 +22,7 @@
                 return obj[res.locals.lang || "ru"] || obj.ru;
             };
             res.locals.translateNews = function (obj) {
-                if (obj[res.locals.lang || "ru"].data.length > 0) {
+                if (obj[res.locals.lang || "ru"].blocks.length > 0) {
                     return obj[res.locals.lang || "ru"];
                 } else {
                     return obj.ru;
@@ -55,7 +55,7 @@
                 return obj[renderData.lang || "ru"] || obj.ru;
             };
             renderData.translateNews = function (obj) {
-                if (obj[renderData.lang || "ru"].data.length > 0) {
+                if (obj[renderData.lang || "ru"].blocks.length > 0) {
                     return obj[renderData.lang || "ru"];
                 } else {
                     return obj.ru;

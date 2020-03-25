@@ -38,11 +38,24 @@
     BaseController.prototype.list = function (req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function (err, docs) {
+                var docksCount = docs.length;
+                var pageNum = req.query.page || 0;
+                var pagesCount = Math.ceil(docksCount / 20);
+                var docsToRender = [];
+                for (var i = pageNum * 20; i < pageNum * 20 + 20; i++) {
+                    if (docs[i] && docs[i]. _id) {
+                        docsToRender.push(docs[i])
+                    }
+                    
+                }
                 res.render(self.viewPath + 'list.jade', {
-                docs: docs,
-                viewName: self.name.toLowerCase(),
-                siteConfig: self.app ? self.app.siteConfig : {}
-            });
+                    docs: docsToRender,
+                    pageNum: pageNum,
+                    pagesCount: pagesCount,
+                    docksCount: docksCount,
+                    viewName: self.name.toLowerCase(),
+                    siteConfig: self.app ? self.app.siteConfig : {}
+                });
         });
     };
 
@@ -55,8 +68,13 @@
         } else {
             doc = new self.Collection();
         }
+        var queryId = ""
+        if (req.query && req.query.id) {
+            queryId = req.query.id
+        }
         res.render(self.viewPath + 'new.jade', {
             doc: doc,
+            queryId:queryId,
             method: 'post'
         });
     };
@@ -74,19 +92,19 @@
     BaseController.prototype.checkWidth = function (doc) {
         var caption_re = /\[(.*)\]/,
             lines,
-            lastline,
+            lastlineFirstCol,
             langs = ['ru', 'by', 'en'],
             block,
             i;
         langs.forEach(function (lang) {
-            for (i = 0; i < doc.body.ru.data.length; i++) {
-                block = doc.body[lang].data[i];
+            for (i = 0; i < doc.bodynew.ru.blocks.length; i++) {
+                block = doc.bodynew[lang].blocks[i];
                 if (block != undefined && block.type === 'table') {
-                    lines = block.data.text.split('\n');
-                    lastline = lines[lines.length - 1];
-                    if (lastline.match(caption_re)) {
-                        if (lastline.match(caption_re)[1] === 'table' || lastline.match(caption_re)[1] === 'olymp') {
-                            doc.type[lang] = lastline.match(caption_re)[1];
+                    lines = block.data.content;
+                    lastlineFirstCol = lines[lines.length - 1][0];
+                    if (lastlineFirstCol.match(caption_re)) {
+                        if (lastlineFirstCol.match(caption_re)[1] === 'table' || lastlineFirstCol.match(caption_re)[1] === 'olymp') {
+                            doc.type[lang] = lastlineFirstCol.match(caption_re)[1];
                         }
                     }
                 }
@@ -105,6 +123,15 @@
         if (req.body[name + '.en']) {
             req.body[name + '.en.data'] = JSON.parse(req.body[name + '.en']).data;
         }
+        if (req.body[name + 'new.ru']) {
+            req.body[name + 'new.ru.blocks'] = JSON.parse(req.body[name + 'new.ru']).blocks;
+        }
+        if (req.body[name + 'new.by']) {
+            req.body[name + 'new.by.blocks'] = JSON.parse(req.body[name + 'new.by']).blocks;
+        }
+        if (req.body[name + 'new.en']) {
+            req.body[name + 'new.en.blocks'] = JSON.parse(req.body[name + 'new.en']).blocks;
+        }
     };
 
     BaseController.prototype.sirToJsonDoc = function (doc, req, name) {
@@ -116,6 +143,15 @@
         }
         if (req.body[name + '.en']) {
             doc[name].en.data = JSON.parse(req.body[name + '.en']).data;
+        }
+        if (req.body[name + 'new.ru']) {
+            doc[name + 'new'].ru.blocks = JSON.parse(req.body[name + 'new.ru']).blocks;
+        }
+        if (req.body[name + 'new.by']) {
+            doc[name + 'new'].by.blocks = JSON.parse(req.body[name + 'new.by']).blocks;
+        }
+        if (req.body[name + 'new.en']) {
+            doc[name + 'new'].en.blocks = JSON.parse(req.body[name + 'new.en']).blocks;
         }
 
         return doc;

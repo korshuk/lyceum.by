@@ -1,15 +1,20 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+	- var menuPage = 'test';
+	- var menuSection = 'exams';
 
 block content
-    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
-    script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)
+	//script(src='https://code.jquery.com/jquery-1.11.0.min.js')
+	script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit', async, defer)
+	.row
+		+pageHeader()
+			| Форма для тестов
+	.row
+		+simpleCard('Личный кабинет', 6)
+			include ../results/widget
 
-    .page-header
-        h1 Форма для тестов
-    .row
-        .col.col-md-6
-            include ../results/widget
-
-    include ../results/widgetDialogs
+	include ../results/widgetDialogs
 //script(src='/js/script.min.js')

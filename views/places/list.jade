@@ -1,42 +1,57 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'places';
+  - var menuSection = 'exams';
 
 block content
-    div.page-header
-        h1 Список мест
-        a.btn.btn-primary(href='/admin/pupils/places/create') Добавить место
-        &nbsp;
-        a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
-        &nbsp;
-        a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
-        &nbsp;
-        a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
-        
-        &nbsp;
-        &nbsp;
-        a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv', disabled=!siteConfig.showExamSeats1, target="_blank") .csv для 1 экзамена 
-        &nbsp;
-        a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv', disabled=!siteConfig.showExamSeats2, target="_blank") .csv для 2 экзамена 
-    
-    table.table.table-hover
-        tr
-            th Код
-            th Название
-            th Адрес
-            th Аудитории
-            th
-        - each doc in docs
-            tr
-                td  #{doc.code}
-                td  #{doc.name}
-                td  #{doc.address}
-                td
-                    table.table
-                        - each audience in doc.audience
+    +listPageHeader('Места', 'Добавить место', '/admin/pupils/places/create')
+    .row
+        +mainCard('Список мест')
+            .table-responsive
+                table.table.table-hover
+                    thead.text-primary
+                        tr
+                            th.text-center #
+                            th Код
+                            th Название
+                            th Адрес
+                            th Аудитории
+                            th.text-right Действия
+                    tbody    
+                        each doc, index in docs
                             tr
-                                td #{audience.name}
-                                td #{audience.max}
-                                td #{audience.bel ? 'Бел' :'  '}
-                td
-                    a(href="/admin/pupils/places/edit/"+doc.id) Редактировать
-                    br
-                    a(href="/admin/pupils/places/delete/"+doc.id) Удалить
+                                td.text-center= index+1
+                                td  #{doc.code}
+                                td  #{doc.name}
+                                td  #{doc.address}
+                                td
+                                    table.table
+                                        - each audience in doc.audience
+                                            tr
+                                                td #{audience.name}
+                                                td #{audience.max}
+                                                td #{audience.bel ? 'Бел' :'  '}
+                                td.text-right 
+                                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/places/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                        i.fa.fa-edit
+                                    | #{' '}    
+                                    a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/places/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                        i.fa.fa-times      
+
+        +simpleCard('Дополнительно', 4)
+            h5 Рассадка
+            .form-group.text-right
+                a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
+                &nbsp;
+                a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
+                &nbsp;
+                a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
+            
+            h5 Данные
+            .form-group.text-right
+                a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv', disabled=!siteConfig.showExamSeats1, target="_blank") .csv для 1 экзамена 
+                &nbsp;
+                a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv', disabled=!siteConfig.showExamSeats2, target="_blank") .csv для 2 экзамена 

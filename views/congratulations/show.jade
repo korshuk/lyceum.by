@@ -14,28 +14,10 @@ block content
             - locals.olympic = 'olympic'
         -var blocks;
         section(class= locals.type === 'table' ? 'col-3 clearfix' : 'col-2 clearfix')#content
-            if doc.body[locals.lang || "ru"]
-                - blocks = doc.body[locals.lang || "ru"].data
+            if doc.bodynew[locals.lang || "ru"]
+                - blocks = doc.bodynew[locals.lang || "ru"].blocks
             else
-                - blocks = doc.teaser[locals.lang || "ru"].data
+                - blocks = doc.teasernew[locals.lang || "ru"].blocks
             include ../stuff/sir/sirparser
-            each block in blocks
-                case block.type
-                    when "heading"
-                        include ../stuff/sir/sirheading
-                    when "heading3"
-                        include ../stuff/sir/sirheading3
-                    when "heading4"
-                        include ../stuff/sir/sirheading4
-                    when "video"
-                        include ../stuff/sir/sirvideo
-                    when "list"
-                        include ../stuff/sir/sirlist
-                    when "table"
-                        include ../stuff/sir/sirtable 
-                    when "text"
-                        include ../stuff/sir/sirtext
-                    when "image"
-                        include ../stuff/sir/sirimage
             include ../layout/asidesmall
         include ../layout/aside

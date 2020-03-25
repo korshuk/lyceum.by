@@ -2,6 +2,7 @@ module.exports = function (app) {
     'use strict';
   
     require('../routes/adminSettings')(app);
+    require('../routes/adminMigrations')(app);
     require('../routes/adminSotka')(app);
     require('../routes/adminCash')(app);
     require('../routes/adminFiles')(app);
@@ -21,4 +22,5 @@ module.exports = function (app) {
     require('../routes/adminCommittees')(app);
     //////////////////////////////////////
     require('../routes/adminReport')(app);
+    require('../routes/adminS3Files')(app);
 };

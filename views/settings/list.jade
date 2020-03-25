@@ -1,184 +1,122 @@
-extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+extends ../adminLayout
+append menuVars
+  - var menuPage = 'settings';
+  - var menuSection = 'settings';
 block content
-    div.page-header
-        h1 Настройки
-    form(method='post', action='/admin/settings/')
-        .form-group
-            h2 Настройки личного кабинета
-        div.form-group
-            a.btn.btn-primary(href='/admin/settings/calculateStats') Пересчитать статистику    
-        div.form-group
-            .checkbox
-                label
-                    input#showPupilCabinet(name="showPupilCabinet", type="checkbox", checked=(docs && docs.showPupilCabinet))
-                    | showPupilCabinet
-        div.form-group
-            .checkbox
-                label
-                    input#showStats(name="showStats", type="checkbox", checked=(docs && docs.showStats))
-                    | Показать конкурс на главной
-        hr
-        .form-group
-            h3 Даты
-        .row
-            .col-sm-12
-                h4 Регистрация
-            div.form-group.col-sm-6
-                label Конец регистрации
-                input#registrationEndDate.form-control(name="registrationEndDate", type="text", value=(docs && docs.registrationEndDate))
-            div.form-group.col-sm-6
-                label Уже точно конец
-                input#confirmationEndDate.form-control(name="confirmationEndDate", type="text", value=(docs && docs.confirmationEndDate))
-        .row
-            .col-sm-12
-                h4 Резарвный день
-            div.form-group.col-sm-6
-                label Дата резервного дня
-                input#reservedDayDate.form-control(name="reservedDayDate", type="text", value=(docs && docs.reservedDayDate))   
-            div.form-group.col-sm-6
-                label Дата конца приема справок
-                input#absentDocumentsDate.form-control(name="absentDocumentsDate", type="text", value=(docs && docs.absentDocumentsDate))    
-        .row
-            .col-sm-12
-                h4 Итоги вступительной кампании
-            div.form-group.col-sm-6
-                label Дата появления итогов
-                input#totalResultsDate.form-control(name="totalResultsDate", type="text", value=(docs && docs.totalResultsDate))
-            div.form-group.col-sm-6
-                label Дата до конца приема документов поступивших
-                input#endDocumentsDate.form-control(name="endDocumentsDate", type="text", value=(docs && docs.endDocumentsDate))        
+    form#dataForm.form-horizontal(method='post', action='/admin/settings/')
+        .row    
+            +pageHeader()
+                | Настройки
+             .col-md-5.text-right
+                .form-group
+                    a.btn.btn-primary.btn-move-left(href='/admin/settings/calculateStats')
+                        span.btn-label
+                            i.fas.fa-chart-bar
+                        | #{'  '}Пересчитать статистику                       
+                    button.btn.btn-success.btn-move-left(type='submit', value='Save')
+                        span.btn-label
+                            i.fa.fa-save
+                        | #{'  '}Сохранить  
+    
+        
+        h2.card-title Настройки личного кабинета 
+        
             
         .row
-            .col-sm-6
-                .row 
-                    .col-xs-12
-                        h4 Согласие абитуриента
-                    div.form-group.col-sm-12
-                        label Текст возле галочки
-                        p.bg-warning(style="padding: 15px") Если это поле заполнено, то абитуриенту при подаче заявки предложат поставить галочку и согласиться с текстом поля
-                        textarea#agreement.form-control(name="agreement", rows="2")
-                            | #{docs && docs.agreement}
-            .col-sm-6
-                .row 
-                    .col-xs-12 
-                        h4 Видео инструкция о регистрации
-                    div.form-group.col-sm-12
-                        label Ссылка на Youtube
-                        input#registrationVideoLink.form-control(name="registrationVideoLink", type="text", value=(docs && docs.registrationVideoLink))        
+            .col-md-6
+                .row
+                    +simpleCard('Главное', 12) 
+                        h5 Личный кабинет
+                        +field('switch', "showPupilCabinet", 'Показывать')(checked=(docs && docs.showPupilCabinet ))#showPupilCabinet
+                        h5 Конкурс на главной
+                        +field('switch', "showStats", 'Показывать')(checked=(docs && docs.showStats ))#showStats
+                        h5 Супер пароль
+                        +field('text', "superPassword", 'Пароль')(value=(docs && docs.superPassword))#superPassword
 
-
-        hr
-        .form-group
-            h3 Правила приёма
-        .row    
-            div.form-group.col-sm-12
-                label Ссылка на правила приёма
-                input#rulesLink.form-control(name="rulesLink", type="text", value=(docs && docs.rulesLink))
-            div.form-group.col-sm-6
-                label Пункт правил про олимпиадные предметы
-                input#rulesOlympPoint.form-control(name="rulesOlympPoint", type="text", value=(docs && docs.rulesOlympPoint)) 
-            div.form-group.col-sm-6
-                label Пункт правил про преимущественное право на зачисление
-                input#rulesHalfPassPoint.form-control(name="rulesHalfPassPoint", type="text", value=(docs && docs.rulesHalfPassPoint))        
-        div.form-group
-            label Правила приёма
-            textarea#rulesHTML.form-control(name="rulesHTML", rows="10")
-                | #{docs && docs.rulesHTML}
-
-        hr
-        div.form-group
-            label Супер пароль
-            input#superPassword.form-control(name="superPassword", type="text", value=(docs && docs.superPassword))
-        hr
-        .form-group
-            h3 Для зачисленных
+                    +simpleCard('Даты', 12)
+                        h5 Регистрация
+                        +field('date', "registrationEndDate", 'Конец регистрации')(value=(docs && docs.registrationEndDate ))#registrationEndDate
+                        +field('text', "confirmationEndDate", 'Уже точно конец')(value=(docs && docs.confirmationEndDate))#confirmationEndDate
+                        h5 Резервный день
+                        +field('text', "reservedDayDate", 'Конец регистрации')(value=(docs && docs.reservedDayDate))#reservedDayDate
+                        +field('text', "absentDocumentsDate", 'Конец приема справок')(value=(docs && docs.absentDocumentsDate))#absentDocumentsDate
+                        h5 Итоги вступительной кампании
+                        +field('text', "totalResultsDate", 'Появление итогов')(value=(docs && docs.totalResultsDate))#totalResultsDate
+                        +field('text', "endDocumentsDate", 'Конец приема документов поступивших')(value=(docs && docs.endDocumentsDate))#endDocumentsDate
+                    +simpleCard('Правила приёма', 12)
+                        +field('text', "rulesLink", 'Ссылка на правила')(value=(docs && docs.rulesLink))#rulesLink
+                        h5 Пункты правил
+                        +field('text', "rulesOlympPoint", 'Про олимпиадные предметы')(value=(docs && docs.rulesOlympPoint))#rulesOlympPoint
+                        +field('text', "rulesHalfPassPoint", 'Про преимущественное право')(value=(docs && docs.rulesHalfPassPoint))#rulesHalfPassPoint
+                        h5 Правила приёма
+                        +field('textarea', "rulesHTML", 'HTML правил')( rows="10")#rulesHTML #{docs && docs.rulesHTML} 
+                    
+            .col-md-6        
+                .row
+                    +simpleCard('Разное', 12)
+                        h5 Согласие абитуриента 
+                        +infoBlock 
+                            | Если это поле заполнено, то абитуриенту при подаче заявки предложат поставить галочку и согласиться с текстом поля
+                        +field('textarea', "agreement", 'Текст возле галочки')( rows="3")#agreement #{docs && docs.agreement} 
+                        h5 Видео инструкция о регистрации
+                        +field('text', "registrationVideoLink", 'Ссылка на Youtube')(value=(docs && docs.registrationVideoLink))#registrationVideoLink
+            
+                    +simpleCard('Для зачисленных', 12)
+                        h5 Анкета для рекомендованных к зачислению
+                        +field('text', "anketaLink", 'Ссылка на google doc')(value=(docs && docs.anketaLink))#anketaLink
+                        h5 Сообщение, которое появится у всех зачисленных
+                        p.card-category (например, приглашение на "Hello, карапузы")
+                        +field('textarea', "helloMessage", 'Текст')( rows="4")#helloMessage #{docs && docs.helloMessage} 
+                                
+        h2.card-title Настройки работы сайта 
         .row
-            .form-group.col-sm-6
-                label Анкета для рекомендованных к зачислению
-                p (ссылка на google doc)
-                input#anketaLink.form-control(name="anketaLink", type="text", value=(docs && docs.anketaLink))
-            .form-group.col-sm-6
-                label Сообщение, которое появится у всех зачисленных
-                p (например, приглашение на "Hello, карапузы")
-                textarea#helloMessage.form-control(name="helloMessage", rows="4")
-                    | #{docs && docs.helloMessage}
-        hr  
-        .form-group
-            h3 eMails
-            p Мы используем “application-specific password” для лучшей безопасности
-            p За подробностями можно оборатиться к 
-                a(href="https://lyceumbsu.atlassian.net/wiki/spaces/WEBSITE/pages/4030500/gmail", target="_blank") страничке на Confluence
-        .row
-            div.form-group.col-sm-6
-                label Первый email
-                input#email1.form-control(name="email1", type="text", value=(docs && docs.email1))
-                label Первый email - пароль
-                input#email1Pass.form-control(name="email1Pass", type="text", value=(docs && docs.email1Pass))
-            div.form-group.col-sm-6
-                label Втрой email
-                input#emai21.form-control(name="email2", type="text", value=(docs && docs.email2))
-                label Втрой email - пароль
-                input#email2Pass.form-control(name="email2Pass", type="text", value=(docs && docs.email2Pass))
-            div.form-group.col-sm-6
-                label Третий email
-                input#email3.form-control(name="email3", type="text", value=(docs && docs.email3))
-                label Третий email - пароль
-                input#email3Pass.form-control(name="email3Pass", type="text", value=(docs && docs.email3Pass))
-            div.form-group.col-sm-6
-                label Четвертый email
-                input#email4.form-control(name="email4", type="text", value=(docs && docs.email4))
-                label Четвертый email - пароль
-                input#email4Pass.form-control(name="email4Pass", type="text", value=(docs && docs.email4Pass))
-        hr
-        .form-group
-            h3 WEBSMS
-        .row
-            .form-group.col-lg-6
-                label Login
-                input#websmsLogin.form-control(name="smsAPILogin", type="text", value=(docs && docs.smsAPILogin))
-            .form-group.col-lg-6
-                label API-key(
-                    a(href="https://websms.by/") можно узнать тут
-                    | )
-                input#websmsKey.form-control(name="smsAPIKey", type="text", value=(docs && docs.smsAPIKey))
-            .form-group.col-lg-6
-                label От этого имени придут смс
-                input#websmsName.form-control(name="smsAPIName", type="text", value=(docs && docs.smsAPIName))
-            .form-group.col-lg-6
-                label Секретный код подтверждения
-                input#websmsSecretCode.form-control(name="smsAPISecretCode", type="text", value=(docs && docs.smsAPISecretCode))
+            .col-md-6        
+                .row
+                    +simpleCard('Отправка сообщений', 12)  
+                        h5 eMails
+                        p.card-category 
+                            | Мы используем “application-specific password” для лучшей безопасности
+                            br
+                            | За подробностями можно оборатиться к 
+                            a(href="https://lyceumbsu.atlassian.net/wiki/spaces/WEBSITE/pages/4030500/gmail", target="_blank") страничке на Confluence
+                        
+                        +field('text', "email1", 'Первый email')(value=(docs && docs.email1))#email1
+                        +field('text', "email1Pass", 'Первый email - пароль')(value=(docs && docs.email1Pass))#email1Pass
+                        
+                        +field('text', "email2", 'Первый email')(value=(docs && docs.email2))#email2
+                        +field('text', "email2Pass", 'Первый email - пароль')(value=(docs && docs.email2Pass))#email2Pass
+                        
+                        +field('text', "email3", 'Первый email')(value=(docs && docs.email3))#email3
+                        +field('text', "email3Pass", 'Первый email - пароль')(value=(docs && docs.email3Pass))#email3Pass
 
-        hr
-        .form-group
-            h2 Технические вещи
-        .form-group
-            h3 reCAPTCHA
-        .row
-            .form-group.col-lg-6
-                label Ключ (
-                    a(href="https://www.google.com/recaptcha/admin") можно узнать тут
-                    |)
-                input#reSiteKey.form-control(name="reSiteKey", type="text", value=(docs && docs.reSiteKey))
-        hr    
-        div.form-group
-            label clientAppName
-            input#clientAppName.form-control(name="clientAppName", type="text", value=(docs && docs.clientAppName))
-        div.form-group
-            label clientAppSecret
-            input#clientAppSecret.form-control(name="clientAppSecret", type="text", value=(docs && docs.clientAppSecret))
-        div.row
-            div.col.col-lg-12
-                input.btn.btn-default(type='submit', value='Save')
+                        +field('text', "email4", 'Первый email')(value=(docs && docs.email4))#email4
+                        +field('text', "email4Pass", 'Первый email - пароль')(value=(docs && docs.email4Pass))#email4Pass
 
+                        h5 WEBSMS
+                        p.card-category 
+                            | Подробнее  
+                            a(href="https://websms.by/") можно узнать здесь
+                        +field('text', "smsAPILogin", 'Login')(value=(docs && docs.smsAPILogin))#websmsLogin
+                        +field('text', "smsAPIKey", 'API-key')(value=(docs && docs.smsAPIKey))#websmsKey
+                        +field('text', "smsAPIName", 'От этого имени придут смс')(value=(docs && docs.smsAPIName))#websmsName
+                        +field('text', "smsAPISecretCode", 'Секретный код подтверждения')(value=(docs && docs.smsAPISecretCode))#websmsSecretCode
+                
+            .col-md-6        
+                .row  
+                    +simpleCard('Технические вещи', 12)
+                        h5 reCAPTCHA
+                        +infoBlock 
+                            | Ключ 
+                            a.text-white(href="https://www.google.com/recaptcha/admin") можно узнать тут
+                        +field('text', "reSiteKey", 'Ключ')(value=(docs && docs.reSiteKey))#reSiteKey
+                        h5 Tokens
+                        +field('text', "clientAppName", 'clientAppName')(value=(docs && docs.clientAppName))#clientAppName
+                        +field('text', "clientAppSecret", 'clientAppSecret')(value=(docs && docs.clientAppSecret))#clientAppSecret
+                        h5 Amazone S3
+                        +field('text', "s3AccessKeyId", 'AccessKeyId')(value=(docs && docs.s3AccessKeyId))#s3AccessKeyId
+                        +field('text', "s3SecretAccessKey", 'SecretAccessKey')(value=(docs && docs.s3SecretAccessKey))#s3SecretAccessKey
+                        +field('text', "s3Hostname", 'Hostname')(value=(docs && docs.s3Hostname))#s3Hostname
 block scripts
-    include ../stuff/adminScriptBlock
-
-    script
-        $('#registrationEndDate').datetimepicker();
-        $('#confirmationEndDate').datetimepicker();
-        $('#absentDocumentsDate').datetimepicker();
-        $('#reservedDayDate').datetimepicker();
-        $('#totalResultsDate').datetimepicker();
-        $('#endDocumentsDate').datetimepicker();
-        

@@ -20,7 +20,7 @@ MediaController = function(mongoose) {
     var self = this;
     this.Collection.findByReq(req, res, function(doc){
       doc.name.ru = req.body['name.ru'];
-      doc.image = req.body['image'];
+      doc.imagenew = JSON.parse(req.body['imagenew']);
       doc.name.by = req.body['name.by'];
       doc.name.en = req.body['name.en'];
       doc.body.ru = req.body['body.ru'];
@@ -47,6 +47,7 @@ MediaController = function(mongoose) {
     var self = this;
     var doc = new this.Collection(req.body);
     var date = new Date();
+    doc.imagenew = JSON.parse(req.body['imagenew']);
     doc.save(function(err) {
       if (err) {
         req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';

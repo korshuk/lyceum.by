@@ -1,15 +1,23 @@
 extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
 
+append menuVars
+	- var menuPage = 'users';
+	- var menuSection = 'users';
 block content
-    div.page-header
-        h1: Список пользователей
-        a.btn.btn-primary(href='/admin/users/create') Добавить нового
-    table.table.table-hover
-      - each u in users
-          tr
-            td= u.name
-            td
-              a(href="/admin/users/"+u.id.toHexString()+"/edit") Edit
-            td
-              a(href="/admin/users/"+u.id.toHexString()+"/delete") Delete me 
-            td= u.createdAt
+	+listPageHeader('Список пользователей', 'Добавить нового', '/admin/users/create')
+	.row
+		+mainCard('Список мест')
+			.table-responsive
+				table.table.table-hover
+					- each u in users
+							tr
+								td= u.name
+								td= u.createdAt
+								td.text-right 
+									a.btn.btn-success.btn-icon.btn-sm(href="/admin/users/"+u.id.toHexString()+"/edit", type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+										i.fa.fa-edit
+									| #{' '}    
+									a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/users/"+u.id.toHexString()+"/delete", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+										i.fa.fa-times 

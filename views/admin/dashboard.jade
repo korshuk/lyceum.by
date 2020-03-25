@@ -1,0 +1,381 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+	- var menuPage = '';
+	- var menuSection = '';
+block content
+	.row
+		+pageHeader()
+			| Админка
+	.row
+		.col-sm-12
+			h4 Ресурсы сервера
+		.col-lg-3.col-md-6.col-sm-6
+			.card.card-stats
+				.card-body
+					.row
+						.col-5.col-md-4
+							.icon-big.text-center.icon-warning
+								i.fas.fa-microchip.text-warning
+						.col-7.col-md-8
+							.numbers
+								p.card-category Процессор
+								p.card-title #{cpuUsage.toFixed(4)}%
+		.col-lg-3.col-md-6.col-sm-6
+			.card.card-stats
+				.card-body
+					.row
+						.col-5.col-md-4
+							.icon-big.text-center.icon-warning
+								i.fas.fa-memory.text-info
+						.col-7.col-md-8
+							.numbers
+								p.card-category Память
+								p.card-title #{Math.round(freemem)}/#{totalmem}MB
+		.col-lg-3.col-md-6.col-sm-6
+			.card.card-stats
+				.card-body
+					.row
+						.col-5.col-md-4
+							.icon-big.text-center.icon-warning
+								i.fas.fa-hdd.text-success
+						.col-7.col-md-8
+							.numbers
+								p.card-category Место
+								p.card-title #{size}MB						
+	.row
+		.col-sm-12
+			h4 Вступительная кампания
+		.col-lg-3.col-md-6.col-sm-6
+			.row
+				.col-sm-12
+					.card.card-stats
+						.card-body
+							.row
+								.col-5.col-md-4
+									.icon-big.text-center.icon-warning
+										i.fas.fa-baby.text-success
+								.col-7.col-md-8
+									.numbers
+										p.card-category Всего
+										p.card-title #{totalP} Чел.
+				.col-sm-12
+					.card.card-stats
+						.card-body
+							.row
+								.col-5.col-md-4
+									.icon-big.text-center.icon-warning
+										i.fas.fa-baby.text-warning
+								.col-7.col-md-8
+									.numbers
+										p.card-category Олимпиадники
+										p.card-title #{passOlymp || 0} Чел.						
+		.col-md-4.col-sm-6
+			.card
+				.card-header
+					h5.card-title Распределение по статусам
+				.card-body
+					canvas#chartUsers.ct-chart.ct-perfect-fourth(width="456", height="300")
+	.row			
+		.col-md-4.col-sm-6
+			.card
+				.card-header
+					h5.card-title Конкурс
+				.card-body
+					canvas#chartConcurs.ct-chart.ct-perfect-fourth(width="456", height="300")				
+		.col-md-8.col-sm-12
+			.card
+				.card-header
+					h5.card-title Подача заявок
+				.card-body
+					canvas#chartProfiles.ct-chart.ct-perfect-fourth(width="456", height="300")
+	div(style="display:none")
+		textarea(id="profileCodes", cols="30", rows="10")
+				| #{JSON.stringify(profiles.codes)}
+		textarea(id="profileAmmounts", cols="30", rows="10")
+				| #{JSON.stringify(profiles.ammounts)}
+		textarea(id="profileOlymp", cols="30", rows="10")
+				| #{JSON.stringify(profiles.olymp)}
+		textarea(id="profileNames", cols="30", rows="10")
+				| #{JSON.stringify(profiles.names)}
+		textarea(id="profileDates", cols="30", rows="10")
+				| #{JSON.stringify(profiles.dates)}		
+		each pointsArray, index in profiles.points
+			textarea(id="pointsArray#{index}", cols="30", rows="10")
+				| #{JSON.stringify(pointsArray)}
+			
+									
+
+block scripts
+	script.
+		var ctx1 = document.getElementById('chartUsers').getContext("2d");
+		var colors = [
+			'#51bcda',
+			'#6bd098',
+			'#fbc658',
+			'#ef8157',
+			'#7859c3',
+			'#E56399',
+			'#7F96FF',
+			'#8C5383',
+			'#59C3C3',
+			'#d730e2',
+			'#ECE2D0',
+			'#FF928B',
+			'#FEC3A6',
+			'#241E4E',
+			
+		];
+		myChart = new Chart(ctx1, {
+		type: 'pie',
+		data: {
+			labels: ['approved', 'unapproved', 'new', 'new clear'],
+			datasets: [{
+			label: "Emails",
+			pointRadius: 0,
+			pointHoverRadius: 0,
+			backgroundColor: [
+				'#6bd098',
+				'#ef8157',
+				'#51cbce',
+				'#fbc658'
+
+			],
+			borderWidth: 0,
+			data: [#{approvedP}, #{unapprovedP}, #{newP}, #{newClearP}]
+			}]
+		},
+		options: {
+
+			legend: {
+
+				display: true
+			},
+
+			tooltips: {
+				enabled: true
+			},
+
+			scales: {
+			yAxes: [{
+
+				ticks: {
+				display: false
+				},
+				gridLines: {
+				drawBorder: false,
+				zeroLineColor: "transparent",
+				color: 'rgba(255,255,255,0.05)'
+				}
+
+			}],
+
+			xAxes: [{
+				barPercentage: 1.6,
+				gridLines: {
+				drawBorder: false,
+				color: 'rgba(255,255,255,0.1)',
+				zeroLineColor: "transparent"
+				},
+				ticks: {
+				display: false,
+				}
+			}]
+			},
+		}
+		});
+
+		var ctx2 = document.getElementById('chartProfiles').getContext("2d");
+		var dates = JSON.parse($('#profileDates').val())
+		var names = JSON.parse($('#profileNames').val())
+		var codes = JSON.parse($('#profileCodes').val())
+		var olymp = JSON.parse($('#profileOlymp').val())
+		var ammounts = JSON.parse($('#profileAmmounts').val())
+		
+		
+		var datasets = [];
+		var concursData = [];
+		codes.forEach(function(name, i){
+			var lineName = name;
+			if (i === names.length - 1) {
+				lineName = 'Всего'
+			}
+			var data = [];
+			var points = JSON.parse($('#pointsArray'+i).val());
+			points.forEach(function(point, index) {
+				var d = new Date(dates[index]);
+				data.push({
+					t: d.valueOf(),
+					y: point
+				})
+			});
+			console.log(data.length)
+			concursData.push(((points[points.length - 1] - olymp[i]) / (ammounts[i] - olymp[i])).toFixed(2) )
+			datasets.push({
+					label: lineName,
+					backgroundColor: colors[i] || colors[i - colors.length],
+					borderColor: colors[i] || colors[i - colors.length],
+					fill: false,
+					pointRadius: 0,
+					pointHoverRadius: 0,
+					borderWidth: 3,
+					data: data,
+					lineTension: 0
+			})
+		})
+		
+		myChart = new Chart(ctx2, {
+			type: 'line',
+			data: {
+				datasets: datasets
+			},
+			options: {
+				legend: {
+					display: true
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							fontColor: "#9f9f9f",
+							fontStyle: "bold",
+							beginAtZero: true,
+							maxTicksLimit: 5,
+							padding: 20
+						},
+						gridLines: {
+							zeroLineColor: 'rgba(0,0,0,0.2)',
+							display: true,
+							drawBorder: false,
+							color: 'rgba(0,0,0,0.2)',
+						}
+
+					}],
+
+					xAxes: [{
+						type: 'time',
+						distribution: 'series',
+						offset: true,
+						time: {
+							parser: 'MM/DD/YYYY',
+							tooltipFormat: 'DD MMMM ',
+							distribution: 'series',
+							displayFormats: {
+								hour: 'DD.MM',
+								day: 'DD.MM'
+							}
+						},
+						gridLines: {
+							drawBorder: false,
+							color: 'rgba(0,0,0,0.1)',
+							zeroLineColor: "transparent",
+							display: true,
+						},
+						ticks: {
+							padding: 10,
+							major: {
+								enabled: true,
+								fontStyle: 'bold'
+							},
+							fontColor: "#9f9f9f",
+							source: 'data',
+							autoSkip: true,
+							autoSkipPadding: 30,
+							maxRotation: 0
+						},
+						/*labelInterpolationFnc: function(value) {
+							return moment(value).format('DD MMM');
+						},*/
+						
+					}]
+				},
+				tooltips: {
+					enabled: true,
+					intersect: false,
+					mode: 'index',
+					callbacks: {
+						label: function(tooltipItem, myData) {
+							var label = myData.datasets[tooltipItem.datasetIndex].label || '';
+							if (tooltipItem.datasetIndex === names.length - 1) {
+								label = 'Всего'
+							}
+							if (label) {
+								label += ': ';
+							}
+							label += tooltipItem.yLabel;
+							return label;
+						}
+					}
+				}
+			}
+		});
+
+		ctx3 = document.getElementById('chartConcurs').getContext("2d");
+
+		myChart = new Chart(ctx3, {
+		type: 'horizontalBar',
+		data: {
+			labels: codes,
+			datasets: [
+				{
+					label: "Конкурс",
+					borderColor: '#ef8157',
+					fill: true,
+					backgroundColor: '#ef8157',
+					hoverBorderColor: '#ef8157',
+					borderWidth: 3,
+					data: concursData,
+				}
+			]
+		},
+		options: {
+			tooltips: {
+
+			},
+
+
+			legend: {
+				display: false
+			},
+			scales: {
+
+				yAxes: [{
+					ticks: {
+						fontColor: "#9f9f9f",
+						fontStyle: "bold",
+						beginAtZero: true,
+						maxTicksLimit: 5,
+						padding: 20
+					},
+					gridLines: {
+						zeroLineColor: '#9f9f9f',
+						display: false,
+						drawBorder: true,
+						color: '#9f9f9f',
+					}
+
+				}],
+				xAxes: [{
+					barPercentage: 0.4,
+					gridLines: {
+						zeroLineColor: '#9f9f9f',
+						display: true,
+
+						drawBorder: true,
+						color: '#9f9f9f',
+					},
+					ticks: {
+						padding: 10,
+						fontColor: "#9f9f9f",
+						fontStyle: "bold",
+						maxRotation: 0
+					}
+				}]
+			},
+		}
+		});
+
+
+
+

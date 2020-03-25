@@ -50,7 +50,7 @@ var PageController = function (mongoose, application) {
                     res.redirect(self.path + '/' + doc.id + '/edit');
                 } else {
                     application.menuController.generate(self.Collection);
-                    req.session.success = 'Страница <strong>' + doc.name + '</strong> обновлена';
+                    req.session.success = 'Страница <strong>' + doc.name.ru + '</strong> обновлена';
                     res.redirect(self.path);
                 }
             });
@@ -59,10 +59,8 @@ var PageController = function (mongoose, application) {
 
     base.save = function (req, res) {
         var self = this;
-        console.log(req.body);
-        console.log(JSON.parse(req.body['body.ru']));
+        
         self.sirToJson(req, 'body');
-        console.log(req.body);
         var doc = new this.Collection(req.body);
         doc = self.checkWidth(doc);
         if (doc.name['ru']) {

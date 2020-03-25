@@ -1,52 +1,70 @@
 include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+include ../stuff/adminIntarface/lang-selector-tabs-nav
+
 extends ../adminLayout
+append menuVars
+  - var menuPage = 'congratulations';
+  - var menuSection = 'content'
 
 block content
-    div.page-header
-        if method === 'put'
-            h1 Редактирование поздравления
-        else
-            h1 Новое поздравление
     form.form-horizontal(method='post', action= method === 'put' ? '/admin/congratulations/' + doc.id : '/admin/congratulations' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")   
-
-            +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker 
-
-        div.row
-            div.panel.panel-default
-                ul.nav.nav-tabs#tabNav
-                    li.active 
-                        a(href='#ru', data-toggle="tab") RU
-                    li 
-                        a(href='#by', data-toggle="tab") BY
-                    li 
-                        a(href='#en', data-toggle="tab") EN
-                br
-                div.tab-content
-                    div.tab-pane.fade.in.active#ru
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование поздравления
+                else
+                    | Новое поздравление
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/congratulations')
+        .row
+            +mainCard('Содержание')
+                +langTabs()
+                    +langTab('ru')  
                         +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
-                        +field('textarea', 'teaser.ru', 'Текст на главную')#teaser-ru
-                            !=JSON.stringify(doc.teaser.ru)
-                        +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15') 
-                            !=JSON.stringify(doc.body.ru)
-                    div.tab-pane.fade#by
-                        +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
-                        +field('textarea', 'teaser.by', 'Текст на главную')#teaser-by
-                            !=JSON.stringify(doc.teaser.by)
-                        +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
-                            !=JSON.stringify(doc.body.by)
-                    div.tab-pane.fade#en
-                        +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
-                        +field('textarea', 'teaser.en', 'Текст на главную')#teaser-en
-                            !=JSON.stringify(doc.teaser.en)
-                        +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
-                            !=JSON.stringify(doc.body.en)
+                        +field('editor', "teasernew.ru", 'Текст на главную')(value= JSON.stringify(doc.teasernew.ru) || '')
+                        +field('editor', "bodynew.ru", 'Содержание')(value= JSON.stringify(doc.bodynew.ru) || '')
+                    +langTab('by')  
+                        +field('text', "name.by", 'Название')(value= doc.name.by || '')
+                        +field('editor', "teasernew.by", 'Текст на главную')(value= JSON.stringify(doc.teasernew.by) || '')
+                        +field('editor', "bodynew.by", 'Содержание')(value= JSON.stringify(doc.bodynew.by) || '')
+                    +langTab('en')  
+                        +field('text', "name.en", 'Название')(value= doc.name.en || '')
+                        +field('editor', "teasernew.en", 'Текст на главную')(value= JSON.stringify(doc.teasernew.en) || '')
+                        +field('editor', "bodynew.en", 'Содержание')(value= JSON.stringify(doc.bodynew.en) || '')
+                          
+               
+            +simpleCard('Дополнительно', 5)
+                .row
+                    - var className = "fileinput-new"
+                    - var inputValue = ''
+                    if doc && doc.imagenew && doc.imagenew.file
+                        - className = "fileinput-exists";
+                        - inputValue = JSON.stringify(doc.imagenew)
+                        
+                    label.col-sm-3.col-form-label Картинка к поздравлению:
+                    .col-sm-9
+                        #fileInputContainer.form-group(class=className)
+                            .thumbnail
+                                if doc && doc.imagenew && doc.imagenew.file
+                                    img#fileInputThumbnail(src='#{doc.imagenew.file.url}', alt='...')
+                                else
+                                    img#fileInputThumbnail(src='/assets/img/image_placeholder.jpg', alt='...')
+                                .progress(style="display: none")
+                                    .progress-bar(role="progressbar", style="width: 0%", aria-valuenow="0", aria-valuemin="0", aria-valuemax="100")
+                            
+                            span.btn.btn-success.btn-file.btn-magnify
+                                i.fas.fa-cloud-upload-alt
+                                | #{'  '}
+                                span.fileinput-new Загрузить
+                                span.fileinput-exists Изменить
+                                input( type="hidden",  value=inputValue, name="imagenew")#imagenew
+                                input#fileuploadImg(type="file", name="fileupload", data-url="/admin/images/mainImageUpload")
 
-        +field('textarea', 'image', 'Картинка к поздравлению')#image
-            !=doc.image || ''
-
-        +buttonSet
+                if method === 'put'
+                    +field('text', "createdAt", 'Дата создания')(value= doc.createdAt || '')#datetimepicker 
 
 block scripts
-    include ../stuff/adminScriptBlock

@@ -1,80 +1,76 @@
 include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+include ../stuff/adminIntarface/lang-selector-tabs-nav
+
 extends ../adminLayout
 
+append menuVars
+  - var menuPage = 'pages';
+  - var menuSection = 'content'
+
 block content
+    - var parentPage
+    - if (doc.parentpage) {
+    -    parentPage = doc.parentpage
+    - } else if (method === 'post' && queryId) {
+    -    parentPage = queryId
+    -}
     script
         isPage = true;
-    div.page-header
-        if doc.name.ru
-            h1 Редактирование страницы
-        else
-            h1 Новая страница
     form.form-horizontal(method='post', action= method === 'put' ? '/admin/pages/' + doc.id : '/admin/pages' )
         if method === 'put'
-            input(type="hidden", name="_method", value="put")
-        div.row
-            div.panel.panel-default
-                ul.nav.nav-tabs#tabNav
-                    li.active 
-                        a(href='#ru', data-toggle="tab") RU
-                    li 
-                        a(href='#by', data-toggle="tab") BY
-                    li 
-                        a(href='#en', data-toggle="tab") EN
-                br
-                div.tab-content
-                    div.tab-pane.fade.in.active#ru
-                        .row
-                            .col-lg-12
-                                .col-lg-12
-                                    +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
-                                    +field('textarea', "body.ru", 'Содержание')#body-ru(rows='15')
-                                        != JSON.stringify(doc.body.ru)
-                                    +field('textarea', "keywords.ru", 'Ключевые слова')(rows='2')
-                                        != doc.keywords.ru || ''
-                                    +field('textarea', "description.ru", 'Описание')(rows='2')
-                                        != doc.description.ru || ''
-                    div.tab-pane.fade#by
-                        .row
-                            .col-lg-12
-                                .col-lg-12
-                                    +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
-                                    +field('textarea', "body.by", 'Содержание')#body-by(rows='15')
-                                        != JSON.stringify(doc.body.by)
-                                    +field('textarea', "keywords.by", 'Ключевые слова')(rows='2')
-                                        != doc.keywords.by || ''
-                                    +field('textarea', "description.by", 'Описание')(rows='2')
-                                        != doc.description.by || ''
-                    div.tab-pane.fade#en
-                        .row
-                            .col-lg-12
-                                .col-lg-12
-                                    +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
-                                    +field('textarea', "body.en", 'Содержание')#body-en(rows='15')
-                                        != JSON.stringify(doc.body.en)
-                                    +field('textarea', "keywords.en", 'Ключевые слова')(rows='2')
-                                        != doc.keywords.en || ''
-                                    +field('textarea', "description.en", 'Описание')(rows='2')
-                                        != doc.description.en || ''
-        div.row
-            .col
+            input(type="hidden", name="_method", value="put")    
+        
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование страницы
+                else
+                    | Новая страница
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/pages')
+        .row
+            +mainCard('Содержание')
+                
+                +langTabs()    
+                    +langTab('ru')  
+                        +field('text', "name.ru", 'Название')(value= doc.name.ru || '')
+                        +field('editor', "bodynew.ru", 'Содержание')(value= JSON.stringify(doc.bodynew.ru) || '')
+                        +field('textarea', "keywords.ru", 'Ключевые слова')(rows='2')
+                            != doc.keywords.ru || ''
+                        +field('textarea', "description.ru", 'Описание')(rows='2')
+                            != doc.description.ru || ''
+                    +langTab('by') 
+                        +field('text', "name.by", 'Название')(value= doc.name['by'] || '')
+                        +field('editor', "bodynew.by", 'Содержание')(value= JSON.stringify(doc.bodynew.by) || '')
+                        +field('textarea', "keywords.by", 'Ключевые слова')(rows='2')
+                            != doc.keywords.by || ''
+                        +field('textarea', "description.by", 'Описание')(rows='2')
+                            != doc.description.by || ''
+                    +langTab('en') 
+                        +field('text', "name.en", 'Название')(value= doc.name['en'] || '')
+                        +field('editor', "bodynew.en", 'Содержание')(value= JSON.stringify(doc.bodynew.en) || '')
+                        +field('textarea', "keywords.en", 'Ключевые слова')(rows='2')
+                            != doc.keywords.en || ''
+                        +field('textarea', "description.en", 'Описание')(rows='2')
+                            != doc.description.en || ''     
+            
+            +simpleCard('Дополнительно', 5)
                 if doc.name.ru
                     +field('text', 'pathAlias', 'Путь')(value= doc.pathAlias || '')
 
-                +field('number', 'order', 'Order')(value= doc.order || 0)
-        div.row
-            .col
-                label Родительская страница:
-            div.col.col-lg-12
-                .form-group
-                    select(name='parentpage')
-                        option(value='') Нет
-                        each parent in parents
-                          option(value= parent.id, selected= doc.parentpage == parent.id)= parent.name.ru
-        div.row
-            .col
-                hr
-                +buttonSet
+                +field('number', 'order', 'Порядок')(value= doc.order || 0)
+                .row
+                    label.col-sm-3.col-form-label Верхняя страница:
+                    .col-sm-9
+                        .form-group
+                            select.form-control(name='parentpage')
+                                option(value='') Нет
+                                each parent in parents
+                                    option(value= parent.id, selected= parentPage == parent.id)= parent.name.ru
 
 block scripts
-    include ../stuff/adminScriptBlock
+    //- var data= JSON.stringify(doc.bodynew)
+    // script.
+        //const data = JSON.parse( "#{data}".replace(/&quot;/g,'"').replace(/&amp;smallQuot;/g,'\\"').replace(/&lt;/g,'<').replace(/&gt;/g,'>') );//.replace(/\\\-/g, "-").replace(/\n/g, "").replace( '"type":"text"', '"type":"paragraph"') );
