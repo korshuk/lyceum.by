@@ -126,8 +126,7 @@ function recreateBlocks (datas, doc){
     for(var i = 0; i < datas.length; i++) {
         block = datas[i];
         if (block.type === "paragraph") {
-            block.data.text = block.data.text.split('&smallQuot3;').join("'");
-            block.data.text = block.data.text.split('&smallQuot;').join("'");
+            block.data.text = block.data.text.split('&smallQuot;').join('"');
             blocks.push(block);
         }
         
@@ -139,7 +138,7 @@ function recreateBlocks (datas, doc){
         }
         if (block.type === "list") {
             for(var j = 0; j < block.data.items.length; j++) {
-                block.data.items[j] = block.data.items[j].split('&smallQuot;').join("'");
+                block.data.items[j] = block.data.items[j].split('&smallQuot;').join('"');
             }
             blocks.push(block);
         }

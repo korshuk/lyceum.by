@@ -7533,7 +7533,8 @@
                 }, {
                     key: "setCallback",
                     value: function() {
-                        this.Editor.Listeners.on(document, "paste", this.handlePasteEvent)
+                        var element = document.getElementById(this.Editor.UI.config.holder)
+                        this.Editor.Listeners.on(element, "paste", this.handlePasteEvent)
                     }
                 }, {
                     key: "processTools",
