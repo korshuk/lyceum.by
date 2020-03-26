@@ -98,88 +98,91 @@ block content
                                 span.btn-label
                                     i.fas.fa-arrow-right
 
-            +simpleCard('Изображения', 4)
-                h5 Справка
-                if (doc.requestImg)
-                    if (doc.requestImg.substr(doc.requestImg.lastIndexOf('.') + 1) === 'pdf')
-                        br
-                        a(href="/images/pupils/#{doc.requestImg}", title="pdf. файл", target="_blank") файл справки
-                    else
-                        div
-                            img#requestImg.img-responsive(src="/images/pupils/#{doc.requestImg}")
+            .col-xl-8
+                +simpleCard('Статус', 12)
+                    .row
+                        .col-xl-4
+                            .alert.alert-success
+                                span
+                                    b= doc.status
+                        .col-xl-8         
+                            +field('checkbox', "recommended", 'Зачислен', '', '', 'Автоматическое зачисление')(checked=(doc.recommended)) 
+  
+                +simpleCard('Изображения', 12)
+                    h5 Справка
+                    if (doc.requestImg)
+                        if (doc.requestImg.substr(doc.requestImg.lastIndexOf('.') + 1) === 'pdf')
+                            br
+                            a(href="/images/pupils/#{doc.requestImg}", title="pdf. файл", target="_blank") файл справки
+                        else
+                            div
+                                img#requestImg.img-responsive(src="/images/pupils/#{doc.requestImg}")
 
-                        div.controls.request
-                            a#rotate_left(href="#", title="Rotate left")
-                                i.fas.fa-undo
-                            a#zoom_out(href="#", title="Zoom out")
-                                i.fa.fa-search-minus
-                            a#fit(href="#", title="Fit image")
-                                i.fa.fa-arrows-alt
-                            a#zoom_in(href="#", title="Zoom in")
-                                i.fa.fa-search-plus
-                            a#rotate_right(href="#", title="Rotate right")
-                                i.fas.fa-redo
-                else
-                    p Не загружена
-
-                if doc.diplomImg
-                    br
-                    br
-                    h5 Диплом
-                    if (doc.diplomImg.substr(doc.diplomImg.lastIndexOf('.') + 1) === 'pdf')
-                        br
-                        a(href="/images/pupils/#{doc.diplomImg}", title="pdf. файл", target="_blank") файл диплома
+                            div.controls.request
+                                a#rotate_left(href="#", title="Rotate left")
+                                    i.fas.fa-undo
+                                a#zoom_out(href="#", title="Zoom out")
+                                    i.fa.fa-search-minus
+                                a#fit(href="#", title="Fit image")
+                                    i.fa.fa-arrows-alt
+                                a#zoom_in(href="#", title="Zoom in")
+                                    i.fa.fa-search-plus
+                                a#rotate_right(href="#", title="Rotate right")
+                                    i.fas.fa-redo
                     else
-                        div
-                            img#diplomImg.img-responsive(src="/images/pupils/#{doc.diplomImg}")
-                        div.controls.diplom
-                            a#rotate_left(href="#", title="Rotate left")
-                                i.fas.fa-undo
-                            a#zoom_out(href="#", title="Zoom out")
-                                i.fa.fa-search-minus
-                            a#fit(href="#", title="Fit image")
-                                i.fa.fa-arrows-alt
-                            a#zoom_in(href="#", title="Zoom in")
-                                i.fa.fa-search-plus
-                            a#rotate_right(href="#", title="Rotate right")
-                                i.fa.fas.fa-redo
-            .col-xl-4
+                        p Не загружена
+
+                    if doc.diplomImg
+                        br
+                        br
+                        h5 Диплом
+                        if (doc.diplomImg.substr(doc.diplomImg.lastIndexOf('.') + 1) === 'pdf')
+                            br
+                            a(href="/images/pupils/#{doc.diplomImg}", title="pdf. файл", target="_blank") файл диплома
+                        else
+                            div
+                                img#diplomImg.img-responsive(src="/images/pupils/#{doc.diplomImg}")
+                            div.controls.diplom
+                                a#rotate_left(href="#", title="Rotate left")
+                                    i.fas.fa-undo
+                                a#zoom_out(href="#", title="Zoom out")
+                                    i.fa.fa-search-minus
+                                a#fit(href="#", title="Fit image")
+                                    i.fa.fa-arrows-alt
+                                a#zoom_in(href="#", title="Zoom in")
+                                    i.fa.fa-search-plus
+                                a#rotate_right(href="#", title="Rotate right")
+                                    i.fa.fas.fa-redo
+
+            +simpleCard('Действия', 4)
                 .row
-                    +simpleCard('Статус', 12)
-                        .alert.alert-success
-                            span
-                                b= doc.status
-                        label Автоматическое зачисление
-                        +field('checkboxSimple', "recommended", 'Зачислен')(checked=(doc.recommended)) 
-                .row    
-                    +simpleCard('Действия', 12)
-                        .row
-                            label.col-sm-3.col-form-label Справка:
-                            .col-sm-9.checkbox-radios
-                                +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
-                                +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
-                                +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
-                                +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
-                                +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
-                        +field('textarea', "message", 'Сообщение для абитуриента')(value= doc.message || '').form-control(rows="5")
-                        .row
-                            .col-md-12
-                                .form-group.text-right
-                                    button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
-                                    | #{' '}
-                                    button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
-                                        | Отклонить заявку #{'  '}
-                                        span.btn-label
-                                            i.fas.fa-arrow-right
+                    label.col-sm-3.col-form-label Справка:
+                    .col-sm-9.checkbox-radios
+                        +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
+                        +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
+                        +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
+                        +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
+                        +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
+                +field('textarea', "message", 'Сообщение для абитуриента')(value= doc.message || '').form-control(rows="5")
+                .row
+                    .col-md-12
+                        .form-group.text-right
+                            button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+                            | #{' '}
+                            button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
+                                | Отклонить заявку #{'  '}
+                                span.btn-label
+                                    i.fas.fa-arrow-right
 
-                        .row
-                            .col-md-6
-                            .col-md-6.text-right
-                                .form-group
-                                    button#deleteUser.btn.btn-warning.btn-magnify(type='submit', name="action", value='pupil_delete') 
-                                        span.btn-label
-                                            i.fas.fa-user-slash
-                                        |  #{'  '}Удалить!!! 
+                .row
+                    .col-md-6
+                    .col-md-6.text-right
+                        .form-group
+                            button#deleteUser.btn.btn-warning.btn-magnify(type='submit', name="action", value='pupil_delete') 
+                                span.btn-label
+                                    i.fas.fa-user-slash
+                                |  #{'  '}Удалить!!! 
+
  block scripts
     script(src="/javascripts/guillotine/jquery.guillotine.min.js")
 

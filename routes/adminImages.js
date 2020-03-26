@@ -184,14 +184,20 @@ module.exports = function(app) {
 
 			fs.unlink(reqFile.path);
 			
-			if (image.bitmap.width > image.bitmap.height) {
-				dwidth = 620;
-				mwidth = 300;
-				imageType = 'wide';
-			}
-			else {
-				dwidth = 300;
-				mwidth = 100;
+			if (image.bitmap.width >= 300) {
+				if (image.bitmap.width > image.bitmap.height) {
+					dwidth = 620;
+					mwidth = 300;
+					imageType = 'wide';
+				}
+				else {
+					dwidth = 300;
+					mwidth = 100;
+					imageType = 'narrow';
+				}
+			} else {
+				dwidth = 150;
+				mwidth = 150;
 				imageType = 'narrow';
 			}
 		  

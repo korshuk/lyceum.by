@@ -20,6 +20,7 @@ module.exports = function (app) {
                     var doc;
                     for(var i = 0; i < docs.length; i++) {
                         var doc = docs[i];
+                        /*
                         if (doc.image) {
                             if (doc.image[0] === ',') {
                                 doc.image = doc.image.slice(1,doc.image.length)
@@ -31,14 +32,16 @@ module.exports = function (app) {
                                 console.log('err', JSON.parse(doc.image))
                             }
                             
-                        }
+                        }*/
 
-                        doc.bodynew.ru.blocks = recreateBlocks(doc.body.ru.data, doc);
-                        doc.teasernew.ru.blocks = recreateBlocks(doc.teaser.ru.data, doc);
-                        doc.bodynew.by.blocks = recreateBlocks(doc.body.by.data, doc);
-                        doc.teasernew.by.blocks = recreateBlocks(doc.teaser.by.data, doc);
-                        doc.bodynew.en.blocks = recreateBlocks(doc.body.en.data, doc);
-                        doc.teasernew.en.blocks = recreateBlocks(doc.teaser.en.data, doc);
+                        doc.bodynew.ru.blocks = recreateBlocks(doc.bodynew.ru.blocks, doc);
+                        doc.teasernew.ru.blocks = recreateBlocks(doc.teasernew.ru.blocks, doc);
+                        doc.bodynew.by.blocks = recreateBlocks(doc.bodynew.by.blocks, doc);
+                        doc.teasernew.by.blocks = recreateBlocks(doc.teasernew.by.blocks, doc);
+                        doc.bodynew.en.blocks = recreateBlocks(doc.bodynew.en.blocks, doc);
+                        doc.teasernew.en.blocks = recreateBlocks(doc.teasernew.en.blocks, doc);
+                        doc.markModified('bodynew') 
+                        doc.markModified('teasernew') 
                         doc.save();
                     }
                 })
@@ -48,7 +51,7 @@ module.exports = function (app) {
                     var doc;
                     for(var i = 0; i < docs.length; i++) {
                         var doc = docs[i];
-                        if (doc.image) {
+                       /* if (doc.image) {
                             if (doc.image[0] === ',') {
                                 doc.image = doc.image.slice(1,doc.image.length)
                             }
@@ -59,18 +62,20 @@ module.exports = function (app) {
                                 console.log('err', JSON.parse(doc.image))
                             }
                             
-                        }
+                        }*/
 
-                        doc.bodynew.ru.blocks = recreateBlocks(doc.body.ru.data, doc);
-                        doc.teasernew.ru.blocks = recreateBlocks(doc.teaser.ru.data, doc);
-                        doc.bodynew.by.blocks = recreateBlocks(doc.body.by.data, doc);
-                        doc.teasernew.by.blocks = recreateBlocks(doc.teaser.by.data, doc);
-                        doc.bodynew.en.blocks = recreateBlocks(doc.body.en.data, doc);
-                        doc.teasernew.en.blocks = recreateBlocks(doc.teaser.en.data, doc);
+                        doc.bodynew.ru.blocks = recreateBlocks(doc.teasernew.ru.blocks, doc);
+                        doc.teasernew.ru.blocks = recreateBlocks(doc.teasernew.ru.blocks, doc);
+                        doc.bodynew.by.blocks = recreateBlocks(doc.bodynew.by.blocks, doc);
+                        doc.teasernew.by.blocks = recreateBlocks(doc.teasernew.by.blocks, doc);
+                        doc.bodynew.en.blocks = recreateBlocks(doc.bodynew.en.blocks, doc);
+                        doc.teasernew.en.blocks = recreateBlocks(doc.teasernew.en.blocks, doc);
+                        doc.markModified('bodynew') 
+                        doc.markModified('teasernew') 
                         doc.save();
                     }
                 })  
-        app.mediaController.Collection
+        /*app.mediaController.Collection
                 .find()
                 .exec(function (err, docs) {
                     var doc;
@@ -90,7 +95,7 @@ module.exports = function (app) {
                         }
                         doc.save();
                     }
-                })                
+                }) */               
     }
     
     function updatePages() {
@@ -99,11 +104,13 @@ module.exports = function (app) {
                 .exec(function (err, docs) {
                     var doc;
                     for(var i = 0; i < docs.length; i++) {
-                        doc = docs[i];
-                        doc.bodynew.ru.blocks = recreateBlocks(doc.body.ru.data, doc);
-                        doc.bodynew.by.blocks = recreateBlocks(doc.body.by.data, doc);
-                        doc.bodynew.en.blocks = recreateBlocks(doc.body.en.data, doc);
-                        doc.save();
+                        doc = docs[i]; 
+                        doc.bodynew.ru.blocks = recreateBlocks(doc.bodynew.ru.blocks, doc);
+                        doc.bodynew.by.blocks = recreateBlocks(doc.bodynew.by.blocks, doc);
+                        doc.bodynew.en.blocks = recreateBlocks(doc.bodynew.en.blocks, doc);
+                        
+                        doc.markModified('bodynew') 
+                        doc.save();                        
                     }
                 })
     }
@@ -118,122 +125,35 @@ function recreateBlocks (datas, doc){
 
     for(var i = 0; i < datas.length; i++) {
         block = datas[i];
-        console.log(block.commented)
-        if (block.type === "text") {
-            text = block.data.text.split('\n').join('<br>');
-            blocks.push({
-                type: 'paragraph',
-                data: {
-                    text: parse(text),
-                    commented: block.commented
-                }
-                
-            });
+        if (block.type === "paragraph") {
+            block.data.text = block.data.text.split('&smallQuot3;').join("'");
+            block.data.text = block.data.text.split('&smallQuot;').join("'");
+            blocks.push(block);
         }
-        if (block.type === "heading") {
-            text = block.data.text;
-            blocks.push({
-                type: 'header',
-                data: {
-                    text: parse(text),
-                    level: 2,
-                    commented: block.commented
-                }
-                
-            });
-        }
-        if (block.type === "heading3") {
-            text = block.data.text;
-            blocks.push({
-                type: 'header',
-                data: {
-                    text: parse(text),
-                    level: 3,
-                    commented: block.commented
-                }
-                
-            });
-        }
-        if (block.type === "heading4") {
-            text = block.data.text;
-            blocks.push({
-                type: 'header',
-                data: {
-                    text: parse(text),
-                    level: 4,
-                    commented: block.commented
-                }
-                
-            });
+        
+        if (block.type === "header") {
+            blocks.push(block);
         }
         if (block.type === "video") {
-            blocks.push({
-                type: 'embed',
-                data : {
-                    "service" : "youtube",
-                    "source" : "https://youtu.be/" + block.data.remote_id,
-                    "embed" : "https://www.youtube.com/embed/" +  block.data.remote_id,
-                    "width" : 620,
-                    "height" : 400,
-                    "caption" : "",
-                    commented: block.commented
-                }
-                
-            });
+            blocks.push(block);
         }
         if (block.type === "list") {
-            text = parse( block.data.text.replace(/^ - (.+)$/mg,"$1</li>").replace(/\n/mg, "")).split("</li>")
-            text.pop();
-            blocks.push({
-                type : "list",
-                data : {
-                    "style" : "unordered",
-                    "items" : text,
-                    commented: block.commented
-                } 
-            });
+            for(var j = 0; j < block.data.items.length; j++) {
+                block.data.items[j] = block.data.items[j].split('&smallQuot;').join("'");
+            }
+            blocks.push(block);
         }
         if (block.type === "pagebreak") {
-            blocks.push({
-                type : "delimiter",
-                data : {
-                    commented: block.commented
-                } 
-            });
+            blocks.push(block);
         }
         if (block.type === "shopbutton") {
-            
-            blocks.push({
-                type : "shopbutton",
-                data : {
-                    url: parse(block.data.text),
-                    commented: block.commented
-                } 
-            });
+            blocks.push(block);
         }
         if (block.type === "image") {
-            block.data.commented = block.commented
-            blocks.push({
-                type : "image",
-                data : block.data
-            });
+            blocks.push(block);
         }
         if (block.type === "table") {
-            var rows = block.data.text.split('\n');
-            rows.splice(1,1);
-            for (var j = 0; j < rows.length; j++) {
-                rows[j] = rows[j].split('|');
-                for (var k = 0; k < rows[j].length; k++) {
-                    rows[j][k] = (parse(rows[j][k]))
-                }
-            }
-            blocks.push({
-                type : "table",
-                data : {
-                    content: rows,
-                    commented: block.commented
-                }
-            });
+            blocks.push(block);
         }
        
     }

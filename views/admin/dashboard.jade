@@ -131,7 +131,7 @@ block scripts
 		myChart = new Chart(ctx1, {
 		type: 'pie',
 		data: {
-			labels: ['approved', 'unapproved', 'new', 'new clear'],
+			labels: ['approved', 'unapproved', 'disapproved', 'new', 'new clear'],
 			datasets: [{
 			label: "Emails",
 			pointRadius: 0,
@@ -139,12 +139,12 @@ block scripts
 			backgroundColor: [
 				'#6bd098',
 				'#ef8157',
+				'#fbc658',
 				'#51cbce',
-				'#fbc658'
-
+				'#66615b'
 			],
 			borderWidth: 0,
-			data: [#{approvedP}, #{unapprovedP}, #{newP}, #{newClearP}]
+			data: [#{approvedP}, #{unapprovedP}, #{disapprovedP}, #{newP}, #{newClearP}]
 			}]
 		},
 		options: {

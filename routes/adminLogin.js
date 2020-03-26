@@ -1,6 +1,7 @@
 var osutils = require('os-utils');
 var getSize = require('get-folder-size');
 var path = require('path');
+var async = require('async');
 
 var dateFormat = function () {
 	var	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
@@ -112,58 +113,97 @@ module.exports = function (app) {
 
 	app.get('/admin', function (req, res) {
 		if (res.locals.logged === 'logged') {
-			app.pupilsController.Collection.count({}).exec(function (err, totalP) {
+			var pupils_all = function (callback) {
+				app.pupilsController.Collection.count({})
+					.exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
+			var pupils_approved = function (callback) {
 				app.pupilsController.Collection.count({
 					status: 'approved'
-				}).exec(function (err, approvedP) {
-					app.pupilsController.Collection.count({
-						status: 'new'
-					}).exec(function (err, newP) {
-						app.pupilsController.Collection.count({
-							status: 'new clear'
-						}).exec(function (err, newClearP) {
-							app.pupilsController.Collection.count({
-								status: 'unapproved'
-							}).exec(function (err, unapprovedP) {
-								app.pupilsController.Collection.count({
-									passOlymp: true
-								}).exec(function (err, passOlymp) {
-									app.profileController.Collection.find().exec(function (err, profiles) {
-										osutils.cpuUsage(function (cpuUsage) {
-											getSize(path.resolve(__dirname, '../'), function (err, size) {
-												if (err) {
-													throw err;
-												}
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
+			var pupils_new = function (callback) {
+				app.pupilsController.Collection.count({
+					status: 'new'
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
+			var pupils_new_clear= function (callback) {
+				app.pupilsController.Collection.count({
+					status: 'new clear'
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
+			var pupils_unapproved= function (callback) {
+				app.pupilsController.Collection.count({
+					status: 'unapproved'
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
 
-												res.render('admin/dashboard', {
-													cpuUsage: cpuUsage,
-													totalmem: osutils.totalmem(),
-													memUsage: process.memoryUsage().heapUsed / (1024 * 1024),
-													freemem: osutils.freemem(),
-													size: (size / 1024 / 1024).toFixed(2),
-													totalP: totalP,
-													approvedP: approvedP,
-													unapprovedP: unapprovedP,
-													newP: newP,
-													newClearP: newClearP,
-													passOlymp: passOlymp,
-													profiles: calcProfileStats(profiles)
-												});
-											});
-										});
-									})
-								})
-							})
-						})
-					})
-				})
-			})
+			var pupils_disapproved= function (callback) {
+				app.pupilsController.Collection.count({
+					status: 'disapproved'
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
 
+			var pupils_olymp= function (callback) {
+				app.pupilsController.Collection.count({
+					passOlymp: true
+				}).exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
 
+			var profiles_all= function (callback) {
+				app.profileController.Collection.find()
+				.exec(function (err, data) {
+						queryExecFn(err, data, callback)
+					});
+			};
+				async.parallel([
+					pupils_all, 
+					pupils_approved, 
+					pupils_new, 
+					pupils_new_clear, 
+					pupils_unapproved, 
+					pupils_disapproved, 
+					pupils_olymp, 
+					profiles_all
+				], function (err, results) {
+					osutils.cpuUsage(function (cpuUsage) {
+						getSize(path.resolve(__dirname, '../'), function (err, size) {
+							if (err) {
+								throw err;
+							}
 
-
-
-
+							res.render('admin/dashboard', {
+								cpuUsage: cpuUsage,
+								totalmem: osutils.totalmem(),
+								memUsage: process.memoryUsage().heapUsed / (1024 * 1024),
+								freemem: osutils.freemem(),
+								size: (size / 1024 / 1024).toFixed(2),
+								totalP: results[0],
+								approvedP: results[1],
+								unapprovedP: results[4],
+								disapprovedP: results[5],
+								newP: results[2],
+								newClearP: results[3],
+								passOlymp: results[6],
+								profiles: calcProfileStats(results[7])
+							});
+						});
+					});
+				});				
 		} else {
 			res.render('admin/login');
 		}
@@ -307,6 +347,25 @@ module.exports = function (app) {
 				returnPoints[k].push(v.count)
 			})
 		}
+		var flag = true;
+		var g = -1;
+		while (flag) {
+			g++;
+			for (var m = 0; m < returnPoints.length; m++) {
+				if (returnPoints[m][g] > 0) {
+					flag = false
+				}
+			}
+			
+		}
+
+		dates = dates.slice(g)
+		for (m = 0; m < returnPoints.length; m++) {
+			returnPoints[m] = returnPoints[m].slice(g)
+		}
+	
+
+
 		return {
 			names: returnNames,
 			points: returnPoints,
@@ -316,4 +375,13 @@ module.exports = function (app) {
 			codes: returnCodes
 		}
 	}
+
+	function queryExecFn(err, data, callback) {
+        if (err) {
+            callback(err, null);
+        }
+        else {
+            callback(null, data);
+        }
+    }
 }
