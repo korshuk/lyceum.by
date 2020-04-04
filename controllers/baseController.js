@@ -132,6 +132,9 @@
         if (req.body[name + 'new.en']) {
             req.body[name + 'new.en.blocks'] = JSON.parse(req.body[name + 'new.en']).blocks;
         }
+        if (req.body['messageTemplate']) {
+            req.body['messageTemplate.blocks'] = JSON.parse(req.body['messageTemplate']).blocks;
+        }
     };
 
     BaseController.prototype.sirToJsonDoc = function (doc, req, name) {
@@ -152,6 +155,9 @@
         }
         if (req.body[name + 'new.en']) {
             doc[name + 'new'].en.blocks = JSON.parse(req.body[name + 'new.en']).blocks;
+        }
+        if (req.body['messageTemplate']) {
+            doc['messageTemplate'].blocks = JSON.parse(req.body['messageTemplate']).blocks;
         }
 
         return doc;

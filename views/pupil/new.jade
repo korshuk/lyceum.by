@@ -28,75 +28,117 @@ block content
                             i.fas.fa-arrow-right
 
         .row
-            +simpleCard('Информация', 4)
-                .row    
-                    label.col-sm-3.col-form-label Создан: 
-                    .col-sm-9
-                        .form-group
-                            p.form-control-static #{doc.created.format('dd MM yyyy, hh:mm:ss')}
-                +field('text', "firstName", 'Фамилия')(value= doc.firstName || '')
-                +field('text', "lastName", 'Имя')(value= doc.lastName || '') 
-                +field('text', "parentName", 'Отчество')(value= doc.parentName || '')
-                .row    
-                    label.col-sm-3.col-form-label Регион:
-                    .col-sm-9
-                        .form-group
-                            select.form-control(name='region')
-                                option(value=undefined) Выберите регион
-                                option(value="г. Минск", selected=(doc.region === "г. Минск")) г. Минск
-                                option(value="Минская область", selected=(doc.region === "Минская область")) Минская область
-                                option(value="Брестская область", selected=(doc.region === "Брестская область")) Брестская область
-                                option(value="Витебская область", selected=(doc.region === "Витебская область")) Витебская область
-                                option(value="Гомельская область", selected=(doc.region === "Гомельская область")) Гомельская область
-                                option(value="Гродненская область", selected=(doc.region === "Гродненская область")) Гродненская область
-                                option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
-                                option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
-                +field('text', "email", 'email')(value= doc.email || '')
-                .row    
-                    label.col-sm-3.col-form-label Телефон:
-                    .col-sm-9
-                        .form-group
-                            p.form-control-static #{doc.phone} #{'  '}
-                                if doc.codeValid
-                                    span.badge.badge-pill.badge-success подтвержден
-                                else
-                                    span.badge.badge-pill.badge-danger не подтвержден
-                                br
-                                span.description Код подтверждения: #{doc.phoneCode}
+            .col-xl-4
+                .row
+                    +simpleCard('Информация', 12)
+                        .row    
+                            label.col-sm-3.col-form-label Создан: 
+                            .col-sm-9
+                                .form-group
+                                    p.form-control-static #{doc.created.format('dd MM yyyy, hh:mm:ss')}
+                        +field('text', "firstName", 'Фамилия')(value= doc.firstName || '')
+                        +field('text', "lastName", 'Имя')(value= doc.lastName || '') 
+                        +field('text', "parentName", 'Отчество')(value= doc.parentName || '')
+                        .row    
+                            label.col-sm-3.col-form-label Регион:
+                            .col-sm-9
+                                .form-group
+                                    select.form-control(name='region')
+                                        option(value=undefined) Выберите регион
+                                        option(value="г. Минск", selected=(doc.region === "г. Минск")) г. Минск
+                                        option(value="Минская область", selected=(doc.region === "Минская область")) Минская область
+                                        option(value="Брестская область", selected=(doc.region === "Брестская область")) Брестская область
+                                        option(value="Витебская область", selected=(doc.region === "Витебская область")) Витебская область
+                                        option(value="Гомельская область", selected=(doc.region === "Гомельская область")) Гомельская область
+                                        option(value="Гродненская область", selected=(doc.region === "Гродненская область")) Гродненская область
+                                        option(value="Могилевская область", selected=(doc.region === "Могилевская область")) Могилевская область
+                                        option(value="Иностранный гражданин", selected=(doc.region === "Иностранный гражданин")) Иностранный гражданин
+                        +field('text', "email", 'email')(value= doc.email || '')
+                        .row    
+                            label.col-sm-3.col-form-label Телефон:
+                            .col-sm-9
+                                .form-group
+                                    p.form-control-static #{doc.phone} #{'  '}
+                                        if doc.codeValid
+                                            span.badge.badge-pill.badge-success подтвержден
+                                        else
+                                            span.badge.badge-pill.badge-danger не подтвержден
+                                        br
+                                        span.description Код подтверждения: #{doc.phoneCode}
+
+                        .row
+                            label.col-sm-3.col-form-label Курсы:
+                            .col-sm-9.checkbox-radios
+                                .form-check
+                                    label.form-check-label
+                                        input.form-check-input(type="checkbox", name='night', checked=(doc.night))
+                                        span.form-check-sign
+                                        | Вечерний Лицей
+                                .form-check
+                                    label.form-check-label
+                                        input.form-check-input(type="checkbox", name='distant', checked=(doc.distant))
+                                        span.form-check-sign
+                                        | Дистанционные курсы
+                        
+                        h5 Профиль
+                            | (#{profile ? profile.name : 'Еще не выбран профиль'})
+                            
+                        +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
+                        +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
+                        
+                        .row
+                            .col-md-12
+                                #diplomAlert.alert.alert-danger.alert-with-icon(role="alert", style="display: none") 
+                                    span.fas.fa-exclamation-triangle(data-notify="icon")
+                                    | А вот и нельзя апрувнуть, если у чувака есть диплом, а предмет диплома не выбран
+                                .form-group.text-right
+                                    button#approveBtn.btn.btn-success(type='submit', name="action", value='pupil_approve') 
+                                        | Подтвердить заявку
+                                    | #{' '}
+                                    button#approveBtn.btn.btn-success.btn-move-right(type='submit', name="action", value='pupil_approve_next') 
+                                        | Подтвердить заявку #{'  '}
+                                        span.btn-label
+                                            i.fas.fa-arrow-right
+                .row
+                    +simpleCard('Отклонить', 12)
+                        .row
+                            label.col-sm-3.col-form-label Справка:
+                            .col-sm-9.checkbox-radios
+                                +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
+                                +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
+                                +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
+                                +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
+                                +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
+                        .row
+                            label.col-sm-3.col-form-label Сообщение для абитуриента:
+                            .col-sm-9
+                                .form-group
+                                    textarea.form-control(name='message', rows="5")#pupilDisaprovedMsg
+                                        | #{doc.message || ''}
+                                    a#msgTemplatesBtn.btn.btn-outline-default.btn-round(href="#", data-toggle="modal",data-target="#templatesModal")
+                                        i.fas.fa-envelope-open-text
+                                        | #{'   '}Шаблоны
+                            
+                                    #pipilMessages(style="display: none")
+                                        | lskdjlkdjf
+                        .row
+                            .col-md-12
+                                .form-group.text-right
+                                    button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+                                    | #{' '}
+                                    button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
+                                        | Отклонить заявку #{'  '}
+                                        span.btn-label
+                                            i.fas.fa-arrow-right
 
                 .row
-                    label.col-sm-3.col-form-label Курсы:
-                    .col-sm-9.checkbox-radios
-                        .form-check
-                            label.form-check-label
-                                input.form-check-input(type="checkbox", name='night', checked=(doc.night))
-                                span.form-check-sign
-                                | Вечерний Лицей
-                        .form-check
-                            label.form-check-label
-                                input.form-check-input(type="checkbox", name='distant', checked=(doc.distant))
-                                span.form-check-sign
-                                | Дистанционные курсы
-                   
-                h5 Профиль
-                    | (#{profile ? profile.name : 'Еще не выбран профиль'})
-                       
-                +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
-                +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
-                
-                .row
-                    .col-md-12
-                        #diplomAlert.alert.alert-danger.alert-with-icon(role="alert", style="display: none") 
-                            span.fas.fa-exclamation-triangle(data-notify="icon")
-                            | А вот и нельзя апрувнуть, если у чувака есть диплом, а предмет диплома не выбран
-                        .form-group.text-right
-                            button#approveBtn.btn.btn-success(type='submit', name="action", value='pupil_approve') 
-                                | Подтвердить заявку
-                            | #{' '}
-                            button#approveBtn.btn.btn-success.btn-move-right(type='submit', name="action", value='pupil_approve_next') 
-                                | Подтвердить заявку #{'  '}
+                    .col-md-6
+                    .col-md-6.text-right
+                        .form-group
+                            button#deleteUser.btn.btn-warning.btn-magnify(type='submit', name="action", value='pupil_delete') 
                                 span.btn-label
-                                    i.fas.fa-arrow-right
+                                    i.fas.fa-user-slash
+                                |  #{'  '}Удалить!!! 
 
             .col-xl-8
                 +simpleCard('Статус', 12)
@@ -153,36 +195,19 @@ block content
                                     i.fa.fa-search-plus
                                 a#rotate_right(href="#", title="Rotate right")
                                     i.fa.fas.fa-redo
-
-            +simpleCard('Действия', 4)
-                .row
-                    label.col-sm-3.col-form-label Справка:
-                    .col-sm-9.checkbox-radios
-                        +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
-                        +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
-                        +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
-                        +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
-                        +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
-                +field('textarea', "message", 'Сообщение для абитуриента')(value= doc.message || '').form-control(rows="5")
-                .row
-                    .col-md-12
-                        .form-group.text-right
-                            button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
-                            | #{' '}
-                            button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
-                                | Отклонить заявку #{'  '}
-                                span.btn-label
-                                    i.fas.fa-arrow-right
-
-                .row
-                    .col-md-6
-                    .col-md-6.text-right
-                        .form-group
-                            button#deleteUser.btn.btn-warning.btn-magnify(type='submit', name="action", value='pupil_delete') 
-                                span.btn-label
-                                    i.fas.fa-user-slash
-                                |  #{'  '}Удалить!!! 
-
+    .modal(tabindex='-1', role='dialog')#templatesModal
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5.modal-title Шаблоны сообщений
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                .modal-body
+                    p Modal body text goes here.
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Закрыть
+                    button.btn.btn-primary(type='button') Вставить
+            
  block scripts
     script(src="/javascripts/guillotine/jquery.guillotine.min.js")
 

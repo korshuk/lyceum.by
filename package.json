@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon --legacy-watch app.js"
+    "dev": "nodemon --legacy-watch app.js",
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "dependencies": {
     "async": "1.0.0",
@@ -52,6 +53,8 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-postcss": "^0.7.2",
     "jit-grunt": "^0.9.1",
-    "nodemon": "1.11.0"
+    "nodemon": "1.11.0",
+    "mocha": "2.4.1",
+    "chai": "~4.2.0"
   }
 }

@@ -126,6 +126,11 @@ html
                           span.sidebar-mini-icon
                             i.far.fa-envelope
                           span.sidebar-normal Рассылка писем
+                      li(class="#{menuPage === 'pupilMessages' ? 'active' : ''}")
+                        a(href="/admin/pupils/pupilMessages")
+                          span.sidebar-mini-icon
+                            i.fas.fa-envelope-open-text
+                          span.sidebar-normal Сообщения в почту   
                       li(class="#{menuPage === 'test' ? 'active' : ''}")
                         a(href="/admin/pupils/test")
                           span.sidebar-mini-icon

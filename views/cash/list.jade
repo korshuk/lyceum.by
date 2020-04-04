@@ -32,7 +32,7 @@ block content
 							td= n.addedToCash.format('dd-MM-yyyy hh:mm:ss')
 							td= n.counter
 							td
-							a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить
+								a(href="/admin/cash/" + n.name.replace(/\//g, '%2F') + "/delete") Удалить
 		+simpleCard('Времена старта сервера', 4)
 			.table-responsive
 				table.table.table-hover

@@ -62,6 +62,24 @@ $(document).ready(function () {
         }
     };
 
+    const editorToolsMessage = {
+        header: {
+            class: Header,
+            inlineToolbar: ['link'],
+            config: {
+                placeholder: 'Заголовок',
+                levels: [2, 3, 4],
+                defaultLevel: 2
+            },
+            shortcut: 'CMD+SHIFT+H'
+        },
+        list: {
+            class: List,
+            inlineToolbar: true,
+            shortcut: 'CMD+SHIFT+L'
+        }
+    };
+
     const editorToolsImage = {
         image: {
             class: ImageTool,
@@ -91,7 +109,25 @@ $(document).ready(function () {
     initFileUploads();
     initCopyContentBtn();
     initDeleteBtns();
-
+    initPupilDisaprovedMsg();
+    
+    function initPupilDisaprovedMsg() {
+        if ($('#pupilDisaprovedMsg').length > 0) {
+            console.log('####')
+            
+            $(document).on('focus', '#pupilDisaprovedMsg', onMsgFocus)
+            $(document).on('blur', '#pupilDisaprovedMsg', onMsgFocusOut)
+        }
+        
+        function onMsgFocus() {
+            console.log('22222')
+            $('#pipilMessages').fadeIn();
+        }
+        function onMsgFocusOut() {
+            console.log('22222')
+            $('#pipilMessages').fadeOut();
+        }
+    }
     function initDeleteBtns() {
         if ( $('.delete-doc-btn').length > 0 ) {
             $(document).on('click', '.delete-doc-btn', function(e){
@@ -253,6 +289,9 @@ $(document).ready(function () {
     }
 
     function initSirBlocks() {
+        if ($('#messageTemplate').length) {
+            createEditor('messageTemplate', false, true)
+        }
         if ($('#bodynewru').length) {
             createEditor('bodynewru')
         }
@@ -299,11 +338,18 @@ $(document).ready(function () {
         }*/
     };
 
-    function createEditor(name, isTeaser) {
+    function createEditor(name, isTeaser, isMessage) {
         const $input = $('#' + name + 'Data');
+        let tools = editorTools;
+        if (isTeaser) {
+            tools = editorToolsTeaser
+        }
+        if (isMessage) {
+            tools = editorToolsMessage
+        }
         editors[name] = new EditorJS({
             holderId: name,
-            tools: isTeaser ? editorToolsTeaser : editorTools,
+            tools: tools,
             data: JSON.parse($input.val()),
             onChange: function () {
                 editors[name].save().then(function (data) {

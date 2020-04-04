@@ -51,19 +51,19 @@ $(function(){
                 var $table = $('#statsTable tbody');
                 var $tr;
                 var $td;
-                var $p;
+                var $a;
                 var profile;
                 $table.html('');
                 for (i = 0; i < length; i++) {
                     profile = profiles[i];
                     $tr = $('<tr>');
                     $td = $('<td class="profile-name">');
-                    $td.text(profile.name);
+                    
                     if(profile.guidePage && profile.guidePage.length> 0) {
-                        console.log(profile.guidePage)
-                        $p = $('<p><a href="' + profile.guidePage + '" title="гид по профилю" target="_blank">гид по профилю</a></p>')
-                        console.log($p)
-                        $td.append($p);
+                        $a = $('<p><a href="' + profile.guidePage + '" title="гид по профилю" target="_blank">' + profile.name + '</a></p>')
+                        $td.append($a);
+                    } else {
+                        $td.text(profile.name);
                     }
                     
                     $tr.append($td);
@@ -83,7 +83,10 @@ $(function(){
                     $table.append($tr);
                 }
                 var updatedDate =new Date( profiles[0].countArray[profiles[0].countArray.length - 1].date );
-                $("<p>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
+                if ($('.stats-time').length > 0) {
+                    $('.stats-time').remove();
+                }
+                $("<p class='stats-time'>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
                     .css({
                         'text-align': 'right',
                         'padding-top': '20px'

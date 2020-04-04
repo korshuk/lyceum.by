@@ -453,7 +453,7 @@ var PupilsController = function (mongoose, app) {
         pupil.save(next);
     }
 
-    function saveExams(req, res) {
+    /*function saveExams(req, res) {
         var reqUser;
         var i;
         var userIds = [];
@@ -490,7 +490,7 @@ var PupilsController = function (mongoose, app) {
                 }
             });
 
-    }
+    }*/
     function saveExams(req, res) {
         var reqUser;
         var i;

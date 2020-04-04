@@ -1,0 +1,34 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'pupilMessages';
+  - var menuSection = 'exams';
+
+block content
+    +listPageHeader('Сообщения абитуриенту', 'Добавить сообщение', '/admin/pupils/pupilMessages/create')
+    .row
+        +mainCard('Список сообщений')
+            .table-responsive
+                table.table.table-hover
+                    thead.text-primary
+                        tr
+                            th.text-center #
+                            th Название
+                            th Тип
+                            th Порядок
+                            th.text-right Действия
+                    tbody
+                        each doc, index in docs
+                            tr
+                                td.text-center #{index + 1}
+                                td= doc.name
+                                td  #{doc.type === 0 ? 'для справки' : 'для диплома'}
+                                td= doc.order
+                                td.text-right 
+                                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/pupilMessages/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                        i.fa.fa-edit
+                                    | #{' '}    
+                                    a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/pupilMessages/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                        i.fa.fa-times 

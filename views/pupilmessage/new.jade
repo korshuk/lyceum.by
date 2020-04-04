@@ -1,0 +1,31 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'pupilMessages';
+  - var menuSection = 'exams';
+  - var types = [{value: 0, name: 'для справки' }, {value: 1, name: 'для диплома' }];
+
+block content
+    form.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/pupilMessages/' + doc.id : '/admin/pupils/pupilMessages' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование сообщения
+                else
+                    | Новое сообщение
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/pupils/pupilMessages') 
+        
+        .row
+            +mainCard('Информация')
+                +field('text', "name", 'Название')(value= doc.name || '')
+                +field('number', "order", 'Порядок')(value= doc.order || '')
+                +field('select', "type", 'Тип', types, doc.type)(value= doc.type || '')
+                +field('editor', "messageTemplate", 'Шаблон')(value= JSON.stringify(doc.messageTemplate) || '{}')
+
+block scripts
