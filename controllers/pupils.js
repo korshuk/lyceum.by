@@ -2,6 +2,10 @@ var async = require('async');
 var BaseController = require('./baseController').BaseController;
 var crypto = require('crypto');
 var urlParser = require('url');
+var messageRenderer = require('../modules/messageRenderer').api;
+var makeMessage = messageRenderer.makeMessage;
+var moment = require('moment');
+moment.locale('ru');
 
 var PupilsController = function (mongoose, app) {
 
@@ -41,6 +45,8 @@ var PupilsController = function (mongoose, app) {
 
     base.seedReccommended = seedReccommended;
 
+    base.onPupilStatusChange = onPupilStatusChange;
+
     base.pupilsList = pupilsList;
 
 
@@ -68,39 +74,7 @@ var PupilsController = function (mongoose, app) {
         });
     };
 
-    base.edit = function (req, res) {
-        var self = this;
-
-        this.Collection.findByReq(req, res, function (doc) {
-            app.subjectController.Collection.find(function (err, subjects) {
-                app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                    app.profileController.Collection.find().exec(function (err, profiles) {
-                        subjects = subjects.map(function (subject) {
-                            return {
-                                name: subject.name,
-                                value: subject.name
-                            };
-                        });
-                        profiles = profiles.map(function (profile) {
-                            return {
-                                name: profile.name,
-                                value: '' + profile._id
-                            };
-                        });
-                        res.render(self.viewPath + 'new.jade', {
-                            doc: doc,
-                            subjects: subjects,
-                            profile: profile,
-                            profiles: profiles,
-                            method: 'put',
-                            viewName: 'pupil',
-                            query: urlParser.parse(req.originalUrl).query
-                        });
-                    });
-                });
-            });
-        });
-    };
+    base.edit = renderPupilEditPage;
 
     base.save = function (req, res) {
         var self = this;
@@ -183,6 +157,83 @@ var PupilsController = function (mongoose, app) {
 
     return base;
 
+    function renderPupilEditPage(req, res) {
+        var self = this;
+        var queries = [];
+        this.Collection.findByReq(req, res, function (doc) {
+            queries.push(createqueryExecFunction('subjectController', 'find'));
+            queries.push(createqueryExecFunction('profileController', 'find'));
+            queries.push(createqueryExecFunction('profileController', 'findOne', {_id: doc.profile}));
+            queries.push(createqueryExecFunction('pupilMessageController', 'find'));
+            
+            async.parallel(queries, onDone);
+  
+            function createqueryExecFunction(controllerName, functionName, args) {
+                return function(callback) {
+                    app[controllerName]
+                        .Collection[functionName](args)
+                        .exec(function (err, data) {
+                            queryExecFn(err, data, callback);
+                        }); 
+                    }
+            }
+
+            function onDone (err, results) {
+                var subjects = results[0];
+                var profiles = results[1];
+                var profile = results[2];
+                var messages = results[3];
+                var data = {};
+                
+                data.config = app.siteConfig;
+                
+                data.pupil = doc;
+                if (err) {
+                   // res.json(err);
+                } else {
+                    subjects = subjects.map(subjectsToViewMap);
+                    profiles = profiles.map(profilesToViewMap);
+                    messages.forEach(function (message) {
+                        message.text = makeMessage(message.messageTemplate, data);
+                    });
+                    messages.sort(sortMessages)
+                    res.render(self.viewPath + 'new.jade', {
+                        doc: doc,
+                        subjects: subjects,
+                        profile: profile,
+                        profiles: profiles,
+                        method: 'put',
+                        viewName: 'pupil',
+                        messages: messages,
+                        query: urlParser.parse(req.originalUrl).query
+                    });
+                }
+            }
+        });
+    };
+
+    function sortMessages(a, b) {
+        if (a.type === b.type) {
+            return a.order - b.order
+        } else {
+            return a.type - b.type
+        }
+       
+    }
+
+    function subjectsToViewMap (subject) {
+        return {
+            name: subject.name,
+            value: subject.name
+        };
+    }
+
+    function profilesToViewMap (profile) {
+        return {
+            name: profile.name,
+            value: '' + profile._id
+        };
+    }
 
     function pupilsList(profile) {
         var query = base.Collection.find();
@@ -320,6 +371,7 @@ var PupilsController = function (mongoose, app) {
                     doc.diplomImgNotApproved = req.body.diplomImgNotApproved === 'on';
                     doc.diplomExamName = req.body.diplomExamName;
                     doc.message = req.body.message;
+                    doc.dessaproveDate = Date.now();
                     doc.email = req.body.email;
                     if (req.body.profile) {
                         doc.profile = req.body.profile;
@@ -350,11 +402,12 @@ var PupilsController = function (mongoose, app) {
                             if (err) {
                                 req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
                                 req.session.locals = {doc: doc};
-                                res.redirect('/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || ''));
+                                returnUrl = '/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || '');
                             }
                             else {
                                 req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                                if (bodyAction === 'pupil_approve') {
+                                base.onPupilStatusChange(bodyAction, doc, profile, app.siteConfig)
+                                /*if (bodyAction === 'pupil_approve') {
                                     app.mailController.mailApproved(doc.email, {
                                         firstName: doc.firstName,
                                         lastName: doc.lastName,
@@ -367,15 +420,33 @@ var PupilsController = function (mongoose, app) {
                                         firstName: doc.firstName,
                                         lastName: doc.lastName
                                     });
-                                }
-        
-                                res.redirect(returnUrl);
+                                } */
                             }
+                            res.redirect(returnUrl);
                         });
                     });
                 }
             });
         });
+    }
+
+    function onPupilStatusChange(actionStatus, doc, profile, siteConfig) {
+        if (actionStatus === 'pupil_approve') {
+            app.mailController.mailApproved(doc.email, {
+                firstName: doc.firstName,
+                lastName: doc.lastName,
+                profile: profile.name,
+                registrationEndDate: siteConfig.registrationEndDate
+            });
+        }
+        if (actionStatus === 'pupil_disapprove') {
+            app.mailController.mailDisapproved(doc.email, {
+                firstName: doc.firstName,
+                lastName: doc.lastName,
+                message: doc.message,
+                dessaproveDate: moment(doc.dessaproveDate).format('DD MMMM YYYY в HH:mm'),
+            });
+        } 
     }
 
     

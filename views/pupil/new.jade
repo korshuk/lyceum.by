@@ -101,26 +101,32 @@ block content
                                             i.fas.fa-arrow-right
                 .row
                     +simpleCard('Отклонить', 12)
-                        .row
+                        //.row
                             label.col-sm-3.col-form-label Справка:
                             .col-sm-9.checkbox-radios
                                 +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
                                 +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
                                 +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
                                 +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
-                                +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))
-                        .row
+                                +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))    
+                        .row        
                             label.col-sm-3.col-form-label Сообщение для абитуриента:
                             .col-sm-9
                                 .form-group
-                                    textarea.form-control(name='message', rows="5")#pupilDisaprovedMsg
-                                        | #{doc.message || ''}
                                     a#msgTemplatesBtn.btn.btn-outline-default.btn-round(href="#", data-toggle="modal",data-target="#templatesModal")
                                         i.fas.fa-envelope-open-text
-                                        | #{'   '}Шаблоны
-                            
-                                    #pipilMessages(style="display: none")
-                                        | lskdjlkdjf
+                                        | #{'   '}Сообщения
+                        .row 
+                            .col-sm-12
+                                .jumbotron
+                                    #pupilDisaprovedMsgPreview 
+                                        | !{doc.message || ''}
+
+
+                            textarea.form-control(name='message', hidden)#pupilDisaprovedMsg
+                                | #{doc.message || ''}
+                            input(type="text", hidden, name='requestImgNotApproved', value=doc.requestImgNotApproved ? 'on' : 'off')#requestImgNotApproved 
+                            input(type="text", hidden, name='diplomImgNotApproved', value=doc.diplomImgNotApproved ? 'on' : 'off')#diplomImgNotApproved        
                         .row
                             .col-md-12
                                 .form-group.text-right
@@ -195,18 +201,37 @@ block content
                                     i.fa.fa-search-plus
                                 a#rotate_right(href="#", title="Rotate right")
                                     i.fa.fas.fa-redo
+    
     .modal(tabindex='-1', role='dialog')#templatesModal
-        .modal-dialog(role='document')
+        .modal-dialog.modal-lg.modal-dialog-scrollable(role='document')
             .modal-content
                 .modal-header
-                    h5.modal-title Шаблоны сообщений
+                    h5.modal-title Варианты сообщений
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                 .modal-body
-                    p Modal body text goes here.
+                    .card-collapse
+                            each message, index in messages
+                                .card.card-plain
+                                    .card-header
+                                        .row
+                                            .col-md-9.col-9
+                                                a(data-toggle='collapse', data-parent='#accordion', href="#accordeonMessage" + index, aria-expanded='false', aria-controls='collapseOne')
+                                                    strong #{message.name}#{'   '}
+                                                    span.badge.badge-pill(class="#{message.type === 0 ? 'badge-info' : 'badge-warning'}")
+                                                        | #{message.type === 0 ? 'для справки' : 'для диплома'}
+                                                    i.nc-icon.nc-minimal-down
+                                            .col-md-3.col-3     
+                                                +field('checkboxSimple', 'message' + message._id, 'добавить')(checked=false, data-messageid="#{message._id}", data-messagetype="#{message.type}", class="messageCheckbox")          
+                                    .collapse(id="accordeonMessage" + index, role='tabpanel')
+                                        .message-html(data-messageid="#{message._id}")
+                                            | !{message.text}
+                                        hr
+                                        
+
                 .modal-footer
                     button.btn.btn-secondary(type='button', data-dismiss='modal') Закрыть
-                    button.btn.btn-primary(type='button') Вставить
+                    button#submitMessageBtn.btn.btn-primary(type='button') Вставить
             
  block scripts
     script(src="/javascripts/guillotine/jquery.guillotine.min.js")

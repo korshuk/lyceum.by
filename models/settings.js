@@ -18,6 +18,8 @@ function define(mongoose, fn) {
             'anketaLink': String,
             'rulesLink': String,
             'rulesHTML': String,
+            'rulesClassPoint': String,
+            'rulesOlympPassPoint': String,
             'rulesOlympPoint': String,
             'rulesHalfPassPoint': String,
             'email1': String,

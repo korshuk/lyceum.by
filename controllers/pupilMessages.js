@@ -58,6 +58,13 @@ var PupilMessageController = function(mongoose, app) {
                     }
                     
                 }
+                docsToRender.sort(function(a, b) {
+                        if (a.type === b.type) {
+                            return a.order - b.order
+                        } else {
+                            return a.type - b.type
+                        }
+                });
                 res.render(self.viewPath + 'list.jade', {
                     docs: docsToRender,
                     pageNum: pageNum,

@@ -20,6 +20,9 @@ function define(mongoose, fn) {
             type: Date,
             default: Date.now
         },
+        dessaproveDate: {
+            type: Date,
+        },
         status: String,
         resetPasswordToken: String,
         resetPasswordExpires: Date,

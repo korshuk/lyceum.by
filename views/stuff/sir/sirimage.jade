@@ -1,1 +1,5 @@
-img(src="#{block.data.file.dUrl}", alt="#{doc.name[locals.lang || 'ru']}", class="image-#{block.data.file.imageType}")
+if block.data.caption && block.data.caption.length > 0
+    a.imagelink(href="#{block.data.caption}", target="_blank")
+        img(src="#{block.data.file.dUrl}", alt="#{doc.name[locals.lang || 'ru']}", class="image-#{block.data.file.imageType}")
+else
+    img(src="#{block.data.file.dUrl}", alt="#{doc.name[locals.lang || 'ru']}", class="image-#{block.data.file.imageType}")

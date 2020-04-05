@@ -49,8 +49,10 @@ block content
                     +simpleCard('Правила приёма', 12)
                         +field('text', "rulesLink", 'Ссылка на правила')(value=(docs && docs.rulesLink))#rulesLink
                         h5 Пункты правил
+                        +field('text', "rulesClassPoint", 'Про 9 класс')(value=(docs && docs.rulesClassPoint))#rulesClassPoint
+                        +field('text', "rulesOlympPassPoint", 'Про олимпиаду')(value=(docs && docs.rulesOlympPassPoint))#rulesOlympPassPoint
                         +field('text', "rulesOlympPoint", 'Про олимпиадные предметы')(value=(docs && docs.rulesOlympPoint))#rulesOlympPoint
-                        +field('text', "rulesHalfPassPoint", 'Про преимущественное право')(value=(docs && docs.rulesHalfPassPoint))#rulesHalfPassPoint
+                        +field('text', "rulesHalfPassPoint", 'Про преимущественное право')(value=(docs && docs.rulesHalfPassPoint))
                         h5 Правила приёма
                         +field('textarea', "rulesHTML", 'HTML правил')( rows="10")#rulesHTML #{docs && docs.rulesHTML} 
                     

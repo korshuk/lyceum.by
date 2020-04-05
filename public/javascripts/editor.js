@@ -20834,8 +20834,9 @@
                     })
                 },
                 this.nodes.caption.dataset.placeholder = this.config.captionPlaceholder,
-                this.nodes.imageContainer.appendChild(this.nodes.imagePreloader),
+                this.nodes.caption.appendChild(this.nodes.imagePreloader),
                 this.nodes.wrapper.appendChild(this.nodes.imageContainer),
+                this.nodes.wrapper.appendChild(this.nodes.caption),
                 this.nodes.wrapper.appendChild(this.nodes.fileButton)
             }
             return l()(t, [{

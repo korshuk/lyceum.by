@@ -113,19 +113,37 @@ $(document).ready(function () {
     
     function initPupilDisaprovedMsg() {
         if ($('#pupilDisaprovedMsg').length > 0) {
-            console.log('####')
-            
-            $(document).on('focus', '#pupilDisaprovedMsg', onMsgFocus)
-            $(document).on('blur', '#pupilDisaprovedMsg', onMsgFocusOut)
+            $(document).on('click', '#submitMessageBtn', onMessageopupSubmit)
         }
         
-        function onMsgFocus() {
-            console.log('22222')
-            $('#pipilMessages').fadeIn();
-        }
-        function onMsgFocusOut() {
-            console.log('22222')
-            $('#pipilMessages').fadeOut();
+        function onMessageopupSubmit() {
+            $('#requestImgNotApproved').val('off');
+            $('#diplomImgNotApproved').val('off')
+            
+            var html = '';
+            $('.messageCheckbox').each(function(i, el) {
+                var messageId = $(el).data("messageid");
+                var messageType = $(el).data("messagetype");
+                if (el.checked) {
+                    console.log(messageType)
+                    console.log($(el).data("messageid"))
+                    html += '<div data-messageid="' + messageId + '">';
+                    html += $('.message-html[data-messageid=' + messageId + ']').html();
+                    html += '</div>';
+                    if (messageType === 0) {
+                        $('#requestImgNotApproved').val('on')
+                    }
+                    if (messageType === 1) {
+                        $('#diplomImgNotApproved').val('on')
+                    }
+                    
+                }
+            })
+            
+            $('#pupilDisaprovedMsgPreview').html(html) 
+            $('#pupilDisaprovedMsg').val(html) 
+            
+            $('#templatesModal').modal('hide')
         }
     }
     function initDeleteBtns() {

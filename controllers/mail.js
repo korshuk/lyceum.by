@@ -195,6 +195,8 @@ var MailController = function (mongoose, app) {
     }
 
     function mailDisapproved(mailTo, param) {
+        param.endPeriod = moment(app.siteConfig.registrationEndDate).fromNow();
+        param.registrationEndDate = app.siteConfig.registrationEndDate
         prepareMail(mailTo, 'mails/mailDisapproved.jade', param, 'Кабинет абитуриента: отказ в регистрации');
     }
 
