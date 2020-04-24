@@ -45,7 +45,7 @@ function Renderer(template, options) {
     var doTCompiled = doT.template(template, undefined, { a: 100, b: 200});
     var result = doTCompiled(options);
     if (result.indexOf('undefined') > -1) {
-        throw new Error('Template renderer rendered undefined variable');
+       // throw new Error('Template renderer rendered undefined variable');
     }
     return result
 }

@@ -1,7 +1,7 @@
 ready(function () {
     'use strict';
 
-    var FIO_REGEX = /^[а-яА-ЯёЁ_ ]+$/i;
+    var FIO_REGEX = /^[а-яА-ЯёЁ_\- ]+$/i;
     String.prototype.capitalize = function() {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };

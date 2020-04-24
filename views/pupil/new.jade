@@ -99,43 +99,44 @@ block content
                                         | Подтвердить заявку #{'  '}
                                         span.btn-label
                                             i.fas.fa-arrow-right
-                .row
-                    +simpleCard('Отклонить', 12)
-                        //.row
-                            label.col-sm-3.col-form-label Справка:
-                            .col-sm-9.checkbox-radios
-                                +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
-                                +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
-                                +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
-                                +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
-                                +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))    
-                        .row        
-                            label.col-sm-3.col-form-label Сообщение для абитуриента:
-                            .col-sm-9
-                                .form-group
-                                    a#msgTemplatesBtn.btn.btn-outline-default.btn-round(href="#", data-toggle="modal",data-target="#templatesModal")
-                                        i.fas.fa-envelope-open-text
-                                        | #{'   '}Сообщения
-                        .row 
-                            .col-sm-12
-                                .jumbotron
-                                    #pupilDisaprovedMsgPreview 
-                                        | !{doc.message || ''}
+                if (doc.status !== 'new clear')
+                    .row
+                        +simpleCard('Отклонить', 12)
+                            //.row
+                                label.col-sm-3.col-form-label Справка:
+                                .col-sm-9.checkbox-radios
+                                    +field('checkboxSimple', "requestImgNotApproved", 'НЕ подошла')(checked=(doc.requestImgNotApproved))
+                                    +field('checkboxSimple', "requestImgNoPhoto", 'Нет фотографии на справке')(checked=(doc.requestImgNoPhoto))
+                                    +field('checkboxSimple', "requestImgLowQuality", 'Слишком плохое качество')(checked=(doc.requestImgLowQuality))
+                                    +field('checkboxSimple', "requestImgStampError", 'Печать не на фото')(checked=(doc.requestImgStampError))
+                                    +field('checkboxSimple', "diplomImgNotApproved", 'Диплом НЕ прокатил')(checked=(doc.diplomImgNotApproved))    
+                            .row        
+                                label.col-sm-3.col-form-label Сообщение для абитуриента:
+                                .col-sm-9
+                                    .form-group
+                                        a#msgTemplatesBtn.btn.btn-outline-default.btn-round(href="#", data-toggle="modal",data-target="#templatesModal")
+                                            i.fas.fa-envelope-open-text
+                                            | #{'   '}Сообщения
+                            .row 
+                                .col-sm-12
+                                    .jumbotron
+                                        #pupilDisaprovedMsgPreview 
+                                            | !{doc.message || ''}
 
 
-                            textarea.form-control(name='message', hidden)#pupilDisaprovedMsg
-                                | #{doc.message || ''}
-                            input(type="text", hidden, name='requestImgNotApproved', value=doc.requestImgNotApproved ? 'on' : 'off')#requestImgNotApproved 
-                            input(type="text", hidden, name='diplomImgNotApproved', value=doc.diplomImgNotApproved ? 'on' : 'off')#diplomImgNotApproved        
-                        .row
-                            .col-md-12
-                                .form-group.text-right
-                                    button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
-                                    | #{' '}
-                                    button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
-                                        | Отклонить заявку #{'  '}
-                                        span.btn-label
-                                            i.fas.fa-arrow-right
+                                textarea.form-control(name='message', hidden)#pupilDisaprovedMsg
+                                    | #{doc.message || ''}
+                                input(type="text", hidden, name='requestImgNotApproved', value=doc.requestImgNotApproved ? 'on' : 'off')#requestImgNotApproved 
+                                input(type="text", hidden, name='diplomImgNotApproved', value=doc.diplomImgNotApproved ? 'on' : 'off')#diplomImgNotApproved        
+                            .row
+                                .col-md-12
+                                    .form-group.text-right
+                                        button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+                                        | #{' '}
+                                        button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
+                                            | Отклонить заявку #{'  '}
+                                            span.btn-label
+                                                i.fas.fa-arrow-right
 
                 .row
                     .col-md-6
