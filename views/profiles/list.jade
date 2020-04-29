@@ -73,6 +73,8 @@ block content
                                         br
                                         | Дата: <b><nobr>(#{doc.firstExamDate.dayToString()}) #{doc.firstExamDate.format('dd.MM.yyyy')}</nobr></b>
                                         br
+                                        | Начало экзамена в: <b>#{doc.firstExamStartTime}</b>
+                                        br
                                         | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                                         
                                     p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
@@ -95,6 +97,8 @@ block content
                                         | Предмет: <b>#{doc.secondExamName}</b>
                                         br
                                         | Дата: <b><nobr>(#{doc.secondExamDate.dayToString()}) #{doc.secondExamDate.format('dd.MM.yyyy')}</nobr></b>
+                                        br
+                                        | Начало экзамена в: <b>#{doc.secondExamStartTime}</b>
                                         br
                                         | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                                     

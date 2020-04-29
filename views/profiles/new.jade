@@ -40,12 +40,14 @@ block content
                 h5 Первый экзамен
                 +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
                 +field('date', "firstExamDate", 'Дата')(value=(doc && doc.firstExamDate))#firstExamDate
+                +field('time', "firstExamStartTime", 'Время начала экзамена')(value=(doc && doc.firstExamStartTime))#firstExamStartTime
                 +field('date', "firstExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.firstExamAppelationDate))#firstExamAppelationDate
                 //- +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
                 +field('checkbox', "firstIsFirst", 'является первым', '', '', 'Первый экзамен')(checked=(doc.firstIsFirst))
                 h5 Второй экзамен
                 +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
                 +field('date', "secondExamDate", 'Дата')(value=(doc && doc.secondExamDate))#secondExamDate
+                +field('time', "secondExamStartTime", 'Время начала экзамена')(value=(doc && doc.secondExamStartTime))#secondExamStartTime
                 +field('date', "secondExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.secondExamAppelationDate))#secondExamAppelationDate
                 //- +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
 

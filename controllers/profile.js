@@ -518,15 +518,17 @@ var ProfileController = function (mongoose, app) {
             doc.code = req.body.code;
             doc.subcode = req.body.subcode;
             doc.ammount = req.body.ammount;
-
+            
             doc.examPlace = req.body.examPlace;
 
             doc.firstExamName = req.body.firstExamName;
             doc.firstExamDate = req.body.firstExamDate;
+            doc.firstExamStartTime = req.body.firstExamStartTime;
             doc.firstExamAppelationDate = req.body.firstExamAppelationDate;
             doc.firstIsFirst = req.body.firstIsFirst === 'on';
             doc.secondExamName = req.body.secondExamName;
             doc.secondExamDate = req.body.secondExamDate;
+            doc.secondExamStartTime = req.body.secondExamStartTime;
             doc.secondExamAppelationDate = req.body.secondExamAppelationDate;
 
             doc.secondExamPlace = req.body.secondExamPlace;

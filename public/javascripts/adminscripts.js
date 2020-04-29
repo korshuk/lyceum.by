@@ -294,7 +294,6 @@ $(document).ready(function () {
 
             $('#dataForm').on('submit', function(e) {
                 e.preventDefault();
-                console.log('asd')
                 $('.datepicker').each(function(i, input) {
                     var $input = $(input);
                     var date = moment($input.val(), MOMENT_FORMAT ).toDate();
@@ -303,6 +302,11 @@ $(document).ready(function () {
                 })
                 $(this).unbind('submit').submit();
             })
+        }
+        if ($(".datepicker-time").length != 0) {
+            $('.datepicker-time').datetimepicker({
+                format: 'LT'
+            });
           }
     }
 
