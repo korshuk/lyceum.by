@@ -19,29 +19,51 @@ html
             
             if (param.examNum === '1')
                 - var audience = ''
+                - var placeName = param.pupil.place1.name;
+                - var placeAddress = param.pupil.place1.address;
                 - for (var i = 0; i < param.pupil.place1.audience.length; i++) {
                 -     if ('' + param.pupil.place1.audience[i]._id === param.pupil.audience1) {
                 -         audience= param.pupil.place1.audience[i].name
                 -     }
                 - }
-                p <b>#{prettyDate(param.pupil.profile.firstExamDate)}</b> у Вас будет первое вступительное испытание в Лицей БГУ, которое состоится по адресу: #{param.pupil.place1.name}, #{param.pupil.place1.address}. 
+
+                - if (audience.indexOf('_') > -1) {
+                -   var splitted = audience.split('_');
+                -   audience = splitted[1];
+                -   placeIndex = splitted[0];
+                -   placeName = placeName.split('&')[placeIndex];
+                -   placeAddress = placeAddress.split('&')[placeIndex];
+                -}
+                p <b>#{prettyDate(param.pupil.profile.firstExamDate)}</b> у Вас будет первое вступительное испытание в Лицей БГУ, которое состоится по адресу: #{placeName}, <b>#{placeAddress}</b>.
                     br 
                     | Вы пишете экзамен в кабинете <b>#{audience}</b>.
                     br
-                    | Начало экзамена в <b>9:00</b>
+                    | Начало экзамена в <b>#{param.pupil.profile.firstExamStartTime}</b>
 
             if (param.examNum === '2')
-                - var audience = ''
+                - var audience = '';
+                - var placeName = param.pupil.place2.name;
+                - var placeAddress = param.pupil.place2.address;
+
                 - for (var i = 0; i < param.pupil.place2.audience.length; i++) {
                 -     if ('' + param.pupil.place2.audience[i]._id === param.pupil.audience2) {
                 -         audience= param.pupil.place2.audience[i].name
                 -     }
                 - }
-                p <b>#{prettyDate(param.pupil.profile.secondExamDate)}</b> у Вас будет второе вступительное испытание в Лицей БГУ, которое состоится по адресу: #{param.pupil.place2.name}, #{param.pupil.place2.address}. 
+
+                - if (audience.indexOf('_') > -1) {
+                -   var splitted = audience.split('_');
+                -   audience = splitted[1];
+                -   placeIndex = splitted[0];
+                -   placeName = placeName.split('&')[placeIndex];
+                -   placeAddress = placeAddress.split('&')[placeIndex];
+                -}
+                
+                p <b>#{prettyDate(param.pupil.profile.secondExamDate)}</b> у Вас будет второе вступительное испытание в Лицей БГУ, которое состоится по адресу: #{placeName}, <b>#{placeAddress}</b>. 
                     br 
                     | Вы пишете экзамен в кабинете <b>#{audience}</b>.
                     br
-                    | Начало экзамена в <b>9:00</b>        
+                    | Начало экзамена в <b>#{param.pupil.profile.secondExamStartTime}</b>        
 
             p Пропуском на вступительное испытание является паспорт, карта учащегося или справка из школы. Не забывайте эти документы дома, возьмите их заранее. Кстати о справке, на справке должна быть Ваша фотография и печать учреждения образования, которая частично закрывает фотографию.
 

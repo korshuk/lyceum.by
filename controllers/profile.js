@@ -30,9 +30,7 @@ var ProfileController = function (mongoose, app) {
         deleteScan: deleteScan,
         assign: resultsAssign,
         getResults: getResults,
-        addPoints: addPoints,
-        tempImagesList:tempImagesList,
-        tempImagesUpload:tempImagesUpload
+        addPoints: addPoints
     };
     
     base.constructor = arguments.callee;
@@ -63,82 +61,25 @@ var ProfileController = function (mongoose, app) {
         base.Collection.findByReq(req, res, function (profile) {
             base.ResultsCollection
                 .find({profile: req.params.id, examNumber: req.params.examNumber})
-                .populate('image')
                 .sort('ID')
                 .exec(function(err, docs){
-                    res.render(base.viewPath + 'resultsList.jade',{
-                        id: req.params.id,
-                        examNumber: req.params.examNumber,
-                        docs: docs,
-                        profile: profile
-                    });
+                    async.eachSeries(docs, function (doc, asyncdone) { 
+                        app.resultScansController.Collection
+                            .find({profile: req.params.id, examNum: req.params.examNumber, code: doc.ID})
+                            .exec(function (err, scans) {
+                                doc.scans = scans;
+                                asyncdone();
+                            })          
+                    }, function (err) {
+                        res.render(base.viewPath + 'resultsList.jade',{
+                            id: req.params.id,
+                            examNumber: req.params.examNumber,
+                            docs: docs,
+                            profile: profile
+                        });
+                    })  
                 });
         }); 
-    }
-
-    function tempImagesUpload(req, res) {
-        var profileId = req.params.id;
-        var examNumber = req.params.examNumber;
-        var scanFile = req.files.resultScan
-
-        app.s3filesController.sendExamScan(scanFile, function(data){
-            scanFile.response = data;
-            res.json({files: [scanFile]})
-        })
-    /*    const profileId = req.params.id;
-        const examNumber = req.params.examNumber;
-        const scanFile = req.files.resultScans[0]
-        console.log('scanFile', scanFile)
-
-        var p = new Parallel(scanFile);
-        p
-        //.require({ fn: Jimp, name: 'Jimp' })
-        .spawn(processScanFile).then(function(recognitionResult) {
-            console.log('recognitionResult', recognitionResult)
-            scanFile.ID = recognitionResult;
-            scanFile.isTemp = true;
-            res.json({files: [scanFile]})
-            //const image = new base.ExamFilesCollection(scanFile);
-            //image.save(function(err, image) {
-            // imageIds.push(image._id)
-            // asyncdone()
-        // });
-        });
-        
-           processScanFile(scanFile)
-                .then(function(recognitionResult) {
-                        console.log('recognitionResult', recognitionResult)
-                        scanFile.ID = recognitionResult;
-                        scanFile.isTemp = true;
-                        res.json({files: [scanFile]})
-                        //const image = new base.ExamFilesCollection(scanFile);
-                        //image.save(function(err, image) {
-                        // imageIds.push(image._id)
-                        // asyncdone()
-                    // });
-                    });
-              
-
-       */
-    }
-
-    function tempImagesList(req, res) {
-        var profileId = req.params.id;
-        var examNumber = req.params.examNumber;
-        base.Collection.findByReq(req, res, function (profile) {
-            base.ExamFilesCollection
-                .find({profileId: profileId, examNumber: examNumber, isTemp: true})
-                .populate('profile')
-                .exec(function(err, images){
-                    res.render(base.viewPath + 'tempImagesList.jade',{
-                        id: profileId,
-                        examNumber: examNumber,
-                        docs: images,
-                        profile: profile
-                });
-
-            });
-        });
     }
 
     function deleteScan(req, res) {

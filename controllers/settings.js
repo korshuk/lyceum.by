@@ -67,6 +67,7 @@ var SettingsController = function(mongoose, app) {
                 app.siteConfig = doc;
                 base.app.siteConfig.startTime = Date.now();
                 app.mailController.update();
+                app.s3filesController.updateCredentials();
                 app.superCash = {};
                 res.redirect(self.path);
             });
@@ -98,6 +99,7 @@ var SettingsController = function(mongoose, app) {
         base.app.siteConfig = doc;
         base.app.siteConfig.startTime = Date.now();
         base.app.mailController.update();
+        base.app.s3filesController.updateCredentials();
     });
 
 

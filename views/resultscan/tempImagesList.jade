@@ -1,0 +1,154 @@
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+extends ../adminLayout
+
+append menuVars
+	- var menuPage = 'committees';
+	- var menuSection = 'exams';
+block content
+	style
+		#progress {
+			width: 200pxß
+		}
+		.bar {
+			height: 18px;
+			background: green
+		}
+		.file {
+			position: relative;
+			background: linear-gradient(to right, lightblue 50%, transparent 50%);
+			background-size: 200% 100%;
+			background-position: right bottom;
+			transition:all 1s ease;
+		}
+		.file.done {
+			background: lightgreen;
+		}
+		.file a {
+			display: block;
+			position: relative;
+			padding: 5px;
+			color: black;
+		}
+	.row
+		+pageHeader()
+			| Загрузка сканов результатов
+		.col-md-5.text-right
+			a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles")
+				span.btn-label
+					i.fa.fa-undo
+				| #{'  '}К списку профилей
+			a.btn.btn-success.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank")
+					span.btn-label
+						i.far.fa-list-alt
+					| #{'  '} Посмотреть результаты		
+	.row
+		.col
+			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, сканов: #{docs.length || 0}	
+	.row.results-wizard.card-wizard.active
+			.col-xl-12
+				.wizard-navigation
+					ul.nav.nav-pills
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/profiles/results/#{profile._id}/#{examNumber}")
+								span.results-wizard-number 1
+								i.fas.fa-poll
+								| Загрузка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/profiles/results/assign/#{id}/#{examNumber}")
+								span.results-wizard-number 2
+								i.fas.fa-table
+								| Расшифровка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link.active(href="/admin/pupils/resultScans/#{id}/#{examNumber}")
+								span.results-wizard-number 3
+								i.fas.fa-images
+								| Загрузка сканов работ
+	.row
+		+simpleCard('Загруженные сканы', 7)
+			.table-responsive
+				table#scansTable.table.table-hover
+					- each doc, index in docs
+						tr
+							td	
+								.row
+									.col-md-6
+										a.resultScanImgContainer(href='/admin/pupils/resultScans/#{doc.filename}', target="_blank")
+
+											img.resultScanImg(src='/admin/pupils/resultScans/small_#{doc.filename}')
+									.col-md-6
+										.row
+											.col-xl-12(class= doc.hasDanger ? 'has-danger' : '')
+												+field('text', "code", 'Код')(id="scancode#{doc.id}", value= doc.code || '', style="font-size: 20px;", class="scan-code-input")
+										.row
+											.col-xl-12
+												+field('text', "code", 'Текст')(value= doc.text || '', disabled)	
+							td.text-right(width="80px")
+								a.btn.btn-success.btn-icon.btn-sm.update-btn(href="#", type='button', rel='tooltip', data-original-title='Сохранить', title='Обновить', data-id="#{doc.id}")
+									i.fa.fa-save( data-id="#{doc.id}")
+								| #{' '}
+								a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/resultScans/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+									i.fa.fa-times
+					tr#templateRow(style="display: none")
+						td	
+							.row.progress-row
+								.col-md-12
+									.progress
+										.progress-bar(role="progressbar", style="width: 0%")
+									p.upload-text
+							.row.result-row(style="display: none")
+								.col-md-6
+									a.resultScanImgContainer(href='', target="_blank")
+										img.resultScanImg(src='')
+								.col-md-6
+									.row
+										.col-xl-12.scan-code-container
+											+field('text', "code", 'Код')(style="font-size: 20px;", class="scan-code-input").scan-code
+									.row
+										.col-xl-12
+											+field('text', "code", 'Текст')(disabled).scan-text	
+						td.text-right(width="80px")
+							a.btn.btn-success.btn-icon.btn-sm.update-btn.scan-update-btn(href="#", type='button', rel='tooltip', data-original-title='Сохранить', title='Обновить')
+								i.fa.fa-save
+							| #{' '}
+							a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm.scan-delete-btn(href="/admin/pupils/resultScans/delete/", type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+								i.fa.fa-times					
+		+simpleCard('Действия', 5, true)
+			.row
+				.col-xl-12
+					+infoBlock()
+						| Файлы должны быть отсканированы в 300dpi и весить не больше 5мб. Желательно .png
+				.col-xl-12
+					label.btn.btn-primary.btn-magnify.file-input-label
+						span.fileinput-new.btn-label
+							i.fa.fa-plus
+							| #{'  '} Загрузить ещё
+						input#fileupload(type="file", name="resultScan", data-url="/admin/pupils/resultScans/"+id+"/"+examNumber + "/upload", multiple, style="display: none")		
+			hr
+			.row
+				.col-xl-6
+					a#updateAllScans.btn.btn-success.btn-magnify(href="")
+						span.btn-label
+							i.fa.fa-save
+						| #{'  '} Обновить все	
+				.col-xl-6.text-right	
+					a.delete-doc-btn.btn.btn-danger.btn-magnify(href="/admin/pupils/resultScans/"+id+"/"+examNumber + "/delete-all") 
+						span.btn-label
+							i.fa.fa-trash-alt
+						| #{'  '} Удалить все
+			hr
+			.row
+				.col-xl-12
+					h4 Проверка
+					+infoBlock()
+						| Тут посчитано количество ошибочных кодов
+						br
+						| Данные обновятся при перезагрузке страницы
+					p Не заполнено кодов: #{notFilled.length}
+					p Код не является числом: #{notNumbers.length}
+						
+block scripts
+	script( src="/javascripts/jquery_fileupload/js/vendor/jquery.ui.widget.js")
+	script( src="/javascripts/jquery_fileupload/js/jquery.iframe-transport.js")
+	script( src="/javascripts/jquery_fileupload/js/jquery.fileupload.js")

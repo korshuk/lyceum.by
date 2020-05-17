@@ -24,12 +24,6 @@ module.exports = function(app) {
 	router.get('/results/:id/:examNumber', app.userController.Pass, function(req, res) {
 		app.profileController.results.resultsList(req, res);
 	});
-	router.get('/results/tempImages/:id/:examNumber', app.userController.Pass, function(req, res) {
-		app.profileController.results.tempImagesList(req, res);
-	});
-	router.post('/results/tempImages/:id/:examNumber', app.userController.Pass, function(req, res) {
-		app.profileController.results.tempImagesUpload(req, res);
-	});
 	router.post('/results/:id/:examNumber', app.userController.Pass, function(req, res) {
 		app.profileController.results.upload(req, res);
 	});

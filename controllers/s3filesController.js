@@ -5,29 +5,42 @@
     var fs = require('fs');
     var https = require("https");
     var aws = require('aws-sdk');
-    
-    var s3 = new aws.S3({
-        accessKeyId: '',
-        secretAccessKey: ''
-    });
+    //var stream = require('stream')
 
-    var S3filesController = function (mongoose, app) {
-        console.log('s3 start');
+    
+
+    var S3filesController = function (mongoose, app) {       
+        /*this.s3 = new aws.S3({
+            accessKeyId: app.siteConfig.s3AccessKeyId,
+            secretAccessKey: app.siteConfig.s3SecretAccessKey
+        });
 
         this.options = {
-            common: {
-
-            },
             scans: {
-                hostname: 'xfc65yvpd9.execute-api.ca-central-1.amazonaws.com',
+                hostname: app.siteConfig.s3Hostname,//'xfc65yvpd9.execute-api.ca-central-1.amazonaws.com',
                 path: '/prod/upload',
                 Bucket: 'examscans'
             }
-        }
+        }*/
 
         this.sendExamScan = sendExamScan;
         this.getScanFile = getScanFile;
+        this.updateCredentials = updateCredentials;
 
+        function updateCredentials() {
+            this.s3 = new aws.S3({
+                accessKeyId: app.siteConfig.s3AccessKeyId,
+                secretAccessKey: app.siteConfig.s3SecretAccessKey
+            });
+    
+            this.options = {
+                scans: {
+                    hostname: app.siteConfig.s3Hostname,
+                    path: '/prod/upload',
+                    Bucket: 'examscans'
+                }
+            }
+        }
         function sendExamScan(scanFile, next) {
             var contentType = scanFile.headers['content-type']
             var fileData = fs.readFileSync(scanFile.path)
@@ -39,7 +52,7 @@
                 method: 'POST',
                 headers: {
                     "Accept": '*/*',
-                    "Content-Type": contentType,
+                    "Content-Type": contentType,//'application/x-www-form-urlencoded',
                     'Content-Length': fileData.length
                 }
             };
@@ -69,11 +82,12 @@
                 Bucket: this.options.scans.Bucket,
                 Key: fileName
             }
-            s3.getObject(getParams, function (err, data) {
+            this.s3.getObject(getParams, function (err, data) {
                 if (err) {
-                    console.log('eee', err);
+                    res.status(404).send(err);
                 } else {
-                    console.log('wwwww', data.Body);
+                    res.writeHead(200,{'Content-type':'image/jpg'});
+                    res.end(data.Body);
                 }
             })
         }

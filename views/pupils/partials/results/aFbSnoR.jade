@@ -2,35 +2,4 @@ h3 Первый экзамен закончился, но результатов
 
 +appelationInfo(profile.firstIsFirst ?  profile.firstExamAppelationDate : profile.secondExamAppelationDate, true)
 
-p Напоминаем Вам, что следующий экзамен по предмету
-    +space()
-    b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName }
-    +space()
-    | пройдет
-    +space()
-    nobr
-        b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
-        +space()
-
-    if (user.place2 && user.place2.address) 
-            br
-            | по адресу:
-            +space()
-            | #{user.place2.name},
-            +space()
-            | #{user.place2.address}
-            
-            if (siteConfig.showExamSeats2) 
-                - var audience = '';
-                - for (var i = 0; i < user.place2.audience.length; i++) {
-                -   if ('' + user.place2.audience[i]._id === user.audience2) {
-                -    audience = user.place2.audience[i].name
-                -   }
-                - }
-                br
-                | Вы будете писать экзамен в аудитории <b>#{audience}</b>
-            
-            br
-            | начало экзамена в
-            +space()
-            b 9:00    
++secondExamPlaceReminder();   

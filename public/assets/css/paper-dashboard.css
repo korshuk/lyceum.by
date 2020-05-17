@@ -13398,7 +13398,7 @@ img {
     position: relative;
     padding: 20px;
 }
-.progress {
+.thumbnail .progress {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -13548,19 +13548,55 @@ img {
 .resultScanImgContainer {
     display: block;
     overflow: hidden;
-    width: 200px;
+    min-width: 350px;
     height: 100px;
     position: relative;
     border: 1px solid #ccc;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.36);
   }
   .resultScanImg {
-    width: 1860px;
+    width: 500px;
     position: absolute;
-    top: -140px;
-    left: -190px;
+    top: -30px;
+    left: -30px;
     max-width: none;
   }
+  label.file-input-label {
+      color: #fff;
+  }
+  .sticky-card {
+      position: sticky;
+      top: 20px;
+  }
+  .results-wizard {
+    min-height: 55px;
+    box-shadow: none;
+  }  
+  .results-wizard.card-wizard .nav-pills .nav-item .nav-link.active{
+    background-color: #66615b;
+    box-shadow: 0 2px 2px hsla(38,16%,76%,.5);
+    
+  }
+  .results-wizard.card-wizard .nav-pills .nav-item .nav-link{
+      border-radius: 0!important;
+      margin-right: 2px;
+      background-color: #9a9a9a;
+      position: relative;
+  }
+  .results-wizard.card-wizard .nav-pills .nav-item .nav-link:hover {
+    background-color: #66615b;
+    box-shadow: 0 2px 2px hsla(38,16%,76%,.5);
+    }
+    .results-wizard.card-wizard .nav-pills {
+         background-color: transparent; 
+    }
+    .results-wizard-number {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        bottom: 12px;
+        font-size: 16px;
+    }    
 /*oi-select directive*/
 oi-select {
     display: block;

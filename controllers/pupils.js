@@ -796,23 +796,29 @@ var PupilsController = function (mongoose, app) {
             var pupil = results[0],
                 profiles = results[1],
                 status = pupil.status,
+                examPlaceId = pupil.profile.examPlace,
                 viewData,
                 viewName;
-            viewData = {
-                user: pupil,
-                profiles: profiles,
-                profile: pupil.profile,
-                siteConfig: app.siteConfig
-            };
-
-            if (pupil.status === 'new clear') {
-                status = 'newClear';
-            }
-            if (status === 'approved') {
-                viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
-            }
-            viewName = 'pupils/' + status + '.jade';
-            res.render(viewName, viewData);
+            app.placesController.Collection
+                .findOne({_id: examPlaceId})
+                .exec(function(err, examPlace) {
+                    viewData = {
+                        user: pupil,
+                        profiles: profiles,
+                        profile: pupil.profile,
+                        examPlace: examPlace,
+                        siteConfig: app.siteConfig
+                    };
+        
+                    if (pupil.status === 'new clear') {
+                        status = 'newClear';
+                    }
+                    if (status === 'approved') {
+                        viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
+                    }
+                    viewName = 'pupils/' + status + '.jade';
+                    res.render(viewName, viewData);
+                });
         }
     }
 

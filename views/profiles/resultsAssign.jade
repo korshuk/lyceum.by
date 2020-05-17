@@ -10,13 +10,40 @@ block content
 	div(ng-app="assignApp", ng-controller="assignController as app")
 		.row
 			+pageHeader()
-				| Внесение результатов
+				| Расшифровка результатов
+			.col-md-5.text-right
+				a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles")
+					span.btn-label
+						i.fa.fa-undo
+					| #{'  '}К списку профилей
+				a.btn.btn-success.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank")
+					span.btn-label
+						i.far.fa-list-alt
+					| #{'  '} Посмотреть результаты	
 		.row
 			.col	
 				h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }
 					br
 					| бланков: {{app.resultsCount}}, абитуриентов: {{app.pupilsCount}}, олимпиадников: {{app.olympPupilsCoumt}}
-		//- a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+		.row.results-wizard.card-wizard.active
+			.col-xl-12
+				.wizard-navigation
+					ul.nav.nav-pills
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/profiles/results/#{profile._id}/#{examNumber}")
+								span.results-wizard-number 1
+								i.fas.fa-poll
+								| Загрузка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link.active(href="/admin/pupils/profiles/results/assign/#{id}/#{examNumber}")
+								span.results-wizard-number 2
+								i.fas.fa-table
+								| Расшифровка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/resultScans/#{id}/#{examNumber}")
+								span.results-wizard-number 3
+								i.fas.fa-images
+								| Загрузка сканов работ
 		.row
 			+simpleCard('Cтатистика', 6)
 				.table-responsive
@@ -57,24 +84,18 @@ block content
 						span.btn-label
 							i.fas.fa-chart-bar
 						| #{'  '} Пересчитать статистику
-			+simpleCard('Действия', 6)
-				.row
-					.col-sm-12
-						a.btn.btn-default(href="/admin/pupils/profiles") К списку профилей
-						| #{' '}
-						a.btn.btn-default(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank") К списку результатов
-				.row
-					.col-sm-12.text-right
-						a.btn.btn-default(href="/admin/pupils/profiles/results/assign/#{profile.id}/#{examNumber}") Отмена
-						| #{' '}
-						button.btn.btn-success(ng-click="app.saveChanges()")  Сохранить
-
 		.row
 			+simpleCard('Результаты', 7)
-				.alert.alert-danger.alert-with-icon
-					span(data-notify="icon").fas.fa-exclamation
-					span(data-notify="message")
-						| В списке селекта отсутвуют олимпиадники и те, кому мы поставили "Отсутсвовал (Н)"
+				.row
+					.col-sm-8	
+						.alert.alert-danger.alert-with-icon
+							span(data-notify="icon").fas.fa-exclamation
+							span(data-notify="message")
+								| В списке селекта отсутвуют олимпиадники и те, кому мы поставили "Отсутсвовал (Н)"
+					.col-sm-4.text-right
+						a.btn.btn-default(href="/admin/pupils/profiles/results/assign/#{profile.id}/#{examNumber}") Отмена
+						| #{' '}
+						button.btn.btn-success(ng-click="app.saveChanges()") Сохранить
 				.table-responsive	
 					table#resultsTable.table.table-hover
 						tr
@@ -103,8 +124,6 @@ block content
 									ng-change="app.onResultInputChange(result, app.tempPupil)",
 									placeholder="Select")
 							td {{result.Class}} 
-								br
-								| {{result.Scanned  | date:'dd.MM.yyyy HH:mm'}}
 							td {{result.Points}} {{result.AdditionalPoints > -1 ? ' + ' + result.AdditionalPoints : ''}} 
 								br
 								| <b>{{result.Points + result.AdditionalPoints}}</b>

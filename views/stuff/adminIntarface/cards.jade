@@ -6,9 +6,9 @@ mixin mainCard(caption)
             .card-body
                 block    
 
-mixin simpleCard(caption, columnWidth)
+mixin simpleCard(caption, columnWidth, isSticky)
     div(class="col-xl-#{columnWidth}")    
-        .card
+        .card(class="#{isSticky ? 'sticky-card' : ''}")
             .card-header
                 h3.card-title #{caption}
             .card-body

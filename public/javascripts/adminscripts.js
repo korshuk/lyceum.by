@@ -110,6 +110,21 @@ $(document).ready(function () {
     initCopyContentBtn();
     initDeleteBtns();
     initPupilDisaprovedMsg();
+    initScans();
+
+    function initScans() {
+        if ($('#scansTable').length > 0 ) {
+            $('#fileupload').fileupload({
+				multipart: "true",
+				add: onNewScanFileAdded,
+				progress: onNewScanProgress,
+				done: onNewScanDone
+            });
+            
+            $(document).on('click', '.update-btn', updateScanCode)
+            $(document).on('click', '#updateAllScans', updateScansAll)
+        }
+    }
     
     function initPupilDisaprovedMsg() {
         if ($('#pupilDisaprovedMsg').length > 0) {
@@ -394,6 +409,100 @@ $(document).ready(function () {
         }
     }
 
+    function updateScanCode(e) {
+        e.preventDefault();
+        const $targetBtn = $(e.target);
+        const id = $targetBtn.data('id');
+
+        const $input =  $(`#scancode${id}`);
+        const code = $input.val();
+
+        $input.prop("disabled", true);
+        $.post(`/admin/pupils/resultScans/update/${id}`, 
+            {
+                code
+            })
+            .done(data => {
+                console.log('done', data)
+            })
+            .fail(err => {
+                console.log(err)
+                alert('Что-то случилось!!! Перезагрузите страницу!!!')
+            })
+            .always( () => {
+                $input.prop("disabled", false);
+            })
+    }
+
+    function onNewScanFileAdded(e, data) {
+        const $table = $('#scansTable tbody');
+        const template = $('#templateRow').html();
+        const $newRow = $('<tr>').html(template)
+        $newRow.find('.upload-text').text('Файл ' + data.files[0].name + ' / Загрузка...')
+
+        data.context = $newRow.prependTo($table);
+        
+        data.submit();
+    }
+
+    function onNewScanProgress(e, data) {
+        const progress = parseInt((data.loaded / data.total) * 100, 10);
+        const $row = $(data.context);
+        
+        $row.find('.progress-bar').css("width", progress + "%");
+
+        if (progress === 100) {
+            $row.find('.progress-bar').addClass('progress-bar-success')
+            $row.find('.upload-text').text('Файл ' + data.files[0].name + ' / Распознавание...')
+        }
+    }
+
+    function onNewScanDone(e, data) {
+        console.log(data.result, data.result.filename)
+        const $row = $(data.context);
+        $row.find('.progress-row').remove();
+        $row.find('.resultScanImg').attr('src', `/admin/pupils/resultScans/small_${data.result.filename}`);
+        $row.find('.resultScanImgContainer').attr('href', `/admin/pupils/resultScans/${data.result.filename}`);
+        $row.find('.scan-code').val(data.result.code).attr('id', `scancode${data.result._id}`)
+        $row.find('.scan-text').val(data.result.text);
+        $row.find('.scan-update-btn').data('id',data.result._id );
+        $row.find('.scan-update-btn .fa-save').data('id',data.result._id );
+        $row.find('.scan-delete-btn').attr('href', `/admin/pupils/resultScans/delete/${data.result._id}`)
+        if (!data.result.code || data.result.code.length === 0 || !isNumeric(data.result.code)) {
+            $row.find('.scan-code-container').addClass('has-danger');
+        }
+        
+        $row.find('.result-row').fadeIn()
+    }
+
+    function updateScansAll(e) {
+        e.preventDefault();
+        var data = [];
+        $(".scan-code-input").each((index, $input) => {
+            console.log('----', $(".scan-code-input").length, index)
+            if (index+1 < $(".scan-code-input").length) {
+                data.push({
+                    id: $input.id.split('scancode')[1],
+                    code: $($input).val()
+                })
+            }
+        })
+        $.post(`/admin/pupils/resultScans/update/all`, {data: data})
+            .done(data => {
+            })
+            .fail(err => {
+                console.log(err)
+                alert('Что-то случилось!!! Перезагрузите страницу!!!')
+            })
+            .always( () => {
+                window.location.reload()
+            })
+    }
+
+
+    function isNumeric(value) {
+        return /^\d+$/.test(value);
+    }
     function showNotification(color, html) {
         color = color; 
         

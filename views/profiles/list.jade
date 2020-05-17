@@ -88,7 +88,12 @@ block content
                                         a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/1")
                                             span.btn-label
                                                 i.fas.fa-table
-                                            | #{'  '}Расшифровка результатов   
+                                            | #{'  '}Расшифровка результатов  
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/resultScans/"+doc.id + "/1") 
+                                            span.btn-label
+                                                i.fas.fa-images
+                                            | #{'  '}Загрузка сканов         
                                 td
                                     if (doc.secondUploaded)    
                                         p
@@ -114,7 +119,12 @@ block content
                                         a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/2")
                                             span.btn-label
                                                 i.fas.fa-table
-                                            | #{'  '}Расшифровка результатов  
+                                            | #{'  '}Расшифровка результатов
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/resultScans/"+doc.id + "/2") 
+                                            span.btn-label
+                                                i.fas.fa-images
+                                            | #{'  '}Загрузка сканов        
                                     
                                 td
                                     if (doc.totalUploaded)
@@ -131,4 +141,11 @@ block content
                                     | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
                                     br
                                     | Дельта:&nbsp;#{doc.halfDelta}
+                                    br
+                                    p #{' '}
+                                    .form-group
+                                        a.btn.btn-info.btn-neutral(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{doc.id}", target="_blank") 
+                                            span.btn-label
+                                                i.far.fa-list-alt
+                                            | #{'  '}Посмотреть результаты
                                     

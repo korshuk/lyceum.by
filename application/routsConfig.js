@@ -24,7 +24,8 @@
         MailController = require('../controllers/mail').MailController,
         smsController = require('../controllers/smsController').smsController,
         ReportController = require('../controllers/report').ReportController,
-        S3filesController = require('../controllers/s3filesController').S3filesController;
+        S3filesController = require('../controllers/s3filesController').S3filesController,
+        ResultScansController = require('../controllers/resultScans').ResultScansController;
 
         
     exports.configure = function (app) {
@@ -39,13 +40,13 @@
         });
 
         app.fileController = new FileController(app);
-
+        
         app.newsController = new NewsController(mongoose);
         app.mediaController = new MediaController(mongoose);
         app.congratulationsController = new CongratulationsController(mongoose);
         app.contactsController = new ContactsController(mongoose, app);
         app.resultsController = new ResultsController(mongoose, app);
-        app.s3filesController = new S3filesController(mongoose, app);
+        app.resultScansController = new ResultScansController(mongoose, app);
 
         require('../routes/frontRoutes')(app);
 
@@ -64,6 +65,7 @@
         app.placesController = new PlacesController(mongoose, app);
         app.pupilsController = new PupilsController(mongoose, app);
         app.reportController = new ReportController('Report', '', mongoose, app, true);
+        app.s3filesController = new S3filesController(mongoose, app);
         
         require('../routes/adminRoutes')(app);
         return app;

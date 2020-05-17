@@ -23,5 +23,5 @@ module.exports = function (app) {
     require('../routes/adminCommittees')(app);
     //////////////////////////////////////
     require('../routes/adminReport')(app);
-    require('../routes/adminS3Files')(app);
+    require('./adminResultScans')(app);
 };
