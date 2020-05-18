@@ -796,7 +796,7 @@ var PupilsController = function (mongoose, app) {
             var pupil = results[0],
                 profiles = results[1],
                 status = pupil.status,
-                examPlaceId = pupil.profile.examPlace,
+                examPlaceId = pupil.profile && pupil.profile.examPlace,
                 viewData,
                 viewName;
             app.placesController.Collection
