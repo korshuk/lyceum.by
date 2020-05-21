@@ -43,15 +43,15 @@ block content
 
         +simpleCard('Дополнительно', 4)
             h5 Рассадка
-            .form-group.text-right
+            //.form-group.text-right
                 a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
                 &nbsp;
                 a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
                 &nbsp;
                 a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
             
-            h5 Данные
+            h5 Данные для ручной массовой рассылки писем с аудиториями
             .form-group.text-right
-                a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv', disabled=!siteConfig.showExamSeats1, target="_blank") .csv для 1 экзамена 
+                a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv') .csv для 1 экзамена 
                 &nbsp;
-                a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv', disabled=!siteConfig.showExamSeats2, target="_blank") .csv для 2 экзамена 
+                a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv') .csv для 2 экзамена 

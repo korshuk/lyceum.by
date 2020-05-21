@@ -1,76 +1,83 @@
 if (user.diplomImg)
-    p
-        | Вы подали диплом победителя республиканской олимпиады
-        +space()
-        nobr
-            | по предмету <b>#{user.diplomExamName}</b>.
-        br
-        | К сожалению, мы не можем зачислить вас без экзаменов, так как диплом
-        +space()
-            | по предмету <b>#{user.diplomExamName}</b>
-        +space()
-        | не позволяет поступить
-        +space()
-        nobr
-            | на <b class="uppercase">#{profile.name}</b> профиль
-        +space()
-        | без экзаменов*.
-        br
-        | Напоминаем, профиль можно поменять до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>.
-    p
-        small *Ознакомьтесь с пунктом #{siteConfig.rulesOlympPoint} <a href="#{siteConfig.rulesLink}" target="_blank" title="Правила приёма">правил приёма</a>, для того чтобы знать на какой профиль вы можете поступить без экзаменов.
+	p
+		| Вы подали диплом победителя республиканской олимпиады
+		+space()
+		nobr
+			| по предмету <b>#{user.diplomExamName}</b>.
+		br
+		| К сожалению, мы не можем зачислить вас без экзаменов, так как диплом
+		+space()
+			| по предмету <b>#{user.diplomExamName}</b>
+		+space()
+		| не позволяет поступить
+		+space()
+		nobr
+			| на <b class="uppercase">#{profile.name}</b> профиль
+		+space()
+		| без экзаменов*.
+		br
+		| Напоминаем, профиль можно поменять до <strong>#{prettyDate(siteConfig.registrationEndDate)}</strong>.
+	p
+		small *Ознакомьтесь с пунктом #{siteConfig.rulesOlympPoint} <a href="#{siteConfig.rulesLink}" target="_blank" title="Правила приёма">правил приёма</a>, для того чтобы знать на какой профиль вы можете поступить без экзаменов.
 
 h3 Экзамены еще не начались
 
 h4 Напоминаем Вам, что Вас ждут следующие экзамены:
 ul
-    li
-        | Первый экзамен по предмету
-        +space()
-        b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
-        +space()
-        | пройдет
-        nobr
-            +space()
-            b #{prettyDate(profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate)}
-        
-        if (examPlace && !(user.place1 && user.place1.address))
-            +space()
-            +noSeatJustPlace(examPlace);
-        
-        if (user.place1 && user.place1.address) 
-            - var audience = '';
-            - var placeName = user.place1.name;
-            - var placeAddress = user.place1.address;
-            - for (var i = 0; i < user.place1.audience.length; i++) {
-            -   if ('' + user.place1.audience[i]._id === user.audience1) {
-            -       audience = user.place1.audience[i].name
-            -   }
-            - }
-            - if (audience.indexOf('_') > -1) {
-            -   var splitted = audience.split('_');
-            -   audience = splitted[1];
-            -   placeIndex = splitted[0];
-            -   placeName = placeName.split('&')[placeIndex];
-            -   placeAddress = placeAddress.split('&')[placeIndex];
-            -}
-            +space()
-            | по адресу
-            +space()
-            +addressLine(placeAddress, placeName)
-            if (siteConfig.showExamSeats1) 
-                br
-                | Вы будете писать экзамен в аудитории <b>#{audience}</b>.
-        +examStartTime(profile.firstExamStartTime);
-    li
-        | Второй экзамен по предмету
-        +space()
-        b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
-        +space()
-        | пройдет
-        +space()
-        b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
-        
-        +examStartTime(profile.secondExamStartTime);
+	li
+		| Первый экзамен по предмету
+		+space()
+		b #{profile.firstIsFirst ? profile.firstExamName : profile.secondExamName}
+		+space()
+		| пройдет
+		nobr
+			+space()
+			b #{prettyDate(profile.firstIsFirst ? profile.firstExamDate : profile.secondExamDate)}
+		
+		-var dateNow = new Date();
+		-var dateExam = new Date(profile.firstExamDate);
+		-var daysBeforeExam = dateExam.getDate() - dateNow.getDate(); 
+		
+		if (daysBeforeExam <= 7)
+			if (examPlace && !(user.place1 && user.place1.address))
+				+space()
+				+noSeatJustPlace(examPlace);
+		
+			if (user.place1 && user.place1.address) 
+				- var audience = '';
+				- var placeName = user.place1.name;
+				- var placeAddress = user.place1.address;
+				- for (var i = 0; i < user.place1.audience.length; i++) {
+				-   if ('' + user.place1.audience[i]._id === user.audience1) {
+				-       audience = user.place1.audience[i].name
+				-   }
+				- }
+				- if (audience.indexOf('_') > -1) {
+				-   var splitted = audience.split('_');
+				-   audience = splitted[1];
+				-   placeIndex = splitted[0];
+				-   placeName = placeName.split('&')[placeIndex];
+				-   placeAddress = placeAddress.split('&')[placeIndex];
+				-}
+				+space()
+				| по адресу
+				+space()
+				+addressLine(placeAddress, placeName)
+
+				if (daysBeforeExam <= 3)
+					br
+					| Вы будете писать экзамен в аудитории <b>#{audience}</b>.
+				
+			+examStartTime(profile.firstExamStartTime);
+	li
+		| Второй экзамен по предмету
+		+space()
+		b #{profile.firstIsFirst ? profile.secondExamName : profile.firstExamName}
+		+space()
+		| пройдет
+		+space()
+		b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
+		
+		+examStartTime(profile.secondExamStartTime);
    
 include ./footer

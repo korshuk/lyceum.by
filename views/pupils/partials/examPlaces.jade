@@ -26,34 +26,38 @@ mixin secondExamPlaceReminder()
 		nobr
 			b #{prettyDate(profile.firstIsFirst ? profile.secondExamDate : profile.firstExamDate)}
 			+space()
+		-var dateNow = new Date();
+		-var dateExam = new Date(profile.secondExamDate);
+		-var daysBeforeExam = dateExam.getDate() - dateNow.getDate(); 
 		
-		if (examPlace && !(user.place2 && user.place2.address))
+		if (daysBeforeExam <= 7)
+			if (examPlace && !(user.place2 && user.place2.address))
+					+space()
+					+noSeatJustPlace(examPlace);
+			
+			if (user.place2 && user.place2.address) 
+				- var audience = '';
+				- var placeName = user.place2.name;
+				- var placeAddress = user.place2.address;
+				- for (var i = 0; i < user.place2.audience.length; i++) {
+				-   if ('' + user.place2.audience[i]._id === user.audience1) {
+				-       audience = user.place2.audience[i].name
+				-   }
+				- }
+				- if (audience.indexOf('_') > -1) {
+				-   var splitted = audience.split('_');
+				-   audience = splitted[1];
+				-   placeIndex = splitted[0];
+				-   placeName = placeName.split('&')[placeIndex];
+				-   placeAddress = placeAddress.split('&')[placeIndex];
+				-}
 				+space()
-				+noSeatJustPlace(examPlace);
+				| по адресу
+				+space()
+				+addressLine(placeAddress, placeName)
+				if (daysBeforeExam <= 3)
+					br
+					| Вы будете писать экзамен в аудитории <b>#{audience}</b>.
 		
-		if (user.place2 && user.place2.address) 
-			- var audience = '';
-			- var placeName = user.place2.name;
-			- var placeAddress = user.place2.address;
-			- for (var i = 0; i < user.place2.audience.length; i++) {
-			-   if ('' + user.place2.audience[i]._id === user.audience1) {
-			-       audience = user.place2.audience[i].name
-			-   }
-			- }
-			- audience = '1_321'
-			- if (audience.indexOf('_') > -1) {
-			-   var splitted = audience.split('_');
-			-   audience = splitted[1];
-			-   placeIndex = splitted[0];
-			-   placeName = placeName.split('&')[placeIndex];
-			-   placeAddress = placeAddress.split('&')[placeIndex];
-			-}
-			+space()
-			| по адресу
-			+space()
-			+addressLine(placeAddress, placeName)
-			if (siteConfig.showExamSeats2) 
-				br
-				| Вы будете писать экзамен в аудитории <b>#{audience}</b>.
 	p
 		+examStartTime(profile.secondExamStartTime);
