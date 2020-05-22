@@ -96,5 +96,5 @@ exports.handler = (event, context, callback) => {
             return s3.upload(s3params).promise();
         }
     
-}   
+}
 

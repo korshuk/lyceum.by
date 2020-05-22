@@ -65,6 +65,11 @@ block content
 
 
                                 td
+                                    .form-group
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}На проверку...
                                     if (doc.firstUploaded)
                                         p
                                             strong 1 экзамен готов
@@ -78,23 +83,13 @@ block content
                                         | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                                         
                                     p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
-                                    br
+     
+                                td
                                     .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/2")
                                             span.btn-label
                                                 i.fas.fa-poll
-                                            | #{'  '}Загрузка результатов
-                                    .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/1")
-                                            span.btn-label
-                                                i.fas.fa-table
-                                            | #{'  '}Расшифровка результатов  
-                                    .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/resultScans/"+doc.id + "/1") 
-                                            span.btn-label
-                                                i.fas.fa-images
-                                            | #{'  '}Загрузка сканов         
-                                td
+                                            | #{'  '}На проверку...
                                     if (doc.secondUploaded)    
                                         p
                                             strong 2 экзамен готов
@@ -107,45 +102,26 @@ block content
                                         br
                                         | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
                                     
-                                    p
-                                        | pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
-                                    br
-                                    .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/"+doc.id + "/2")
-                                            span.btn-label
-                                                i.fas.fa-poll
-                                            | #{'  '}Загрузка результатов
-                                    .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/profiles/results/assign/"+doc.id + "/2")
-                                            span.btn-label
-                                                i.fas.fa-table
-                                            | #{'  '}Расшифровка результатов
-                                    .form-group
-                                        a.btn.btn-info.btn-neutral(href="/admin/pupils/resultScans/"+doc.id + "/2") 
-                                            span.btn-label
-                                                i.fas.fa-images
-                                            | #{'  '}Загрузка сканов        
+                                    p pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
+                                    
                                     
                                 td
-                                    if (doc.totalUploaded)
-                                        strong Зачисление готово
-                                        br
-                                        br
-                                    | pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
-                                    br
-                                    br
-                                    | Проходной:&nbsp;#{doc.passT}
-                                    br
-                                    | Полупроходной:&nbsp;#{doc.halfpass}
-                                    br
-                                    | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
-                                    br
-                                    | Дельта:&nbsp;#{doc.halfDelta}
-                                    br
-                                    p #{' '}
                                     .form-group
-                                        a.btn.btn-info.btn-neutral(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{doc.id}", target="_blank") 
+                                        a.btn.btn-primary.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{doc.id}", target="_blank") 
                                             span.btn-label
                                                 i.far.fa-list-alt
                                             | #{'  '}Посмотреть результаты
+                                    if (doc.totalUploaded)
+                                        p
+                                            strong Зачисление готово
+                                    p
+                                        | Проходной:&nbsp;#{doc.passT}
+                                        br
+                                        | Полупроходной:&nbsp;#{doc.halfpass}
+                                        br
+                                        | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
+                                        br
+                                    | Дельта:&nbsp;#{doc.halfDelta}
+                                    p pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
+                                    
                                     

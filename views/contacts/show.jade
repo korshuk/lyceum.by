@@ -27,9 +27,9 @@ block content
                         tr
                             td!= (doc.name[locals.lang || "ru"] || doc.name.ru).replace(' ','<br>') 
                             td= doc.occupation[locals.lang || "ru"] || doc.name.ru
-                            td= doc.place
+                            td= doc.place || ' ' 
                             td
-                                = doc.phone
+                                = doc.phone || ' ' 
                                 if (doc.email)
                                     br
                                     a(href="mailto:" + doc.email)= doc.email

@@ -23,8 +23,6 @@ block content
 		.row
 			.col	
 				h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }
-					br
-					| бланков: {{app.resultsCount}}, абитуриентов: {{app.pupilsCount}}, олимпиадников: {{app.olympPupilsCoumt}}
 		.row.results-wizard.card-wizard.active
 			.col-xl-12
 				.wizard-navigation
@@ -44,6 +42,9 @@ block content
 								span.results-wizard-number 3
 								i.fas.fa-images
 								| Загрузка сканов работ
+		.row
+			.col
+				h4 бланков: {{app.resultsCount}}, абитуриентов: {{app.pupilsCount}}, олимпиадников: {{app.olympPupilsCoumt}}
 		.row
 			+simpleCard('Cтатистика', 6)
 				.table-responsive

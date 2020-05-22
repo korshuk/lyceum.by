@@ -4,7 +4,7 @@ include ../stuff/adminIntarface/cards
 extends ../adminLayout
 
 append menuVars
-	- var menuPage = 'committees';
+	- var menuPage = 'profiles';
 	- var menuSection = 'exams';
 block content
 	style
@@ -45,7 +45,7 @@ block content
 					| #{'  '} Посмотреть результаты		
 	.row
 		.col
-			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, сканов: #{docs.length || 0}	
+			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }	
 	.row.results-wizard.card-wizard.active
 			.col-xl-12
 				.wizard-navigation
@@ -66,7 +66,10 @@ block content
 								i.fas.fa-images
 								| Загрузка сканов работ
 	.row
-		+simpleCard('Загруженные сканы', 7)
+		.col
+			h4 бланков: #{docs.length || 0}, абитуриентов: #{profile.countArray[profile.countArray.length - 1].count}, олимпиадников: #{profile.olymp}
+	.row
+		+simpleCard('Загруженные сканы (всего ' + docs.length + ')', 7)
 			.table-responsive
 				table#scansTable.table.table-hover
 					- each doc, index in docs

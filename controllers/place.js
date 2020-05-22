@@ -11,6 +11,44 @@ var PlacesController = function(mongoose, app) {
 
     base.seatsEmailExport = seatsEmailExport;
 
+    base.list = list;
+
+    base.create = function (req, res) {
+        var self = this,
+            doc;
+        if (req.session && req.session.locals && req.session.locals.doc) {
+            doc = req.session.locals.doc;
+            req.session.locals = {};
+        } else {
+            doc = new self.Collection();
+        }
+        var queryId = ""
+        if (req.query && req.query.id) {
+            queryId = req.query.id
+        }
+        app.profileController.Collection.find().exec(function(err, profiles) {
+            res.render(self.viewPath + 'new.jade', {
+                doc: doc,
+                queryId:queryId,
+                profiles: profiles,
+                method: 'post'
+            });
+        });
+    };
+
+    base.edit = function (req, res) {
+        var self = this;
+        this.Collection.findByReq(req, res, function (doc) {
+            app.profileController.Collection.find().exec(function(err, profiles) {
+                res.render(self.viewPath + 'new.jade', {
+                    doc: doc,
+                    method: 'put',
+                    profiles: profiles
+                });
+            });
+        });
+    };
+
     base.save = function(req, res) {
         var self = this;
         var doc = new this.Collection(req.body);
@@ -69,6 +107,34 @@ var PlacesController = function(mongoose, app) {
 
     return base;
 
+    function list(req, res) {
+        var self = this;
+        this.Collection.find().sort('-createdAt').exec(function (err, docs) {
+                var docksCount = docs.length;
+                var pageNum = req.query.page || 0;
+                var pagesCount = Math.ceil(docksCount / 20);
+                var docsToRender = [];
+                for (var i = pageNum * 20; i < pageNum * 20 + 20; i++) {
+                    if (docs[i] && docs[i]. _id) {
+                        docsToRender.push(docs[i])
+                    }
+                    
+                }
+                app.profileController.Collection.find().exec(function(err, profiles) {
+                    res.render(self.viewPath + 'list.jade', {
+                        docs: docsToRender,
+                        pageNum: pageNum,
+                        pagesCount: pagesCount,
+                        docksCount: docksCount,
+                        profiles: profiles,
+                        viewName: self.name.toLowerCase(),
+                        siteConfig: self.app ? self.app.siteConfig : {}
+                    });
+                })
+                
+        });
+    }
+    
     function seatsEmailExport(req, res) {
         var examNum = req.params.examNum;
 

@@ -20,13 +20,21 @@ block content
             .col-md-5.text-right
                 +buttonSet('/admin/pupils/places') 
         .row
-            +simpleCard('Основное', 5)
+            +simpleCard('Основное', 3)
                 +field('text', "code", 'Код')(value= doc.code || '')
                 +field('text', "name", 'Название')(value= doc.name || '')
                 +field('text', "address", 'Адрес')(value= doc.address || '')
-            +simpleCard('Кабинеты', 5)
+
+                
+            +simpleCard('Кабинеты', 4)
+                - var totalMax = 0;
+                - for (var i = 0; i < doc.audience.length; i++) {
+                -   totalMax += doc.audience[i].max
+                - }
                 .row
-                    .col-lg-12
+                    .col-xl-6
+                        b Всего мест #{totalMax}
+                    .col-xl-6.text-right
                         .form-group
                             button#addItem.btn.btn-primary Добавить
                 .table-responsive
@@ -40,7 +48,7 @@ block content
                                             input.form-control(type='text', name="audience[" + index + "][name]", value= audience.name || '')
                                     td
                                         .form-group
-                                            label Максимальное количество:
+                                            label Влазит:
                                             input.form-control(type='number', name="audience[" + index + "][max]", value= audience.max || 0)
                                     td
                                         .form-group 
@@ -58,13 +66,13 @@ block content
                         tbody(style="display: none;")
                             tr#template
                                 td
-                                    
                                     .form-group
-                                        label Название:
+                                        
+                                        label Название 
                                         input.name-field.form-control(type='text', name="", value= '')
                                 td
                                     .form-group
-                                            label Максимальное количество:
+                                            label Влазит:
                                             input.max-field.form-control(type='number', name="", value= 0)
                                         
                                 td
@@ -76,11 +84,31 @@ block content
                                 td
                                     .form-group 
                                         label #{' '}
+                                            span.badge.badge-pill.badge-info New
                                         br
                                         button.delete-btn.btn.btn-danger.btn-icon.btn-sm
                                             span.btn-label
                                                 i.fa.fa-times
 
+            +simpleCard('Профили', 5)
+                .table-responsive
+                        table.table.table-hover
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th Название
+                                    th Апрув.
+                                    th Олимп.
+                                    th Надо мест
+                            tbody    
+                                each profile, index in profiles
+                                    tr
+                                        td.text-center= index+1
+                                        td #{profile.name}
+                                        td #{profile.countArray[profile.countArray.length - 1].count}
+                                        td #{profile.olymp}
+                                        td
+                                            b #{profile.countArray[profile.countArray.length - 1].count - profile.olymp}
 block scripts
 
     script.

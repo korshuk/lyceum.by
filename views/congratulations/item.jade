@@ -7,7 +7,7 @@ div.news-item
     - var block = translateNews(d.teasernew).blocks[0];
     a(href= ahref).to-full-page
         h3= translateObj(d.name)
-    if d.image
+    if d.image || d.imagenew
         - var image = d.imagenew;
         a(href= ahref, title= block.data.text).imagelink
             img(src= image.file.mUrl, alt= block.data.text, class= image.file.imageType)

@@ -9,49 +9,84 @@ append menuVars
 block content
     +listPageHeader('Места', 'Добавить место', '/admin/pupils/places/create')
     .row
-        +mainCard('Список мест')
-            .table-responsive
-                table.table.table-hover
-                    thead.text-primary
-                        tr
-                            th.text-center #
-                            th Код
-                            th Название
-                            th Адрес
-                            th Аудитории
-                            th.text-right Действия
-                    tbody    
-                        each doc, index in docs
-                            tr
-                                td.text-center= index+1
-                                td  #{doc.code}
-                                td  #{doc.name}
-                                td  #{doc.address}
-                                td
-                                    table.table
-                                        - each audience in doc.audience
-                                            tr
-                                                td #{audience.name}
-                                                td #{audience.max}
-                                                td #{audience.bel ? 'Бел' :'  '}
-                                td.text-right 
-                                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/places/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
-                                        i.fa.fa-edit
-                                    | #{' '}    
-                                    a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/places/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
-                                        i.fa.fa-times      
+        .col-xl-7
+            .row
+                +simpleCard('Список мест', 12)
+                    .table-responsive
+                        table.table.table-hover
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th Код
+                                    th Название
+                                    th Адрес
+                                    th Аудитории
+                                    th.text-right Действия
+                            tbody    
+                                each doc, index in docs
+                                    - var totalMax = 0;
+                                    - for (var i = 0; i < doc.audience.length; i++) {
+                                    -   totalMax += doc.audience[i].max
+                                    - }
+                                    tr
+                                        td.text-center= index+1
+                                        td  #{doc.code}
+                                        td  #{doc.name}
+                                        td  #{doc.address}
+                                        td
+                                            table.table
+                                                - each audience in doc.audience
+                                                    tr
+                                                        td #{audience.name}
+                                                        td #{audience.max}
+                                                        td #{audience.bel ? 'Бел' :'  '}
+                                                tr
+                                                    td 
+                                                        b Всего
+                                                    td(colspan=2) 
+                                                        b #{totalMax}
+                                        td.text-right 
+                                            a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/places/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                                i.fa.fa-edit
+                                            | #{' '}    
+                                            a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/places/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                                i.fa.fa-times      
+        .col-xl-5
+            .row
+                +simpleCard('Дополнительно', 12)
+                    //.form-group.text-right
+                        a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
+                        &nbsp;
+                        a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
+                        &nbsp;
+                        a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
+                    
+                    h5 Данные для ручной массовой рассылки писем с аудиториями
+                    .form-group.text-right
+                        a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv') .csv для 1 экзамена 
+                        &nbsp;
+                        a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv') .csv для 2 экзамена 
+            .row
+                +simpleCard('Профили', 12, true)
+                    .table-responsive
+                        table.table.table-hover
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th Название
+                                    th Апрув.
+                                    th Олимп.
+                                    th Надо мест
+                            tbody    
+                                each profile, index in profiles
+                                    tr
+                                        td.text-center= index+1
+                                        td #{profile.name}
+                                        td #{profile.countArray[profile.countArray.length - 1].count}
+                                        td #{profile.olymp}
+                                        td
+                                            b #{profile.countArray[profile.countArray.length - 1].count - profile.olymp}
 
-        +simpleCard('Дополнительно', 4)
-            h5 Рассадка
-            //.form-group.text-right
-                a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
-                &nbsp;
-                a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
-                &nbsp;
-                a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
-            
-            h5 Данные для ручной массовой рассылки писем с аудиториями
-            .form-group.text-right
-                a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv') .csv для 1 экзамена 
-                &nbsp;
-                a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv') .csv для 2 экзамена 
+                                        
+
+

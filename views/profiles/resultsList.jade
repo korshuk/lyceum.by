@@ -23,8 +23,7 @@ block content
 
 	.row
 		.col
-			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, результатов: #{docs.length || 0}
-	//- a(href="/admin/pupils/profiles/delete/"+number+"/"+id, class="btn btn-primary") Удалить файлы
+			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }
 	.row.results-wizard.card-wizard.active
 		.col-xl-12
 				.wizard-navigation
@@ -44,6 +43,9 @@ block content
 								span.results-wizard-number 3
 								i.fas.fa-images
 								| Загрузка сканов работ
+	.row
+		.col
+			h4 бланков: #{docs.length || 0}, абитуриентов: #{profile.countArray[profile.countArray.length - 1].count}, олимпиадников: #{profile.olymp}
 	.row	
 		+simpleCard('Загрузка файлов', 12)
 			form(action="/admin/pupils/profiles/results/"+id+"/"+examNumber, method="post", enctype="multipart/form-data")
