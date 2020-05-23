@@ -43,9 +43,11 @@ function define(mongoose, fn) {
     });
   };
 
-  ExamResultSchema.statics.findByGreatCamID = function (ID, next) {
+  ExamResultSchema.statics.findByGreatCamID = function (ID, examNumber, profileId, next) {
     this.findOne({
-      ID: ID
+      ID: ID, 
+      examNumber: examNumber,
+      profileId: profileId
     }, next);
   };
 
@@ -54,7 +56,7 @@ function define(mongoose, fn) {
     record.examNumber = examNumber;
     record.profile = profile;
 
-    result = new base.ResultsCollection(record);
+    result = new this(record);
     result.save(next);
   }
 

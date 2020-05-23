@@ -8,7 +8,9 @@ module.exports = function(app) {
 	router.get('/', app.userController.Pass, function(req, res) {
 		app.profileController.list(req, res);
 	});
-
+	router.get('/examresults', app.userController.Pass, function(req, res) {
+		app.profileController.examresultsList(req, res);
+	});
 	router.get('/create', app.userController.Pass, function(req, res) {
 		app.profileController.create(req, res);
 	});

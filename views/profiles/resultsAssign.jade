@@ -3,16 +3,16 @@ include ../stuff/adminIntarface/cards
 
 extends ../adminLayout
 append menuVars
-	- var menuPage = 'profiles';
+	- var menuPage = 'examresults';
 	- var menuSection = 'exams';
 
 block content
 	div(ng-app="assignApp", ng-controller="assignController as app")
 		.row
 			+pageHeader()
-				| Расшифровка результатов
+				| Расшифровка и заполнение результатов экзаменов 
 			.col-md-5.text-right
-				a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles")
+				a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles/examresults")
 					span.btn-label
 						i.fa.fa-undo
 					| #{'  '}К списку профилей

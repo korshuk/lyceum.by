@@ -1,0 +1,71 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'examresults';
+  - var menuSection = 'exams';
+
+block content
+    .row
+        .col-xl-12
+            .row
+                .col-sm-8
+                    h2 Расшифровка и заполнение результатов экзаменов   
+    .row
+        +simpleCard('Профили', 12) 
+            .table-responsive
+                table.table.table-hover
+                    tbody
+                        each doc, index in docs
+                            tr
+                                td  
+                                    p
+                                        span.h6 #{doc.name}
+                                td
+                                    p <b>#{doc.firstExamName}</b>
+                                    .form-group
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}На проверку 1 экзамена
+                                    if (doc.firstUploaded)
+                                        p
+                                            strong 1 экзамен готов
+                                        
+                                    p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
+     
+                                td
+                                    p <b>#{doc.secondExamName}</b>
+                                    .form-group
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/2")
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}На проверку 2 экзамена
+                                    if (doc.secondUploaded)    
+                                        p
+                                            strong 2 экзамен готов
+                                    
+                                    p pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
+                                    
+                                    
+                                td
+                                    .form-group
+                                        a.btn.btn-primary.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{doc.id}", target="_blank") 
+                                            span.btn-label
+                                                i.far.fa-list-alt
+                                            | #{'  '}Посмотреть результаты
+                                    if (doc.totalUploaded)
+                                        p
+                                            strong Зачисление готово
+                                    p
+                                        | Проходной:&nbsp;#{doc.passT}
+                                        br
+                                        | Полупроходной:&nbsp;#{doc.halfpass}
+                                        br
+                                        | С&nbsp;полупроходным:&nbsp;#{doc.halfPupils}
+                                        br
+                                    | Дельта:&nbsp;#{doc.halfDelta}
+                                    p pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
+                                    
+                                    

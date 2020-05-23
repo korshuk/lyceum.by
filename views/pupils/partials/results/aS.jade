@@ -23,7 +23,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
         | <b>#{profile.ammount - profile.olymp}</b> #{GetNoun(profile.ammount - profile.olymp, 'работы', 'работ', 'работ')} первого экзамена, с учетом того, что на 
         | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
         | <b>#{profile.olymp}</b> #{GetNoun(profile.olymp, 'заявление от олимпиадника', 'заявления от олимпиадников', 'заявлений от олимпиадников')}) 
-    +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
+    +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, profile.examKey1, user.result1, 1, false)       
 else
     +absent('первый', siteConfig)
 
@@ -38,7 +38,7 @@ if ((profile.firstIsFirst && user.exam2 >= 0) || (!profile.firstIsFirst && user.
         | <b>#{profile.ammount}</b> #{GetNoun(profile.ammount, 'свободное место', 'свободных места', 'свободных мест')} на профиле было подано 
         | <b>#{profile.olymp}</b> #{GetNoun(profile.olymp, 'заявление от олимпиадника', 'заявления от олимпиадников', 'заявлений от олимпиадников')}) 
 
-    +appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, false)    
+    +appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, profile.examKey2, user.result2, 2, false)  
 else
     +absent('второй', siteConfig)
 

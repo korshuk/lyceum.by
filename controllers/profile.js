@@ -17,6 +17,7 @@ var ProfileController = function (mongoose, app) {
     });
 
     base.list = list;
+    base.examresultsList = examresultsList;
     base.create = create;
     base.edit = edit;
     base.save = save;
@@ -206,52 +207,6 @@ var ProfileController = function (mongoose, app) {
         next();
     }
 
-    function processScanFile(file, next) {
-      //  var Jimp = require('jimp');
-       // var Tesseract = require('tesseract.js');
-
-       /* return Jimp.read(file.path)
-            .then(function(image) {
-                return scanFileOperations(image, file)
-            })
-            .then(function(filedata) {
-                console.log(filedata)
-                return Tesseract.recognize(filedata);
-            })
-            .then(function(data) {
-                const REGEXP = /\(([^)]+)\)/g;
-                let result = '';
-                if (data && data.lines && data.lines[0]) {
-                    const matchText = data.lines[0].text;
-                    const matchNumber = matchText.match(REGEXP);
-                    console.log(matchText, matchNumber)
-                    if (matchNumber && matchNumber[1]) {
-                        result = matchNumber[1].replace(/[()]/g, '')
-                    }
-                   
-                }
-                    
-                console.log('then2 ', result)
-                return result;
-            })
-            .catch(function(err) {
-                console.log('@@@@@@@@@', err)
-            })*/
-    }
-
-    function scanFileOperations(image, file) {
-       /* const newFilePath = "./public/files/temp_" + file.name;
-
-        fs.unlinkSync(file.path)
-
-        return image
-            .resize(2480, 3508)
-            .write(newFilePath)
-            .crop(100, 150, 700, 150 )
-            .write("./public/files/small_" + file.name)
-            .getBufferAsync(Jimp.MIME_PNG)*/
-    }
-
     function validateResultsScanUploadForm(req, res) {
         var hasErrors = false;
         if (req.files.resultScans.size === 0) {
@@ -283,8 +238,9 @@ var ProfileController = function (mongoose, app) {
 
     function saveResults(req, res, records, next) {
         var examNumber = req.params.examNumber;
+        var profileId = req.params.profileId;
         async.eachSeries(records, function (record, asyncdone) {
-            base.ResultsCollection.findByGreatCamID(record.ID, function(err, result) {
+            base.ResultsCollection.findByGreatCamID(record.ID, examNumber, profileId, function(err, result) {
                 if (result) {
                     record.AdditionalPoints = result.AdditionalPoints;
                     updateExistingResult(result, record, req.params.id, examNumber, asyncdone)
@@ -365,6 +321,20 @@ var ProfileController = function (mongoose, app) {
         }
         res.redirect('/admin/pupils/profiles/results/' + req.params.id + '/' + req.params.examNumber);
     }
+    
+    function examresultsList (req, res) {
+        var self = this;
+        this.Collection
+            .find()
+            .sort('order')
+            .populate('examPlace')
+            .exec(function (err, docs) {
+                res.render(self.viewPath + 'examresultsList.jade', {
+                    docs: docs,
+                    viewName: self.name.toLowerCase()
+                });
+            });
+    };
 
     function list (req, res) {
         var self = this;
@@ -474,6 +444,9 @@ var ProfileController = function (mongoose, app) {
 
             doc.secondExamPlace = req.body.secondExamPlace;
             doc.firstExamPlace = req.body.firstExamPlace;
+
+            doc.examKey1 = req.body.examKey1;
+            doc.examKey2 = req.body.examKey2;
 
             doc.firstUploaded = req.body.firstUploaded === 'on';
             doc.firstExamNoStats = req.body.firstExamNoStats === 'on';

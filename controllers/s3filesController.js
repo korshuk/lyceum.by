@@ -86,7 +86,7 @@
                 if (err) {
                     res.status(404).send(err);
                 } else {
-                    res.writeHead(200,{'Content-type':'image/jpg'});
+                    res.writeHead(200,{'Content-type':'image/png'});
                     res.end(data.Body);
                 }
             })

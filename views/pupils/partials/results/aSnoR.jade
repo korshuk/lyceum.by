@@ -1,6 +1,6 @@
 h3 Второй экзамен закончился, но его результатов пока нет
 
-+appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, true)
++appelationInfo(profile.firstIsFirst ? profile.secondExamAppelationDate : profile.firstExamAppelationDate, profile.examKey2, '', 2, true)
 
 if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.exam2 >= 0))
     +resultLine(profile, user, 1)
@@ -8,6 +8,7 @@ if ((profile.firstIsFirst && user.exam1 >= 0) || (!profile.firstIsFirst && user.
         b *
         | - текущий проходной балл по первому экзамену
 
-     +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, false)      
+    +appelationInfo(profile.firstIsFirst ? profile.firstExamAppelationDate : profile.secondExamAppelationDate, profile.examKey1, user.result1, 1, false)       
+     
 else
     +absent('первый', siteConfig)

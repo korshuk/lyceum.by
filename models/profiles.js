@@ -49,7 +49,9 @@ function define(mongoose, fn) {
         'belLang': Boolean,
         'firstUploaded': Boolean,
         'secondUploaded': Boolean,
-        'totalUploaded': Boolean
+        'totalUploaded': Boolean,
+        'examKey1': String,
+        'examKey2': String
     }, { usePushEach: true });
 
     ProfilesSchema.virtual('id').get(function() {

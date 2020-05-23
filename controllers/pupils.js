@@ -777,6 +777,8 @@ var PupilsController = function (mongoose, app) {
                 .populate('profile')
                 .populate('place1')
                 .populate('place2')
+                .populate('result1')
+                .populate('result2')
                 .exec(function (err, data) {
                     queryExecFn(err, data, callback);
                 });
@@ -798,27 +800,42 @@ var PupilsController = function (mongoose, app) {
                 status = pupil.status,
                 examPlaceId = pupil.profile && pupil.profile.examPlace,
                 viewData,
-                viewName;
+                viewName,
+                results = [];
+            if (pupil.result1 && pupil.result1.ID) {
+                results.push(pupil.result1.ID)
+            }
+            if (pupil.result2 && pupil.result2.ID) {
+                results.push(pupil.result2.ID)
+            } 
             app.placesController.Collection
                 .findOne({_id: examPlaceId})
                 .exec(function(err, examPlace) {
-                    viewData = {
-                        user: pupil,
-                        profiles: profiles,
-                        profile: pupil.profile,
-                        examPlace: examPlace,
-                        siteConfig: app.siteConfig
-                    };
-        
-                    if (pupil.status === 'new clear') {
-                        status = 'newClear';
-                    }
-                    if (status === 'approved') {
-                        viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
-                    }
-                    viewName = 'pupils/' + status + '.jade';
-                    res.render(viewName, viewData);
-                });
+                    app.resultScansController.Collection
+                        .find({
+                            profile: pupil.profile._id, 
+                            code: { $in: results}
+                        })
+                        .exec(function (err, scans) {
+                            viewData = {
+                                user: pupil,
+                                profiles: profiles,
+                                profile: pupil.profile,
+                                examPlace: examPlace,
+                                siteConfig: app.siteConfig,
+                                scans: scans
+                            };
+                
+                            if (pupil.status === 'new clear') {
+                                status = 'newClear';
+                            }
+                            if (status === 'approved') {
+                                viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
+                            }
+                            viewName = 'pupils/' + status + '.jade';
+                            res.render(viewName, viewData);
+                        });
+            });
         }
     }
 

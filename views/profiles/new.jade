@@ -42,6 +42,7 @@ block content
                 +field('date', "firstExamDate", 'Дата')(value=(doc && doc.firstExamDate))#firstExamDate
                 +field('time', "firstExamStartTime", 'Время начала экзамена')(value=(doc && doc.firstExamStartTime))#firstExamStartTime
                 +field('date', "firstExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.firstExamAppelationDate))#firstExamAppelationDate
+                +field('text', "examKey1", 'Ключ первого экзамена')(value= doc.examKey1 || '')
                 //- +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
                 +field('checkbox', "firstIsFirst", 'является первым', '', '', 'Первый экзамен')(checked=(doc.firstIsFirst))
                 h5 Второй экзамен
@@ -49,6 +50,7 @@ block content
                 +field('date', "secondExamDate", 'Дата')(value=(doc && doc.secondExamDate))#secondExamDate
                 +field('time', "secondExamStartTime", 'Время начала экзамена')(value=(doc && doc.secondExamStartTime))#secondExamStartTime
                 +field('date', "secondExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.secondExamAppelationDate))#secondExamAppelationDate
+                +field('text', "examKey2", 'Ключ второго экзамена')(value= doc.examKey2 || '')
                 //- +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
 
                 h5 Место проведения экзаменов

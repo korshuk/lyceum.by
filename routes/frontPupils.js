@@ -62,6 +62,7 @@ module.exports = function (app) {
     app.get('/resetPassword/:token', resetPasswordPage);
     app.get('/registerConfirmation/:token', passport.initialize(), registerConfirmationPage);
 
+    app.get('/api/pupils/get-my-test/:examNumber', passport.authenticate('bearer', {session: false}), getScanFile);
     app.post('/api/pupils/fio', passport.authenticate('bearer', {session: false}), updateFio);
     app.post('/api/pupils/request', passport.authenticate('bearer', {session: false}), updateRequest);
     app.post('/api/pupils/diplom', passport.authenticate('bearer', {session: false}), updateDiplom);
@@ -73,6 +74,27 @@ module.exports = function (app) {
     app.post('/api/pupils/phone', passport.authenticate('bearer', {session: false}), updatePhone);
     app.post('/api/pupils/code', passport.authenticate('bearer', {session: false}), updateCode);
 
+    function getScanFile(req, res) {
+        var pupil = req.user;
+        var examNumber = req.params.examNumber;
+        var resultId = pupil['result' + examNumber];
+        console.log(pupil, examNumber)
+
+        app.profileController.ResultsCollection
+            .findOne({_id: resultId})
+            .exec(function (err, result) {
+                app.resultScansController.Collection
+                        .findOne({
+                            profile: pupil.profile, 
+                            code: result.ID,
+                            examNum: examNumber
+                        })
+                        .exec(function (err, scan) {
+                            req.params.fileName = scan.filename;
+                            app.resultScansController.getScanFile(req, res)
+                        });
+            });
+    }
     function requestPasswordPost(req, res) {
         app.pupilsController.Collection.findOne({
                 email: req.body.mail

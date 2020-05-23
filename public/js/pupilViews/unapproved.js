@@ -22,6 +22,47 @@ ready(function () {
         $(document).on('click', '#saveSettings', saveSettings);
         $(document).on('click', '.settings-list-item.editable', openSettingsDialog);
         $(document).on('change', '#profileInput', profileInputChange);
+        $(document).on('click', '.getTestFile', getTestFile)
+
+        function getTestFile(e) {
+            e.preventDefault();
+            loadingStart()
+            var url = $(this).attr('href');
+            var auth = JSON.parse(window.localStorage.getItem('jquery.oauth'))
+            var examNumber = url.split('/').pop()
+            var xhr = new XMLHttpRequest();
+            var filename = 'exam-result-' + examNumber + '.png';
+            if ($(e.target).hasClass('getTestFileKey')) {
+                filename = url.split('/').pop();
+            }
+            
+            xhr.onreadystatechange = function(){
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        downloadFile(this.response, filename)
+                    }
+                    if (this.status == 401) {
+                        $(document).trigger('lyceum:needReload');
+                    }
+                }
+            }
+            xhr.open('GET', url);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
+
+        function downloadFile(data, filename) {
+            var a = document.createElement('a');
+            var url = window.URL.createObjectURL(data);
+            a.href = url;
+            a.download = filename;
+            document.body.append(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            loadingEnd();
+        }
 
         function saveSettings() {
             var data = {};
