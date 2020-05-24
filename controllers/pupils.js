@@ -841,13 +841,15 @@ var PupilsController = function (mongoose, app) {
 
     function createApprovedPupilView(pupil, profile) {
         var date = new Date;
-
+        
+        date.setHours(date.getHours() - 15);
+        
         var firstExamDate = profile.firstExamDate;
         var secondExamDate = profile.secondExamDate;
 
         var templateName = '';
         //TODO check empty firstExamDeate
-        console.log(date, firstExamDate, date < firstExamDate);
+        console.log('***', date, firstExamDate, date < firstExamDate);
         if (pupil.passOlymp) {
             // templateName = templateName + 'passOlymp';
         }
