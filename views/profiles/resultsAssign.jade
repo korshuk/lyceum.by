@@ -8,18 +8,11 @@ append menuVars
 
 block content
 	div(ng-app="assignApp", ng-controller="assignController as app")
+		+resultsMainBtnsBlock(profile.id)
 		.row
 			+pageHeader()
 				| Расшифровка и заполнение результатов экзаменов 
-			.col-md-5.text-right
-				a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles/examresults")
-					span.btn-label
-						i.fa.fa-undo
-					| #{'  '}К списку профилей
-				a.btn.btn-success.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank")
-					span.btn-label
-						i.far.fa-list-alt
-					| #{'  '} Посмотреть результаты	
+			
 		.row
 			.col	
 				h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }
@@ -125,7 +118,7 @@ block content
 									ng-change="app.onResultInputChange(result, app.tempPupil)",
 									placeholder="Select")
 							td {{result.Class}} 
-							td {{result.Points}} {{result.AdditionalPoints > -1 ? ' + ' + result.AdditionalPoints : ''}} 
+							td {{result.Points}} {{result.AdditionalPoints >= 0 ? ' +' + result.AdditionalPoints : result.AdditionalPoints}} 
 								br
 								| <b>{{result.Points + result.AdditionalPoints}}</b>
 			+simpleCard('Абитуриенты', 5)
@@ -157,7 +150,9 @@ block content
 									span.label.label-info(ng-if="pupil.passOlymp")
 										span.far.fa-star
 								
-							td {{app.examStatuses[pupil.examStatus]}}
+							td 
+								span(ng-if="pupil.examStatus !== 0")
+									| {{app.examStatuses[pupil.examStatus]}}
 							td 
 								
 									div(ng-if="!pupil.passOlymp")
@@ -166,11 +161,13 @@ block content
 												type="text", 
 												ng-disabled="true"
 												value="Отсутсвовал")
-											a.input-group-addon(
-												href="#", 
-												title="очистить результат"
-												ng-click="app.removeAbsence(pupil); $event.preventDefault();"
-											) &times;
+											.input-group-append	
+												a.btn.btn-info(
+													href="#", 
+													title="очистить результат"
+													ng-click="app.removeAbsence(pupil); $event.preventDefault();"
+												)
+													i.fas.fa-times
 										.input-group( ng-if="pupil.exam#{examNumber} !== -2")	
 											button.btn.btn-danger.btn-link(ng-click="app.addAbsence(pupil)") Поставить "Н"
 	block scripts

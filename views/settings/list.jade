@@ -65,6 +65,8 @@ block content
                         +field('textarea', "agreement", 'Текст возле галочки')( rows="3")#agreement #{docs && docs.agreement} 
                         h5 Видео инструкция о регистрации
                         +field('text', "registrationVideoLink", 'Ссылка на Youtube')(value=(docs && docs.registrationVideoLink))#registrationVideoLink
+                        h5 Форма аппеляции
+                        +field('text', "appelationFormLink", 'Ссылка на форму')(value=(docs && docs.appelationFormLink))#appelationFormLink
             
                     +simpleCard('Для зачисленных', 12)
                         h5 Анкета для рекомендованных к зачислению

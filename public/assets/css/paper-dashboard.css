@@ -13549,16 +13549,16 @@ img {
     display: block;
     overflow: hidden;
     min-width: 350px;
-    height: 100px;
+    height: 150px;
     position: relative;
     border: 1px solid #ccc;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.36);
   }
   .resultScanImg {
-    width: 500px;
+    width: 400px;
     position: absolute;
-    top: -30px;
-    left: -30px;
+    top: -15px;
+    left: -55px;
     max-width: none;
   }
   label.file-input-label {

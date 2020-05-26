@@ -487,10 +487,10 @@ var PupilsController = function (mongoose, app) {
                                     if (reqUser['exam' + examNum] == undefined) {
                                         user['exam' + examNum] = undefined;
                                     }
-                                    if (reqUser.result) {
+                                    if (reqUser.result) {       
                                         user['result' + examNum] = reqUser.result;
                                         user['exam' + examNum] = resultsObj[reqUser.result].Points
-                                        if (resultsObj[reqUser.result].AdditionalPoints > -1) {
+                                        if (resultsObj[reqUser.result].AdditionalPoints) {
                                             user['exam' + examNum] = user['exam' + examNum] + resultsObj[reqUser.result].AdditionalPoints;
                                         }
                                     }
@@ -504,8 +504,8 @@ var PupilsController = function (mongoose, app) {
                                     if (reqUser['exam' + examNum] === -1) {
                                         user['exam' + examNum] = -1;
                                     }
+
                                     
-                                        
                                     user.sum = (user.exam1 || 0) + (user.exam2 || 0);
                                     user.save(asyncdone);
                                 }, function (err) {
@@ -519,7 +519,7 @@ var PupilsController = function (mongoose, app) {
 
     }
     function updatePupilResults(pupil, record, examNumber, next) {
-        pupil['exam'+examNumber] = record.Points;
+        pupil['exam'+examNumber] = record.Points + (record.AdditionalPoints || 0);
         pupil.sum = (pupil.exam1 || 0) + (pupil.exam2 || 0);
         pupil.save(next);
     }

@@ -111,6 +111,23 @@ $(document).ready(function () {
     initDeleteBtns();
     initPupilDisaprovedMsg();
     initScans();
+    initStatsCalculateBtn();
+
+    function initStatsCalculateBtn() {
+        $(document).on('click', '.statsCalculate', calculateStats)
+    }
+
+    function calculateStats(e) {
+        e.preventDefault()
+        $.get('/admin/settings/api/calculateStats')
+            .done(() => {
+                window.location.reload()
+            })
+            .fail((err) => {
+                console.log(err);
+                alert('Беда!!!! что-то сломалось');
+            });
+    }
 
     function initScans() {
         if ($('#scansTable').length > 0 ) {

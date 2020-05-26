@@ -36,6 +36,10 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
                     if (examKey)
                         | #{' и '}
                         a.getTestFile.getTestFileKey(href="#{examKey}") Скачать ключ
+                if (siteConfig.appelationFormLink && currDate === appDate)
+                    p Для подачи апелляции перейдите по следующей 
+                        a(href="#{siteConfig.appelationFormLink}", target="_blank", title="Форма для аппеляции") ссылке
+                        |  (ссылка доступна только сегодня).
         //small
             p
                 | #{prettyDate(date)} в Лицее БГУ состоялось ознакомление с результатами проверки вашей работы.

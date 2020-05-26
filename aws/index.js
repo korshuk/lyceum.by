@@ -34,7 +34,12 @@ exports.handler = (event, context, callback) => {
 
         function parseNumber(text) {
             const firstLine = text.split('\n')[0];
-            const number = firstLine.split('(').pop().split(')')[0];
+            let number;
+            if (firstLine.indexOf('#') > -1) {
+                number = firstLine.split('#').pop();
+            } else {
+                number = firstLine.split('(').pop().split(')')[0];
+            }
         
             return {
                 number,
@@ -64,12 +69,7 @@ exports.handler = (event, context, callback) => {
                             return getTextFromImage("/tmp/small_" + fileName);
                         })
                         .then(parseNumber)
-                })
-            
-            
-            //todo: extract region
-            
-            
+                })            
         }
 
 

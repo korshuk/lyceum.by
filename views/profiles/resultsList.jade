@@ -7,19 +7,10 @@ append menuVars
 	- var menuSection = 'exams';
 
 block content
+	+resultsMainBtnsBlock(profile.id)
 	.row
 		+pageHeader()
 			| Расшифровка и заполнение результатов экзаменов
-		.col-md-5.text-right
-			a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles/examresults")
-				span.btn-label
-					i.fa.fa-undo
-				| #{'  '}К списку профилей
-			a.btn.btn-success.btn-magnify(href="http://localhost:3000/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{profile.id}", target="_blank")
-					span.btn-label
-						i.far.fa-list-alt
-					| #{'  '} Посмотреть результаты	
-					
 
 	.row
 		.col

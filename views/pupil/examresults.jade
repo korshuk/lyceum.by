@@ -7,6 +7,13 @@ append menuVars
   - var menuSection = 'exams';
 
 block content
+    .row
+        .col.text-right
+            a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles/examresults")
+                span.btn-label
+                    i.fa.fa-undo
+                | #{'  '}К списку профилей
+            +statsCalculate()
     +listHeader('Результаты экзаменов');
     .row
         +simpleCard('Список абитуриентов', 12)
@@ -170,7 +177,13 @@ block content
                                         span(ng-if='!app.isEditMode2 || item.passOlymp || item.result2.ID') {{item.exam2 === -2 ? 'н' : item.exam2}}
                                         input.form-control(type='text', ng-if='app.isEditMode2 && !item.passOlymp && !item.result2.ID', ng-model="item.exam2")
                                     td {{item.result1.ID}}
+                                        br
+                                        span(ng-if="item.result1.ID")
+                                            | {{item.result1.Points}} {{item.result1.AdditionalPoints > 0 ? '+' + item.result1.AdditionalPoints : item.result1.AdditionalPoints}} = {{item.result1.Points + item.result1.AdditionalPoints}}
                                     td {{item.result2.ID}}
+                                        br
+                                        span(ng-if="item.result2.ID")
+                                            | {{item.result2.Points}} {{item.result2.AdditionalPoints > 0 ? '+' + item.result2.AdditionalPoints : item.result2.AdditionalPoints}} = {{item.result2.Points + item.result2.AdditionalPoints}}
                                     td {{item.sum}}
                                     td {{app.examStatuses[item.examStatus || '0']}}
 

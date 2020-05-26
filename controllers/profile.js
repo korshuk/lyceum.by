@@ -238,7 +238,7 @@ var ProfileController = function (mongoose, app) {
 
     function saveResults(req, res, records, next) {
         var examNumber = req.params.examNumber;
-        var profileId = req.params.profileId;
+        var profileId = req.params.id;
         async.eachSeries(records, function (record, asyncdone) {
             base.ResultsCollection.findByGreatCamID(record.ID, examNumber, profileId, function(err, result) {
                 if (result) {
@@ -293,20 +293,38 @@ var ProfileController = function (mongoose, app) {
     }
     function addPoints(req, res) {
         var addPoinsArray = req.body.addpoints; 
-        
+        var examNumber = req.params.examNumber;
+
         async.forEachOf(addPoinsArray, function(additionalPoints, id, asymcdone) {
            
             base.ResultsCollection
                 .findOne({_id: id})
                 .exec(function(err, result) {
                     var adPointsNum;
-                    if (!isNaN(parseInt(additionalPoints)) && parseInt(additionalPoints) > -1) {
+                    if (!isNaN(parseInt(additionalPoints))) {
                         adPointsNum = parseInt(additionalPoints);
                     } else {
                         adPointsNum = undefined;
                     }
                     result.AdditionalPoints = adPointsNum;
-                    result.save(asymcdone)
+                    app.pupilsController.Collection.findByResultAsigned(result._id, examNumber, function(err, pupil){
+                        if (err) {
+                            next(err, pupil);
+                            return;
+                        }
+                        if (pupil) {
+                            app.pupilsController.updatePupilResults(pupil, result, examNumber, function(err, doc){
+                                if (err) {
+                                    next(err, doc)
+                                } else {
+                                    result.save(asymcdone)
+                                }
+                            })
+                        } else {
+                            result.save(asymcdone)
+                        }
+                    });
+                    
                 })
          }, function(err) {
             onAddPointsComplete(req, res, err)

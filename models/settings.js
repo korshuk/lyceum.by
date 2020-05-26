@@ -40,6 +40,7 @@ function define(mongoose, fn) {
             'showExamSeats2': Boolean,
             'agreement': String,
             'registrationVideoLink': String,
+            'appelationFormLink': String,
             's3AccessKeyId': String,
             's3SecretAccessKey': String,
             's3Hostname': String,
