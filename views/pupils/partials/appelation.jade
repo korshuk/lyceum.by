@@ -19,6 +19,8 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
             | Кроме того #{prettyDate(date)} здесь (в личном кабинете) вы сможете ознакомиться с результатом проверки вашей работы.
     else
         h4 Результат проверки вашей работы:
+        //p 
+            | #{scans}
         if (result.Missed)
             p Вы неправильно ответили на следующие вопросы: 
                 br
