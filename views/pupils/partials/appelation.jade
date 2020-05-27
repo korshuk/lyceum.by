@@ -2,8 +2,8 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
     -var d = new Date();
     -var appDate = date.setHours(0,0,0,0)
     -var currDate = d.setHours(0,0,0,0)
-    - var appelationEndDate = date;
-    - appelationEndDate = appelationEndDate.setDate(date.getDate() + 3)
+    - var appelationEndDate = new Date();
+    - appelationEndDate = appelationEndDate.setDate(date.getDate() + 2)
 
     if (noResultFlag)
         p
@@ -41,7 +41,7 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
                 if (siteConfig.appelationFormLink && currDate < appelationEndDate)
                     p Для подачи апелляции перейдите по следующей 
                         a(href="#{siteConfig.appelationFormLink}", target="_blank", title="Форма для аппеляции") ссылке
-                        |  (ссылка доступна только до #{prettyDate(new Date(appelationEndDate))}).
+                        |  (ссылка доступна только до #{prettyDate(new Date(appelationEndDate))} включительно).
         //small
             p
                 | #{prettyDate(date)} в Лицее БГУ состоялось ознакомление с результатами проверки вашей работы.
