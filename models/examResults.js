@@ -45,9 +45,9 @@ function define(mongoose, fn) {
 
   ExamResultSchema.statics.findByGreatCamID = function (ID, examNumber, profileId, next) {
     this.findOne({
-      ID: ID, 
-      examNumber: examNumber,
-      profileId: profileId
+      ID: +ID, 
+      examNumber: +examNumber,
+      profile: profileId
     }, next);
   };
 

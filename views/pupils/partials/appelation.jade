@@ -19,8 +19,6 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
             | Кроме того #{prettyDate(date)} здесь (в личном кабинете) вы сможете ознакомиться с результатом проверки вашей работы.
     else
         h4 Результат проверки вашей работы:
-        //p 
-            | #{scans}
         if (result.Missed)
             p Вы неправильно ответили на следующие вопросы: 
                 br
@@ -34,17 +32,17 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
             -     }
             - }
             if (scan)
-                p Можно посмотреть на свой бланк ответов и свериться с праильным:
+                p Можно посмотреть на свой бланк ответов и свериться с правильным:
                     br
                     a.getTestFile(href="/api/pupils/get-my-test/#{examNumber}") Скачать свой бланк ответов
                     if (examKey)
                         | #{' и '}
-                        a.getTestFile.getTestFileKey(href="#{examKey}") Скачать ключ
+                        a.getTestFileKey(href="#{examKey}", target="_blank") Скачать ключ
                 if (siteConfig.appelationFormLink && currDate < appelationEndDate)
                     p Для подачи апелляции перейдите по следующей 
                         a(href="#{siteConfig.appelationFormLink}", target="_blank", title="Форма для аппеляции") ссылке
                         |  (ссылка доступна только до #{prettyDate(new Date(appelationEndDate))} включительно).
-        //small
+        //-small
             p
                 | #{prettyDate(date)} в Лицее БГУ состоялось ознакомление с результатами проверки вашей работы.
                 br
