@@ -119,34 +119,56 @@ var ResultScansController = function(mongoose, app) {
                 .find({profile: profileId, examNum: examNumber})
                 .sort('-created')
                 .exec(function(err, images){
-                    var i = 0,
-                        image,
-                        length = images.length;
-
-                    var notNumbers = [] ;
-                    var notFilled = []    
-                    
-                    for (i; i < length; i++) {
-                        image = images[i];
+                    var notNumbers = [];
+                    var notFilled = [];
+                    var nodVithResult = [];    
+                    var doubleCheckObject = {};
+                    async.eachSeries(images, function (image, asyncdone) {
+                        
                         if (!image.code || image.code.length === 0) {
                             notFilled.push(image.code)   
-                            image.hasDanger = true
+                            image.hasDanger = true;
                         }
                         else if (!isNumeric(image.code)) {
                             notNumbers.push(image.code)
-                            image.hasDanger = true
+                            image.hasDanger = true;
+                        } else {
+                            if (!doubleCheckObject[image.code]) {
+                                doubleCheckObject[image.code] = 1;
+                            } else {
+                                doubleCheckObject[image.code] = doubleCheckObject[image.code] + 1;
+                            }
+                        }  
+                        app.profileController.ResultsCollection
+                            .findOne({
+                                'ID': image.code,
+                                'examNumber': examNumber,
+                                'profile': profile._id 
+                            }, function(err, result){
+                                if (!result) {
+                                    nodVithResult.push(image.code)
+                                    image.hasDanger = true;
+                                }
+                                asyncdone(err)
+                            });
+                    }, function(err) {
+                        var withDoubleCodes = [];
+                        for (var imageCode in doubleCheckObject) {
+                            if (doubleCheckObject[imageCode] > 1) {
+                                withDoubleCodes.push(imageCode)
+                            }
                         }
-                    }
-
-                    res.render(base.viewPath + 'tempImagesList.jade',{
-                        id: profileId,
-                        examNumber: examNumber,
-                        docs: images,
-                        profile: profile,
-                        notFilled: notFilled,
-                        notNumbers: notNumbers
-                });
-
+                        res.render(base.viewPath + 'tempImagesList.jade',{
+                            id: profileId,
+                            examNumber: examNumber,
+                            docs: images,
+                            profile: profile,
+                            notFilled: notFilled,
+                            notNumbers: notNumbers,
+                            nodVithResult: nodVithResult,
+                            withDoubleCodes: withDoubleCodes
+                        });
+                    });               
             });
         });
     }

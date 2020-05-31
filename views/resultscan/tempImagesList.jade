@@ -136,12 +136,25 @@ block content
 			.row
 				.col-xl-12
 					h4 Проверка
-					+infoBlock()
+					+dangerBlock()
 						| Тут посчитано количество ошибочных кодов
 						br
 						| Данные обновятся при перезагрузке страницы
-					p Не заполнено кодов: #{notFilled.length}
-					p Код не является числом: #{notNumbers.length}
+						hr
+						p Не заполнено кодов: <b>#{notFilled.length}</b>
+							if (notFilled.length > 0)
+								| (#{notFilled.join(', ')})
+						p Код не является числом: <b>#{notNumbers.length}</b> 
+							if (notNumbers.length > 0)
+								| (#{notNumbers.join(', ')})
+						p Скану не соответствует ни один результат: <b>#{nodVithResult.length}</b> 
+							if (nodVithResult.length > 0)
+								| (#{nodVithResult.join(', ')})
+						p Есть сканы с одинаковыми номерами: <b>#{withDoubleCodes.length}</b> 
+							if (withDoubleCodes.length > 0)
+								| (#{withDoubleCodes.join(', ')})
+
+							
 						
 block scripts
 	script( src="/javascripts/jquery_fileupload/js/vendor/jquery.ui.widget.js")

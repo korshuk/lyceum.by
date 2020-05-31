@@ -48,14 +48,42 @@ block content
 						.form-group
 							button(type="submit").btn.btn-primary Загрузить
 			hr
+			- var doubleScans = [];
+			- var noScans = [];
+			- var doc;
+			- for(var i = 0; i < docs.length; i++) {
+			-	doc = docs[i];
+			-	if(doc.scans && doc.scans.length > 1) {
+			-		doubleScans.push(doc.ID)
+			-	}
+			-	if (!doc.scans || doc.scans.length === 0) {
+			-		noScans.push(doc.ID)
+			-	}
+			-}
+			
 			form(action="/admin/pupils/profiles/results/addPoints/"+id+"/"+examNumber, method="post", enctype="multipart/form-data")
 				.row
-					.col-sm-12
+					.col-sm-8
+						if (doubleScans.length > 0)
+							.alert.alert-danger.alert-with-icon
+								span.fas.fa-exclamation(data-notify="icon")
+								span
+									| Есть результаты, которым соответсвуют <b>несколько</b> сканов: <b>#{doubleScans.join(', ')}</b>
+						if (noScans.length > 0)
+							.alert.alert-danger.alert-with-icon
+								span.fas.fa-exclamation(data-notify="icon")
+								span
+									| Есть результаты, <b>без</b> сканов: <b>#{noScans.join(', ')}</b>		
+					.col-sm-4.text-right
 						.form-group
-							button.btn.btn-success.pull-right.btn-magnify(type="submit")
+							button.btn.btn-success.btn-magnify(type="submit")
 								span.btn-label
 									i.far.fa-save
 								| #{'  '}Сохранить дополнительный баллы	
+							//-a.btn.btn-danger.delete-doc-btn.btn-magnify(href="/admin/pupils/profiles/results/deleteResults/"+id+"/"+examNumber, type='button', rel='tooltip', data-original-title='Очистить результаты', title='Очистить результаты')
+								span.btn-label
+									i.fas.fa-times
+								| #{'  '}Удалить		
 				
 				.table-responsive
 					table.table.table-hover
@@ -73,7 +101,7 @@ block content
 								tr
 									td #{doc.Class}	
 									td 
-										h3 #{doc.ID}	
+										h3 #{doc.ID}
 									td #{doc.Missed}
 									td
 										span(style="font-size: 1.5em") 

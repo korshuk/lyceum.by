@@ -39,7 +39,9 @@ module.exports = function(app) {
 	router.get('/results/scans/delete/:id/:examNumber/:resultId', app.userController.Pass, function(req, res) {
 		app.profileController.results.deleteScan(req, res);
 	})
-
+	router.get('/results/deleteResults/:id/:examNumber', app.userController.Pass, function(req, res) {
+		app.profileController.results.deleteAllResults(req, res);
+	})
 	router.get('/results/assign/:id/:examNumber', app.userController.Pass, function(req, res) {
 		app.profileController.results.assign(req, res);
 	});
