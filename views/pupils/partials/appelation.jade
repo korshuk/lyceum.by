@@ -37,7 +37,7 @@ mixin appelationInfo(date, examKey, result, examNumber, noResultFlag)
                     if (examKey)
                         | #{' и '}
                         a.getTestFileKey(href="#{examKey}", target="_blank") Скачать ключ
-                if (siteConfig.appelationFormLink && currDate < appelationEndDate)
+                if (siteConfig.appelationFormLink && currDate <= appelationEndDate)
                     p Для подачи апелляции перейдите по следующей 
                         a(href="#{siteConfig.appelationFormLink}", target="_blank", title="Форма для аппеляции") ссылке
                         |  (ссылка доступна только до #{prettyDate(new Date(appelationEndDate))} включительно).
