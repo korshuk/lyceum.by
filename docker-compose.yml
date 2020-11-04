@@ -12,10 +12,9 @@ services:
       - PORT=$PORT
       - MONGO_URL=$MONGO_URL
     ports:
-      - "4000:3000"
+      - "3000:3000"
     volumes:
       - .:/home/node/app
-    #  - node_modules:/home/node/app/node_modules
     networks:
       - app-network
     #command: ./wait-for.sh lyceum_mongo:27017 -- ./home/node/app/node_modules/node_modules/bin/ app.js  
@@ -28,13 +27,17 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - dbdata:/data/db
+      - ./dump:/dump
+      - ./dbdata:/data/db
+    ports:
+      - 27017:27017 
     networks:
       - app-network
 networks:
   app-network:
     driver: bridge
 
-volumes:
-  dbdata:
-  node_modules:
+#volumes:
+  #dbdata:
+  #dump:
+  #node_modules:
