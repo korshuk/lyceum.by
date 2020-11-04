@@ -1,26 +1,40 @@
-version: '3.7'
-services: 
-  app:  
-    image: node:4
-    container_name: lyceum  
-    build: .
-#    restart: always
-    command: npm run dev
-    ports: 
-      - '80:3000'
-    volumes:
-      - C:\Users\nastyasinkevich\Documents\GitHub\lyceum.by\:/user/src/app/
-      - C:\Users\nastyasinkevich\Documents\Basketball website\img:/user/src/app/sinkevich
-    working_dir: /user/src/app/
+version: '3'
+services:
+  lyceum_nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: lyceum_nodejs
+    restart: unless-stopped
+    env_file: .env
     environment:
-      - MONGO_URL=host.docker.internal
-  #   links:
-  #     - mongo
-  #   depends_on:
-  #     - mongo
-  # mongo:
-  #   image: mongo
-  #   volumes:
-  #     - C:\Users\nastyasinkevich\Documents\example:/data/db
-  #   ports:
-  #   - '27017:27017'
+      - PORT=$PORT
+      - MONGO_URL=$MONGO_URL
+    ports:
+      - "4000:3000"
+    volumes:
+      - .:/home/node/app
+    #  - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+    #command: ./wait-for.sh lyceum_mongo:27017 -- ./home/node/app/node_modules/node_modules/bin/ app.js  
+    command: nodemon app.js
+    depends_on:
+      - lyceum_mongo
+  lyceum_mongo:
+    image: mongo:3.6.20-xenial
+    container_name: lyceum_mongo
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - dbdata:/data/db
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+  node_modules:

@@ -1,13 +1,19 @@
-FROM node:4
+FROM node:0.10
 
-WORKDIR /user/src/app
+#RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-COPY package*.json ./
+WORKDIR /home/node/app
 
-RUN npm install --quiet
+RUN npm i nodemon@1.11.0 -g
 
-RUN npm install -g nodemon
+#COPY package*.json ./
 
-COPY . . 
+#USER node
+
+#RUN npm install
+
+#COPY --chown=node:node . .
 
 EXPOSE 3000
+
+CMD [ "node", "app.js" ]

@@ -26,7 +26,6 @@
     "multer": "^1.4.2",
     "node-logentries": "0.0.2",
     "nodemailer": "2.7.2",
-    "nodemon": "^1.17.3",
     "oauth2orize": "1.11.0",
     "paralleljs": "^0.2.1",
     "passport": "0.4.0",
@@ -53,7 +52,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-postcss": "^0.7.2",
     "jit-grunt": "^0.9.1",
-    "nodemon": "1.11.0",
+    "nodemon": "~1.19.4",
     "mocha": "2.4.1",
     "chai": "~4.2.0",
     "dot": "~1.1.0"

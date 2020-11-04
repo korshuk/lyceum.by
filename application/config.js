@@ -83,7 +83,7 @@
             next();
         });
         
-        app.portNum = 3000;
+        app.portNum = process.env.PORT || 3000;
         
         return app;
     };

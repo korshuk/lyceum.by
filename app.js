@@ -27,7 +27,7 @@
                 if (err) {
                     throw 'error writing file: ' + err;
                 }
-                console.log('file written');
+                console.log('file written', app.portNum);
             });
 
         }
