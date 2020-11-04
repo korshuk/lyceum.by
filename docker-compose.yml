@@ -11,14 +11,13 @@ services:
     environment:
       - PORT=$PORT
       - MONGO_URL=$MONGO_URL
+      - WAIT_HOSTS=lyceum_mongo:27017
     ports:
       - "3000:3000"
     volumes:
       - .:/home/node/app
     networks:
       - app-network
-    #command: ./wait-for.sh lyceum_mongo:27017 -- ./home/node/app/node_modules/node_modules/bin/ app.js  
-    command: nodemon app.js
     depends_on:
       - lyceum_mongo
   lyceum_mongo:
