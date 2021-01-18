@@ -2,6 +2,21 @@ var crypto = require('crypto');
 var mongoose = require('mongoose');
 var async = require('async');
 
+var PUPIL_FIELDS_TO_BE_VISIBLE = [
+    '_id', 
+    'email', 
+    'firstName',
+    'lastName',
+    'parentName', 
+    'status', 
+    'dessaproveDate', 
+    'profile', 
+    'place1', 
+    'place2', 
+    'result1', 
+    'result2'
+].join(' ');
+
 function define(mongoose, fn) {
     var PupilSchema = new mongoose.Schema({
         email: {
@@ -118,7 +133,19 @@ function define(mongoose, fn) {
     PupilSchema.methods.checkPassword = function (password) {
         return this.encryptPassword(password) === this.hashedPassword;
     };
-
+    
+    PupilSchema.statics.findOneForAjax = function(req, res, next) {
+        this.findOne({_id: req.user.userId}, PUPIL_FIELDS_TO_BE_VISIBLE)
+            .populate('profile')
+            .populate('place1')
+            .populate('place2')
+            .populate('result1')
+            .populate('result2')
+            .exec(function(err, pupil) {
+                next(err, pupil)
+            })
+    };
+    
     PupilSchema.statics.findByReq = function(req, res, next) {
         this.findOne({ _id: req.params.id}, function(err, doc) {
             if (!doc) {

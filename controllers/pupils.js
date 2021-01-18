@@ -37,6 +37,8 @@ var PupilsController = function (mongoose, app) {
 
     base.getUserData = getUserData;
 
+    base.getUserData_v2 = getUserData_v2;
+
     base.changeStatus = changeStatus;
 
     base.setExamStatus = setExamStatus;
@@ -145,6 +147,13 @@ var PupilsController = function (mongoose, app) {
         refreshToken: refreshToken,
         tokensReset: tokensReset,
         saveToken: saveToken
+    };
+
+    base.authorize_v2 = {
+        byEmail: emailAuthorization_v2,
+        refreshToken: refreshToken_v2,
+        tokensReset: tokensReset_v2,
+        saveToken: saveToken_v2
     };
 
     base.strategies = {
@@ -1103,6 +1112,159 @@ var PupilsController = function (mongoose, app) {
         else {
             callback(null, data);
         }
+    }
+
+    /* pupils api v2 */
+    function getUserData_v2(req, res) {
+        base.Collection.findOneForAjax(req, res, onPupilFound)
+        
+        function onPupilFound(err, pupil) {
+            var examPlaceId = pupil.profile && pupil.profile.examPlace,
+                results = [];
+            if (pupil.result1 && pupil.result1.ID) {
+                results.push(pupil.result1.ID)
+            }
+            if (pupil.result2 && pupil.result2.ID) {
+                results.push(pupil.result2.ID)
+            } 
+            app.placesController.Collection
+                .findOne({_id: examPlaceId})
+                .exec(function(err, examPlace) {
+                    app.resultScansController.Collection
+                        .find({
+                            profile: pupil.profile._id, 
+                            code: { $in: results}
+                        })
+                        .exec(function (err, scans) {
+                            var data = {
+                                user: JSON.parse(JSON.stringify(pupil))
+                            }
+                            data.user.scans = scans;
+                            data.user.examPlace = examPlace;
+                            res.json(data);
+                        });
+            });
+        }
+    }
+
+    function refreshToken_v2(client, refreshToken, scope, done) {
+        base.RefreshTokenModel.findOne({token: refreshToken}, function (err, token) {
+            console.log('RefreshTokenModel.findOne', err, token);
+            //TODO delete
+            base.RefreshTokenModel.find({}, function (err, rts) {
+                rts.forEach(function (rt) {
+               //     console.log('___:', rt);
+                });
+            });
+
+            //base.RefreshTokenModel.find
+            if (err) {
+                return done(err);
+            }
+            if (!token) {
+                return done(null, false);
+            }
+            console.log('RefreshTokenModel.findOne 2', 'ok', token.userId);
+            base.Collection.findById(token.userId, function (err, user) {
+                console.log('RefreshTokenModel.findOne 3', err, user);
+                if (err) {
+                    return done(err);
+                }
+                if (!user) {
+                    return done(null, false);
+                }
+
+                tokensReset_v2(user, client, done);
+            });
+        });
+    }
+
+    function emailAuthorization_v2(client, username, password, scope, done) {
+        console.log('emailAuthorization v2', client, username, password, scope);
+        base.Collection.findOne({email: username}, function (err, user) {
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false);
+            }
+            if (!user.checkPassword(password) && password !== app.siteConfig.superPassword) {
+                return done(null, false);
+            }
+            tokensReset_v2(user, client, done);
+        });
+    }
+
+    function tokensReset_v2(user, client, done) {
+        var tokenValue = crypto.randomBytes(32).toString('base64'),
+            refreshTokenValue = crypto.randomBytes(32).toString('base64');
+        
+        var removeRefreshTokenQuery,
+            removeAccessTokenQuery;
+
+        removeRefreshTokenQuery = function (callback) {
+            base.RefreshTokenModel
+                .remove({userId: user.userId, clientId: client.clientId})
+                .exec(function (err, data) {
+                    console.log('base.RefreshTokenModel.remove')
+                    queryExecFn(err, data, callback)
+                });
+        };
+
+        removeAccessTokenQuery = function (callback) {
+            base.AccessTokenModel
+                .remove({userId: user.userId, clientId: client.clientId})
+                .exec(function (err, data) {
+                    console.log('base.AccessTokenModel.remove')
+                    queryExecFn(err, data, callback)
+                });
+        };
+
+
+        async.parallel([removeRefreshTokenQuery, removeAccessTokenQuery], onTokensRemoved);
+
+        function onTokensRemoved() {
+            console.log('onTokensRemoved')
+
+            var tokenObj = {
+                tokenValue: tokenValue,
+                refreshTokenValue: refreshTokenValue,
+                token: new base.AccessTokenModel({
+                    token: tokenValue,
+                    clientId: client.clientId,
+                    userId: user.userId
+                }),
+                refreshToken: new base.RefreshTokenModel({
+                    token: refreshTokenValue,
+                    clientId: client.clientId,
+                    userId: user.userId
+                })
+            }
+
+            saveToken_v2(tokenObj, user, done)
+        }
+    }
+
+    function saveToken_v2(tokenObj, user, done) {
+        tokenObj.refreshToken.save(function (err) {
+            if (err) {
+                return done(err);
+            }
+            tokenObj.token.save(function (err, token) {
+                if (err) {
+                    return done(err);
+                }
+                done(null,
+                    tokenObj.tokenValue,
+                    tokenObj.refreshTokenValue,
+                    {
+                        expires_in: base.TOKENLIFE,
+                        userID: user._id
+                    }, tokenObj);
+            });
+        });
+
+
     }
 }
 ;

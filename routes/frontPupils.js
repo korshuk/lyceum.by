@@ -4,10 +4,15 @@ module.exports = function (app) {
 
     var path = require('path'),
         fs = require('fs'),
+        cors = require('cors'),
         gm = require('gm'),
         util = require('util'),
         Jimp = require('jimp');
 
+    var CORS_OPTIONS = {
+        origin: ['http://localhost:8081', 'http://localhost:8080'],
+        credentials: true
+    }    
     var localization = require('../modules/localization').localization;
     var passport = require('passport');
     var oauth2 = require('../modules/oauth2')(app);
@@ -40,6 +45,25 @@ module.exports = function (app) {
     });
 */
     passportStrategies(passport);
+
+    /*  API V2 START */
+    app.options('/api/v2/oauth/token', cors(CORS_OPTIONS));
+    app.post(
+        '/api/v2/oauth/token', 
+        cors(CORS_OPTIONS),
+        passport.authenticate(['basic', 'oauth2-client-password'], {session: false}),
+        oauth2.token_v2
+    );
+    //app.use('/api/v2/pupils/', cors(CORS_OPTIONS), passport.initialize());
+    app.options('/api/v2/pupils/current', cors(CORS_OPTIONS));
+    app.get('/api/v2/pupils/current',
+        cors(CORS_OPTIONS),
+        passport.authenticate('bearer', {session: false}),
+        function(req,res) {
+            app.pupilsController.getUserData_v2(req,res);
+        });
+    /*  API V2 END */
+
 
     app.get('/api/pupils/images/:img', serveImg);
 
