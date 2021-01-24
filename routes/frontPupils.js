@@ -47,6 +47,8 @@ module.exports = function (app) {
     passportStrategies(passport);
 
     /*  API V2 START */
+    
+    // GETTIN AND REFRESHING AUTH TOKENS
     app.options('/api/v2/oauth/token', cors(CORS_OPTIONS));
     app.post(
         '/api/v2/oauth/token', 
@@ -54,16 +56,22 @@ module.exports = function (app) {
         passport.authenticate(['basic', 'oauth2-client-password'], {session: false}),
         oauth2.token_v2
     );
-    //app.use('/api/v2/pupils/', cors(CORS_OPTIONS), passport.initialize());
+
+    // GET LOGGED IN PUPIL INFOO
     app.options('/api/v2/pupils/current', cors(CORS_OPTIONS));
     app.get('/api/v2/pupils/current',
         cors(CORS_OPTIONS),
         passport.authenticate('bearer', {session: false}),
-        function(req,res) {
-            app.pupilsController.getUserData_v2(req,res);
-        });
+        function(req, res) { app.pupilsController.getUserData_v2(req, res) }
+    );
+    
+    // GET APP CONFIG
+    app.options('/api/v2/config/current', cors(CORS_OPTIONS));
+    app.get('/api/v2/config/current',
+        cors(CORS_OPTIONS),
+        function(req, res) { app.settingsController.getCurrent_v2(req, res) }
+    );    
     /*  API V2 END */
-
 
     app.get('/api/pupils/images/:img', serveImg);
 

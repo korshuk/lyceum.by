@@ -4,6 +4,8 @@ var SettingsController = function(mongoose, app) {
 
     var base = new BaseController('Settings', 'settings', mongoose, app);
 
+    base.getCurrent_v2 = getCurrent_v2;
+    
     base.list = function(req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function(err, docs) {
@@ -103,8 +105,22 @@ var SettingsController = function(mongoose, app) {
         base.app.s3filesController.updateCredentials();
     });
 
-
+    
     return base;
+
+    function getCurrent_v2(req, res) {
+        var isRegistration = false;
+        if (app.siteConfig.registrationEndDate) {
+            isRegistration = new Date() <= new Date(app.siteConfig.registrationEndDate)
+        }
+
+
+        res.json({
+            config: {
+                isRegistration: isRegistration
+            }
+        })
+    }
 };
 
 
