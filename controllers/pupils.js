@@ -23,6 +23,8 @@ var PupilsController = function (mongoose, app) {
 
     base.apiListExport = apiListExport;
 
+
+    
     base.saveExams = saveExams;
     base.saveExamsNew = saveExamsNew;
     base.updatePupilResults = updatePupilResults;
