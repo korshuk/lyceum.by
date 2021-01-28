@@ -12,6 +12,7 @@ module.exports = function (app) {
                 app.pupilsController.strategies.BasicStrategy(username, password, done)
             }));
 
+            
         passport.use(new ClientPasswordStrategy(
             function (clientId, clientSecret, done) {
                 app.pupilsController.strategies.ClientPasswordStrategy(clientId, clientSecret, done)
