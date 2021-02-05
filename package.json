@@ -38,7 +38,11 @@
     "winston": "1.1.2",
     "aws-sdk": "~2.635.0",
     "os-utils": "0.0.14",
-    "get-folder-size": "0.1.1"
+    "get-folder-size": "0.1.1",
+    "cookie-parser": "~1.4.5",
+    "express-session": "~1.17.1",
+    "passport-jwt": "2.1.1",
+    "jsonwebtoken": "7.1.10"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.6",

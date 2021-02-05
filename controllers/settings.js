@@ -4,7 +4,9 @@ var SettingsController = function(mongoose, app) {
 
     var base = new BaseController('Settings', 'settings', mongoose, app);
 
-    base.getCurrent_v2 = getCurrent_v2;
+    base.v2 = {
+        getCurrent: getCurrent_v2
+    }
     
     base.list = function(req, res) {
         var self = this;

@@ -25,8 +25,8 @@
         smsController = require('../controllers/smsController').smsController,
         ReportController = require('../controllers/report').ReportController,
         S3filesController = require('../controllers/s3filesController').S3filesController,
-        ResultScansController = require('../controllers/resultScans').ResultScansController;
-
+        ResultScansController = require('../controllers/resultScans').ResultScansController,
+        PassportController = require('../controllers/passport_v2').PassportController;
         
     exports.configure = function (app) {
         app.param('lang', function (req, res, next, lang) {
@@ -47,6 +47,7 @@
         app.contactsController = new ContactsController(mongoose, app);
         app.resultsController = new ResultsController(mongoose, app);
         app.resultScansController = new ResultScansController(mongoose, app);
+        app.passportController = new PassportController(app);
 
         require('../routes/frontRoutes')(app);
 

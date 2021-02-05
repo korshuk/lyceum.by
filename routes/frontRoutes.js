@@ -19,6 +19,7 @@
         require('../routes/frontContacts')(app);
         require('../routes/frontResults')(app);
         require('../routes/frontPupils')(app);
+        require('../routes/frontPupils_v2')(app);
         require('../routes/frontStats')(app);
     };
 }(exports, require));
