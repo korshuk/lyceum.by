@@ -5,7 +5,8 @@ var SettingsController = function(mongoose, app) {
     var base = new BaseController('Settings', 'settings', mongoose, app);
 
     base.v2 = {
-        getCurrent: getCurrent_v2
+        getCurrent: getCurrent_v2,
+        isRegistration: isRegistration
     }
     
     base.list = function(req, res) {
@@ -68,6 +69,7 @@ var SettingsController = function(mongoose, app) {
             doc.s3SecretAccessKey = req.body.s3SecretAccessKey
             doc.s3Hostname = req.body.s3Hostname
 
+
             doc.save(function(err, d) {
                 app.siteConfig = doc;
                 base.app.siteConfig.startTime = Date.now();
@@ -123,6 +125,18 @@ var SettingsController = function(mongoose, app) {
             }
         })
     }
+
+    function isRegistration(req, res) {
+        var reqDate = +req.body.date;
+        var registrationEndDate = app.siteConfig.registrationEndDate;
+        console.log(reqDate)
+        console.log(app.siteConfig)
+        
+        if (reqDate < registrationEndDate) {
+            res.status(403)
+            res.send({message: 'registration off'})
+        }
+    };
 };
 
 

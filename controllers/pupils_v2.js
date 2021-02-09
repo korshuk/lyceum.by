@@ -12,6 +12,7 @@
         api.userLogin = userLogin;
         api.userLogout = userLogout;
         api.getUserData = getUserData;
+        api.registerPost = registerPost;
 
         return api;
 
@@ -74,7 +75,48 @@
                 });
             }
         }
+
+
+        function registerPost(req, res) {
+            baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
+                console.log('app NR', app)
+                console.log('req date NR', req.body.date)
+                
+                                
+                
+                if (!pupil) {
+                    var pupil = new app.pupilsController.Collection({
+                        password: req.body.password,
+                        email: req.body.email,
+                        status: 'new clear',
+                        confirmMailToken: crypto.randomBytes(32).toString('hex')
+                    });
+    
+                    pupil.save(function (err, pupil) {
+                        if (err) {
+                            res.status(403);
+                            res.send({
+                                message: 'something wrong'
+                            });
+                        }
+                        else {
+                            app.mailController.mailRegisterConfirm(pupil.email, 'http://' + req.headers.host + '/registerConfirmation/' + pupil.confirmMailToken);
+                            res.send({
+                                message: 'registered'
+                            });
+                        }
+                    });
+    
+                } else {
+                    res.status(403);
+                    res.send({
+                        message: 'email exists'
+                    });
+                }
+            })
+        }
     }
+
 
     
 })(exports, require)

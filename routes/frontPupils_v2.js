@@ -28,6 +28,13 @@ module.exports = function (app) {
         function(req, res) { app.pupilsController.v2.userLogout(req, res) }
     );
 
+    router.post('/pupils/register',  function(req, res) {
+        app.settingsController.v2.isRegistration(req, res)
+        app.pupilsController.v2.registerPost(req, res) }
+    )
+    
+
+
     router.get('/pupils/current',
         app.passportController.authenticate,
         function(req, res) { app.pupilsController.v2.getUserData(req, res) }
