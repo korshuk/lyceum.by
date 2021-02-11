@@ -1,6 +1,7 @@
 var express = require('express');
 var session = require('express-session');
 
+
 var SESSION_OPTIONS = {
     secret: 'wow very secret',
     cookie: {
@@ -29,8 +30,7 @@ module.exports = function (app) {
     );
 
     router.post('/pupils/register',  function(req, res) {
-        app.settingsController.v2.isRegistration(req, res)
-        app.pupilsController.v2.registerPost(req, res) }
+       app.pupilsController.v2.registerPost(req, res) }
     )
     
 

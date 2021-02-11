@@ -8,7 +8,8 @@
 
     function Setup(baseController, app) {
         var api = {}
-
+    
+        
         api.userLogin = userLogin;
         api.userLogout = userLogout;
         api.getUserData = getUserData;
@@ -44,6 +45,9 @@
         }
        
         function getUserData(req, res) {
+            console.log('app NR', baseController.app.siteConfig)
+
+
             console.log('getUserData', req, arguments.length)
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
             
@@ -78,13 +82,12 @@
 
 
         function registerPost(req, res) {
-            baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
-                console.log('app NR', app)
-                console.log('req date NR', req.body.date)
-                
+           baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
+           // console.log('getUserData', app, baseController.app.siteConfig.confirmationEndDate)
                                 
-                
                 if (!pupil) {
+                    var config = app.siteConfig;
+                    console.log('!!!config NR', config)
                     var pupil = new app.pupilsController.Collection({
                         password: req.body.password,
                         email: req.body.email,

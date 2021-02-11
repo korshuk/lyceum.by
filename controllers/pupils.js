@@ -51,7 +51,7 @@ var PupilsController = function (mongoose, app) {
 
     base.pupilsList = pupilsList;
 
-    base.v2 = pupilsV2Setup(base, app);
+    setTimeout(function(){base.v2 = pupilsV2Setup(base, app)}, 5000);
 
     base.create = function (req, res) {
         var self = this,

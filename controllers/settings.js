@@ -6,7 +6,7 @@ var SettingsController = function(mongoose, app) {
 
     base.v2 = {
         getCurrent: getCurrent_v2,
-        isRegistration: isRegistration
+        
     }
     
     base.list = function(req, res) {
@@ -117,8 +117,6 @@ var SettingsController = function(mongoose, app) {
         if (app.siteConfig.registrationEndDate) {
             isRegistration = new Date() <= new Date(app.siteConfig.registrationEndDate)
         }
-
-
         res.json({
             config: {
                 isRegistration: isRegistration
@@ -126,17 +124,7 @@ var SettingsController = function(mongoose, app) {
         })
     }
 
-    function isRegistration(req, res) {
-        var reqDate = +req.body.date;
-        var registrationEndDate = app.siteConfig.registrationEndDate;
-        console.log(reqDate)
-        console.log(app.siteConfig)
-        
-        if (reqDate < registrationEndDate) {
-            res.status(403)
-            res.send({message: 'registration off'})
-        }
-    };
+    
 };
 
 

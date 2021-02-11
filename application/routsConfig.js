@@ -49,7 +49,7 @@
         app.resultScansController = new ResultScansController(mongoose, app);
         app.passportController = new PassportController(app);
 
-        require('../routes/frontRoutes')(app);
+        
 
         app.mailController = new MailController(mongoose, app);
         app.smsController = new smsController(mongoose, app);
@@ -68,6 +68,7 @@
         app.reportController = new ReportController('Report', '', mongoose, app, true);
         app.s3filesController = new S3filesController(mongoose, app);
         
+        require('../routes/frontRoutes')(app);
         require('../routes/adminRoutes')(app);
         return app;
     };
