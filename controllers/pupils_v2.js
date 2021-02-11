@@ -30,7 +30,7 @@
             var password = req.body.password;
             console.log('emailAuthorization v2', username, password);
             baseController.Collection.findOne({email: username}, function (err, user) {
-                if (err) {
+               if (err) {
                     return done(err);
                 }
                 if (!user) {
@@ -39,17 +39,18 @@
                 if (!user.checkPassword(password) && password !== app.siteConfig.superPassword) {
                     return done(null, false);
                 }
+                console.log('!!!!USER', user)
                 res.locals.user = user;
                 next(req, res);
             });
         }
        
         function getUserData(req, res) {
-            console.log('app NR', baseController.app.siteConfig)
-
+           
 
             console.log('getUserData', req, arguments.length)
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
+
             
             function onPupilFound(err, pupil) {
                 var examPlaceId = pupil.profile && pupil.profile.examPlace,
@@ -83,7 +84,16 @@
 
         function registerPost(req, res) {
            baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
-           // console.log('getUserData', app, baseController.app.siteConfig.confirmationEndDate)
+           
+           var registrationDate = req.body.date;
+           var registrationEnd = app.siteConfig.registrationEndDate;
+
+           console.log('DATES NR', registrationDate, registrationEnd )
+
+           if(registrationDate < registrationEnd) {
+               res.status(403).send({message: 'registration off'});
+               return;
+           }
                                 
                 if (!pupil) {
                     var config = app.siteConfig;
