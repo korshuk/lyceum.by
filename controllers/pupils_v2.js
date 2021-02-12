@@ -14,6 +14,7 @@
         api.userLogout = userLogout;
         api.getUserData = getUserData;
         api.registerPost = registerPost;
+        api.requestPasswordPost = requestPasswordPost;
 
         return api;
 
@@ -128,8 +129,41 @@
                 }
             })
         }
-    }
 
+        function requestPasswordPost(req, res) {
+            app.pupilsController.Collection.findOne({
+                    email: req.body.mail
+                },
+                function (err, pupil) {
+                    if (err) {
+                        return res.send({
+                            error: 'error'
+                        });
+                    }
+                    if (!pupil) {
+                        return res.send({
+                            error: 'user not found'
+                        });
+                    }
+    
+                    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+                    var pass = "";
+    
+                    for (var x = 0; x < 10; x++) {
+                        var i = Math.floor(Math.random() * chars.length);
+                        pass += chars.charAt(i);
+                    }
+    
+                    pupil.password = pass;
+                    pupil.save(function (err, pupil) {
+                        app.mailController.mailPassRequest(pupil.email, pupil.password);
+                        res.send('Email Sent');
+                    })
+                });
+        }
+    }
+    
+    
 
     
 })(exports, require)

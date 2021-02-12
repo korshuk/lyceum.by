@@ -44,5 +44,10 @@ module.exports = function (app) {
         function(req, res) { app.settingsController.v2.getCurrent(req, res) }
     );    
 
+    router.post('/oauth/requestPassword', function(req, res) {
+        app.pupilsController.v2.requestPasswordPost(req, res) }
+     )
+
+
     app.use('/api/v2', router);
 };
