@@ -8,10 +8,13 @@
 
     function Setup(baseController, app) {
         var api = {}
-
+    
+        
         api.userLogin = userLogin;
         api.userLogout = userLogout;
         api.getUserData = getUserData;
+        api.registerPost = registerPost;
+        api.requestPasswordPost = requestPasswordPost;
 
         return api;
 
@@ -28,7 +31,7 @@
             var password = req.body.password;
             console.log('emailAuthorization v2', username, password);
             baseController.Collection.findOne({email: username}, function (err, user) {
-                if (err) {
+               if (err) {
                     return done(err);
                 }
                 if (!user) {
@@ -37,15 +40,15 @@
                 if (!user.checkPassword(password) && password !== app.siteConfig.superPassword) {
                     return done(null, false);
                 }
+                console.log('!!!!USER', user)
                 res.locals.user = user;
                 next(req, res);
             });
         }
        
         function getUserData(req, res) {
-            console.log('getUserData', req, arguments.length)
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
-            
+
             function onPupilFound(err, pupil) {
                 var examPlaceId = pupil.profile && pupil.profile.examPlace,
                     results = [];
@@ -74,7 +77,89 @@
                 });
             }
         }
+
+
+        function registerPost(req, res) {
+           baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
+           
+           var registrationDate = req.body.date;
+           var registrationEnd = app.siteConfig.registrationEndDate;
+
+           console.log('DATES NR', registrationDate, registrationEnd )
+
+           if(registrationDate < registrationEnd) {
+               res.status(403).send({message: 'registration off'});
+               return;
+           }
+                                
+                if (!pupil) {
+                    var config = app.siteConfig;
+                    console.log('!!!config NR', config)
+                    var pupil = new app.pupilsController.Collection({
+                        password: req.body.password,
+                        email: req.body.email,
+                        status: 'new clear',
+                        confirmMailToken: crypto.randomBytes(32).toString('hex')
+                    });
+    
+                    pupil.save(function (err, pupil) {
+                        if (err) {
+                            res.status(403);
+                            res.send({
+                                message: 'something wrong'
+                            });
+                        }
+                        else {
+                            app.mailController.mailRegisterConfirm(pupil.email, 'http://' + req.headers.host + '/registerConfirmation/' + pupil.confirmMailToken);
+                            res.send({
+                                message: 'registered'
+                            });
+                        }
+                    });
+    
+                } else {
+                    res.status(403);
+                    res.send({
+                        message: 'email exists'
+                    });
+                }
+            })
+        }
+
+        function requestPasswordPost(req, res) {
+            app.pupilsController.Collection.findOne({
+                    email: req.body.mail
+                },
+                function (err, pupil) {
+                    if (err) {
+                        return res.send({
+                            error: 'error'
+                        });
+                    }
+                    if (!pupil) {
+                        return res.send({
+                            error: 'user not found'
+                        });
+                    }
+    
+                    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+                    var pass = "";
+    
+                    for (var x = 0; x < 10; x++) {
+                        var i = Math.floor(Math.random() * chars.length);
+                        pass += chars.charAt(i);
+                    }
+    
+                    pupil.password = pass;
+                    pupil.save(function (err, pupil) {
+                        app.mailController.mailPassRequest(pupil.email, pupil.password);
+                        res.send('Email Sent');
+                    })
+                });
+        }
     }
+    
+    
 
     
 })(exports, require)

@@ -44,6 +44,8 @@ function define(mongoose, fn) {
             's3AccessKeyId': String,
             's3SecretAccessKey': String,
             's3Hostname': String,
+            'reCaptchaSite': String,
+            'reCaptchaSecret': String
         });
 
     mongoose.model('Settings', SettingsSchema);
