@@ -116,6 +116,9 @@ block content
                             | Ключ 
                             a.text-white(href="https://www.google.com/recaptcha/admin") можно узнать тут
                         +field('text', "reSiteKey", 'Ключ')(value=(docs && docs.reSiteKey))#reSiteKey
+                        h5 reCAPTCHA для личного кабинета
+                        +field('text', "reCaptchaSite", 'Ключ сайта')(value=(docs && docs.reCaptchaSite))#reCaptchaSite
+                        +field('text', "reCaptchaSecret", 'Секретный ключ')(value=(docs && docs.reCaptchaSecret))#reCaptchaSecret
                         h5 Tokens
                         +field('text', "clientAppName", 'clientAppName')(value=(docs && docs.clientAppName))#clientAppName
                         +field('text', "clientAppSecret", 'clientAppSecret')(value=(docs && docs.clientAppSecret))#clientAppSecret

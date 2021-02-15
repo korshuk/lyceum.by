@@ -21,6 +21,7 @@ module.exports = function (app) {
     app.passportController.init(router);
     
     router.post('/login', 
+        app.passportController.recaptchaCheck,
         function(req, res) { app.pupilsController.v2.userLogin(req, res) }
     );
 

@@ -12,7 +12,6 @@ var SettingsController = function(mongoose, app) {
     base.list = function(req, res) {
         var self = this;
         this.Collection.find().sort('-createdAt').exec(function(err, docs) {
-            console.log(docs[0])
             res.render(self.viewPath + 'list.jade', {
                 docs: docs[0],
                 viewName: 'settings'
@@ -68,7 +67,8 @@ var SettingsController = function(mongoose, app) {
             doc.s3AccessKeyId = req.body.s3AccessKeyId
             doc.s3SecretAccessKey = req.body.s3SecretAccessKey
             doc.s3Hostname = req.body.s3Hostname
-
+            doc.reCaptchaSite = req.body.reCaptchaSite
+            doc.reCaptchaSecret = req.body.reCaptchaSecret
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;
@@ -119,7 +119,8 @@ var SettingsController = function(mongoose, app) {
         }
         res.json({
             config: {
-                isRegistration: isRegistration
+                isRegistration: isRegistration,
+                reCaptchaSite: app.siteConfig.reCaptchaSite
             }
         })
     }

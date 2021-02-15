@@ -47,12 +47,8 @@
         }
        
         function getUserData(req, res) {
-           
-
-            console.log('getUserData', req, arguments.length)
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
 
-            
             function onPupilFound(err, pupil) {
                 var examPlaceId = pupil.profile && pupil.profile.examPlace,
                     results = [];
