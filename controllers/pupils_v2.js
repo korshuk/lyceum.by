@@ -51,30 +51,38 @@
 
             function onPupilFound(err, pupil) {
                 var examPlaceId = pupil.profile && pupil.profile.examPlace,
-                    results = [];
-                if (pupil.result1 && pupil.result1.ID) {
-                    results.push(pupil.result1.ID)
-                }
-                if (pupil.result2 && pupil.result2.ID) {
-                    results.push(pupil.result2.ID)
-                } 
-                app.placesController.Collection
-                    .findOne({_id: examPlaceId})
-                    .exec(function(err, examPlace) {
-                        app.resultScansController.Collection
-                            .find({
-                                profile: pupil.profile._id, 
-                                code: { $in: results}
-                            })
-                            .exec(function (err, scans) {
-                                var data = {
-                                    user: JSON.parse(JSON.stringify(pupil))
-                                }
-                                data.user.scans = scans;
-                                data.user.examPlace = examPlace;
+                    results = [],
+                    data = {
+                        user: JSON.parse(JSON.stringify(pupil))
+                    }
+                if (!examPlaceId) {
+                    res.json(data);
+                    return;
+                } else {
+                    results = createResultsArray(pupil);
+
+                    app.placesController.Collection
+                        .findByExamPlaceId(examPlaceId)
+                        .exec(function(err, examPlace) {
+                            data.user.examPlace = examPlace;
+                            if (results.length === 0) {
                                 res.json(data);
-                            });
-                });
+                            }
+                            else {
+                                app.resultScansController.Collection
+                                    .find({
+                                        profile: pupil.profile._id, 
+                                        code: { $in: results}
+                                    })
+                                    .exec(function (err, scans) {
+                                        
+                                        data.user.scans = scans;
+                                        
+                                        res.json(data);
+                                    });
+                            }
+                    });
+                }
             }
         }
 
@@ -156,6 +164,17 @@
                         res.send('Email Sent');
                     })
                 });
+        }
+
+        function createResultsArray(pupil) {
+            var results = [];
+            if (pupil.result1 && pupil.result1.ID) {
+                results.push(pupil.result1.ID)
+            }
+            if (pupil.result2 && pupil.result2.ID) {
+                results.push(pupil.result2.ID)
+            } 
+            return results
         }
     }
     

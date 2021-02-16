@@ -34,6 +34,11 @@ function define(mongoose, fn) {
             }
         });
     };
+
+    PlacesSchema.statics.findByExamPlaceId = function(examPlaceId) {
+        return this.findOne({ _id: examPlaceId})
+    }
+
     mongoose.model('Places', PlacesSchema);
     fn();
 }

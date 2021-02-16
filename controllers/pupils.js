@@ -800,10 +800,8 @@ var PupilsController = function (mongoose, app) {
         function onResultsFound(err, results) {
             var pupil = results[0],
                 profiles = results[1],
-                status = pupil.status,
                 examPlaceId = pupil.profile && pupil.profile.examPlace,
                 viewData,
-                viewName,
                 results = [];
             if (pupil.result1 && pupil.result1.ID) {
                 results.push(pupil.result1.ID)
@@ -811,34 +809,50 @@ var PupilsController = function (mongoose, app) {
             if (pupil.result2 && pupil.result2.ID) {
                 results.push(pupil.result2.ID)
             } 
-            app.placesController.Collection
-                .findOne({_id: examPlaceId})
-                .exec(function(err, examPlace) {
-                    app.resultScansController.Collection
-                        .find({
-                            profile: pupil.profile._id, 
-                            code: { $in: results}
-                        })
-                        .exec(function (err, scans) {
-                            viewData = {
-                                user: pupil,
-                                profiles: profiles,
-                                profile: pupil.profile,
-                                examPlace: examPlace,
-                                siteConfig: app.siteConfig,
-                                scans: scans
-                            };
-                
-                            if (pupil.status === 'new clear') {
-                                status = 'newClear';
-                            }
-                            if (status === 'approved') {
-                                viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
-                            }
-                            viewName = 'pupils/' + status + '.jade';
-                            res.render(viewName, viewData);
-                        });
-            });
+            viewData = {
+                user: pupil,
+                profiles: profiles,
+                profile: pupil.profile,
+                siteConfig: app.siteConfig,
+            };
+            if (examPlaceId) {
+                app.placesController.Collection
+                    .findOne({_id: examPlaceId})
+                    .exec(function(err, examPlace) {
+                        if (results.length > 0) {
+                            app.resultScansController.Collection
+                                .find({
+                                    profile: pupil.profile._id, 
+                                    code: { $in: results}
+                                })
+                                .exec(function (err, scans) {
+                                    viewData.examPlace = examPlace,
+                                    viewData.scans = scans
+                                    
+                                    sendRes(res, pupil, viewData)
+                                    
+                                });
+                        } else {
+                            sendRes(res, pupil, viewData)
+                        }
+                });
+            } else {
+                sendRes(res, pupil, viewData)
+            }
+
+            function sendRes(res, pupil, viewData) {
+                var status = pupil.status,
+                    viewName;
+
+                if (status === 'new clear') {
+                    status = 'newClear';
+                }
+                if (status === 'approved') {
+                    viewData.pupilViewName = createApprovedPupilView(pupil, pupil.profile);
+                }
+                viewName = 'pupils/' + status + '.jade'
+                res.render(viewName, viewData);
+            }
         }
     }
 

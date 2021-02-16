@@ -30,8 +30,11 @@ module.exports = function (app) {
         function(req, res) { app.pupilsController.v2.userLogout(req, res) }
     );
 
-    router.post('/pupils/register',  function(req, res) {
-       app.pupilsController.v2.registerPost(req, res) }
+    router.post('/pupils/register',
+        app.passportController.recaptchaCheck,
+        function(req, res) {
+            app.pupilsController.v2.registerPost(req, res) 
+        }
     )
     
 
