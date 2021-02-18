@@ -14,8 +14,35 @@ block content
                     h2 Профили   
                 .col-sm-4.text-right
                     +addNewDocBtn('Добавить профиль', '/admin/pupils/profiles/create')
+                    +addNewDocBtn('Добавить кластер', '/admin/pupils/profiles/clusters/create')
     .row
-        +simpleCard('Список', 12) 
+        +simpleCard('Список кластеров', 12)
+            .table-responsive
+                table.table.table-hover
+                    thead.text-primary
+                        tr
+                            th #
+                            th Название
+                            th Код
+                            th Профили
+                            th.text-right Действия
+                    tbody
+                        each doc, index in clusters
+                            tr
+                                td.text-center= index+1
+                                td #{doc.name} 
+                                td #{doc.code}
+                                td 
+                                    if doc.profiles 
+                                        each profile, index in doc.profiles 
+                                            p #{profile.code} - #{profile.name}
+                                td.text-right 
+                                    a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/profiles/clusters/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                        i.fa.fa-edit
+                                    | #{' '}    
+                                    a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/profiles/clusters/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                        i.fa.fa-times 
+        +simpleCard('Список профилей', 12) 
             .table-responsive
                 table.table.table-hover
                     thead.text-primary

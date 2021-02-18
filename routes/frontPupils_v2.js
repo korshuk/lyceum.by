@@ -45,8 +45,12 @@ module.exports = function (app) {
     );
     
     router.get('/config/current',
+        app.passportController.authenticate,
         function(req, res) { app.settingsController.v2.getCurrent(req, res) }
-    );    
+    );  
+    router.get('/config/common',
+        function(req, res) { app.settingsController.v2.getCommon(req, res) }
+    );   
 
     router.post('/oauth/requestPassword', function(req, res) {
         app.pupilsController.v2.requestPasswordPost(req, res) }

@@ -6,6 +6,7 @@ var SettingsController = function(mongoose, app) {
 
     base.v2 = {
         getCurrent: getCurrent_v2,
+        getCommon: getCommon_v2
         
     }
     
@@ -113,6 +114,19 @@ var SettingsController = function(mongoose, app) {
     return base;
 
     function getCurrent_v2(req, res) {
+        app.profileController.Collection
+            .find()
+            .exec(function(err, profiles){
+                res.json({
+                    config: {
+                        fooo: 'bar',
+                        profiles: profiles
+                    }
+                })
+            })
+    }
+
+    function getCommon_v2(req, res) {
         var isRegistration = false;
         if (app.siteConfig.registrationEndDate) {
             isRegistration = new Date() <= new Date(app.siteConfig.registrationEndDate)

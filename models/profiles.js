@@ -1,5 +1,6 @@
 function define(mongoose, fn) {
     var Schema = mongoose.Schema,
+        ProfilesSchema;
 
     ProfilesSchema = new Schema({
     	'name': String,

@@ -1,0 +1,108 @@
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+extends ../adminLayout
+append menuVars
+  - var menuPage = 'profiles';
+  - var menuSection = 'exams';
+
+block content
+    form#dataForm.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/profiles/clusters/' + doc.id : '/admin/pupils/profiles/clusters' )
+        if method === 'put'
+            input(type="hidden", name="_method", value="put")
+        
+        .row    
+            +pageHeader()
+                if method === 'put' 
+                    | Редактирование кластера
+                else
+                    | Новый кластер
+                
+            .col-md-5.text-right
+                +buttonSet('/admin/pupils/profiles')
+        .row
+            +simpleCard('Кластер', 5)
+                +field('text', "name", 'Название')(value= doc.name || '')
+                +field('text', "code", 'Код')(value= doc.code || '')
+            +simpleCard('Профили', 7)
+                .row
+                    .col-xl-7
+                        +field('select', "newProfile", 'Новый профиль', profiles, '')('')#profileSelect
+                    .col-xl-5.text-right
+                        button#addItem.btn.btn-primary Добавить
+                .table-responsive
+                    table.table.table-hover
+                        tbody#profilesTable
+                            - each profile, index in doc.profiles
+                                tr
+                                    td  #{profile.code} - #{profile.name}   
+                                        input.form-control(type='hidden', name="profiles[" + index + "]", value= profile._id || '')                             
+                                    td
+                                        .form-group 
+                                            label #{' '}
+                                            br
+                                            button.delete-btn.btn.btn-danger.btn-icon.btn-sm 
+                                                span.btn-label
+                                                    i.fa.fa-times
+                        tbody(style="display: none;")
+                            tr#template
+                                td
+                                    span.name-text
+                                    input.name-field.form-control(type='hidden', name="", value= '')
+                                td
+                                    .form-group 
+                                        label #{' '}
+                                            span.badge.badge-pill.badge-info New
+                                        br
+                                        button.delete-btn.btn.btn-danger.btn-icon.btn-sm
+                                            span.btn-label
+                                                i.fa.fa-times
+
+            
+block scripts
+
+    script.
+        var $profilesTable = $('#profilesTable');
+        var $template = $('#template');
+
+
+        $(document).on('click', '#addItem', addItem);
+        $(document).on('click', '.delete-btn', deleteItem);
+
+        function deleteItem(e) {
+            e.preventDefault();
+            var $btn = $(e.currentTarget);
+            var $row = $btn.parents('tr');
+            $row.remove();
+
+            $audienceTable.find('tr').each(function (index, element) {
+                var $row = $(element);
+                setAttrs($row, index);
+            });
+        }
+
+        function setAttrs($row, index, value, text) {
+            $row.attr('id', 'data-row-' + index);
+
+            $row
+                .find('.name-field')
+                .attr('name', 'profiles[' + index + ']')
+                .val(value)
+            $row
+                .find('.name-text')
+                .text(text)
+        }
+
+        function addItem(e) {
+            e.preventDefault();
+            var $newRow = $template.clone();
+            var num = $profilesTable.find('tr').length;
+            if ($('#profileSelect').val()) {
+                setAttrs($newRow, num, $('#profileSelect').val(), $( "#profileSelect option:selected" ).text());
+                $newRow.appendTo($profilesTable)
+                $('#profileSelect').val('')
+            }
+            
+
+            
+        }

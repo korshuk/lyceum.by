@@ -50,6 +50,26 @@ module.exports = function(app) {
 		app.profileController.results.getResults(req, res);
 	});
 
+	router.get('/clusters/create', app.userController.Pass, function(req, res) {
+		app.profileController.clusters.create(req, res);
+	});
+
+	router.get('/clusters/edit/:id', app.userController.Pass, function(req, res) {
+		app.profileController.clusters.edit(req, res);
+	});
+
+	router.post('/clusters', app.userController.Pass, function(req, res) {
+		app.profileController.clusters.save(req, res);
+	});
+
+	router.put('/clusters/:id', app.userController.Pass, function(req, res) {
+		app.profileController.clusters.update(req, res);
+	});
+
+	router.get('/clusters/delete/:id', app.userController.Pass, function(req, res) {
+		app.profileController.clusters.remove(req, res);
+	});
+
 	router.post('/', app.userController.Pass, function(req, res) {
 		app.profileController.save(req, res);
 	});

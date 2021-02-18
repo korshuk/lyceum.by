@@ -10,12 +10,17 @@ var ProfileController = function (mongoose, app) {
 
     var base = new BaseController('Profiles', '', mongoose, app, true);
     var resultsModel = require('../models/examResults');
+    var clustersModel = require('../models/profilescluster');
     
     resultsModel.define(mongoose, function(){
         base.ResultsCollection = mongoose.model('ExamResults');
         base.ExamFilesCollection = mongoose.model('ExamFiles');
     });
 
+    clustersModel.define(mongoose, function () {
+        base.ClustersCollection = mongoose.model('ProfilesCluster');
+    });
+    
     base.list = list;
     base.examresultsList = examresultsList;
     base.create = create;
@@ -33,6 +38,14 @@ var ProfileController = function (mongoose, app) {
         getResults: getResults,
         addPoints: addPoints
     };
+
+    base.clusters = {
+        create: createCluster,
+        save: saveCluster,
+        edit: editCluster,
+        update: updateCluster,
+        remove: removeCluster
+    }
     
     base.constructor = arguments.callee;
 
@@ -361,10 +374,18 @@ var ProfileController = function (mongoose, app) {
             .sort('order')
             .populate('examPlace')
             .exec(function (err, docs) {
-                res.render(self.viewPath + 'list.jade', {
-                    docs: docs,
-                    viewName: self.name.toLowerCase()
-                });
+                self.ClustersCollection
+                    .find()
+                    .populate('profiles')
+                    .exec(function (err, clusters) {
+                        console.log(clusters)
+                        res.render(self.viewPath + 'list.jade', {
+                            docs: docs,
+                            clusters: clusters,
+                            viewName: self.name.toLowerCase()
+                        });
+                    })
+                
             });
     };
 
@@ -502,6 +523,93 @@ var ProfileController = function (mongoose, app) {
             });
         });
     };
+
+    function removeCluster(req, res) {
+        base.ClustersCollection.findByReq(req, res, function (doc) {
+            var name = doc.name;
+            doc.remove(function () {
+                req.session.success = 'Кластер профилей <strong>' + name + '</strong> успешно удалён';
+                res.redirect(base.path);
+            });
+        });
+    }
+
+    function updateCluster(req, res) {
+        base.ClustersCollection.findByReq(req, res, function (doc) {
+            doc.name = req.body.name;
+            doc.code = req.body.code;
+            doc.profiles = req.body.profiles;
+            doc.save(function (err) {
+                if (err) {
+                    req.session.error = 'Не получилось обновить кластер профиля(( Возникли следующие ошибки: <p>' + err + '</p>';
+                    req.session.locals = {doc: doc};
+                    res.redirect('/admin/pupils/profiles/clusters/edit/' + doc.id);
+                }
+                else {
+                    req.session.success = 'Кластер профиля <strong>' + doc.name + '</strong> обновлен';
+                    res.redirect('/admin/pupils/profiles/');
+                }
+            });
+        });
+    }
+
+    function editCluster(req, res) {
+        base.ClustersCollection
+            .findOne({ _id: req.params.id})
+            .populate('profiles')
+            .exec(function (err, doc) {
+                base.Collection
+                    .find()
+                    .exec(function(err, profiles) {
+                        profiles = createListForSelect(profiles, '_id');
+
+                        res.render(base.viewPath + 'clusters_new.jade', {
+                            doc: doc,
+                            profiles: profiles,
+                            method: 'put',
+                            viewName: 'profileclusters'
+                        });
+                    })
+            });
+    }
+    function saveCluster(req, res) {
+        var doc = new base.ClustersCollection(req.body);
+        
+        doc.save(function (err) {
+            if (err) {
+                req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+                req.session.locals = {doc: doc};
+                res.redirect('/admin/pupils/profiles/clusters/create');
+            }
+            else {
+                req.session.success = 'Кластер профилей <strong>' + doc.name + '</strong> создан ' + doc.createdAt;
+                res.redirect(base.path);
+            }
+        });
+    }
+
+    function createCluster(req, res) {
+        var doc;
+        if (req.session && req.session.locals && req.session.locals.doc) {
+            doc = req.session.locals.doc;
+            req.session.locals = {};
+        } else {
+            doc = new base.ClustersCollection();
+        }
+        base.Collection
+            .find()
+            .exec(function(err, profiles) {
+
+                profiles = createListForSelect(profiles, '_id');
+
+                res.render(base.viewPath + 'clusters_new.jade', {
+                    doc: doc,
+                    method: 'post',
+                    profiles: profiles,
+                    viewName: 'profileclusters'
+                });
+            });
+    }
 };
 
 
