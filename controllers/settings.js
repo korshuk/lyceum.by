@@ -1,5 +1,12 @@
 var BaseController = require('./baseController').BaseController;
 
+var VISIBLE_FOR_CABINET = [
+    'registrationEndDate',
+    'confirmationEndDate',
+    'rulesOlympPoint',
+    'rulesLink'
+]
+
 var SettingsController = function(mongoose, app) {
 
     var base = new BaseController('Settings', 'settings', mongoose, app);
@@ -114,16 +121,20 @@ var SettingsController = function(mongoose, app) {
     return base;
 
     function getCurrent_v2(req, res) {
+        var data = {};
+        data.dateNow = new Date();
+        fillConfigForAjax(data);
         app.profileController.Collection
-            .find()
-            .exec(function(err, profiles){
-                res.json({
-                    config: {
-                        fooo: 'bar',
-                        profiles: profiles
-                    }
-                })
+            .findAllForAjax(req, res, function(profiles){
+                data.profiles = profiles;
+                res.json({config: data});
             })
+    }
+
+    function fillConfigForAjax(config) {
+        for(var i = 0; i < VISIBLE_FOR_CABINET.length; i++) {
+            config[VISIBLE_FOR_CABINET[i]] = app.siteConfig[VISIBLE_FOR_CABINET[i]]
+        }
     }
 
     function getCommon_v2(req, res) {

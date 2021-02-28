@@ -1,3 +1,12 @@
+var FIELDS_TO_BE_VISIBLE = [
+    '_id', 
+    'name', 
+    'code',
+    'order',
+    'belLang', 
+    'selectVariant'
+].join(' ');
+
 function define(mongoose, fn) {
     var Schema = mongoose.Schema,
         ProfilesSchema;
@@ -52,7 +61,13 @@ function define(mongoose, fn) {
         'secondUploaded': Boolean,
         'totalUploaded': Boolean,
         'examKey1': String,
-        'examKey2': String
+        'examKey2': String,
+        'selectVariant': [{
+            profiles: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Profiles'
+            }]
+        }]
     }, { usePushEach: true });
 
     ProfilesSchema.virtual('id').get(function() {
@@ -60,15 +75,32 @@ function define(mongoose, fn) {
     });
 
     ProfilesSchema.statics.findByReq = function(req, res, next) {
-        this.findOne({ _id: req.params.id}, function(err, doc) {
-            if (!doc) {
-                req.session.error = new Error('такой страницы не существует');
-                res.redirect('404.html');
-            } else {
-                next(doc);
-            }
-        });
+        this.findOne({ _id: req.params.id})
+            .populate('selectVariant.profiles')
+            .exec(function(err, doc) {
+                if (!doc) {
+                    req.session.error = new Error('такой страницы не существует');
+                    res.redirect('404.html');
+                } else {
+                    next(err, doc);
+                }
+            })
     };
+    
+    ProfilesSchema.statics.findAllForAjax = function(req, res, next) {
+        this.find({}, FIELDS_TO_BE_VISIBLE)
+            .populate('selectVariant.profiles', FIELDS_TO_BE_VISIBLE)
+            .sort('order')
+            .exec(function(err, docs) {
+                if (docs.length > 0) {
+                    next(docs);
+                } else {
+                    req.session.error = new Error('такой страницы не существует');
+                    res.redirect('404.html');
+                }
+            })
+    };
+    
     mongoose.model('Profiles', ProfilesSchema);
     fn();
 }

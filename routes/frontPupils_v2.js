@@ -37,7 +37,12 @@ module.exports = function (app) {
         }
     )
     
-
+    router.post('/pupils/update',
+        app.passportController.authenticate,
+        function(req, res) {
+            app.pupilsController.v2.userUpdate(req, res) 
+        }
+    )
 
     router.get('/pupils/current',
         app.passportController.authenticate,

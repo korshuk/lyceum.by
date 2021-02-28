@@ -64,6 +64,8 @@ block content
                                         a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/profiles/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
                                             i.fa.fa-times
                                     p
+                                        | Код: #{doc.code}
+                                        br
                                         | Мест #{doc.ammount}
                                         br
                                         | Заявлений #{doc.countArray[doc.countArray.length-1] ? doc.countArray[doc.countArray.length-1].count : 0}

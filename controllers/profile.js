@@ -378,7 +378,6 @@ var ProfileController = function (mongoose, app) {
                     .find()
                     .populate('profiles')
                     .exec(function (err, clusters) {
-                        console.log(clusters)
                         res.render(self.viewPath + 'list.jade', {
                             docs: docs,
                             clusters: clusters,
@@ -406,37 +405,51 @@ var ProfileController = function (mongoose, app) {
 
                 places = createListForSelect(places, 'id');
 
-                res.render(self.viewPath + 'new.jade', {
-                    doc: doc,
-                    subjects: subjects,
-                    places: places,
-                    method: 'post',
-                    viewName: 'profile'
-                });
+                self.Collection.find()
+                        .exec(function(err, profiles) {
+                                
+                            profiles = createListForSelect(profiles, '_id');
+                            
+                            res.render(self.viewPath + 'new.jade', {
+                                doc: doc,
+                                subjects: subjects,
+                                places: places,
+                                method: 'post',
+                                viewName: 'profile'
+                            });
+                        });
             });
         });
     };
 
     function edit(req, res) {
         var self = this;
-        this.Collection.findByReq(req, res, function (doc) {
-            app.subjectController.Collection.find(function (err, subjects) {
 
-                subjects = createListForSelect(subjects, 'name');
+        this.Collection.findByReq(req, res, function(err, doc) {
+                app.subjectController.Collection.find(function (err, subjects) {
 
-                app.placesController.Collection.find(function (err, places) {
+                    subjects = createListForSelect(subjects, 'name');
 
-                    places = createListForSelect(places, 'id');
+                    app.placesController.Collection.find(function (err, places) {
 
-                    res.render(self.viewPath + 'new.jade', {
-                        doc: doc,
-                        subjects: subjects,
-                        places: places,
-                        method: 'put',
-                        viewName: 'profile'
+                        places = createListForSelect(places, 'id');
+
+                        self.Collection.find()
+                            .exec(function(err, profiles) {
+                                    
+                                profiles = createListForSelect(profiles, '_id');
+                        
+                                res.render(self.viewPath + 'new.jade', {
+                                    doc: doc,
+                                    subjects: subjects,
+                                    places: places,
+                                    profiles: profiles,
+                                    method: 'put',
+                                    viewName: 'profile'
+                                });
+                            });
                     });
                 });
-            });
         });
     };
 
@@ -498,6 +511,19 @@ var ProfileController = function (mongoose, app) {
             doc.belLang = req.body.belLang === 'on';
             for (subject in req.body.olympExams) {
                 doc.olympExams.push(subject);
+            }
+            doc.selectVariant = [];
+            var variant;
+            for (var i = 0; i < req.body.selectVariant.length; i++) {
+                variant = {
+                    profiles: []
+                }
+                for (var j = 0; j < req.body.selectVariant[i].length; j++) {
+                    if (req.body.selectVariant[i][j]) {
+                        variant.profiles.push(req.body.selectVariant[i][j])
+                    }
+                }
+                doc.selectVariant.push(variant)
             }
             doc.save(function (err) {
                 if (err) {

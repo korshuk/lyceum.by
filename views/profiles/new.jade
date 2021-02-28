@@ -55,22 +55,168 @@ block content
 
                 h5 Место проведения экзаменов
                 +field('select', "examPlace", 'Место проведение', places, doc.examPlace)(value= doc.examPlace || '')
-
-            +simpleCard('Готовность результатов', 4)
+            .col-xl-4
                 .row
-                    label.col-sm-3.col-form-label Готовы:
-                    .col-sm-9.checkbox-radios
-                        +field('checkboxSimple', "firstUploaded", 'Первый экзамен')(checked=(doc.firstUploaded))
-                        +field('checkboxSimple', "secondUploaded", 'Второй экзамен')(checked=(doc.secondUploaded))
-                        +field('checkboxSimple', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
-                    
-                    
-            
+                    +simpleCard('Готовность результатов', 12)
+                        .row
+                            label.col-sm-3.col-form-label Готовы:
+                            .col-sm-9.checkbox-radios
+                                +field('checkboxSimple', "firstUploaded", 'Первый экзамен')(checked=(doc.firstUploaded))
+                                +field('checkboxSimple', "secondUploaded", 'Второй экзамен')(checked=(doc.secondUploaded))
+                                +field('checkboxSimple', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
+                .row
+                    +simpleCard('Варианты выбора дополнительных профилей', 12)
+                        | #{doc.selectVariant}
+                        .row#variantsList
+                            - each variant, index in doc.selectVariant
+                                .variant-item.col-sm-12(id='data-variant-' + index)
+                                    .row(style="margin-bottom: 20px")
+                                        .col-sm-8
+                                            h4 Вариант выбора <span class="variant-num-text">#{index + 1}</span>
+                                        .col-sm-4.text-right   
+                                            button.delete-variant-btn.btn.btn-danger.btn-magnify(style="margin-top: 30px", data-variant=index)
+                                                span.btn-label
+                                                    i.fa.fa-times 
+                                                | #{'  '} Удалить вариант   
+                                    table.table.table-hover
+                                        tbody.profile-list
+                                            - each pr, indexPr in variant.profiles
+                                                tr(id='data-variant-' + index + '-profile-' + indexPr)
+                                                    td
+                                                        strong.profile-name #{pr.code} - #{pr.name}
+                                                        input.profile-field.form-control(type='hidden', name='selectVariant[' + index + '][' + indexPr+ ']', value= pr._id || '')
+                                                    td
+                                                        .form-group 
+                                                            button.delete-profile-btn.btn.btn-danger.btn-icon.btn-sm(style="margin-top: 0", data-variant=index, data-profile=indexPr) 
+                                                                i.fa.fa-times 
+                                    .row
+                                        .col-sm-7
+                                            +field('select', "newProfile", 'Профиль', profiles, '')(id='profile-select-variant-' + index).profile-select
+                                        .col-sm-5
+                                            button.add-new-profile-btn.btn.btn-secondary.btn-magnify(style="margin-top: 0", data-variant=index)  
+                                                span.btn-label
+                                                    i.fa.fa-plus
+                                                | #{'  '} Добавить 
+                                    hr
+                        
+                        .row 
+                            .col-sm-12
+                                button#addNewVariant.btn.btn-primary.btn-magnify
+                                    span.btn-label
+                                        i.fa.fa-plus
+                                    | #{'  '} Добавить вариант
+
+                        .row(style="display: none;")
+                            .variant-item.col-sm-12#templateVariant
+                                .row(style="margin-bottom: 20px")
+                                    .col-sm-8
+                                        h4 Вариант выбора <span class="variant-num-text"></span>
+                                    .col-sm-4.text-right   
+                                        button.delete-variant-btn.btn.btn-danger.btn-magnify(style="margin-top: 30px")
+                                            span.btn-label
+                                                i.fa.fa-times 
+                                            | #{'  '} Удалить вариант   
+                                table.table.table-hover
+                                    tbody.profile-list
+                                
+                                .row
+                                    .col-sm-7
+                                        +field('select', "newProfile", 'Профиль', profiles, '')('').profile-select
+                                    .col-sm-5
+                                        button.add-new-profile-btn.btn.btn-secondary.btn-magnify(style="margin-top: 0")  
+                                            span.btn-label
+                                                i.fa.fa-plus
+                                            | #{'  '} Добавить 
+                                hr
+
+                        table(style="display: none;")
+                            tbody
+                                tr#templateVariantProfile
+                                    td
+                                        strong.profile-name
+                                        label #{' '}
+                                            span.badge.badge-pill.badge-info New
+                                        input.profile-field.form-control(type='hidden', name="", value= '')
+                                    td
+                                        .form-group 
+                                            button.delete-profile-btn.btn.btn-danger.btn-icon.btn-sm(style="margin-top: 0") 
+                                                i.fa.fa-times 
 
 
 block scripts
-    script
-       /* $('#firstExamDate').datetimepicker();
-        $('#secondExamDate').datetimepicker();
-        $('#firstExamAppelationDate').datetimepicker();
-        $('#secondExamAppelationDate').datetimepicker();*/
+
+    script.
+        var $variantsList = $('#variantsList');
+        var $templateVariant = $('#templateVariant');
+        var $templateVariantProfile = $('#templateVariantProfile');
+
+        $(document).on('click', '#addNewVariant', addNewVariant);   
+        $(document).on('click', '.add-new-profile-btn', addNewProfileClick);   
+        $(document).on('click', '.delete-variant-btn', deleteVariant);   
+        $(document).on('click', '.delete-profile-btn', deleteProfile);   
+
+        function deleteProfile(e) {
+            e.preventDefault();
+            var variant = this.dataset.variant;
+            var profile = this.dataset.profile;
+            
+            var $profile = $('#data-variant-' + variant + '-profile-' + profile);
+            
+            $profile.remove();
+        }
+
+        function deleteVariant(e) {
+            e.preventDefault();
+            var variant = this.dataset.variant;
+            var $variant = $('#data-variant-' + variant);
+           
+            $variant.remove();
+            
+        }
+        function addNewProfileClick(e) {
+            e.preventDefault();
+            var variant = this.dataset.variant;
+            var $profileSelect = $('#profile-select-variant-' + variant);
+            var $variant = $('#data-variant-' + variant);
+            console.log($profileSelect, $profileSelect.val(), $variant)
+            if ($profileSelect.val()) {
+                addNewProfileToVariant($variant, variant, $profileSelect.val(), $profileSelect.find("option:selected" ).text())     
+                $profileSelect.val('')  
+            }
+
+            
+        }
+
+        function addNewVariant(e) {
+            e.preventDefault();
+            var $newVariant = $templateVariant.clone();
+
+            var variantsCount = $variantsList.find('.variant-item').length;
+    
+            $newVariant.attr('id', 'data-variant-' + variantsCount);
+            $newVariant.find('.add-new-profile-btn').attr('data-variant', variantsCount);
+            $newVariant.find('.delete-variant-btn').attr('data-variant', variantsCount);
+            $newVariant.find('.variant-num-text').text('#' + variantsCount + 1)
+            $newVariant.find('.profile-select').attr('id', 'profile-select-variant-' + variantsCount)
+            
+            // addNewProfileToVariant($newVariant, variantsCount)
+
+            $newVariant.appendTo($variantsList)
+        }                
+
+        function addNewProfileToVariant($variant, variantNum, value, text) {
+            var $newProfile = $templateVariantProfile.clone();
+            var profilesCount = +$variant.find('.profile-field').last().attr('name').split('][')[1].split(']')[0] + 1
+           
+            $newProfile.attr('id', 'data-variant-' + variantNum + '-profile-' + profilesCount);
+            $newProfile.find('.profile-name').text(text)
+            
+            $newProfile
+                .find('.profile-field')
+                .attr('name', 'selectVariant[' + variantNum + '][' + profilesCount+ ']')
+                .val(value)
+            
+            $newProfile.find('.delete-profile-btn').attr('data-variant', variantNum)
+            $newProfile.find('.delete-profile-btn').attr('data-profile', profilesCount)
+            $newProfile.appendTo($variant.find('.profile-list'));
+        }

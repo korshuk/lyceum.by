@@ -15,7 +15,12 @@
         api.getUserData = getUserData;
         api.registerPost = registerPost;
         api.requestPasswordPost = requestPasswordPost;
+        api.userUpdate = userUpdate;
 
+        var pupilUpdater = {
+            'profile': updateProfile,
+            'fio': updateFIO
+        }
         return api;
 
         function userLogin(req, res) {
@@ -46,6 +51,82 @@
             });
         }
        
+        function userUpdate(req, res) {
+            console.log(req.body)
+            baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
+
+            function onPupilFound(err, pupil) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (!pupilUpdater[req.body.apiAction]) {
+                        res.status(500).send({
+                            message: 'something wrong'
+                        })
+                    } else {
+                        pupilUpdater[req.body.apiAction](pupil, req.body.user, function(err, pupil) {
+                            if (err) {
+                                res.status(500).send({
+                                    message: 'something wrong on save'
+                                })
+                            } else {
+                                res.send('Ok')
+                            }
+                            
+                        });
+                    }
+                    
+                }
+            }
+        }
+
+        function updateFIO(pupil, newData, next) {
+            // TODO check status and date
+            // if (pupil.status !== 'approved') {
+                //TODO add trim whitespace
+                pupil.firstName = newData.firstName;
+                pupil.lastName = newData.lastName;
+                pupil.parentName = newData.parentName;
+                pupil.save(function (err, pupil) {
+                    next(err, pupil)
+                });
+            // } else {
+            //     next('save not allowed', null)
+            // }
+        }
+
+        function updateProfile(pupil, newData, next) {
+            var profile = pupil.profile || { id: 0 };
+            var oldNeedBel = pupil.needBel;
+            pupil.needBel = newData.needBel;
+
+            app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
+                //TODO check pupil status    
+                if (profile.id !== newProfile.id) {
+                    pupil.profile = newProfile.id;
+                }
+
+                if (pupil.status === 'approved') {
+                    if (pupil.diplomImg) {
+                        if (newProfile.olympExams.indexOf(pupil.diplomExamName) > -1) {
+                            pupil.passOlymp = true;
+                            pupil.exam1 = -1;
+                            pupil.exam2 = -1;
+                            pupil.sum = -1;
+                        } else {
+                            pupil.passOlymp = false;
+                            pupil.exam1 = 0;
+                            pupil.exam2 = 0;
+                            pupil.sum = 0;
+                        }
+                    }
+                }
+                pupil.save(function (err, pupil) {
+                    next(err, pupil)
+                });
+            });
+        }
+
         function getUserData(req, res) {
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
 
