@@ -44,6 +44,20 @@ module.exports = function (app) {
         }
     )
 
+    router.post('/pupils/uploadPhoto',
+        app.passportController.authenticate,
+        function(req, res) {
+            app.pupilsController.v2.uploadPhoto(req, res) 
+        }
+    )
+    router.get('/pupils/request-photo/:filename',
+        app.passportController.authenticate,
+        function(req, res) {
+            app.pupilsController.v2.getRequestPhoto(req, res) 
+        }
+    )
+    
+
     router.get('/pupils/current',
         app.passportController.authenticate,
         function(req, res) { app.pupilsController.v2.getUserData(req, res) }

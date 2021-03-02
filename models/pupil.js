@@ -14,7 +14,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'place1', 
     'place2', 
     'result1', 
-    'result2'
+    'result2',
+    'requestImg'
 ].join(' ');
 
 function define(mongoose, fn) {
