@@ -272,7 +272,7 @@
                 results.push(pupil.result2.ID)
             } 
             return results
-
+            
             function getRequestPhoto(req, res) {
                 app.s3filesController.getRequestPhoto(req, res) 
             }
