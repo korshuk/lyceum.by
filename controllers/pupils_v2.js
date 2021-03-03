@@ -1,8 +1,10 @@
 (function (exports, require) {
     'use strict';
     
-    var async = require('async');
-    var crypto = require('crypto');
+    var async = require('async'),
+        crypto = require('crypto'),
+        fs = require('fs'),
+        Jimp = require('jimp');
 
     exports.Setup = Setup;
 
@@ -16,10 +18,13 @@
         api.registerPost = registerPost;
         api.requestPasswordPost = requestPasswordPost;
         api.userUpdate = userUpdate;
+        api.uploadPhoto = uploadPhoto;
+        api.getRequestPhoto = getRequestPhoto;
 
         var pupilUpdater = {
             'profile': updateProfile,
-            'fio': updateFIO
+            'fio': updateFIO,
+            'requestimg': updateRequestImg
         }
         return api;
 
@@ -52,7 +57,6 @@
         }
        
         function userUpdate(req, res) {
-            console.log(req.body)
             baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
 
             function onPupilFound(err, pupil) {
@@ -93,6 +97,17 @@
             // } else {
             //     next('save not allowed', null)
             // }
+        }
+
+        function updateRequestImg(pupil, newData, next) {
+            pupil.requestImg = newData.requestImg;
+            pupil.requestImgNotApproved = false;
+            pupil.requestImgNoPhoto = false;
+            pupil.requestImgLowQuality = false;
+            pupil.requestImgStampError = false;
+            pupil.save(function (err, pupil) {
+                next(err, pupil)
+            });
         }
 
         function updateProfile(pupil, newData, next) {
@@ -256,6 +271,13 @@
                 results.push(pupil.result2.ID)
             } 
             return results
+        }
+
+        function getRequestPhoto(req, res) {
+            app.s3filesController.getRequestPhoto(req, res) 
+        }
+        function uploadPhoto(req, res) {            
+            app.s3filesController.uploadRequestPhoto(req, res)
         }
     }
     

@@ -21,6 +21,7 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'night',
     'distant'
 
+
 ].join(' ');
 
 function define(mongoose, fn) {
