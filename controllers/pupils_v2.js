@@ -24,7 +24,9 @@
         var pupilUpdater = {
             'profile': updateProfile,
             'fio': updateFIO,
-            'requestimg': updateRequestImg
+            'region': updateRegion,
+            'requestimg': updateRequestImg,
+            'additional': updateAdditional,
         }
         return api;
 
@@ -85,6 +87,21 @@
             }
         }
 
+        function updateAdditional(pupil, newData, next) {
+            // TODO check status and date
+            // if (pupil.status !== 'approved') {
+                //TODO add trim whitespace
+
+                pupil.night = newData.night;
+                pupil.distant = newData.distant;
+                pupil.save(function (err, pupil) {
+                    next(err, pupil)
+                });
+            // } else {
+            //     next('save not allowed', null)
+            // }
+        }
+
         function updateFIO(pupil, newData, next) {
             // TODO check status and date
             // if (pupil.status !== 'approved') {
@@ -92,6 +109,20 @@
                 pupil.firstName = newData.firstName;
                 pupil.lastName = newData.lastName;
                 pupil.parentName = newData.parentName;
+                pupil.save(function (err, pupil) {
+                    next(err, pupil)
+                });
+            // } else {
+            //     next('save not allowed', null)
+            // }
+        }
+
+        function updateRegion(pupil, newData, next) {
+            // TODO check status and date
+            // if (pupil.status !== 'approved') {
+                //TODO add trim whitespace
+
+                pupil.region = newData.region;
                 pupil.save(function (err, pupil) {
                     next(err, pupil)
                 });
