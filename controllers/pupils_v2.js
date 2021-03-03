@@ -273,12 +273,13 @@
             } 
             return results
             
-            function getRequestPhoto(req, res) {
-                app.s3filesController.getRequestPhoto(req, res) 
-            }
-            function uploadPhoto(req, res) {            
-                app.s3filesController.uploadRequestPhoto(req, res)
-            }
+            
+        }
+        function getRequestPhoto(req, res) {
+            app.s3filesController.getRequestPhoto(req, res) 
+        }
+        function uploadPhoto(req, res) {            
+            app.s3filesController.uploadRequestPhoto(req, res)
         }
     }
     
