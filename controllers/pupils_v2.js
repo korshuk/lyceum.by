@@ -57,6 +57,7 @@
         }
        
         function userUpdate(req, res) {
+
             baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
 
             function onPupilFound(err, pupil) {
@@ -271,13 +272,13 @@
                 results.push(pupil.result2.ID)
             } 
             return results
-        }
 
-        function getRequestPhoto(req, res) {
-            app.s3filesController.getRequestPhoto(req, res) 
-        }
-        function uploadPhoto(req, res) {            
-            app.s3filesController.uploadRequestPhoto(req, res)
+            function getRequestPhoto(req, res) {
+                app.s3filesController.getRequestPhoto(req, res) 
+            }
+            function uploadPhoto(req, res) {            
+                app.s3filesController.uploadRequestPhoto(req, res)
+            }
         }
     }
     
