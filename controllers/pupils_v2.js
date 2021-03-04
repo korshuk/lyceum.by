@@ -26,6 +26,7 @@
             'fio': updateFIO,
             'region': updateRegion,
             'requestimg': updateRequestImg,
+            'diplomImg': updateDiplomImg,
             'additional': updateAdditional,
         }
         return api;
@@ -137,6 +138,13 @@
             pupil.requestImgNoPhoto = false;
             pupil.requestImgLowQuality = false;
             pupil.requestImgStampError = false;
+            pupil.save(function (err, pupil) {
+                next(err, pupil)
+            });
+        }
+
+        function updateDiplomImg(pupil, newData, next) {
+            pupil.diplomImg = newData.diplomImg;
             pupil.save(function (err, pupil) {
                 next(err, pupil)
             });
