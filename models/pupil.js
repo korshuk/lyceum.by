@@ -19,7 +19,9 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'requestImg',
     'diplomImg',
     'night',
-    'distant'
+    'distant',
+    'phone',
+    'codeValid'
 
 
 ].join(' ');

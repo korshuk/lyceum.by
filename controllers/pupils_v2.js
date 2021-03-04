@@ -20,6 +20,7 @@
         api.userUpdate = userUpdate;
         api.uploadPhoto = uploadPhoto;
         api.getRequestPhoto = getRequestPhoto;
+        api.sendSMS = sendSMS;
 
         var pupilUpdater = {
             'profile': updateProfile,
@@ -172,6 +173,29 @@
                     next(err, pupil)
                 });
             });
+        }
+
+        function sendSMS(req, res) {
+            baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
+
+            function onPupilFound(err, pupil) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    
+
+                    pupil.phone = req.body.phone;
+                    pupil.phoneCode =  Math.floor(100000 + Math.random() * 900000);
+                    pupil.codeValid = false;
+                    console.log('phoneeeee')
+                    // app.smsController.sendVerificationCode(pupil.phone, pupil.phoneCode);
+
+                    pupil.save(function (err, pupil) {
+                        res.send('OK')
+                    })
+                    
+                }
+            }
         }
 
         function getUserData(req, res) {
