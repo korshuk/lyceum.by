@@ -33,7 +33,7 @@ module.exports = function (app) {
     router.post('/pupils/register',
         app.passportController.recaptchaCheck,
         function(req, res) {
-            app.pupilsController.v2.registerPost(req, res) 
+            app.pupilsController.v2.userRegister(req, res) 
         }
     )
     
@@ -57,6 +57,13 @@ module.exports = function (app) {
             app.pupilsController.v2.sendSMS(req, res) 
         }
     )
+    router.post('/pupils/checkSMSCode',
+        app.passportController.authenticate,
+        function(req, res) {
+            app.pupilsController.v2.checkSMSCode(req, res) 
+        }
+    )
+    
 
     router.get('/pupils/request-photo/:filename',
         app.passportController.authenticate,

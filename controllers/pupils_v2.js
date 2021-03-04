@@ -2,9 +2,7 @@
     'use strict';
     
     var async = require('async'),
-        crypto = require('crypto'),
-        fs = require('fs'),
-        Jimp = require('jimp');
+        crypto = require('crypto');
 
     exports.Setup = Setup;
 
@@ -15,12 +13,13 @@
         api.userLogin = userLogin;
         api.userLogout = userLogout;
         api.getUserData = getUserData;
-        api.registerPost = registerPost;
+        api.userRegister = userRegister;
         api.requestPasswordPost = requestPasswordPost;
         api.userUpdate = userUpdate;
         api.uploadPhoto = uploadPhoto;
         api.getRequestPhoto = getRequestPhoto;
         api.sendSMS = sendSMS;
+        api.checkSMSCode = checkSMSCode;
 
         var pupilUpdater = {
             'profile': updateProfile,
@@ -29,6 +28,7 @@
             'requestimg': updateRequestImg,
             'diplomImg': updateDiplomImg,
             'additional': updateAdditional,
+            'phone': updatePhone
         }
         return api;
 
@@ -87,6 +87,10 @@
                     
                 }
             }
+        }
+
+        function updatePhone(pupil, newData, next) {
+            next(null, pupil)
         }
 
         function updateAdditional(pupil, newData, next) {
@@ -183,6 +187,25 @@
             });
         }
 
+        function checkSMSCode(req, res) {
+            baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
+
+            function onPupilFound(err, pupil) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    var code = req.body.code;
+                    pupil.codeValid =  (code === pupil.phoneCode) || (code === app.siteConfig.smsAPISecretCode);
+            
+                    pupil.save(function (err, pupil) {
+                        res.send({
+                            isValid: pupil.codeValid
+                        })
+                    })
+                }
+            }
+        }
+
         function sendSMS(req, res) {
             baseController.Collection.findOne({ _id: req.user.userId}, onPupilFound)
 
@@ -195,8 +218,8 @@
                     pupil.phone = req.body.phone;
                     pupil.phoneCode =  Math.floor(100000 + Math.random() * 900000);
                     pupil.codeValid = false;
-                    console.log('phoneeeee')
-                    // app.smsController.sendVerificationCode(pupil.phone, pupil.phoneCode);
+
+                    app.smsController.sendVerificationCode(pupil.phone, pupil.phoneCode);
 
                     pupil.save(function (err, pupil) {
                         res.send('OK')
@@ -247,25 +270,23 @@
         }
 
 
-        function registerPost(req, res) {
-           baseController.Collection.findOne({email: req.body.email}, function (err, pupil) {
+        function userRegister(req, res) {
+           baseController.Collection.findOne({email: req.body.user.email}, function (err, pupil) {
            
-           var registrationDate = req.body.date;
-           var registrationEnd = app.siteConfig.registrationEndDate;
+           var dateNow = new Date;
+           var dateRegistrationEnd = app.siteConfig.registrationEndDate;
 
-           console.log('DATES NR', registrationDate, registrationEnd )
+           console.log('DATES NR', dateNow.getTime(), dateRegistrationEnd.getTime() )
 
-           if(registrationDate < registrationEnd) {
+           if(dateNow.getTime() > dateRegistrationEnd.getTime()) {
                res.status(403).send({message: 'registration off'});
                return;
            }
                                 
                 if (!pupil) {
-                    var config = app.siteConfig;
-                    console.log('!!!config NR', config)
                     var pupil = new app.pupilsController.Collection({
-                        password: req.body.password,
-                        email: req.body.email,
+                        password: req.body.user.password,
+                        email: req.body.user.email,
                         status: 'new clear',
                         confirmMailToken: crypto.randomBytes(32).toString('hex')
                     });
