@@ -2,7 +2,8 @@
     'use strict';
     
     var async = require('async'),
-        crypto = require('crypto');
+        crypto = require('crypto'),
+        mongoose = require('mongoose');
 
     exports.Setup = Setup;
 
@@ -28,7 +29,8 @@
             'requestimg': updateRequestImg,
             'diplomImg': updateDiplomImg,
             'additional': updateAdditional,
-            'phone': updatePhone
+            'phone': updatePhone,
+            'sendRequest': updateUserStatus
         }
         return api;
 
@@ -91,6 +93,20 @@
 
         function updatePhone(pupil, newData, next) {
             next(null, pupil)
+        }
+
+        function updateUserStatus(pupil, newData, next) {
+            pupil.agreement = newData.agreement;
+            pupil.status = 'unapproved';
+            pupil.message = '';
+            pupil.requestImgNotApproved = false;
+            pupil.requestImgNoPhoto = false;
+            pupil.requestImgLowQuality = false;
+            pupil.requestImgStampError = false;
+            pupil.diplomImgNotApproved = false;
+            pupil.save(function (err, pupil) {
+                next(err, pupil)
+            });
         }
 
         function updateAdditional(pupil, newData, next) {
@@ -165,6 +181,16 @@
                 if (profile.id !== newProfile.id) {
                     pupil.profile = newProfile.id;
                 }
+                
+                var additionalProfiles = [];
+                var additionalProfile;
+                for (var i = 0; i < newData.additionalProfiles.length; i++) {
+                    additionalProfile = newData.additionalProfiles[i]
+                    additionalProfiles.push(newData.additionalProfiles[i]._id)
+                    
+                }
+
+                pupil.additionalProfiles = additionalProfiles
 
                 if (pupil.status === 'approved') {
                     if (pupil.diplomImg) {

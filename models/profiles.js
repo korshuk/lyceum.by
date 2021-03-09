@@ -4,7 +4,9 @@ var FIELDS_TO_BE_VISIBLE = [
     'code',
     'order',
     'belLang', 
-    'selectVariant'
+    'selectVariant',
+    'firstExamName',
+    'secondExamName'
 ].join(' ');
 
 function define(mongoose, fn) {

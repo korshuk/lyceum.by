@@ -476,7 +476,7 @@ var ProfileController = function (mongoose, app) {
     function update(req, res) {
         var self = this;
 
-        this.Collection.findByReq(req, res, function (doc) {
+        this.Collection.findByReq(req, res, function (err, doc) {
             doc.name = req.body.name;
             doc.code = req.body.code;
             doc.subcode = req.body.subcode;

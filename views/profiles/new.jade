@@ -206,7 +206,11 @@ block scripts
 
         function addNewProfileToVariant($variant, variantNum, value, text) {
             var $newProfile = $templateVariantProfile.clone();
-            var profilesCount = +$variant.find('.profile-field').last().attr('name').split('][')[1].split(']')[0] + 1
+            var profilesCount = 0;
+            if ($variant.find('.profile-field').length > 0) {
+                profilesCount = +$variant.find('.profile-field').last().attr('name').split('][')[1].split(']')[0] + 1
+            }
+            
            
             $newProfile.attr('id', 'data-variant-' + variantNum + '-profile-' + profilesCount);
             $newProfile.find('.profile-name').text(text)

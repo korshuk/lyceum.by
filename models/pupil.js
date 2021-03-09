@@ -21,9 +21,9 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'night',
     'distant',
     'phone',
-    'codeValid'
-
-
+    'codeValid',
+    'needBel',
+    'additionalProfiles'
 ].join(' ');
 
 function define(mongoose, fn) {
@@ -57,6 +57,10 @@ function define(mongoose, fn) {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Profiles'
         },
+        additionalProfiles: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Profiles'
+        }],
         place1: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Places'
@@ -150,6 +154,7 @@ function define(mongoose, fn) {
             .populate('place2')
             .populate('result1')
             .populate('result2')
+            .populate('selectVariant')
             .exec(function(err, pupil) {
                 next(err, pupil)
             })

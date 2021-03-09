@@ -26,7 +26,7 @@ module.exports = function (app) {
     );
 
     router.post('/logout',
-        app.passportController.authenticate,
+        // app.passportController.authenticate,
         function(req, res) { app.pupilsController.v2.userLogout(req, res) }
     );
 
