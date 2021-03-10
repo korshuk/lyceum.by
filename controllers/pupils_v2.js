@@ -128,9 +128,17 @@
             // TODO check status and date
             // if (pupil.status !== 'approved') {
                 //TODO add trim whitespace
-                pupil.firstName = newData.firstName;
-                pupil.lastName = newData.lastName;
-                pupil.parentName = newData.parentName;
+                var firstName = newData.firstName.trim();
+                var lastName = newData.lastName.trim();
+                var parentName = newData.parentName.trim();
+                firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
+                lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+                parentName = parentName.charAt(0).toUpperCase() + parentName.slice(1)
+                
+                pupil.firstName = firstName;
+                pupil.lastName = lastName;
+                pupil.parentName = parentName;
+
                 pupil.save(function (err, pupil) {
                     next(err, pupil)
                 });
@@ -176,41 +184,47 @@
             var oldNeedBel = pupil.needBel;
             pupil.needBel = newData.needBel;
 
-            app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
-                //TODO check pupil status    
-                if (profile.id !== newProfile.id) {
-                    pupil.profile = newProfile.id;
-                }
-                
-                var additionalProfiles = [];
-                var additionalProfile;
-                for (var i = 0; i < newData.additionalProfiles.length; i++) {
-                    additionalProfile = newData.additionalProfiles[i]
-                    additionalProfiles.push(newData.additionalProfiles[i]._id)
-                    
-                }
+            if (newData.profile && newData.profile._id) {
+                app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
+                    //TODO check pupil status    
+                    if (profile.id !== newProfile.id) {
+                        pupil.profile = newProfile.id;
+                    }
 
-                pupil.additionalProfiles = additionalProfiles
+                    var additionalProfiles = [];
+                    var additionalProfile;
+                    for (var i = 0; i < newData.additionalProfiles.length; i++) {
+                        additionalProfile = newData.additionalProfiles[i]
+                        additionalProfiles.push(additionalProfile._id)
+                        
+                    }
 
-                if (pupil.status === 'approved') {
-                    if (pupil.diplomImg) {
-                        if (newProfile.olympExams.indexOf(pupil.diplomExamName) > -1) {
-                            pupil.passOlymp = true;
-                            pupil.exam1 = -1;
-                            pupil.exam2 = -1;
-                            pupil.sum = -1;
-                        } else {
-                            pupil.passOlymp = false;
-                            pupil.exam1 = 0;
-                            pupil.exam2 = 0;
-                            pupil.sum = 0;
+                    pupil.additionalProfiles = additionalProfiles
+
+                    if (pupil.status === 'approved') {
+                        if (pupil.diplomImg) {
+                            if (newProfile.olympExams.indexOf(pupil.diplomExamName) > -1) {
+                                pupil.passOlymp = true;
+                                pupil.exam1 = -1;
+                                pupil.exam2 = -1;
+                                pupil.sum = -1;
+                            } else {
+                                pupil.passOlymp = false;
+                                pupil.exam1 = 0;
+                                pupil.exam2 = 0;
+                                pupil.sum = 0;
+                            }
                         }
                     }
-                }
+                    pupil.save(function (err, pupil) {
+                        next(err, pupil)
+                    });
+                });
+            } else {
                 pupil.save(function (err, pupil) {
                     next(err, pupil)
                 });
-            });
+            }
         }
 
         function checkSMSCode(req, res) {
