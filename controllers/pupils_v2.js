@@ -273,38 +273,45 @@
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
 
             function onPupilFound(err, pupil) {
-                var examPlaceId = pupil.profile && pupil.profile.examPlace,
-                    results = [],
-                    data = {
-                        user: JSON.parse(JSON.stringify(pupil))
-                    }
-                if (!examPlaceId) {
-                    res.json(data);
-                    return;
+                console.log(err, pupil)
+                if (!pupil) {
+                    res.status(500).send({
+                        message: 'user not found'
+                    })
                 } else {
-                    results = createResultsArray(pupil);
+                    var examPlaceId = pupil.profile && pupil.profile.examPlace,
+                        results = [],
+                        data = {
+                            user: JSON.parse(JSON.stringify(pupil))
+                        }
+                    if (!examPlaceId) {
+                        res.json(data);
+                        return;
+                    } else {
+                        results = createResultsArray(pupil);
 
-                    app.placesController.Collection
-                        .findByExamPlaceId(examPlaceId)
-                        .exec(function(err, examPlace) {
-                            data.user.examPlace = examPlace;
-                            if (results.length === 0) {
-                                res.json(data);
-                            }
-                            else {
-                                app.resultScansController.Collection
-                                    .find({
-                                        profile: pupil.profile._id, 
-                                        code: { $in: results}
-                                    })
-                                    .exec(function (err, scans) {
-                                        
-                                        data.user.scans = scans;
-                                        
-                                        res.json(data);
-                                    });
-                            }
-                    });
+                        app.placesController.Collection
+                            .findByExamPlaceId(examPlaceId)
+                            .exec(function(err, examPlace) {
+                                data.user.examPlace = examPlace;
+                                if (results.length === 0) {
+                                    res.json(data);
+                                }
+                                else {
+                                    app.resultScansController.Collection
+                                        .find({
+                                            profile: pupil.profile._id, 
+                                            code: { $in: results}
+                                        })
+                                        .exec(function (err, scans) {
+                                            
+                                            data.user.scans = scans;
+                                            
+                                            res.json(data);
+                                        });
+                                }
+                        });
+                    }
                 }
             }
         }

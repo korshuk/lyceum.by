@@ -23,7 +23,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'phone',
     'codeValid',
     'needBel',
-    'additionalProfiles'
+    'additionalProfiles',
+    'message'
 ].join(' ');
 
 function define(mongoose, fn) {
