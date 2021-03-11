@@ -87,6 +87,12 @@ module.exports = function(app) {
         app.pupilsController.update(req, res);
     });
     
+    router.get('/images/request/:filename', app.userController.Pass, function(req, res) {
+        app.pupilsController.v2.getRequestPhoto(req, res) 
+    });
+
+    
+
     //Emails Sender
     
 
