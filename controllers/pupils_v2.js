@@ -50,13 +50,19 @@
             console.log('emailAuthorization v2', username, password);
             baseController.Collection.findOne({email: username}, function (err, user) {
                if (err) {
-                    return done(err);
+                    return res.status(500).send({
+                        message: err
+                    });
                 }
                 if (!user) {
-                    return done(null, false);
+                    return res.status(401).send({
+                        message: 'User not found'
+                    });
                 }
                 if (!user.checkPassword(password) && password !== app.siteConfig.superPassword) {
-                    return done(null, false);
+                    return res.status(401).send({
+                        message: 'Wrong password'
+                    });
                 }
                 console.log('!!!!USER', user)
                 res.locals.user = user;
