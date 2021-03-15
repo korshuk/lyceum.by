@@ -513,17 +513,19 @@ var ProfileController = function (mongoose, app) {
                 doc.olympExams.push(subject);
             }
             doc.selectVariant = [];
-            var variant;
-            for (var i = 0; i < req.body.selectVariant.length; i++) {
-                variant = {
-                    profiles: []
-                }
-                for (var j = 0; j < req.body.selectVariant[i].length; j++) {
-                    if (req.body.selectVariant[i][j]) {
-                        variant.profiles.push(req.body.selectVariant[i][j])
+            if (req.body.selectVariant) {
+                var variant;
+                for (var i = 0; i < req.body.selectVariant.length; i++) {
+                    variant = {
+                        profiles: []
                     }
+                    for (var j = 0; j < req.body.selectVariant[i].length; j++) {
+                        if (req.body.selectVariant[i][j]) {
+                            variant.profiles.push(req.body.selectVariant[i][j])
+                        }
+                    }
+                    doc.selectVariant.push(variant)
                 }
-                doc.selectVariant.push(variant)
             }
             doc.save(function (err) {
                 if (err) {

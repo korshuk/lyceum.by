@@ -82,9 +82,27 @@ block content
                         
                         h5 Профиль
                             | (#{profile ? profile.name : 'Еще не выбран профиль'})
-                            
-                        +field('select', "profile", 'Выбрать профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
+                        h6 Без экзаменов
+                        +field('select', "diplomProfile", 'Профиль диплома', profiles, diplomProfile ? '' + diplomProfile._id : '')(value= diplomProfile ? '' + diplomProfile._id : '')#diplomProfile
                         +field('select', "diplomExamName", 'Предмет для диплома', subjects, doc.diplomExamName)(value= doc.diplomExamName || '')#diplomExamName
+                        p #{doc.isEnrolledToExams ? 'Будет еще и экзамены сдавать!'  : ''}
+
+                        h6 Экзамены
+                        +field('select', "profile", 'Основной профиль', profiles, profile ? '' + profile._id : '')(value= profile ? '' + profile._id : '')#profile
+                        
+                        .row
+                            label.col-sm-3.col-form-label Дополнительные профили:
+                            .col-sm-9
+                                .form-group
+                                    if (additionalProfiles.length > 0)
+                                        each additionalProfile, index in additionalProfiles
+                                            
+                                            
+                                                p #{additionalProfile.name}
+                                    else 
+                                        p Нет
+
+                        
                         
                         .row
                             .col-md-12

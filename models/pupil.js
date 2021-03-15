@@ -11,6 +11,9 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'status', 
     'dessaproveDate', 
     'profile', 
+    'diplomProfile',
+    'additionalProfiles',
+    'isEnrolledToExams',
     'place1', 
     'place2', 
     'result1', 
@@ -23,8 +26,7 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'phone',
     'codeValid',
     'needBel',
-    'additionalProfiles',
-    'message'
+    'message',
 ].join(' ');
 
 function define(mongoose, fn) {
@@ -55,6 +57,10 @@ function define(mongoose, fn) {
         examStatus: String,
 
         profile: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Profiles'
+        },
+        diplomProfile: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Profiles'
         },
@@ -100,6 +106,7 @@ function define(mongoose, fn) {
         diplomExamName: String,
 
         passOlymp: Boolean,
+        isEnrolledToExams: Boolean,
         exam1: Number,
         exam2: Number,
         sum: Number,
@@ -151,6 +158,7 @@ function define(mongoose, fn) {
     PupilSchema.statics.findOneForAjax = function(req, res, next) {
         this.findOne({_id: req.user.userId}, PUPIL_FIELDS_TO_BE_VISIBLE)
             .populate('profile')
+            .populate('diplomProfile')
             .populate('place1')
             .populate('place2')
             .populate('result1')

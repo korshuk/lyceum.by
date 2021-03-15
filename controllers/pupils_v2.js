@@ -24,10 +24,12 @@
 
         var pupilUpdater = {
             'profile': updateProfile,
+            'enrollChange': updateEnroll,
             'fio': updateFIO,
             'region': updateRegion,
             'requestimg': updateRequestImg,
             'diplomImg': updateDiplomImg,
+            'diplomImgDelete': deleteDiplomImg,
             'additional': updateAdditional,
             'phone': updatePhone,
             'sendRequest': updateUserStatus
@@ -174,6 +176,28 @@
 
         function updateDiplomImg(pupil, newData, next) {
             pupil.diplomImg = newData.diplomImg;
+            pupil.diplomImgNotApproved = false;
+            pupil.diplomExamName = null;
+            pupil.diplomProfile = newData.diplomProfile._id;
+            pupil.passOlymp = false;
+            pupil.save(function (err, pupil) {
+                next(err, pupil)
+            });
+        }
+
+        function deleteDiplomImg(pupil, newData, next) {
+            pupil.diplomImg = null;
+            pupil.diplomImgNotApproved = false;
+            pupil.diplomExamName = null;
+            pupil.diplomProfile = null
+            pupil.passOlymp = false;
+            pupil.save(function (err, pupil) {
+                next(err, pupil)
+            });
+        }
+
+        function updateEnroll(pupil, newData, next) {
+            pupil.isEnrolledToExams = !!newData.isEnrolledToExams;
             pupil.save(function (err, pupil) {
                 next(err, pupil)
             });
@@ -183,7 +207,6 @@
             var profile = pupil.profile || { id: 0 };
             var oldNeedBel = pupil.needBel;
             pupil.needBel = newData.needBel;
-
             if (newData.profile && newData.profile._id) {
                 app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
                     //TODO check pupil status    

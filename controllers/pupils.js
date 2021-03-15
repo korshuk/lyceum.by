@@ -168,7 +168,13 @@ var PupilsController = function (mongoose, app) {
             queries.push(createqueryExecFunction('profileController', 'find'));
             queries.push(createqueryExecFunction('profileController', 'findOne', {_id: doc.profile}));
             queries.push(createqueryExecFunction('pupilMessageController', 'find'));
-            
+            queries.push(createqueryExecFunction('profileController', 'findOne', {_id: doc.diplomProfile}));
+            queries.push(createqueryExecFunction('profileController', 'find', {
+                _id: {
+                    $in: doc.additionalProfiles
+                }
+            }));
+
             async.parallel(queries, onDone);
   
             function createqueryExecFunction(controllerName, functionName, args) {
@@ -186,8 +192,10 @@ var PupilsController = function (mongoose, app) {
                 var profiles = results[1];
                 var profile = results[2];
                 var messages = results[3];
+                var diplomProfile = results[4];
+                var additionalProfiles = results[5];
                 var data = {};
-                
+
                 data.config = app.siteConfig;
                 
                 data.pupil = doc;
@@ -200,11 +208,14 @@ var PupilsController = function (mongoose, app) {
                         message.text = makeMessage(message.messageTemplate, data);
                     });
                     messages.sort(sortMessages)
+
                     res.render(self.viewPath + 'new.jade', {
                         doc: doc,
                         subjects: subjects,
                         profile: profile,
+                        diplomProfile: diplomProfile,
                         profiles: profiles,
+                        additionalProfiles: additionalProfiles,
                         method: 'put',
                         viewName: 'pupil',
                         messages: messages,
@@ -376,6 +387,9 @@ var PupilsController = function (mongoose, app) {
                     doc.message = req.body.message;
                     doc.dessaproveDate = Date.now();
                     doc.email = req.body.email;
+                    if (req.body.diplomProfile) {
+                        doc.diplomProfile = req.body.diplomProfile;
+                    }
                     if (req.body.profile) {
                         doc.profile = req.body.profile;
                     }
@@ -387,45 +401,47 @@ var PupilsController = function (mongoose, app) {
                         doc.status = 'disapproved';
                     }
         
-                    app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                        if (doc.diplomImg && doc.status === 'approved') {
-                            if (profile.olympExams.indexOf(doc.diplomExamName) > -1) {
-                                doc.passOlymp = true;
-                                doc.exam1 = -1;
-                                doc.exam2 = -1;
-                                doc.sum = -1;
-                            } else {
-                                doc.passOlymp = false;
-                                doc.exam1 = 0;
-                                doc.exam2 = 0;
-                                doc.sum = 0;
-                            }
-                        }
-                        doc.save(function (err, doc) {
-                            if (err) {
-                                req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
-                                req.session.locals = {doc: doc};
-                                returnUrl = '/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || '');
-                            }
-                            else {
-                                req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                                base.onPupilStatusChange(bodyAction, doc, profile, app.siteConfig)
-                                /*if (bodyAction === 'pupil_approve') {
-                                    app.mailController.mailApproved(doc.email, {
-                                        firstName: doc.firstName,
-                                        lastName: doc.lastName,
-                                        profile: profile.name,
-                                        registrationEndDate: app.siteConfig.registrationEndDate
-                                    });
+                    app.profileController.Collection.findOne({_id: doc.diplomProfile}, function (err, diplomProfile) {
+                        app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
+                            if (doc.diplomImg && doc.status === 'approved') {
+                                if (diplomProfile.olympExams.indexOf(doc.diplomExamName) > -1) {
+                                    doc.passOlymp = true;
+                                    doc.exam1 = -1;
+                                    doc.exam2 = -1;
+                                    doc.sum = -1;
+                                } else {
+                                    doc.passOlymp = false;
+                                    doc.exam1 = 0;
+                                    doc.exam2 = 0;
+                                    doc.sum = 0;
                                 }
-                                if (bodyAction === 'pupil_disapprove') {
-                                    app.mailController.mailDisapproved(doc.email, {
-                                        firstName: doc.firstName,
-                                        lastName: doc.lastName
-                                    });
-                                } */
                             }
-                            res.redirect(returnUrl);
+                            doc.save(function (err, doc) {
+                                if (err) {
+                                    req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+                                    req.session.locals = {doc: doc};
+                                    returnUrl = '/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || '');
+                                }
+                                else {
+                                    req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
+                                    base.onPupilStatusChange(bodyAction, doc, profile, diplomProfile, app.siteConfig)
+                                    /*if (bodyAction === 'pupil_approve') {
+                                        app.mailController.mailApproved(doc.email, {
+                                            firstName: doc.firstName,
+                                            lastName: doc.lastName,
+                                            profile: profile.name,
+                                            registrationEndDate: app.siteConfig.registrationEndDate
+                                        });
+                                    }
+                                    if (bodyAction === 'pupil_disapprove') {
+                                        app.mailController.mailDisapproved(doc.email, {
+                                            firstName: doc.firstName,
+                                            lastName: doc.lastName
+                                        });
+                                    } */
+                                }
+                                res.redirect(returnUrl);
+                            });
                         });
                     });
                 }
@@ -433,12 +449,13 @@ var PupilsController = function (mongoose, app) {
         });
     }
 
-    function onPupilStatusChange(actionStatus, doc, profile, siteConfig) {
+    function onPupilStatusChange(actionStatus, doc, profile, diplomProfile, siteConfig) {
         if (actionStatus === 'pupil_approve') {
             app.mailController.mailApproved(doc.email, {
                 firstName: doc.firstName,
                 lastName: doc.lastName,
                 profile: profile.name,
+                diplomProfile: diplomProfile.name,
                 registrationEndDate: siteConfig.registrationEndDate
             });
         }
@@ -819,6 +836,7 @@ var PupilsController = function (mongoose, app) {
                 app.placesController.Collection
                     .findOne({_id: examPlaceId})
                     .exec(function(err, examPlace) {
+                        viewData.examPlace = examPlace
                         if (results.length > 0) {
                             app.resultScansController.Collection
                                 .find({
@@ -826,7 +844,6 @@ var PupilsController = function (mongoose, app) {
                                     code: { $in: results}
                                 })
                                 .exec(function (err, scans) {
-                                    viewData.examPlace = examPlace,
                                     viewData.scans = scans
                                     
                                     sendRes(res, pupil, viewData)
