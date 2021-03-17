@@ -58,7 +58,6 @@
         app.pageController = new PageController(mongoose, app);
         app.examsController = new ExamsController(mongoose, app);
         app.settingsController = new SettingsController(mongoose, app);
-        app.sotkaController = new SotkaController(mongoose, app);
         app.subjectController = new SubjectController(mongoose, app);
         app.pupilMessageController = new PupilMessageController(mongoose, app);
         app.committeesController = new CommitteesController(mongoose, app);
@@ -67,6 +66,7 @@
         app.pupilsController = new PupilsController(mongoose, app);
         app.reportController = new ReportController('Report', '', mongoose, app, true);
         app.s3filesController = new S3filesController(mongoose, app);
+        app.sotkaController = new SotkaController(mongoose, app);
         
         require('../routes/frontRoutes')(app);
         require('../routes/adminRoutes')(app);

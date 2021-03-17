@@ -17,8 +17,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'isEnrolledToExams',
     'place1', 
     'place2', 
-    'result1', 
-    'result2',
+    // 'result1', 
+    // 'result2',
     'region',
     'requestImg',
     'diplomImg',
@@ -28,6 +28,9 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'codeValid',
     'needBel',
     'message',
+    'passOlymp',
+    // 'examResults',
+    // 'examSums'
 ].join(' ');
 
 function define(mongoose, fn) {
@@ -179,6 +182,23 @@ function define(mongoose, fn) {
                 next(doc);
             }
         });
+    };
+
+    PupilSchema.statics.findApprovedPupilsForProfile = function(profileId) {
+        var query = this.find({
+                $or: [
+                    { "profile": profileId }, 
+                    { "diplomProfile": profileId, passOlymp: true },
+                    { "additionalProfiles": { _id: profileId } }
+                ]
+            })
+            .find({status: 'approved'});
+
+        return query
+    };
+
+    PupilSchema.statics.findApprovedOlympPupilsForProfile = function(profileId) {
+        return this.find({diplomProfile: profileId, status: 'approved', passOlymp: true})
     };
 
     PupilSchema.statics.findByResultAsigned = function(resultId, examNumber, next) {

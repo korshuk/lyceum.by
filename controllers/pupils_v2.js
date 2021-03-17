@@ -245,6 +245,7 @@
                             }
                         }
                     }
+                    
                     pupil.save(function (err, pupil) {
                         next(err, pupil)
                     });

@@ -20,6 +20,9 @@ var PupilsController = function (mongoose, app) {
     base.RefreshTokenModel = require('../models/pupil').RefreshTokenModel;
     base.HistoryModel = require('../models/pupil').HistoryModel;
 
+    base.PupilExamResultCollection = require('../models/pupilExamResults').PupilExamResultModel;
+    base.PupilExamSumCollection = require('../models/pupilExamResults').PupilExamSumModel;
+
     base.examresults = examresults;
     base.apiList = apiList;
 
