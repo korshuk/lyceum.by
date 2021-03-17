@@ -34,6 +34,7 @@ var PassportController = function(app) {
     this.init = init;
     this.clearCookies = clearCookies;
     this.setCookie = setCookie;
+    this.sendCookiedRes = sendCookiedRes;
         
     function init(router) {
         setUpStrategies();
@@ -118,7 +119,7 @@ var PassportController = function(app) {
             .cookie('jwt',
                 token, {
                     httpOnly: true,
-                    secure: false //--> SET TO TRUE ON PRODUCTION
+                    secure: false //--> TODO SET TO TRUE ON PRODUCTION
                 }
             )
             .status(200)
@@ -126,7 +127,24 @@ var PassportController = function(app) {
                 message: 'You have logged in :D'
             })
     }
-    
+
+    function sendCookiedRes(req, res, data) {
+        var payload = {
+            userId: req.user.userId,
+            expiration: Date.now() + parseInt(app.v2Config.JWT_EXPIRATION_TIME)
+        }
+        var token = jwt.sign(JSON.stringify(payload), app.v2Config.JWT_SECRET);
+        
+        res
+            .cookie('jwt',
+                token, {
+                    httpOnly: true,
+                    secure: false //--> TODO SET TO TRUE ON PRODUCTION
+                }
+            )
+            .status(200)
+            .json(data)
+    }
 
     function setUpStrategies() {
         var jwtStrategy = new JWTStrategy({
@@ -144,7 +162,6 @@ var PassportController = function(app) {
             console.log('################', user)
             req.logIn(user, function(err) {
                 req.user = user
-                //set cookie here
                 next();
             });
         })(req, res, next);

@@ -21,43 +21,26 @@ block content
             .col-md-5.text-right
                 +buttonSet('/admin/pupils/profiles')
         .row
-            +simpleCard('Профиль', 4)
-                +field('text', "name", 'Название')(value= doc.name || '')
-                +field('text', "code", 'Код')(value= doc.code || '')
-                +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
-                +field('number', "ammount", 'Количество мест')(value= doc.ammount || '')
-                +field('checkbox', "belLang", 'Есть возможность выбрать', '', '', 'Бел. язык')(checked=(doc.belLang))
-                +field('number', "order", 'Порядок')(value= doc.order || '')
-                +field('text', "guidePage", 'URL на гайд')(value= doc.guidePage || '')
-                h5 Олимпадные предметы
+            .col-xl-6
                 .row
-                    label.col-sm-3.col-form-label Предметы:
-                    .col-sm-9.checkbox-radios
-                        each subject, index in subjects
-                            +field('checkboxSimple', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
-
-            +simpleCard('Экзамены', 4)
-                h5 Первый экзамен
-                +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
-                +field('date', "firstExamDate", 'Дата')(value=(doc && doc.firstExamDate))#firstExamDate
-                +field('time', "firstExamStartTime", 'Время начала экзамена')(value=(doc && doc.firstExamStartTime))#firstExamStartTime
-                +field('date', "firstExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.firstExamAppelationDate))#firstExamAppelationDate
-                +field('text', "examKey1", 'Ключ первого экзамена')(value= doc.examKey1 || '')
-                //- +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
-                +field('checkbox', "firstIsFirst", 'является первым', '', '', 'Первый экзамен')(checked=(doc.firstIsFirst))
-                h5 Второй экзамен
-                +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
-                +field('date', "secondExamDate", 'Дата')(value=(doc && doc.secondExamDate))#secondExamDate
-                +field('time', "secondExamStartTime", 'Время начала экзамена')(value=(doc && doc.secondExamStartTime))#secondExamStartTime
-                +field('date', "secondExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.secondExamAppelationDate))#secondExamAppelationDate
-                +field('text', "examKey2", 'Ключ второго экзамена')(value= doc.examKey2 || '')
-                //- +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
-
-                h5 Место проведения экзаменов
-                +field('select', "examPlace", 'Место проведение', places, doc.examPlace)(value= doc.examPlace || '')
-            .col-xl-4
+                    +simpleCard('Профиль', 12)
+                        +field('text', "name", 'Название')(value= doc.name || '')
+                        +field('text', "code", 'Код')(value= doc.code || '')
+                        +field('text', "subcode", 'Сабкод')(value= doc.subcode || '')
+                        +field('number', "ammount", 'Количество мест')(value= doc.ammount || '')
+                        +field('checkbox', "belLang", 'Есть возможность выбрать', '', '', 'Бел. язык')(checked=(doc.belLang))
+                        +field('number', "order", 'Порядок')(value= doc.order || '')
+                        +field('text', "guidePage", 'URL на гайд')(value= doc.guidePage || '')
+                        h5 Олимпадные предметы
+                        .row
+                            label.col-sm-3.col-form-label Предметы:
+                            .col-sm-9.checkbox-radios
+                                each subject, index in subjects
+                                    +field('checkboxSimple', "olympExams["+subject.name+"]", subject.name)(checked=(doc.olympExams.indexOf(subject.name) > -1))
+                
+            .col-xl-6
                 .row
-                    +simpleCard('Готовность результатов', 12)
+                    +simpleCard('Готовность результатов', 12)   
                         .row
                             label.col-sm-3.col-form-label Готовы:
                             .col-sm-9.checkbox-radios
@@ -65,8 +48,29 @@ block content
                                 +field('checkboxSimple', "secondUploaded", 'Второй экзамен')(checked=(doc.secondUploaded))
                                 +field('checkboxSimple', "totalUploaded", 'Зачисление')(checked=(doc.totalUploaded))
                 .row
-                    +simpleCard('Варианты выбора дополнительных профилей', 12)
-                        | #{doc.selectVariant}
+                    +simpleCard('Экзамены', 12)
+                        h5 Первый экзамен
+                        +field('select', "firstExamName", 'Предмет', subjects, doc.firstExamName)(value= doc.firstExamName || '')
+                        +field('date', "firstExamDate", 'Дата')(value=(doc && doc.firstExamDate))#firstExamDate
+                        +field('time', "firstExamStartTime", 'Время начала экзамена')(value=(doc && doc.firstExamStartTime))#firstExamStartTime
+                        +field('date', "firstExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.firstExamAppelationDate))#firstExamAppelationDate
+                        +field('text', "examKey1", 'Ключ первого экзамена')(value= doc.examKey1 || '')
+                        //- +field('text', "firstExamPlace", 'Место проведения (по-старому)')(value= doc.firstExamPlace || '')
+                        +field('checkbox', "firstIsFirst", 'является первым', '', '', 'Первый экзамен')(checked=(doc.firstIsFirst))
+                        h5 Второй экзамен
+                        +field('select', "secondExamName", 'Предмет', subjects, doc.secondExamName)(value= doc.secondExamName || '')
+                        +field('date', "secondExamDate", 'Дата')(value=(doc && doc.secondExamDate))#secondExamDate
+                        +field('time', "secondExamStartTime", 'Время начала экзамена')(value=(doc && doc.secondExamStartTime))#secondExamStartTime
+                        +field('date', "secondExamAppelationDate", 'Дата ознакомления')(value=(doc && doc.secondExamAppelationDate))#secondExamAppelationDate
+                        +field('text', "examKey2", 'Ключ второго экзамена')(value= doc.examKey2 || '')
+                        //- +field('text', "secondExamPlace", 'Место проведения (по-старому)')(value= doc.secondExamPlace || '')
+
+                        h5 Место проведения экзаменов
+                        +field('select', "examPlace", 'Место проведение', places, doc.examPlace)(value= doc.examPlace || '')
+                    
+                    
+        .row
+            +simpleCard('Варианты выбора дополнительных профилей', 8)
                         .row#variantsList
                             - each variant, index in doc.selectVariant
                                 .variant-item.col-sm-12(id='data-variant-' + index)

@@ -6,7 +6,11 @@ var FIELDS_TO_BE_VISIBLE = [
     'belLang', 
     'selectVariant',
     'firstExamName',
-    'secondExamName'
+    'secondExamName',
+    'firstExamDate',
+    'secondExamDate',
+    'firstExamStartTime',
+    'secondExamStartTime'
 ].join(' ');
 
 function define(mongoose, fn) {

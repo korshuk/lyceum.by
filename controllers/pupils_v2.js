@@ -302,7 +302,6 @@
             baseController.Collection.findOneForAjax(req, res, onPupilFound)
 
             function onPupilFound(err, pupil) {
-                console.log(err, pupil)
                 if (!pupil) {
                     res.status(500).send({
                         message: 'user not found'
@@ -313,8 +312,13 @@
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
                         }
+                        if (pupil.status === 'approved') {
+                            data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
+                        }
+                        
                     if (!examPlaceId) {
-                        res.json(data);
+                        app.passportController.sendCookiedRes(req, res, data)
+                        //res.json(data);
                         return;
                     } else {
                         results = createResultsArray(pupil);
@@ -324,7 +328,8 @@
                             .exec(function(err, examPlace) {
                                 data.user.examPlace = examPlace;
                                 if (results.length === 0) {
-                                    res.json(data);
+                                    //res.json(data);
+                                    app.passportController.sendCookiedRes(req, res, data)
                                 }
                                 else {
                                     app.resultScansController.Collection
@@ -336,7 +341,8 @@
                                             
                                             data.user.scans = scans;
                                             
-                                            res.json(data);
+                                            app.passportController.sendCookiedRes(req, res, data)
+                                            //res.json(data);
                                         });
                                 }
                         });
@@ -441,6 +447,53 @@
         function uploadPhoto(req, res) {            
             app.s3filesController.uploadRequestPhoto(req, res)
         }
+    }
+
+    function createApprovedPupilView(pupil, profile) {
+        var date = new Date;
+        
+        date.setHours(date.getHours() - 15);
+        
+        var firstExamDate = profile.firstExamDate;
+        var secondExamDate = profile.secondExamDate;
+
+        var templateName = '';
+        //TODO check empty firstExamDeate
+        console.log('***', date, firstExamDate, date < firstExamDate);
+        if (pupil.passOlymp) {
+            // templateName = templateName + 'passOlymp';
+        }
+        if (pupil.pass || pupil.passOlymp) {
+            var tail;
+            if (pupil.pass) {
+                tail = 'olymp';
+            }
+            if (pupil.passOlymp) {
+                tail = 'passOlymp';
+            }
+            if (date >= secondExamDate) { 
+                if (profile.totalUploaded) {
+                    tail = 'passOlympTotal';
+                }
+            }
+            templateName = templateName + tail;
+        } else {
+            if (date < firstExamDate) {
+                templateName = templateName + 'bF';
+            }
+            if (date >= firstExamDate && date < secondExamDate) {
+                templateName = templateName + (profile.firstUploaded ? 'aFbS' : 'aFbSnoR');
+            }
+            if (date >= secondExamDate) {
+                if (profile.totalUploaded) {
+                    templateName = templateName + 'Total';
+                } else {
+                    templateName = templateName + (profile.secondUploaded ? 'aS' : 'aSnoR');
+                }
+            }
+        }
+        console.log('templateName', templateName);
+        return templateName;
     }
     
     

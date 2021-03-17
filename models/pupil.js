@@ -12,6 +12,7 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'dessaproveDate', 
     'profile', 
     'diplomProfile',
+    'diplomExamName',
     'additionalProfiles',
     'isEnrolledToExams',
     'place1', 
