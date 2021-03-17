@@ -455,7 +455,7 @@ var PupilsController = function (mongoose, app) {
                 firstName: doc.firstName,
                 lastName: doc.lastName,
                 profile: profile.name,
-                diplomProfile: diplomProfile.name,
+                diplomProfile: diplomProfile ? diplomProfile.name : '',
                 registrationEndDate: siteConfig.registrationEndDate
             });
         }
