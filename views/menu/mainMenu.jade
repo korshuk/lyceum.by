@@ -1,6 +1,11 @@
 nav#menu(role="navigation")
     hr.dotted
     ul#sub-sites
+        if (siteConfig.showPupilCabinet)
+            li
+                a(href="https://to.lyceum.by/", title='to.lyceum.by')
+                    span.to-icon
+                    | to.lyceum.by
         li
             a(href="http://ct.lyceum.by", title=translate('Подготовка к ЦТ в Лицее БГУ'))
                 span.ct-icon 

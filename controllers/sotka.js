@@ -7,9 +7,19 @@ SotkaController = function(mongoose, app) {
 
     var base  = new BaseController('Sotka', 'sotka', mongoose, app);
 
+    // base.Collection.remove({}, function (err) {
+    //     if (err) {
+    //         console.log(err)
+    //     } else {
+    //         console.log("Removed!!!!!!!!!!!!!!!!!!!!", err)
+    //     }
+    // })
+
     base.calculate = calculate;
 
-    setTimeout(function() { base.calculate() }, BASE_TIMEOUT);
+    setTimeout(function() { 
+        base.calculate() 
+    }, BASE_TIMEOUT);
 
     function calculate() {
         var stat = new this.Collection();
@@ -42,7 +52,9 @@ SotkaController = function(mongoose, app) {
                 })
 
                 stat.save(function(err, doc) {
-                    setTimeout(function() { base.calculate() }, 60 * BASE_TIMEOUT);
+                    console.log('stat.save(function(err, doc) {', doc)
+                    setTimeout(function() { 
+                        base.calculate() }, 60 * BASE_TIMEOUT);
                 })
             })
         });

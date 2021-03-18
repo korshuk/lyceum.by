@@ -148,10 +148,13 @@ block content
                                 input(type="text", hidden, name='diplomImgNotApproved', value=doc.diplomImgNotApproved ? 'on' : 'off')#diplomImgNotApproved        
                             .row
                                 .col-md-12
+                                    #disapproveAlert.alert.alert-danger.alert-with-icon(role="alert", style="display: none") 
+                                        span.fas.fa-exclamation-triangle(data-notify="icon")
+                                        | Нельзя отклонять заявку, если сообщение пустое
                                     .form-group.text-right
-                                        button.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
+                                        button.disapprove-btn.btn.btn-danger(type='submit', name="action", value='pupil_disapprove') Отклонить заявку
                                         | #{' '}
-                                        button.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
+                                        button.disapprove-btn.btn.btn-danger.btn-move-right(type='submit', name="action", value='pupil_disapprove_next') 
                                             | Отклонить заявку #{'  '}
                                             span.btn-label
                                                 i.fas.fa-arrow-right
@@ -243,7 +246,7 @@ block content
                                             .col-md-3.col-3     
                                                 +field('checkboxSimple', 'message' + message._id, 'добавить')(checked=false, data-messageid="#{message._id}", data-messagetype="#{message.type}", class="messageCheckbox")          
                                     .collapse(id="accordeonMessage" + index, role='tabpanel')
-                                        .message-html(data-messageid="#{message._id}")
+                                        .message-html(data-messageid="#{message._id}", data-messagetype="#{message.type}")
                                             | !{message.text}
                                         hr
                                         
@@ -257,7 +260,9 @@ block content
 
     script.
         var hasDiplom = '#{doc.diplomImg}';
+        var pupilDisaprovedMsgPreview = $('#pupilDisaprovedMsgPreview')
         var btn = document.getElementById('approveBtn');
+        var $disaproveBtn = $('.disapprove-btn')
         var exam = document.getElementById('diplomExamName');
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -328,17 +333,25 @@ block content
             diplomImg.guillotine(action)
         })
 
-        if (hasDiplom) {
-            btn.addEventListener('click', function (e) {
-                if (!exam.value) {
-                    e.preventDefault();
-                    $('#diplomAlert').fadeIn()
-                    /*document.getElementById('diplomAlert').style.display = 'block';
-                    document.getElementById('diplomAlert').classList.remove('hide')
-                    document.getElementById('diplomAlert').classList.add('show')*/
-                }
-            });
+        btn.addEventListener('click', function (e) {
+            if (hasDiplom && !exam.value) {
+                e.preventDefault();
+                $('#diplomAlert').fadeIn()
+                /*document.getElementById('diplomAlert').style.display = 'block';
+                document.getElementById('diplomAlert').classList.remove('hide')
+                document.getElementById('diplomAlert').classList.add('show')*/
+            }
+        });
 
+        $disaproveBtn.on('click', function(e) {
+            console.log(pupilDisaprovedMsgPreview.find('div').length)
+            if (pupilDisaprovedMsgPreview.find('div').length === 0) {
+                $('#disapproveAlert').fadeIn()
+                e.preventDefault();
+            }
+        })
+
+        if (hasDiplom) {
             exam.addEventListener('change', function (e) {
                 if (exam.value) {
                     $('#diplomAlert').fadeOut()

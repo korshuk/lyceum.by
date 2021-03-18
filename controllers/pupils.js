@@ -746,6 +746,13 @@ var PupilsController = function (mongoose, app) {
 
     function resetData(req, res) {
         var self = this;
+        app.sotkaController.Collection.remove({}, function (err) {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("Removed!!!!!!!!!!!!!!!!!!!!", err)
+            }
+        })
         app.profileController.Collection
             .find()
             .exec(function (err, profiles) {

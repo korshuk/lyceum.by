@@ -159,7 +159,7 @@ $(document).ready(function () {
                 if (el.checked) {
                     console.log(messageType)
                     console.log($(el).data("messageid"))
-                    html += '<div data-messageid="' + messageId + '">';
+                    html += '<div data-messageid="' + messageId + '" data-messagetype="' + messageType + '">';
                     html += $('.message-html[data-messageid=' + messageId + ']').html();
                     html += '</div>';
                     if (messageType === 0) {
