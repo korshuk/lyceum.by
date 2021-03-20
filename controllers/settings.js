@@ -5,7 +5,8 @@ var VISIBLE_FOR_CABINET = [
     'confirmationEndDate',
     'rulesOlympPoint',
     'rulesLink',
-    'rulesHTML'
+    'rulesHTML',
+    'logRocket'
 ]
 
 var SettingsController = function(mongoose, app) {
@@ -78,6 +79,8 @@ var SettingsController = function(mongoose, app) {
             doc.s3Hostname = req.body.s3Hostname
             doc.reCaptchaSite = req.body.reCaptchaSite
             doc.reCaptchaSecret = req.body.reCaptchaSecret
+            doc.corsUrls = req.body.corsUrls
+            doc.logRocket = req.body.logRocket
 
             doc.save(function(err, d) {
                 app.siteConfig = doc;

@@ -45,7 +45,9 @@ function define(mongoose, fn) {
             's3SecretAccessKey': String,
             's3Hostname': String,
             'reCaptchaSite': String,
-            'reCaptchaSecret': String
+            'reCaptchaSecret': String,
+            'corsUrls': String,
+            'logRocket': String
         });
 
     mongoose.model('Settings', SettingsSchema);

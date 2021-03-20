@@ -9,7 +9,7 @@ var PassportController = function(app) {
     var https = require("https");
 
     var CORS_OPTIONS = {
-        origin: ['http://localhost:8081', 'http://localhost:8080'],
+        // origin: ['http://localhost:8081', 'http://localhost:8080'],
         credentials: true,
         exposedHeaders: ['Set-Cookie']
     }
@@ -26,7 +26,7 @@ var PassportController = function(app) {
     
     app.v2Config = {
         JWT_EXPIRATION_TIME: 600000,
-        JWT_SECRET: 'wow123'
+        JWT_SECRET: Math.random().toString(36).substring(7)
     }
 
     this.recaptchaCheck = recaptchaCheck;
@@ -40,9 +40,14 @@ var PassportController = function(app) {
         setUpStrategies();
         router.use(passport.initialize());
         router.use(cookieParser(app.v2Config.JWT_SECRET));
-        router.use(cors(CORS_OPTIONS));
+        router.use(cors(corsOptionsDelegate));
         router.use(express.urlencoded({ extended: true }))
     }
+
+    var corsOptionsDelegate = function (req, callback) {
+        CORS_OPTIONS.origin = app.siteConfig.corsUrls.split(' ')
+        callback(null, CORS_OPTIONS)
+      }
 
     function recaptchaCheck(req, res, next) {
         makeGoogleRequest(app.siteConfig.reCaptchaSecret, req.body.recapchaToken, next, onRecaptchaError);

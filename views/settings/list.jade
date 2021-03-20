@@ -72,7 +72,7 @@ block content
                         h5 Анкета для рекомендованных к зачислению
                         +field('text', "anketaLink", 'Ссылка на google doc')(value=(docs && docs.anketaLink))#anketaLink
                         h5 Сообщение, которое появится у всех зачисленных
-                        p.card-category (например, приглашение на "Hello, карапузы")
+                        p.card-category(style="text-transform: none")  (например, приглашение на "Hello, карапузы")
                         +field('textarea', "helloMessage", 'Текст')( rows="4")#helloMessage #{docs && docs.helloMessage} 
                                 
         h2.card-title Настройки работы сайта 
@@ -81,7 +81,7 @@ block content
                 .row
                     +simpleCard('Отправка сообщений', 12)  
                         h5 eMails
-                        p.card-category 
+                        p.card-category(style="text-transform: none")  
                             | Мы используем “application-specific password” для лучшей безопасности
                             br
                             | За подробностями можно оборатиться к 
@@ -100,7 +100,7 @@ block content
                         +field('text', "email4Pass", 'Первый email - пароль')(value=(docs && docs.email4Pass))#email4Pass
 
                         h5 WEBSMS
-                        p.card-category 
+                        p.card-category(style="text-transform: none") 
                             | Подробнее  
                             a(href="https://websms.by/") можно узнать здесь
                         +field('text', "smsAPILogin", 'Login')(value=(docs && docs.smsAPILogin))#websmsLogin
@@ -126,4 +126,18 @@ block content
                         +field('text', "s3AccessKeyId", 'AccessKeyId')(value=(docs && docs.s3AccessKeyId))#s3AccessKeyId
                         +field('text', "s3SecretAccessKey", 'SecretAccessKey')(value=(docs && docs.s3SecretAccessKey))#s3SecretAccessKey
                         +field('text', "s3Hostname", 'Hostname')(value=(docs && docs.s3Hostname))#s3Hostname
+                        h5 CORS
+                        p.card-category(style="text-transform: none") 
+                            | Строка с адресами, которые допустимы для CORS. Разделитель - пробел. Для локальной разработки можно написать "http://localhost:8081 http://localhost:8080"
+                        +field('text', "corsUrls", 'CORS')(value=(docs && docs.corsUrls))#corsUrls
+                        h5 LogRocket
+                        p.card-category(style="text-transform: none") 
+                            | Можно поделючить сервис мониторинга поведения пользователей 
+                            a(href="https://logrocket.com/") LogRocket
+                            br
+                            | #{'  '}Там зарегистрирован аккаунт на почту admin@lyceum.by. Узнать App Id можно 
+                            a(href="https://app.logrocket.com/ttrucq/tolyceumby/settings/setup") тут
+                            br
+                            | #{'  '}Если пусто, то сервис отключен от кабинета
+                        +field('text', "logRocket", 'App ID')(value=(docs && docs.logRocket))#logRocket    
 block scripts
