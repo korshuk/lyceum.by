@@ -32,13 +32,33 @@ SotkaController = function(mongoose, app) {
             profiles.forEach(function(profile) {   
                 profileStatsCalculators.push(function(callback){
                     pupilsCollection.findApprovedPupilsForProfile(profile._id)
-                        .exec(function (err, pupils) {                        
+                        .exec(function (err, pupils) {
+                            var pupilsCount = 0;
+                            var i = 0;
+                            var pupilsLength = pupils.length;
+                            var pupil;
+                            for (i; i < pupilsLength; i++) {
+                                pupil = pupils[i];
+                                
+                                if (pupil.diplomProfile) {
+                                    
+                                    if ('' + pupil.diplomProfile === '' + profile._id) {
+                                        pupilsCount++
+                                    } else if (pupil.isEnrolledToExams){
+                                        pupilsCount++
+                                    }
+                                } else {
+                                    pupilsCount++
+                                }
+                            } 
+
                             pupilsCollection.findApprovedOlympPupilsForProfile(profile._id)
                                 .exec(function (err, pupilsOlymp) {
                                     var profileStat = {
                                         profile:profile._id,
-                                        countTotal:pupils.length,
-                                        countOlymp:pupilsOlymp.length
+                                        countTotalBeta:pupils.length,
+                                        countOlymp:pupilsOlymp.length,
+                                        countTotal: pupilsCount
                                     }
                                     callback(null, profileStat);
                                 });

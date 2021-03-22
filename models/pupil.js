@@ -185,14 +185,15 @@ function define(mongoose, fn) {
     };
 
     PupilSchema.statics.findApprovedPupilsForProfile = function(profileId) {
-        var query = this.find({
+        var query = this
+            .find({status: 'approved'})
+            .find({
                 $or: [
                     { "profile": profileId }, 
                     { "diplomProfile": profileId, passOlymp: true },
                     { "additionalProfiles": { _id: profileId } }
                 ]
-            })
-            .find({status: 'approved'});
+            });
 
         return query
     };

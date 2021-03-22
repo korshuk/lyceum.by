@@ -18,10 +18,12 @@ block content
             h1= translateObj(doc.name)
 
             
-            - var blocks = translateObj(doc.bodynew).blocks
-            include ../stuff/sir/sirparser 
+             
             if (siteConfig.showPupilCabinet && doc.pathAlias === 'abiturientu')
                 include ../results/cabinetLink
-
+            else
+                - var blocks = translateObj(doc.bodynew).blocks
+                include ../stuff/sir/sirparser
+                
             include ../layout/asidesmall
         include ../layout/aside

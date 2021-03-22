@@ -8,6 +8,7 @@ function define(mongoose, fn) {
                 ref: 'Profiles'
             },
             countTotal: Number,
+            countTotalBeta: Number,
             countOlymp: Number
         }],
         date: {

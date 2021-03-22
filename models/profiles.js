@@ -10,7 +10,8 @@ var FIELDS_TO_BE_VISIBLE = [
     'firstExamDate',
     'secondExamDate',
     'firstExamStartTime',
-    'secondExamStartTime'
+    'secondExamStartTime',
+    'olympExams'
 ].join(' ');
 
 function define(mongoose, fn) {

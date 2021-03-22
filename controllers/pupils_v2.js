@@ -183,11 +183,27 @@
         function updateDiplomImg(pupil, newData, next) {
             pupil.diplomImg = newData.diplomImg;
             pupil.diplomImgNotApproved = false;
-            pupil.diplomExamName = null;
+            // pupil.diplomExamName = null;
             pupil.diplomProfile = newData.diplomProfile._id;
             pupil.passOlymp = false;
-            pupil.save(function (err, pupil) {
-                next(err, pupil)
+           
+            console.log('updateDiplomImg', pupil.diplomProfile)
+            app.profileController.Collection.findOne({_id: pupil.diplomProfile}, function (err, pupilDiplomProfile) {
+            
+                if (pupil.status === 'approved') {
+                    if (pupil.diplomImg) {
+                        console.log('updateDiplomImg',pupilDiplomProfile.olympExams)
+                        if (pupilDiplomProfile.olympExams.indexOf(pupil.diplomExamName) > -1) {
+                            pupil.passOlymp = true;
+                        } else {
+                            pupil.passOlymp = false;
+                        }
+                    }
+                }
+
+                pupil.save(function (err, pupil) {
+                    next(err, pupil)
+                });
             });
         }
 
@@ -204,6 +220,10 @@
 
         function updateEnroll(pupil, newData, next) {
             pupil.isEnrolledToExams = !!newData.isEnrolledToExams;
+            if (!pupil.isEnrolledToExams) {
+                pupil.profile = null;
+                pupil.additionalProfiles = []
+            }
             pupil.save(function (err, pupil) {
                 next(err, pupil)
             });
@@ -229,22 +249,6 @@
                     }
 
                     pupil.additionalProfiles = additionalProfiles
-
-                    if (pupil.status === 'approved') {
-                        if (pupil.diplomImg) {
-                            if (newProfile.olympExams.indexOf(pupil.diplomExamName) > -1) {
-                                pupil.passOlymp = true;
-                                pupil.exam1 = -1;
-                                pupil.exam2 = -1;
-                                pupil.sum = -1;
-                            } else {
-                                pupil.passOlymp = false;
-                                pupil.exam1 = 0;
-                                pupil.exam2 = 0;
-                                pupil.sum = 0;
-                            }
-                        }
-                    }
                     
                     pupil.save(function (err, pupil) {
                         next(err, pupil)
@@ -313,9 +317,9 @@
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
                         }
-                        if (pupil.status === 'approved') {
-                            data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
-                        }
+                        // if (pupil.status === 'approved') {
+                        //     data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
+                        // }
                         
                     if (!examPlaceId) {
                         app.passportController.sendCookiedRes(req, res, data)

@@ -410,43 +410,43 @@ module.exports = function (app) {
 			dates.push(dateFormat(Date.now(), DATE_FORMAT));
 		}
 
-		for (i = 0; i < dates.length; i++) {
-			common.points.push({
-				date: dates[i],
-				count: 0
-			});
-			sum = 0;
-			for (j = 0; j < length; j++) {
-				profile = returnData[j];
-				//profile.points = $filter('orderBy')(profile.points, 'date', false);
-				ammountLength = returnData[j].points.length;
-				flag = false;
-				for (k = 0; k < ammountLength; k++) {
-					if (dates[i] == profile.points[k].date) {
-						sum = sum + profile.points[k].count;
-						flag = true;
-					}
-				}
-				if (!flag) {
-					for (k = 0; k < ammountLength; k++) {
-						if (profile.points[k].date >= dates[i]) {
-							break;
+		// for (i = 0; i < dates.length; i++) {
+		// 	common.points.push({
+		// 		date: dates[i],
+		// 		count: 0
+		// 	});
+		// 	sum = 0;
+		// 	for (j = 0; j < length; j++) {
+		// 		profile = returnData[j];
+		// 		//profile.points = $filter('orderBy')(profile.points, 'date', false);
+		// 		ammountLength = returnData[j].points.length;
+		// 		flag = false;
+		// 		for (k = 0; k < ammountLength; k++) {
+		// 			if (dates[i] == profile.points[k].date) {
+		// 				sum = sum + profile.points[k].count;
+		// 				flag = true;
+		// 			}
+		// 		}
+		// 		if (!flag) {
+		// 			for (k = 0; k < ammountLength; k++) {
+		// 				if (profile.points[k].date >= dates[i]) {
+		// 					break;
 
-						}
-					}
-					if (k == 0) {
-						k = 1;
-					}
-					profile.points.push({
-						date: dates[i],
-						count: profile.points[k - 1].count
-					});
+		// 				}
+		// 			}
+		// 			if (k == 0) {
+		// 				k = 1;
+		// 			}
+		// 			profile.points.push({
+		// 				date: dates[i],
+		// 				count: profile.points[k - 1].count
+		// 			});
 
-					sum = sum + profile.points[k - 1].count;
-				}
-			}
-			common.points[common.points.length - 1].count = sum;
-		}
+		// 			sum = sum + profile.points[k - 1].count;
+		// 		}
+		// 	}
+		// 	common.points[common.points.length - 1].count = sum;
+		// }
 
 
 		// returnData.push(common);
