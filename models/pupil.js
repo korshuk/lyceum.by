@@ -270,7 +270,13 @@ function define(mongoose, fn) {
             query.find({"status": req.queryParams.status});
         }
         if (req.queryParams.profile) {
-            query.find({"profile": req.queryParams.profile});
+            // query.find({"profile": req.queryParams.profile});
+            query.find({
+                $or: [
+                    { "profile": req.queryParams.profile }, 
+                    { "additionalProfiles": req.queryParams.profile} //{ _id: req.queryParams.profile } }
+                ]
+            });
         }
         if (req.queryParams.examStatus) {
             if (req.queryParams.examStatus === '0') {
@@ -298,6 +304,7 @@ function define(mongoose, fn) {
             .skip(req.queryParams.itemsPerPage * (req.queryParams.page - 1))
             .limit(req.queryParams.itemsPerPage)
             .populate('profile')
+            .populate('additionalProfiles')
             .populate('result1')
             .populate('result2')
 

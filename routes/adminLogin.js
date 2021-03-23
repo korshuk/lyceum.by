@@ -247,7 +247,7 @@ module.exports = function (app) {
 						disapprovedP: results[5],
 						newP: results[2],
 						newClearP: results[3],
-						passOlymp: pupilsOlymp,
+						passOlymp: pupilsArrayOlymp.length,
 						profiles: calcProfileStats(results[7], results[8]),
 						withAdditional: withAdditional,
 						olympWithAdditional: olympWithAdditional
@@ -271,8 +271,6 @@ module.exports = function (app) {
 		var sum = 0;
 		var olymp = 0;
 		var ammount = 0,
-			returnOlymp = [],
-			returnAmmounts = [],
 			common = {},
 			flag,
 			i = 0,
@@ -289,31 +287,42 @@ module.exports = function (app) {
 		for (i; i < length; i++) {
 			profilesMap[profiles[i]._id] = {
 				code: profiles[i].code,
-				name: profiles[i].name
+				name: profiles[i].name,
+				ammount: profiles[i].ammount,
 			}
 		}
 
 		var returnPoints = [];
 		var returnNames = [];
 		var returnCodes = [];
+		var returnOlymp = [];
+		var returnAmmounts = [];
 		console.log('stats[0]', stats[stats.length - 1])
+		
 		var lastStat = stats[stats.length - 1]
 
 		if (lastStat) {
-
-		
-
+			var countOlymp = 0;
+			var countAmmmounts = 0;
 			for (j = 0; j < lastStat.result.length; j++) {
 				console.log('lastStat.result[j].profile', lastStat.result[j].profile)
 				//returnPoints[i].push(stats[i].profiles[j].countTotal)
 				returnNames.push(profilesMap[ lastStat.result[j].profile ].name)
 				returnCodes.push(profilesMap[ lastStat.result[j].profile ].code)
+				returnAmmounts.push(profilesMap[ lastStat.result[j].profile ].ammount)
+				returnOlymp.push(lastStat.result[j].countOlymp || 0);
+				
+				countAmmmounts = countAmmmounts + profilesMap[ lastStat.result[j].profile ].ammount
+				countOlymp = countOlymp + (lastStat.result[j].countOlymp || 0)
+				
 				returnPoints.push([])
 			}
 
 			returnNames.push('Общий конкурс')
 			returnCodes.push('Все')
 			returnPoints.push([])
+			returnOlymp.push(countOlymp)
+			returnAmmounts.push(countAmmmounts);
 
 			for (i=0; i < statsLength; i++) {
 				if (lastStat.result.length > 0) {
@@ -346,64 +355,64 @@ module.exports = function (app) {
 
 		console.log('profilesMap', profilesMap, returnNames)
 		
-		for (i = 0; i < length; i++) {
-			if (profiles[i].countArray.length > 0) {
-				sum = sum + profiles[i].countArray[profiles[i].countArray.length - 1].count;
-			}
-			returnOlymp.push(profiles[i].olymp || 0);
-			returnAmmounts.push(profiles[i].ammount)
-			olymp = olymp + profiles[i].olymp || 0;
-			ammount = ammount + profiles[i].ammount;
-		}
+		// for (i = 0; i < length; i++) {
+		// 	if (profiles[i].countArray.length > 0) {
+		// 		sum = sum + profiles[i].countArray[profiles[i].countArray.length - 1].count;
+		// 	}
+		// 	//returnOlymp.push(profiles[i].olymp || 0);
+		// 	//returnAmmounts.push(profiles[i].ammount)
+		// 	olymp = olymp + profiles[i].olymp || 0;
+		// 	ammount = ammount + profiles[i].ammount;
+		// }
 
-		common = {
-			common: true,
-			name: 'Общий конкурс',
-			countArray: [{
-				count: sum
-			}],
-			points: [],
-			olymp: olymp,
-			ammount: ammount,
-			code: 'Все'
-		};
-		returnOlymp.push(olymp);
-		returnAmmounts.push(ammount)
+		// common = {
+		// 	common: true,
+		// 	name: 'Общий конкурс',
+		// 	countArray: [{
+		// 		count: sum
+		// 	}],
+		// 	points: [],
+		// 	olymp: olymp,
+		// 	ammount: ammount,
+		// 	code: 'Все'
+		// };
+		// returnOlymp.push(olymp);
+		// returnAmmounts.push(ammount)
 		
-		for (i = 0; i < length; i++) {
-			profile = {
-				name: profiles[i].name,
-				code: profiles[i].code,
-				points: []
-			}
-			date = '';
-			ammountLength = profiles[i].countArray.length;
+		// for (i = 0; i < length; i++) {
+		// 	profile = {
+		// 		name: profiles[i].name,
+		// 		code: profiles[i].code,
+		// 		points: []
+		// 	}
+		// 	date = '';
+		// 	ammountLength = profiles[i].countArray.length;
 			
-			for (j = 0; j < ammountLength; j++) {
-				if (date == dateFormat(profiles[i].countArray[j].date, DATE_FORMAT)) {
-					profile.points[profile.points.length - 1].count = profiles[i].countArray[j].count;
-				} else {
-					date = dateFormat(profiles[i].countArray[j].date, DATE_FORMAT);
-					profile.points.push({
-						count: profiles[i].countArray[j].count,
-						date: date
-					});
-					flag = false;
-					for (k = 0; k < dates.length; k++) {
-						if (date == dates[k]) {
-							flag = true;
-							break;
-						}
-					}
-					if (!flag) {
-						// dates.push(date);
-					}
-				}
+		// 	for (j = 0; j < ammountLength; j++) {
+		// 		if (date == dateFormat(profiles[i].countArray[j].date, DATE_FORMAT)) {
+		// 			profile.points[profile.points.length - 1].count = profiles[i].countArray[j].count;
+		// 		} else {
+		// 			date = dateFormat(profiles[i].countArray[j].date, DATE_FORMAT);
+		// 			profile.points.push({
+		// 				count: profiles[i].countArray[j].count,
+		// 				date: date
+		// 			});
+		// 			flag = false;
+		// 			for (k = 0; k < dates.length; k++) {
+		// 				if (date == dates[k]) {
+		// 					flag = true;
+		// 					break;
+		// 				}
+		// 			}
+		// 			if (!flag) {
+		// 				// dates.push(date);
+		// 			}
+		// 		}
 
-			}
+		// 	}
 
-			returnData.push(profile)
-		}
+		// 	returnData.push(profile)
+		// }
 		// dates = dates.sort();
 		
 		if (dates[dates.length - 1] !== dateFormat(Date.now(), DATE_FORMAT)) {

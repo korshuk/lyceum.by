@@ -169,13 +169,14 @@ block content
                                     td {{item.parentName}}
                                     td {{item.email}}
                                     td(ng-class="item.codeValid ? '' : 'text-danger'")
-                                    | {{item.phone}}
+                                        | {{item.phone}}
                                     td {{item.region}}
                                     td {{item.night}}
                                     td {{item.distant}}
                                     td {{item.status}}
                                     td {{item.created | date:'dd-MM-yy HH:mm:ss'}}
-                                    td {{item.profile.name}}
+                                    td {{item.profile.code | uppercase}} 
+                                        p(style="margin-bottom:0", ng-repeat="profile in item.additionalProfiles track by $index") {{profile.code | uppercase}}
                                     td {{item.needBel}}
                                     td {{item.agreement}}
                                     td {{!!item.requestImg}}
