@@ -27,7 +27,7 @@ var smsController = function (mongoose, app) {
             apikey: app.siteConfig.smsAPIKey,
             sender: app.siteConfig.smsAPIName,
             recipients: phone,
-            message: 'Vash kod: ' + code
+            message: app.siteConfig.smsTemplate.replace('{code}', code)
         },onSMSSend);
     }
 

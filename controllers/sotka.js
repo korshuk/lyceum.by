@@ -81,6 +81,38 @@ SotkaController = function(mongoose, app) {
         //setTimeout(base.calculate, 10 * 60 * 60 * 1000);
     }
 
+    base.restStats = function(req, res) {
+        var stats= function (callback) {
+            base.Collection
+                .find()
+                .sort('-date')
+                .exec(function (err, data) {
+                    queryExecFn(err, data[0], callback)
+                });
+        };
+        var profiles= function (callback) {
+            app.profileController.Collection
+                .find({}, "_id name ammount guidePage")
+                .exec(function (err, profiles) {
+                    var profilesMap = {}
+                    for (var i= 0; i < profiles.length; i++) {
+                        profilesMap[profiles[i]._id] = profiles[i]
+                    }
+                    queryExecFn(err, profilesMap, callback)
+                });
+        };
+
+        async.parallel([
+            stats,
+            profiles
+        ], function (err, results) {
+            res.json({
+                stats: results[0],
+                profiles: results[1]
+            })
+        })
+    };
+
     base.calculateStats = function (req, res, isAjax) {
         app.profileController.Collection.find().exec(function (err, profiles) {
             profiles
@@ -256,6 +288,15 @@ SotkaController = function(mongoose, app) {
     base.constructor = arguments.callee;
 
     return base;
+
+    function queryExecFn(err, data, callback) {
+        if (err) {
+            callback(err, null);
+        }
+        else {
+            callback(null, data);
+        }
+    }
 };
 
 exports.SotkaController = SotkaController;

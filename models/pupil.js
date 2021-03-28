@@ -29,6 +29,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'needBel',
     'message',
     'passOlymp',
+    'requestImgNotApproved',
+    'diplomImgNotApproved'
     // 'examResults',
     // 'examSums'
 ].join(' ');

@@ -1,7 +1,8 @@
 $(function(){
     var oldResponse = '',
         stopFlag = false,
-        profiles = [];
+        profiles = {};
+        stats = {}
 
     getStats();
 
@@ -10,7 +11,7 @@ $(function(){
     }, 10 * 60 * 1000);
 
     function getStats() {
-        $.get('/front/rest/sotka')
+        $.get('/front/rest/stats')
             .success(function (res) {
                 if (JSON.stringify(res) == oldResponse){
                     return;
@@ -18,35 +19,34 @@ $(function(){
 
                 oldResponse = JSON.stringify(res);
                 stopFlag = false;
-                profiles = res;
+                profiles = res.profiles;
+                stats = res.stats;
+                
+                var totalSum = 0;
+                var totalOlymp = 0;
+                var totalAmmount = 0;
+                var common;
 
-                var sum = 0;
-                var olymp = 0;
-                var ammount = 0,
-                    common,
-                    i = 0,
-                    length = profiles.length;
-
-                for (i; i < length; i++) {
-                    if (profiles[i].countArray.length > 0) {
-                        sum = sum + profiles[i].countArray[profiles[i].countArray.length - 1].count;
-                    }
-                    olymp = olymp + profiles[i].olymp || 0;
-                    ammount = ammount + profiles[i].ammount;
+                for (var i = 0; i < stats.result.length; i++) {
+                    totalSum = totalSum + stats.result[i].countTotal;
+                    totalOlymp = totalOlymp + stats.result[i].countOlymp;
+                    totalAmmount = totalAmmount + profiles[stats.result[i].profile].ammount
                 }
 
-                common = {
-                    common: true,
-                    name: 'ВСЕГО',
-                    countArray: [{
-                        count: sum
-                    }],
-                    olymp: olymp,
-                    ammount: ammount
+                var commonStat = {
+                    profile: 'common',
+                    countOlymp: totalOlymp,
+                    countTotal: totalSum,
                 };
 
-                profiles.push(common);
-                length = profiles.length;
+                var commonProfile = {
+                    name: 'ВСЕ',
+                    ammount: totalAmmount
+                }
+
+                profiles.common = commonProfile;
+
+                stats.result.push(commonStat);
 
                 var $table = $('#statsTable tbody');
                 var $tr;
@@ -54,8 +54,9 @@ $(function(){
                 var $a;
                 var profile;
                 $table.html('');
-                for (i = 0; i < length; i++) {
-                    profile = profiles[i];
+                for (i = 0; i < stats.result.length; i++) {
+                    result = stats.result[i];
+                    profile = profiles[result.profile]
                     $tr = $('<tr>');
                     $td = $('<td class="profile-name">');
                     
@@ -69,20 +70,20 @@ $(function(){
                     $tr.append($td);
 
                     $td = $('<td>');
-                    $td.text(profile.ammount + '/' + profile.olymp);
+                    $td.text(profile.ammount + '/' + result.countOlymp);
                     $tr.append($td);
 
                     $td = $('<td>');
-                    $td.text(profile.countArray[profile.countArray.length - 1].count);
+                    $td.text(result.countTotal);
                     $tr.append($td);
 
                     $td = $('<td>');
-                    $td.text(((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2));
+                    $td.text((( result.countTotal - result.countOlymp) / (profile.ammount - result.countOlymp)).toFixed(2));
                     $tr.append($td);
 
                     $table.append($tr);
                 }
-                var updatedDate =new Date( profiles[0].countArray[profiles[0].countArray.length - 1].date );
+                var updatedDate =new Date( stats.date );
                 if ($('.stats-time').length > 0) {
                     $('.stats-time').remove();
                 }

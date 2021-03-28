@@ -36,6 +36,7 @@ function define(mongoose, fn) {
             'smsAPILogin': String,
             'smsAPIName': String,
             'smsAPISecretCode': String,
+            'smsTemplate': String,
             'showExamSeats1': Boolean,
             'showExamSeats2': Boolean,
             'agreement': String,

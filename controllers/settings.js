@@ -71,6 +71,7 @@ var SettingsController = function(mongoose, app) {
             doc.smsAPILogin = req.body.smsAPILogin;
             doc.smsAPISecretCode = req.body.smsAPISecretCode;
             doc.smsAPIName = req.body.smsAPIName;
+            doc.smsTemplate = req.body.smsTemplate;
             doc.agreement = req.body.agreement;
             doc.registrationVideoLink = req.body.registrationVideoLink;
             doc.appelationFormLink = req.body.appelationFormLink;

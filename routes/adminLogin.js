@@ -194,7 +194,6 @@ module.exports = function (app) {
 					});
 			};
 
-			pupils_array_olymp
 				async.parallel([
 					pupils_all, 
 					pupils_approved, 

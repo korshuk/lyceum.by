@@ -107,6 +107,9 @@ block content
                         +field('text', "smsAPIKey", 'API-key')(value=(docs && docs.smsAPIKey))#websmsKey
                         +field('text', "smsAPIName", 'От этого имени придут смс')(value=(docs && docs.smsAPIName))#websmsName
                         +field('text', "smsAPISecretCode", 'Секретный код подтверждения')(value=(docs && docs.smsAPISecretCode))#websmsSecretCode
+                        p.card-category(style="text-transform: none; margin-top: 12px; margin-bottom: 0") 
+                            | Это шаблон SMS сообщения. <strong>{code}</strong> заменится на реальный код. Используйте только датинские символы.  
+                        +field('textarea', "smsTemplate", 'Шаблон сообщения')( rows="2", maxlength="70")#smsTemplate #{docs && docs.smsTemplate} 
                 
             .col-md-6        
                 .row  
