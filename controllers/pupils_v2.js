@@ -136,9 +136,9 @@
             // TODO check status and date
             // if (pupil.status !== 'approved') {
                 //TODO add trim whitespace
-                var firstName = newData.firstName.trim();
-                var lastName = newData.lastName.trim();
-                var parentName = newData.parentName.trim();
+                var firstName = newData.firstName ? newData.firstName.trim() : '';
+                var lastName = newData.lastName ? newData.lastName.trim() : '';
+                var parentName = newData.parentName ? newData.parentName.trim() : '';
                 firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
                 lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                 parentName = parentName.charAt(0).toUpperCase() + parentName.slice(1)
