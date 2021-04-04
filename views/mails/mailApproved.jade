@@ -14,10 +14,24 @@ html
         meta(http-equiv = 'Content-Type', content = 'text/html; charset=UTF-8')
         title= subject
         body
-            h2.h2 Уважаемый #{param.firstName} #{param.lastName}!
+            h2.h2 #{param.firstName} #{param.lastName}!
 
-            p Вы зарегистрированы на вступительные испытания в Лицей БГУ по профилю: #{param.profile}.
-            p После завершения приема документов в Лицей БГУ (#{prettyDate(param.registrationEndDate)}) в <a href="https://to.lyceum.by" target="_blank">личном кабинете абитуриента</a> следите за обновлениями информации места и времени проведения вступительных испытаний.
+            if (param.passOlymp)
+                p Вы подали диплом победителя республиканской олимпиады по предмету #{param.diplomExamName} для поступления на #{param.diplomProfile} профиль без экзаменов.
+                p Поздравляем! Мы возьмем вас без экзаменов на этот профиль!
+                p После завершения вступительной кампании в личном кабинете появится информация о необходимых для зачисления действиях. Следите за изменениеями информации в личном кабинете!
+                
+            if (param.profile || (param.passOlymp && param.isEnrolledToExams && param.profile))
+                if (param.additionalProfiles.length === 0)
+                    p Вы зарегистрированы на вступительные испытания в Лицей БГУ по профилю: #{param.profile}.
+                if (param.additionalProfiles.length > 0)
+                    p Вы зарегистрированы на вступительные испытания в Лицей БГУ на следующие профили: 
+                    ul 
+                        li #{param.profile}
+                        each adProfile in param.additionalProfiles
+                            li #{adProfile.name}
+                
+                p После завершения приема документов в Лицей БГУ (#{prettyDate(param.registrationEndDate)}) в <a href="https://to.lyceum.by" target="_blank">личном кабинете абитуриента</a> следите за обновлениями информации места и времени проведения вступительных испытаний.
 
             hr
             p С уважением,

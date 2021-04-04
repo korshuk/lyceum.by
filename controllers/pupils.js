@@ -405,46 +405,50 @@ var PupilsController = function (mongoose, app) {
                     }
         
                     app.profileController.Collection.findOne({_id: doc.diplomProfile}, function (err, diplomProfile) {
-                        app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
-                            if (doc.diplomImg && doc.status === 'approved') {
-                                if (diplomProfile.olympExams.indexOf(doc.diplomExamName) > -1) {
-                                    doc.passOlymp = true;
-                                    doc.exam1 = -1;
-                                    doc.exam2 = -1;
-                                    doc.sum = -1;
-                                } else {
-                                    doc.passOlymp = false;
-                                    doc.exam1 = 0;
-                                    doc.exam2 = 0;
-                                    doc.sum = 0;
-                                }
-                            }
-                            doc.save(function (err, doc) {
-                                if (err) {
-                                    req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
-                                    req.session.locals = {doc: doc};
-                                    returnUrl = '/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || '');
-                                }
-                                else {
-                                    req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
-                                    base.onPupilStatusChange(bodyAction, doc, profile, diplomProfile, app.siteConfig)
-                                    /*if (bodyAction === 'pupil_approve') {
-                                        app.mailController.mailApproved(doc.email, {
-                                            firstName: doc.firstName,
-                                            lastName: doc.lastName,
-                                            profile: profile.name,
-                                            registrationEndDate: app.siteConfig.registrationEndDate
-                                        });
+                        app.profileController.Collection.find({_id: { $in: doc.additionalProfiles}}, function (err, additionalProfiles) {
+                        
+                            app.profileController.Collection.findOne({_id: doc.profile}, function (err, profile) {
+                                if (doc.diplomImg && doc.status === 'approved') {
+                                    if (diplomProfile.olympExams.indexOf(doc.diplomExamName) > -1) {
+                                        doc.passOlymp = true;
+                                        doc.exam1 = -1;
+                                        doc.exam2 = -1;
+                                        doc.sum = -1;
+                                    } else {
+                                        doc.passOlymp = false;
+                                        doc.exam1 = 0;
+                                        doc.exam2 = 0;
+                                        doc.sum = 0;
                                     }
-                                    if (bodyAction === 'pupil_disapprove') {
-                                        app.mailController.mailDisapproved(doc.email, {
-                                            firstName: doc.firstName,
-                                            lastName: doc.lastName
-                                        });
-                                    } */
                                 }
-                                res.redirect(returnUrl);
+                                doc.save(function (err, doc) {
+                                    if (err) {
+                                        req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+                                        req.session.locals = {doc: doc};
+                                        returnUrl = '/admin/pupils/edit/' + doc._id + '?' + (urlParser.parse(req.originalUrl).query || '');
+                                    }
+                                    else {
+                                        req.session.success = 'Абитуриент <strong>' + doc.email + '</strong> сохранился';
+                                        base.onPupilStatusChange(bodyAction, doc, profile, diplomProfile, additionalProfiles, app.siteConfig)
+                                        /*if (bodyAction === 'pupil_approve') {
+                                            app.mailController.mailApproved(doc.email, {
+                                                firstName: doc.firstName,
+                                                lastName: doc.lastName,
+                                                profile: profile.name,
+                                                registrationEndDate: app.siteConfig.registrationEndDate
+                                            });
+                                        }
+                                        if (bodyAction === 'pupil_disapprove') {
+                                            app.mailController.mailDisapproved(doc.email, {
+                                                firstName: doc.firstName,
+                                                lastName: doc.lastName
+                                            });
+                                        } */
+                                    }
+                                    res.redirect(returnUrl);
+                                });
                             });
+                        
                         });
                     });
                 }
@@ -452,13 +456,18 @@ var PupilsController = function (mongoose, app) {
         });
     }
 
-    function onPupilStatusChange(actionStatus, doc, profile, diplomProfile, siteConfig) {
+    function onPupilStatusChange(actionStatus, doc, profile, diplomProfile, additionalProfiles, siteConfig) {
         if (actionStatus === 'pupil_approve') {
+            console.log('additionalProfiles', additionalProfiles)
             app.mailController.mailApproved(doc.email, {
+                passOlymp: doc.passOlymp,
+                diplomExamName: doc.diplomExamName,
                 firstName: doc.firstName,
                 lastName: doc.lastName,
-                profile: profile.name,
+                isEnrolledToExams: !!doc.isEnrolledToExams,
+                profile: profile ? profile.name : '',
                 diplomProfile: diplomProfile ? diplomProfile.name : '',
+                additionalProfiles: additionalProfiles ? additionalProfiles : [],
                 registrationEndDate: siteConfig.registrationEndDate
             });
         }
