@@ -230,14 +230,20 @@
         }
 
         function updateProfile(pupil, newData, next) {
+            console.log('newData.profile', newData.profile)
             var profile = pupil.profile || { id: 0 };
             var oldNeedBel = pupil.needBel;
+
+            pupil.isEnrolledToExams = !!newData.isEnrolledToExams;
             pupil.needBel = newData.needBel;
-            if (newData.profile && newData.profile._id) {
-                app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
+            
+            // if (newData.profile && newData.profile._id) {
+                // app.profileController.Collection.findOne({_id: newData.profile._id}, function (err, newProfile) {
                     //TODO check pupil status    
-                    if (profile.id !== newProfile.id) {
-                        pupil.profile = newProfile.id;
+
+                    var newProfileId = newData.profile ? newData.profile._id : null
+                    if (profile.id !== newProfileId) {
+                        pupil.profile = newProfileId;
                     }
 
                     var additionalProfiles = [];
@@ -253,12 +259,12 @@
                     pupil.save(function (err, pupil) {
                         next(err, pupil)
                     });
-                });
-            } else {
-                pupil.save(function (err, pupil) {
-                    next(err, pupil)
-                });
-            }
+                // });
+           // } else {
+                // pupil.save(function (err, pupil) {
+                //     next(err, pupil)
+                // });
+           // }
         }
 
         function checkSMSCode(req, res) {

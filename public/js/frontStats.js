@@ -27,6 +27,9 @@ $(function(){
                 var totalAmmount = 0;
                 var common;
 
+                stats.result = stats.result.sort(function(a,b) {
+                    return profiles[a.profile].order - profiles[b.profile].order
+                })
                 for (var i = 0; i < stats.result.length; i++) {
                     totalSum = totalSum + stats.result[i].countTotal;
                     totalOlymp = totalOlymp + stats.result[i].countOlymp;
@@ -61,7 +64,7 @@ $(function(){
                     $td = $('<td class="profile-name">');
                     
                     if(profile.guidePage && profile.guidePage.length> 0) {
-                        $a = $('<p><a href="' + profile.guidePage + '" title="гид по профилю" target="_blank">' + profile.name + '</a></p>')
+                        $a = $('<a href="' + profile.guidePage + '" title="гид по профилю" target="_blank">' + profile.name + '</a>')
                         $td.append($a);
                     } else {
                         $td.text(profile.name);

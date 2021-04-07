@@ -57,10 +57,9 @@
             var filename = req.user.userId + '-' + Date.now() + '-' + crypto.randomBytes(8).toString("hex") + '.png';
 
             new Jimp(filePath, function(err, image) {
-                
                 if (err) {
                     res.status(500).json({
-                        message: 'error in file read'
+                        message: 'error in file read: ' + err
                     })
                 }
 

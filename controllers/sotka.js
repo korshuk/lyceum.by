@@ -28,7 +28,7 @@ SotkaController = function(mongoose, app) {
         stat.result = [];
 
         app.profileController.Collection.find().exec(function (err, profiles) { 
-            
+
             profiles.forEach(function(profile) {   
                 profileStatsCalculators.push(function(callback){
                     pupilsCollection.findApprovedPupilsForProfile(profile._id)
@@ -92,7 +92,7 @@ SotkaController = function(mongoose, app) {
         };
         var profiles= function (callback) {
             app.profileController.Collection
-                .find({}, "_id name ammount guidePage")
+                .find({}, "_id name ammount order guidePage")
                 .exec(function (err, profiles) {
                     var profilesMap = {}
                     for (var i= 0; i < profiles.length; i++) {
