@@ -11,6 +11,10 @@ function define(mongoose, fn) {
             countTotalBeta: Number,
             countOlymp: Number
         }],
+        examsMap: {
+            type: Object,
+            default: {}
+        },
         date: {
             type: Date,
             default: Date.now

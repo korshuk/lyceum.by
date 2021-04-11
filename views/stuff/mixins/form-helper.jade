@@ -50,7 +50,7 @@ mixin field(type, name, label, options, selected, caption)
                 label.col-sm-3.col-form-label #{label}:
                 .col-sm-9
                     .form-group
-                        input.form-control.datepicker(id="attributes.id", type='text', name='#{name}', value="#{moment(attributes.value).format('DD MMMM (ddd) YYYY')}")
+                        input.form-control.datepicker(id="attributes.id", type='text', name='#{name}', value="#{moment(attributes.value).set('hour', 12).format('DD MMMM (ddd) YYYY')}")
         when 'time'
             .row
                 label.col-sm-3.col-form-label #{label}:

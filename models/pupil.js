@@ -275,6 +275,7 @@ function define(mongoose, fn) {
             // query.find({"profile": req.queryParams.profile});
             query.find({
                 $or: [
+                    { "diplomProfile": req.queryParams.profile},
                     { "profile": req.queryParams.profile }, 
                     { "additionalProfiles": req.queryParams.profile} //{ _id: req.queryParams.profile } }
                 ]
@@ -305,6 +306,7 @@ function define(mongoose, fn) {
             .sort(req.queryParams.sortDirection + req.queryParams.sortField)
             .skip(req.queryParams.itemsPerPage * (req.queryParams.page - 1))
             .limit(req.queryParams.itemsPerPage)
+            .populate('diplomProfile')
             .populate('profile')
             .populate('additionalProfiles')
             .populate('result1')

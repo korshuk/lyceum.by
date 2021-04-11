@@ -91,7 +91,12 @@ block content
 				.card-header
 					h5.card-title Конкурс
 				.card-body
-					canvas#chartConcurs.ct-chart.ct-perfect-fourth(width="456", height="300")				
+					canvas#chartConcurs.ct-chart.ct-perfect-fourth(width="456", height="300")	
+			.card
+				.card-header
+					h5.card-title Экзамены
+				.card-body
+					canvas#chartExamsCount.ct-chart.ct-perfect-fourth(width="456", height="300")			
 		.col-md-8.col-sm-12
 			.card
 				.card-header
@@ -112,6 +117,10 @@ block content
 		each pointsArray, index in profiles.points
 			textarea(id="pointsArray#{index}", cols="30", rows="10")
 				| #{JSON.stringify(pointsArray)}
+		textarea(id="examNames", cols="30", rows="10")
+				| #{JSON.stringify(exams.names)}
+		textarea(id="examNumbers", cols="30", rows="10")
+				| #{JSON.stringify(exams.counts)}
 			
 									
 
@@ -200,8 +209,11 @@ block scripts
 		var codes = JSON.parse($('#profileCodes').val())
 		var olymp = JSON.parse($('#profileOlymp').val())
 		var ammounts = JSON.parse($('#profileAmmounts').val())
+		var examNames = JSON.parse($('#examNames').val())
+		var examNumbers = JSON.parse($('#examNumbers').val())
 		
-		
+		console.log(examNames)
+		console.log(examNumbers)
 		var datasets = [];
 		var concursData = [];
 		codes.forEach(function(name, i){
@@ -383,6 +395,75 @@ block scripts
 		}
 		});
 
+		var ctx4 = document.getElementById('chartExamsCount').getContext("2d");
+		myChart = new Chart(ctx4, {
+			type: 'horizontalBar', //'bar',
+			data: {
+				labels: examNames,
+				datasets: [
+					{
+						label: "Количество",
+						borderColor: '#6bd098',
+						fill: true,
+						backgroundColor: '#6bd098',
+						hoverBorderColor: '#6bd098',
+						borderWidth: 3,
+						data: examNumbers,
+					}
+				]
+			},
+		options: {
+			tooltips: {
+
+			},
+
+
+			legend: {
+				display: false
+			},
+			scales: {
+				x: {
+					display: true,
+				},
+				yAxes: [{
+					ticks: {
+						fontColor: "#9f9f9f",
+						fontStyle: "bold",
+						beginAtZero: true,
+						maxTicksLimit: 5,
+						padding: 5,
+						mirror: false
+					},
+					gridLines: {
+						zeroLineColor: '#9f9f9f',
+						display: false,
+						drawBorder: true,
+						color: '#9f9f9f',
+					}
+
+				}],
+				xAxes: [{
+					//barPercentage: 0.4,
+					gridLines: {
+						zeroLineColor: '#9f9f9f',
+						display: true,
+
+						drawBorder: true,
+						color: '#9f9f9f',
+					},
+					ticks: {
+						padding: 10,
+						fontColor: "#9f9f9f",
+						fontStyle: "bold",
+						maxTicksLimit: 10,
+						//autoSkip: false,
+						//maxRotation: 90,
+						//minRotation: 90
+					}
+				}]
+			},
+		}
+		});
 
 
 

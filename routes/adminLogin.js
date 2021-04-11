@@ -248,6 +248,7 @@ module.exports = function (app) {
 						newClearP: results[3],
 						passOlymp: pupilsArrayOlymp.length,
 						profiles: calcProfileStats(results[7], results[8]),
+						exams: calcExamsStats(results[8]),
 						withAdditional: withAdditional,
 						olympWithAdditional: olympWithAdditional
 					});
@@ -264,6 +265,23 @@ module.exports = function (app) {
 	app.get('/admin/logout', function (req, res) {
 		app.userController.logout(req, res);
 	});
+
+	function calcExamsStats(stats) {
+		var names = [];
+		var counts = [];
+		var lastStat = stats[stats.length - 1].examsMap;
+		var keys = Object.keys(lastStat)
+		keys = keys.sort();
+
+		for (var i = 0; i < keys.length; i++) {
+			names.push(keys[i] + ' (' + lastStat[keys[i]] + ')')
+			counts.push(lastStat[keys[i]])
+		}
+		return {
+			names: names,
+			counts: counts
+		}
+	}
 
 	function calcProfileStats(profiles, stats) {
 		var returnData = [];

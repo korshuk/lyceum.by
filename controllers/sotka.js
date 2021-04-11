@@ -16,17 +16,59 @@ SotkaController = function(mongoose, app) {
     // })
 
     base.calculate = calculate;
+    base.calculateExamsCount = calculateExamsCount;
 
     setTimeout(function() { 
         base.calculate() 
     }, BASE_TIMEOUT);
 
+    function calculateExamsCount(next) {
+        var examsMap = {};
+        app.pupilsController.Collection
+            .find({status: 'approved'})
+            .populate('profile')
+            .populate('additionalProfiles')
+            .exec(function (err, pupils) {
+                var i = 0;
+                var pupilsLength = pupils.length;
+                var pupil;
+                var profiles;
+                for (i; i < pupilsLength; i++) {
+                    pupil = pupils[i];
+                    if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+                        if (pupil.additionalProfiles.length > 0) {
+                            profiles = pupil.additionalProfiles
+                        } else {
+                            profiles = [];
+                        }
+                        //profiles = pupil.additionalProfiles || [];
+                        profiles.push(pupil.profile)
+                    // console.log('pupil@@@', profiles, pupil.additionalProfiles.length)
+                        for (var j = 0; j < profiles.length; j++) {
+                            if(examsMap[profiles[j].firstExamName] && examsMap[profiles[j].firstExamName] > 0) {
+                                examsMap[profiles[j].firstExamName] += 1;
+                            } else {
+                                examsMap[profiles[j].firstExamName] = 1;
+                            }
+                            if(examsMap[profiles[j].secondExamName] && examsMap[profiles[j].secondExamName] > 0) {
+                                examsMap[profiles[j].secondExamName] += 1;
+                            } else {
+                                examsMap[profiles[j].secondExamName] = 1;
+                            }
+                        }
+                        
+                    }
+                }
+                next(examsMap)
+            })
+    }
+
     function calculate() {
         var stat = new this.Collection();
         var pupilsCollection = app.pupilsController.Collection;
-        var profileStatsCalculators = []
+        var profileStatsCalculators = [];
         stat.result = [];
-
+        
         app.profileController.Collection.find().exec(function (err, profiles) { 
 
             profiles.forEach(function(profile) {   
@@ -65,18 +107,21 @@ SotkaController = function(mongoose, app) {
                         });
                 })
             });
-
-            async.parallel(profileStatsCalculators, function(err, results) {
-                stat.result = results.sort(function(a, b) {
-                    return a.profile > b.profile
-                })
-
-                stat.save(function(err, doc) {
-                    console.log('stat.save(function(err, doc) {', doc)
-                    setTimeout(function() { 
-                        base.calculate() }, 60 * BASE_TIMEOUT);
+            base.calculateExamsCount(function(examsMap) {
+                async.parallel(profileStatsCalculators, function(err, results) {
+                    stat.result = results.sort(function(a, b) {
+                        return a.profile > b.profile
+                    })
+                    stat.examsMap = examsMap
+    
+                    stat.save(function(err, doc) {
+                        console.log('stat.save(function(err, doc) {', doc)
+                        setTimeout(function() { 
+                            base.calculate() }, 60 * BASE_TIMEOUT);
+                    })
                 })
             })
+            
         });
         //setTimeout(base.calculate, 10 * 60 * 60 * 1000);
     }

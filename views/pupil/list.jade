@@ -155,9 +155,9 @@ block content
                                     th.sortable(sortable="agreement") Согласие&nbsp;
                                     th.sortable(sortable="requestImg") Есть картинка&nbsp;
                                     th.sortable(sortable="passOlymp") БЭ&nbsp;
-                                    th.sortable(sortable="exam1") Э-1&nbsp;
-                                    th.sortable(sortable="exam2") Э-2&nbsp;
-                                    th.sortable(sortable="sum") Сумма&nbsp;
+                                    //- th.sortable(sortable="exam1") Э-1&nbsp;
+                                    //- th.sortable(sortable="exam2") Э-2&nbsp;
+                                    //- th.sortable(sortable="sum") Сумма&nbsp;
                                     th.sortable(sortable="recommended") Зачислен&nbsp;
                                     th.sortable(sortable="examStatus") Экз-статус&nbsp;
                                     th.text-right Действия
@@ -175,19 +175,25 @@ block content
                                     td {{item.distant}}
                                     td {{item.status}}
                                     td {{item.created | date:'dd-MM-yy HH:mm:ss'}}
-                                    td {{item.profile.code | uppercase}} 
-                                        p(style="margin-bottom:0", ng-repeat="profile in item.additionalProfiles track by $index") {{profile.code | uppercase}}
+                                    td 
+                                        p(ng-if="item.diplomProfile && item.passOlymp", style="margin-bottom:0;font-weight:bold") 
+                                            | {{item.diplomProfile.code | uppercase}} 
+                                        div(ng-if="!item.passOlymp || (item.passOlymp && item.isEnrolledToExams)")
+                                            p(style="margin-bottom:0") 
+                                                | {{item.profile.code | uppercase}}
+                                            p(style="margin-bottom:0", ng-repeat="profile in item.additionalProfiles track by $index") 
+                                                | {{profile.code | uppercase}}
                                     td {{item.needBel}}
                                     td {{item.agreement}}
                                     td {{!!item.requestImg}}
                                     td {{item.passOlymp ? 'БЭ' : ''}}
-                                    td
-                                        span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
-                                        input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
-                                    td
-                                        span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
-                                        input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
-                                    td {{item.sum}}
+                                    //- td
+                                    //-     span(ng-if='!app.isEditMode1 || item.passOlymp') {{item.exam1 === -2 ? 'н' : item.exam1}}
+                                    //-     input.form-control(type='number', ng-if='app.isEditMode1 && !item.passOlymp', ng-model="item.exam1")
+                                    //- td
+                                    //-     span(ng-if='!app.isEditMode2 || item.passOlymp') {{item.exam2 === -2 ? 'н' : item.exam2}}
+                                    //-     input.form-control(type='number', ng-if='app.isEditMode2 && !item.passOlymp', ng-model="item.exam2")
+                                    //- td {{item.sum}}
                                     td {{item.recommended}}
                                     td {{app.examStatuses[item.examStatus || '0']}}
                                         p(ng-if='item.audience1 || item.audience2') Ауд:

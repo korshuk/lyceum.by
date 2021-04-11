@@ -1,7 +1,7 @@
 $(document).ready(function () {
     
     moment.locale('ru');
-    const MOMENT_FORMAT = 'DD MMMM (ddd) YYYY';
+    var MOMENT_FORMAT = 'DD MMMM (ddd) YYYY';
     if ($('#chartHours').length > 0) {
         demo.initChartsPages();
     }
@@ -22,7 +22,7 @@ $(document).ready(function () {
         ]
     });
 
-    const editorTools = {
+    var editorTools = {
         header: {
             class: Header,
             inlineToolbar: ['link'],
@@ -62,7 +62,7 @@ $(document).ready(function () {
         }
     };
 
-    const editorToolsMessage = {
+    var editorToolsMessage = {
         header: {
             class: Header,
             inlineToolbar: ['link'],
@@ -80,7 +80,7 @@ $(document).ready(function () {
         }
     };
 
-    const editorToolsImage = {
+    var editorToolsImage = {
         image: {
             class: ImageTool,
             config: {
@@ -92,7 +92,7 @@ $(document).ready(function () {
         },
     };
 
-    const swalWithBootstrapButtons = Swal.mixin({
+    var swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
           cancelButton: 'btn btn-danger'
@@ -100,9 +100,9 @@ $(document).ready(function () {
         buttonsStyling: false
       })
 
-    const editorToolsTeaser = {};
+    var editorToolsTeaser = {};
 
-    const editors = {};
+    var editors = {};
     showNotifications();
     initSirBlocks();
     initDatePicker();
@@ -308,6 +308,7 @@ $(document).ready(function () {
     }
 
     function initDatePicker() {
+        moment.tz.add('Etc/UTC|UTC|0|0||');
         if ($(".datepicker").length != 0) {
             $('.datepicker').datetimepicker({
               format: MOMENT_FORMAT,// 'MM/DD/YYYY',
@@ -328,7 +329,7 @@ $(document).ready(function () {
                 e.preventDefault();
                 $('.datepicker').each(function(i, input) {
                     var $input = $(input);
-                    var date = moment($input.val(), MOMENT_FORMAT ).toDate();
+                    var date = moment($input.val(), MOMENT_FORMAT ).tz("Etc/UTC").set('hour', 12).toISOString();
                     $input.val(date)
                    // console.log(moment($(input).val(), MOMENT_FORMAT ).toDate())
                 })
