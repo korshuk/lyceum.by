@@ -56,6 +56,25 @@ block content
 							.row
 								.col-5.col-md-4
 									.icon-big.text-center.icon-warning
+										i.fas.fa-clock.text-info
+								.col-7.col-md-8
+									.numbers
+										p.card-category Рссчет был
+										p.card-title #{lastUpdated.format('dd.MM.yyyy')}										
+								.col-12
+									p(style="text-align: right; font-size: 14px; font-weight: bold;") 
+										| #{lastUpdated.format('hh:mm:ss')} (GMT+0000)
+								.col-12(style="text-align: right;")
+									a.btn.btn-info.btn-magnify(href="/admin/sotka/renew")
+										span.btn-label
+											i.fa.fa-sync
+										| #{'  '}Пересчитать
+				.col-sm-12
+					.card.card-stats
+						.card-body
+							.row
+								.col-5.col-md-4
+									.icon-big.text-center.icon-warning
 										i.fas.fa-baby.text-success
 								.col-7.col-md-8
 									.numbers

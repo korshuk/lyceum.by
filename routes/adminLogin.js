@@ -250,7 +250,8 @@ module.exports = function (app) {
 						profiles: calcProfileStats(results[7], results[8]),
 						exams: calcExamsStats(results[8]),
 						withAdditional: withAdditional,
-						olympWithAdditional: olympWithAdditional
+						olympWithAdditional: olympWithAdditional,
+						lastUpdated: results[8][results[8].length - 1].date
 					});
 				});
 		} else {

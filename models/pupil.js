@@ -211,6 +211,61 @@ function define(mongoose, fn) {
         this.findOne(queryObj, next)
     } 
 
+    PupilSchema.statics.calculateExamsCount = function(next) {
+        var self = this;
+        var examsMap = {};
+        
+        this.find({status: 'approved'})
+            .populate('profile')
+            .populate('additionalProfiles')
+            .exec(function (err, pupils) {
+                var i = 0;
+                var pupilsLength = pupils.length;
+                var pupil;
+                var exams = [];
+                for (i; i < pupilsLength; i++) {
+                    pupil = pupils[i];
+                    exams = self.getPupilExams(pupil);
+                    
+                    if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+                        for (var j = 0; j < exams.length; j++) {
+                            if(examsMap[exams[j]] && examsMap[exams[j]] > 0) {
+                                examsMap[exams[j]] += 1;
+                            } else {
+                                examsMap[exams[j]] = 1;
+                            }   
+                        }
+                    }
+                }
+                next(examsMap)
+            })
+    } 
+
+    PupilSchema.statics.getPupilExams = function(pupil) {
+        var profiles = [];
+        var exams = [];
+        if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+            if (pupil.additionalProfiles.length > 0) {
+                profiles = pupil.additionalProfiles
+            } 
+
+            profiles.push(pupil.profile)
+
+            for (var j = 0; j < profiles.length; j++) {
+                profiles[j].firstExamName
+                profiles[j].secondExamName
+                if (exams.indexOf(profiles[j].firstExamName) < 0) {
+                    exams.push(profiles[j].firstExamName)
+                }
+
+                if (exams.indexOf(profiles[j].secondExamName) < 0) {
+                    exams.push(profiles[j].secondExamName)
+                }
+            }
+        }
+        return exams
+    }
+
     PupilSchema.statics.simpleSearch = function(req, res, next) {
         var query = this.find();
         generateQueryParams(req);

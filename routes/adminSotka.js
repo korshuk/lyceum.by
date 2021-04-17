@@ -3,6 +3,12 @@ module.exports = function (app) {
         app.sotkaController.list(req, res);
     });
 
+    app.get('/admin/sotka/renew', app.userController.Pass, function (req, res) {
+        app.sotkaController.calculate(function() {
+            res.redirect('/admin')
+        });
+    });
+
     app.get('/admin/rest/sotka', app.userController.Pass, function (req, res) {
         app.sotkaController.restList(req, res);
     });
