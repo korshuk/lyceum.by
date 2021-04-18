@@ -3,7 +3,7 @@ var BaseController = require('./baseController').BaseController,
     async = require('async');
 
 SotkaController = function(mongoose, app) {
-    var BASE_TIMEOUT = 10 * 60 * 1000;
+    var BASE_TIMEOUT = 30 * 60 * 1000;
 
     var base  = new BaseController('Sotka', 'sotka', mongoose, app);
 

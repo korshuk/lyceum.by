@@ -374,16 +374,17 @@ var ProfileController = function (mongoose, app) {
             .sort('order')
             .populate('examPlace')
             .exec(function (err, docs) {
-                self.ClustersCollection
-                    .find()
-                    .populate('profiles')
-                    .exec(function (err, clusters) {
-                        res.render(self.viewPath + 'list.jade', {
-                            docs: docs,
-                            clusters: clusters,
-                            viewName: self.name.toLowerCase()
-                        });
-                    })
+                var examDates = self.Collection.getExamDatesArray(docs);
+                                
+                for(var i = 0; i < docs.length; i++) {
+                    docs[i].exams = self.Collection.fillExamsArray(docs[i], examDates)
+                }
+
+                res.render(self.viewPath + 'list.jade', {
+                    docs: docs,
+                    examDates: examDates,
+                    viewName: self.name.toLowerCase()
+                });
                 
             });
     };

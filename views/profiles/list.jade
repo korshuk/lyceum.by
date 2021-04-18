@@ -22,8 +22,12 @@ block content
                         tr
                             th Название
                             th Место
-                            th I экзамен
-                            th II экзамен
+                            //- th I экзамен
+                            //- th II экзамен
+                            //- th III экзамен
+                            //- th IV экзамен
+                            each examDate, index in examDates
+                                th #{index + 1} экзамен
                             th Сумма
                     tbody
                         each doc, index in docs
@@ -66,48 +70,30 @@ block content
                                         br
                                         br
                                         | Кабинетов: #{doc.examPlace.audience.length}
-
-
-                                td
-                                    .form-group
-                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
-                                            span.btn-label
-                                                i.fas.fa-poll
-                                            | #{'  '}На проверку...
-                                    if (doc.firstUploaded)
-                                        p
-                                            strong 1 экзамен готов
-                                    p
-                                        | Предмет: <b>#{doc.firstExamName}</b>
-                                        br
-                                        | Дата: <b><nobr>(#{doc.firstExamDate.dayToString()}) #{doc.firstExamDate.format('dd.MM.yyyy')}</nobr></b>
-                                        br
-                                        | Начало экзамена в: <b>#{doc.firstExamStartTime}</b>
-                                        br
-                                        | Ознакомление: <b><nobr>(#{doc.firstExamAppelationDate.dayToString()}) #{doc.firstExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
-                                        
-                                    p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
-     
-                                td
-                                    .form-group
-                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/2")
-                                            span.btn-label
-                                                i.fas.fa-poll
-                                            | #{'  '}На проверку...
-                                    if (doc.secondUploaded)    
-                                        p
-                                            strong 2 экзамен готов
-                                    p
-                                        | Предмет: <b>#{doc.secondExamName}</b>
-                                        br
-                                        | Дата: <b><nobr>(#{doc.secondExamDate.dayToString()}) #{doc.secondExamDate.format('dd.MM.yyyy')}</nobr></b>
-                                        br
-                                        | Начало экзамена в: <b>#{doc.secondExamStartTime}</b>
-                                        br
-                                        | Ознакомление: <b><nobr>(#{doc.secondExamAppelationDate.dayToString()}) #{doc.secondExamAppelationDate.format('dd.MM.yyyy')}</nobr></b>
-                                    
-                                    p pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
-                                    
+                                
+                                each examDate, index in examDates
+                                    td
+                                        if (doc.exams[index].name)
+                                            - var exam = doc.exams[index]
+                                            .form-group
+                                                a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/" + exam.examNum) 
+                                                    span.btn-label
+                                                        i.fas.fa-poll
+                                                    | #{'  '}На проверку...
+                                            if (doc.isUploaded)
+                                                p
+                                                    strong #{exam.examNum} экзамен готов
+                                            p
+                                                | Предмет: <b>#{exam.name}</b>
+                                                br
+                                                | Дата: <b><nobr>(#{exam.date.dayToString()}) #{exam.date.format('dd.MM.yyyy')}</nobr></b>
+                                                br
+                                                | Начало экзамена в: <b>#{exam.startTime}</b>
+                                                br
+                                                | Ознакомление: <b><nobr>(#{exam.appelationDate.dayToString()}) #{exam.appelationDate.format('dd.MM.yyyy')}</nobr></b>
+                                            
+                                            p pass:#{exam.pass} min:#{exam.min} max:#{exam.max}
+ 
                                     
                                 td
                                     .form-group
