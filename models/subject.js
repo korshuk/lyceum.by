@@ -3,6 +3,16 @@ function define(mongoose, fn) {
 
         SubjectSchema = new Schema({
             'name': String,
+            'date': Date,
+            'startTime': String,
+            'appelationDate': Date,
+            'place': {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Places',
+            },
+            'uploaded': Boolean,
+            'noStats': Boolean,
+            'examKey': String,
         });
 
     SubjectSchema.virtual('id').get(function() {
@@ -18,6 +28,43 @@ function define(mongoose, fn) {
                 next(doc);
             }
         });
+    };
+
+    SubjectSchema.statics.getExamDatesArray = function (subjects) {
+        var examDates = [];
+        var doc;
+        var date;
+        for (var i = 0; i < subjects.length; i++) {
+            doc = subjects[i];
+            date = new Date(doc.date);
+            date = date.getTime();
+            if (examDates.indexOf(date) < 0) {
+                examDates.push(date);
+            }
+        }
+
+        examDates = examDates.sort();
+
+        return examDates;
+    };
+
+    SubjectSchema.statics.fillExamsArray = function (doc, examDates) {
+        var exams = [];
+        var date;
+        var newExam;
+        
+        for (var j = 0; j < examDates.length; j++) {
+            newExam = {};
+            date = new Date(doc.date);
+            date = date.getTime();
+
+            if (examDates.indexOf(date) === j) {
+                newExam = JSON.parse(JSON.stringify(doc));
+            }
+            exams.push(newExam);
+        }
+
+        return exams
     };
 
 

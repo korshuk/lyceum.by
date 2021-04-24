@@ -1,8 +1,10 @@
-var express = require('express');
+var express = require('express'),
+    moment = require('moment');
 
 module.exports = function(app) {
 
     var router = express();
+    router.locals.moment = moment;
 
     router.get('/', app.userController.Pass, function(req, res) {
             app.subjectController.list(req, res);

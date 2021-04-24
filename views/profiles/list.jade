@@ -20,14 +20,20 @@ block content
                 table.table.table-hover
                     thead.text-primary
                         tr
+                            th
+                            th(colspan=examDates.length) Календарь
+                            th
+                        tr
                             th Название
-                            th Место
                             //- th I экзамен
                             //- th II экзамен
                             //- th III экзамен
                             //- th IV экзамен
                             each examDate, index in examDates
-                                th #{index + 1} экзамен
+                                - var date = new Date(examDate);
+                                th 
+                                    nobr
+                                        | #{date.dayToString()} - #{date.format('dd.MM.yyyy')}
                             th Сумма
                     tbody
                         each doc, index in docs
@@ -53,38 +59,22 @@ block content
                                     p
                                         strong Страница с гайдом: 
                                         | #{doc.guidePage || 'не назначена'}
-                                    .form-group
-                                        span.badge.badge-pill(class="#{doc.firstIsFirst ? 'badge-success' : 'badge-danger'}")
-                                            - if (doc.firstIsFirst)
-                                                | Первый экзамен является первым
-                                            - else 
-                                                | Первый экзамен является вторым 
 
-                                td
-                                    - if(doc.examPlace)
-                                        | #{doc.examPlace.code}
-                                        br
-                                        | #{doc.examPlace.name}
-                                        br
-                                        | #{doc.examPlace.address}
-                                        br
-                                        br
-                                        | Кабинетов: #{doc.examPlace.audience.length}
                                 
                                 each examDate, index in examDates
                                     td
                                         if (doc.exams[index].name)
                                             - var exam = doc.exams[index]
-                                            .form-group
-                                                a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/" + exam.examNum) 
-                                                    span.btn-label
-                                                        i.fas.fa-poll
-                                                    | #{'  '}На проверку...
+                                            //- .form-group
+                                            //-     a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/" + exam.examNum) 
+                                            //-         span.btn-label
+                                            //-             i.fas.fa-poll
+                                            //-         | #{'  '}На проверку...
                                             if (doc.isUploaded)
                                                 p
                                                     strong #{exam.examNum} экзамен готов
                                             p
-                                                | Предмет: <b>#{exam.name}</b>
+                                                | <b>#{exam.name}</b>
                                                 br
                                                 | Дата: <b><nobr>(#{exam.date.dayToString()}) #{exam.date.format('dd.MM.yyyy')}</nobr></b>
                                                 br
@@ -92,7 +82,7 @@ block content
                                                 br
                                                 | Ознакомление: <b><nobr>(#{exam.appelationDate.dayToString()}) #{exam.appelationDate.format('dd.MM.yyyy')}</nobr></b>
                                             
-                                            p pass:#{exam.pass} min:#{exam.min} max:#{exam.max}
+                                            //- p pass:#{exam.pass} min:#{exam.min} max:#{exam.max}
  
                                     
                                 td

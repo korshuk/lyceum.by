@@ -5,12 +5,8 @@ var FIELDS_TO_BE_VISIBLE = [
     'order',
     'belLang',
     'selectVariant',
-    'firstExamName',
-    'secondExamName',
-    'firstExamDate',
-    'secondExamDate',
-    'firstExamStartTime',
-    'secondExamStartTime',
+    'exam1',
+    'exam2',
     'olympExams',
 ].join(' ');
 
@@ -26,6 +22,14 @@ function define(mongoose, fn) {
             examPlace: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Places',
+            },
+            exam1: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject',
+            },
+            exam2: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject',
             },
             firstExamName: String,
             firstExamDate: Date,
@@ -106,6 +110,8 @@ function define(mongoose, fn) {
     ProfilesSchema.statics.findAllForAjax = function (req, res, next) {
         this.find({}, FIELDS_TO_BE_VISIBLE)
             .populate('selectVariant.profiles', FIELDS_TO_BE_VISIBLE)
+            .populate('exam1')
+            .populate('exam2')
             .sort('order')
             .exec(function (err, docs) {
                 if (docs.length > 0) {
@@ -125,17 +131,13 @@ function define(mongoose, fn) {
         var date;
         for (var i = 0; i < profiles.length; i++) {
             doc = profiles[i];
-            date = new Date(doc.firstExamDate);
+            date = new Date(doc.exam1.date);
             date = date.getTime();
-            console.log(
-                date,
-                examDates.indexOf(doc.firstExamDate),
-                examDates.indexOf(doc.secondExamDate)
-            );
+
             if (examDates.indexOf(date) < 0) {
                 examDates.push(date);
             }
-            var date = new Date(doc.secondExamDate);
+            var date = new Date(doc.exam2.date);
             date = date.getTime();
             if (examDates.indexOf(date) < 0) {
                 examDates.push(date);
@@ -154,37 +156,17 @@ function define(mongoose, fn) {
         
         for (var j = 0; j < examDates.length; j++) {
             newExam = {};
-            date = new Date(doc.firstExamDate);
+            date = new Date(doc.exam1.date);
             date = date.getTime();
 
             if (examDates.indexOf(date) === j) {
-                newExam = {
-                    examNum: 1,
-                    isUploaded: doc.firstUploaded,
-                    name: doc.firstExamName,
-                    date: doc.firstExamDate,
-                    startTime: doc.firstExamStartTime,
-                    appelationDate: doc.firstExamAppelationDate,
-                    pass: doc.passF,
-                    min: doc.minF,
-                    max: doc.maxF,
-                };
+                newExam = doc.exam1;
             }
-            date = new Date(doc.secondExamDate);
+            date = new Date(doc.exam2.date);
             date = date.getTime();
             
             if (examDates.indexOf(date) === j) {
-                newExam = {
-                    examNum: 2,
-                    isUploaded: doc.secondUploaded,
-                    name: doc.secondExamName,
-                    date: doc.secondExamDate,
-                    startTime: doc.secondExamStartTime,
-                    appelationDate: doc.secondExamAppelationDate,
-                    pass: doc.passS,
-                    min: doc.minS,
-                    max: doc.maxS,
-                };
+                newExam = doc.exam2;
             }
             exams.push(newExam);
         }

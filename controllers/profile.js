@@ -372,7 +372,8 @@ var ProfileController = function (mongoose, app) {
         this.Collection
             .find()
             .sort('order')
-            .populate('examPlace')
+            .populate('exam1')
+            .populate('exam2')
             .exec(function (err, docs) {
                 var examDates = self.Collection.getExamDatesArray(docs);
                                 
@@ -400,7 +401,7 @@ var ProfileController = function (mongoose, app) {
         }
         app.subjectController.Collection.find(function (err, subjects) {
 
-            subjects = createListForSelect(subjects, 'name');
+            subjects = createListForSelect(subjects, 'id');
 
             app.placesController.Collection.find(function (err, places) {
 
@@ -429,7 +430,7 @@ var ProfileController = function (mongoose, app) {
         this.Collection.findByReq(req, res, function(err, doc) {
                 app.subjectController.Collection.find(function (err, subjects) {
 
-                    subjects = createListForSelect(subjects, 'name');
+                    subjects = createListForSelect(subjects, 'id');
 
                     app.placesController.Collection.find(function (err, places) {
 
@@ -485,21 +486,11 @@ var ProfileController = function (mongoose, app) {
             
             doc.examPlace = req.body.examPlace;
 
-            doc.firstExamName = req.body.firstExamName;
-            doc.firstExamDate = req.body.firstExamDate;
-            doc.firstExamStartTime = req.body.firstExamStartTime;
-            doc.firstExamAppelationDate = req.body.firstExamAppelationDate;
-            doc.firstIsFirst = req.body.firstIsFirst === 'on';
-            doc.secondExamName = req.body.secondExamName;
-            doc.secondExamDate = req.body.secondExamDate;
-            doc.secondExamStartTime = req.body.secondExamStartTime;
-            doc.secondExamAppelationDate = req.body.secondExamAppelationDate;
+            doc.exam1 = req.body.exam1;
+            doc.exam2 = req.body.exam2;
 
-            doc.secondExamPlace = req.body.secondExamPlace;
-            doc.firstExamPlace = req.body.firstExamPlace;
-
-            doc.examKey1 = req.body.examKey1;
-            doc.examKey2 = req.body.examKey2;
+            
+            doc.firstIsFirst = true;
 
             doc.firstUploaded = req.body.firstUploaded === 'on';
             doc.firstExamNoStats = req.body.firstExamNoStats === 'on';

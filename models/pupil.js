@@ -245,21 +245,19 @@ function define(mongoose, fn) {
         var profiles = [];
         var exams = [];
         if (!pupil.passOlymp || pupil.isEnrolledToExams) {
-            if (pupil.additionalProfiles.length > 0) {
+            if (pupil.additionalProfiles && pupil.additionalProfiles.length > 0) {
                 profiles = pupil.additionalProfiles
             } 
 
             profiles.push(pupil.profile)
 
             for (var j = 0; j < profiles.length; j++) {
-                profiles[j].firstExamName
-                profiles[j].secondExamName
-                if (exams.indexOf(profiles[j].firstExamName) < 0) {
-                    exams.push(profiles[j].firstExamName)
+                if (exams.indexOf(profiles[j].exam1) < 0) {
+                    exams.push(profiles[j].exam1)
                 }
 
-                if (exams.indexOf(profiles[j].secondExamName) < 0) {
-                    exams.push(profiles[j].secondExamName)
+                if (exams.indexOf(profiles[j].exam2) < 0) {
+                    exams.push(profiles[j].exam2)
                 }
             }
         }

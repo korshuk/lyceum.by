@@ -8,6 +8,25 @@ module.exports = function(app) {
         app.placesController.list(req, res);
     });
 
+    router.get('/seedApp/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.seedaAppPage(req, res);
+    });
+             //   /admin/pupils/examseeds/seedApp/api/dictionary
+    router.get('/seedApp/api/dictionary', app.userController.Pass, function(req, res) {
+        app.placesController.getDictionary(req, res);
+    });
+    router.get('/seedApp/api/corpses/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.getCorpses(req, res);
+    });
+    router.get('/seedApp/api/generateStatus', app.userController.Pass, function(req, res) {
+        app.placesController.getGenerateStatus(req, res);
+    });
+    router.get('/seedApp/api/generate', app.userController.Pass, function(req, res) {
+        app.placesController.generatePupilSeeds(req, res);
+    });
+    
+    
+
     router.get('/create', app.userController.Pass, function(req, res) {
         app.placesController.create(req, res);
     });
@@ -40,5 +59,5 @@ module.exports = function(app) {
         app.placesController.update(req, res);
     });
 
-    app.use('/admin/pupils/places', router);
+    app.use('/admin/pupils/examseeds', router);
 };

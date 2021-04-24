@@ -101,16 +101,17 @@ html
                           span.sidebar-mini-icon
                             i.fas.fa-chalkboard-teacher
                           span.sidebar-normal Профили
-                      li(class="#{menuPage === 'places' ? 'active' : ''}")
-                        a(href="/admin/pupils/places")
-                          span.sidebar-mini-icon
-                            i.fas.fa-hotel
-                          span.sidebar-normal Места
                       li(class="#{menuPage === 'subjects' ? 'active' : ''}")
                         a(href="/admin/pupils/subjects")
                           span.sidebar-mini-icon
                             i.fas.fa-pencil-ruler
                           span.sidebar-normal Предметы
+                      li(class="#{menuPage === 'places' ? 'active' : ''}")
+                        a(href="/admin/pupils/examseeds")
+                          span.sidebar-mini-icon
+                            i.fas.fa-hotel
+                          span.sidebar-normal Рассадка
+                      
                       li(class="#{menuPage === 'committees' ? 'active' : ''}")
                         a(href="/admin/pupils/committees")
                           span.sidebar-mini-icon

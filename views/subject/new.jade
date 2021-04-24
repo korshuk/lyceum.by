@@ -1,13 +1,13 @@
-extends ../adminLayout
 include ../stuff/mixins/form-helper
 include ../stuff/adminIntarface/cards
 
+extends ../adminLayout
 append menuVars
   - var menuPage = 'subjects';
   - var menuSection = 'exams';
 
 block content
-    form.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/subjects/' + doc.id : '/admin/pupils/subjects' )
+    form#dataForm.form-horizontal(method='post', action= method === 'put' ? '/admin/pupils/subjects/' + doc.id : '/admin/pupils/subjects' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")
         .row    
@@ -23,5 +23,10 @@ block content
         .row
             +mainCard('Информация')
                 +field('text', "name", 'Название')(value= doc.name || '')
+                +field('date', "date", 'Дата')(value=(doc && doc.date))#date
+                +field('time', "startTime", 'Время начала экзамена')(value=(doc && doc.startTime))#startTime
+                +field('date', "appelationDate", 'Дата ознакомления')(value=(doc && doc.appelationDate))#appelationDate
+                +field('text', "examKey", 'Ключ первого экзамена')(value= doc.examKey || '')
+                +field('select', "place", 'Место проведение', places, doc.place)(value= doc.place || '')
 
 block scripts

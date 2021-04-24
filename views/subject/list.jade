@@ -9,19 +9,41 @@ append menuVars
 block content
     +listPageHeader('Предметы', 'Добавить предмет', '/admin/pupils/subjects/create')
     .row
-        +mainCard('Список мест')
+        +simpleCard('Список экзаменов', 12) 
             .table-responsive
                 table.table.table-hover
                     thead.text-primary
                         tr
+                            th.text-center
+                            th
+                            th
+                            th(colspan=examDates.length) Календарь
+                            th.text-right
+                        tr
                             th.text-center #
                             th Название
+                            th Место
+                            each examDate, index in examDates
+                                - var date = new Date(examDate)
+                                th #{date.dayToString()} - #{date.format('dd.MM.yyyy')}
                             th.text-right Действия
                     tbody
                         each doc, index in docs
                             tr
                                 td.text-center #{index + 1}
-                                td= doc.name
+                                td #{doc.name}
+                                td    
+                                    if(doc.place)
+                                        each place, index in doc.place.name.split('&')
+                                            p(style="margin:0") -#{place}
+                                        br
+                                        | Кабинетов: #{doc.place.audience.length}
+                                each examDate, index in examDates
+                                    td
+                                        if (doc.exams[index].name)
+                                            | Начало экзамена в: <b>#{doc.startTime}</b>
+                                            br
+                                            | Ознакомление: <b><nobr>(#{doc.appelationDate.dayToString()}) #{doc.appelationDate.format('dd.MM.yyyy')}</nobr></b>
                                 td.text-right 
                                     a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/subjects/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
                                         i.fa.fa-edit

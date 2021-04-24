@@ -320,44 +320,57 @@
                 } else {
                     var examPlaceId = pupil.profile && pupil.profile.examPlace,
                         results = [],
+                        examIds = [pupil.profile.exam1, pupil.profile.exam2],
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
-                        }
+                        };
                         // if (pupil.status === 'approved') {
                         //     data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
                         // }
-                        
-                    if (!examPlaceId) {
-                        app.passportController.sendCookiedRes(req, res, data)
-                        //res.json(data);
-                        return;
-                    } else {
-                        results = createResultsArray(pupil);
+                    app.subjectController.Collection.find({_id: {$in: examIds}}).exec(function(err, exams) {
+                        for(var i =0; i < 2; i++) {
+                            if (''+exams[i]._id === ''+data.user.profile.exam1) {
+                                data.user.profile.exam1 = exams[i]
+                            }
+                            if (''+exams[i]._id === ''+data.user.profile.exam2) {
+                                data.user.profile.exam2 = exams[i]
+                            }
+                        }
 
-                        app.placesController.Collection
-                            .findByExamPlaceId(examPlaceId)
-                            .exec(function(err, examPlace) {
-                                data.user.examPlace = examPlace;
-                                if (results.length === 0) {
-                                    //res.json(data);
-                                    app.passportController.sendCookiedRes(req, res, data)
-                                }
-                                else {
-                                    app.resultScansController.Collection
-                                        .find({
-                                            profile: pupil.profile._id, 
-                                            code: { $in: results}
-                                        })
-                                        .exec(function (err, scans) {
-                                            
-                                            data.user.scans = scans;
-                                            
-                                            app.passportController.sendCookiedRes(req, res, data)
-                                            //res.json(data);
-                                        });
-                                }
-                        });
-                    }
+                        if (!examPlaceId) {
+                            app.passportController.sendCookiedRes(req, res, data)
+                            //res.json(data);
+                            return;
+                        } else {
+                            results = createResultsArray(pupil);
+    
+                            app.placesController.Collection
+                                .findByExamPlaceId(examPlaceId)
+                                .exec(function(err, examPlace) {
+                                    data.user.examPlace = examPlace;
+                                    if (results.length === 0) {
+                                        //res.json(data);
+                                        app.passportController.sendCookiedRes(req, res, data)
+                                    }
+                                    else {
+                                        app.resultScansController.Collection
+                                            .find({
+                                                profile: pupil.profile._id, 
+                                                code: { $in: results}
+                                            })
+                                            .exec(function (err, scans) {
+                                                
+                                                data.user.scans = scans;
+                                                
+                                                app.passportController.sendCookiedRes(req, res, data)
+                                                //res.json(data);
+                                            });
+                                    }
+                            });
+                        }
+                    })  
+                    
+                    
                 }
             }
         }

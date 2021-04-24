@@ -7,19 +7,44 @@ append menuVars
   - var menuSection = 'exams';
 
 block content
-    +listPageHeader('Места', 'Добавить место', '/admin/pupils/places/create')
+    +listHeader('Рассадка')
     .row
         .col-xl-7
             .row
+                +simpleCard('Рассадка по экзаменам', 12)
+                    .table-responsive
+                        table.table.table-hover
+                            thead.text-primary
+                                tr
+                                    th 
+                                    th Ready?
+                                    th Show?
+                                    th
+                            tbody   
+                                each examDate, index in examDates
+                                    - var date = new Date(examDate)
+                                    tr
+                                        td #{index + 1} экзамен <b>(#{date.dayToString()}) #{date.format('dd.MM.yyyy')}</b>
+                                        td yes
+                                        td yes
+                                        td 
+                                            a.btn.btn-primary.btn-magnify(href='/admin/pupils/examseeds/seedApp/' + index)
+                                                span.btn-label
+                                                    i.fa.fa-random
+                                                | #{'  '} Рассадить
+
+
+                
                 +simpleCard('Список мест', 12)
+                    .text-right
+                        +addNewDocBtn('Добавить место', '/admin/pupils/places/create')
                     .table-responsive
                         table.table.table-hover
                             thead.text-primary
                                 tr
                                     th.text-center #
                                     th Код
-                                    th Название
-                                    th Адрес
+                                    th Название / Адрес
                                     th Аудитории
                                     th.text-right Действия
                             tbody    
@@ -31,8 +56,13 @@ block content
                                     tr
                                         td.text-center= index+1
                                         td  #{doc.code}
-                                        td  #{doc.name}
-                                        td  #{doc.address}
+                                        td  
+                                            each name in doc.name.split('&')
+                                                p(style="margin-bottom:0") #{name}
+                                            br
+                                            p(style="margin-bottom:0") <b>Адрес:</b> 
+                                            each address in doc.address.split('&')
+                                                p(style="margin-bottom:0") #{address}
                                         td
                                             table.table
                                                 - each audience in doc.audience

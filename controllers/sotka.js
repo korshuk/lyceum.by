@@ -75,16 +75,28 @@ SotkaController = function(mongoose, app) {
                 })
             });
             app.pupilsController.Collection.calculateExamsCount(function(examsMap) {
-                async.parallel(profileStatsCalculators, function(err, results) {
-                    stat.result = results.sort(function(a, b) {
-                        return a.profile > b.profile
+                app.subjectController.Collection
+                    .find()
+                    .exec(function(err, subjects) {
+                        var subjectsMap = {}
+                        var subject;
+                        for(var i = 0; i < subjects.length; i++) {
+                            subject = subjects[i];
+                            subjectsMap[subject.name] = examsMap[subject._id]
+                        }
+                        
+                        async.parallel(profileStatsCalculators, function(err, results) {
+                            stat.result = results.sort(function(a, b) {
+                                return a.profile > b.profile
+                            })
+                            stat.examsMap = subjectsMap
+            
+                            stat.save(function(err, doc) {
+                                next();
+                            })
+                        })
                     })
-                    stat.examsMap = examsMap
-    
-                    stat.save(function(err, doc) {
-                        next();
-                    })
-                })
+                
             })
             
         });
