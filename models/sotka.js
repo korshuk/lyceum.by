@@ -19,6 +19,9 @@ function define(mongoose, fn) {
             type: Date,
             default: Date.now
         },
+        pupilsCount: {
+            type: Number,
+        }
         
     });
 

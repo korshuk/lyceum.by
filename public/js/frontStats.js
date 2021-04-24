@@ -31,7 +31,6 @@ $(function(){
                     return profiles[a.profile].order - profiles[b.profile].order
                 })
                 for (var i = 0; i < stats.result.length; i++) {
-                    totalSum = totalSum + stats.result[i].countTotal;
                     totalOlymp = totalOlymp + stats.result[i].countOlymp;
                     totalAmmount = totalAmmount + profiles[stats.result[i].profile].ammount
                 }
@@ -39,17 +38,18 @@ $(function(){
                 var commonStat = {
                     profile: 'common',
                     countOlymp: totalOlymp,
-                    countTotal: totalSum,
+                    countTotal: stats.pupilsCount,
+                    ammount: totalAmmount
                 };
 
-                var commonProfile = {
-                    name: 'ВСЕ',
-                    ammount: totalAmmount
-                }
+                // var commonProfile = {
+                //     name: 'ВСЕ',
+                    
+                // }
 
-                profiles.common = commonProfile;
+                // profiles.common = commonProfile;
 
-                stats.result.push(commonStat);
+                //stats.result.push(commonStat);
 
                 var $table = $('#statsTable tbody');
                 var $tr;
@@ -93,9 +93,25 @@ $(function(){
                 $("<p class='stats-time'>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
                     .css({
                         'text-align': 'right',
-                        'padding-top': '20px'
                     })
                     .insertAfter("#statsTable"); 
+                $("<p>Таким образом, общий конкурс в Лицей составляет <b>" +(( commonStat.countTotal - commonStat.countOlymp) / (commonStat.ammount - commonStat.countOlymp)).toFixed(2) +"</b> человек на место</p>")
+                    .css({
+                        'text-align': 'left',
+                        'padding-top': '0',
+                        
+                    })
+                    .insertAfter("#statsTable"); 
+                $("<p>Всего <b>" + commonStat.countTotal + "</b> человек подали заявления на поступление. Среди них <b>" + commonStat.countOlymp + "<b> олимпиадников.</p>")
+                    .css({
+                        'text-align': 'left',
+                        'padding-top': '10px',
+                        'margin-bottom': '0'
+                    })
+                    .insertAfter("#statsTable"); 
+                
+                
+                
             })
             .error(function (err) {
                 console.log(err);

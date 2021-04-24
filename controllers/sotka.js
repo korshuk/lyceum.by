@@ -86,17 +86,22 @@ SotkaController = function(mongoose, app) {
                         }
                         
                         async.parallel(profileStatsCalculators, function(err, results) {
-                            stat.result = results.sort(function(a, b) {
-                                return a.profile > b.profile
-                            })
-                            stat.examsMap = subjectsMap
-            
-                            stat.save(function(err, doc) {
-                                next();
-                            })
+                            pupilsCollection
+                                .find({status: 'approved'})
+                                .count()
+                                .exec(function(err, pupilsCount){
+                                    stat.pupilsCount = pupilsCount;
+                                    stat.result = results.sort(function(a, b) {
+                                        return a.profile > b.profile
+                                    })
+                                    stat.examsMap = subjectsMap
+                    
+                                    stat.save(function(err, doc) {
+                                        next();
+                                    })
+                                })
                         })
                     })
-                
             })
             
         });

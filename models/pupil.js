@@ -252,12 +252,12 @@ function define(mongoose, fn) {
             profiles.push(pupil.profile)
 
             for (var j = 0; j < profiles.length; j++) {
-                if (exams.indexOf(profiles[j].exam1) < 0) {
-                    exams.push(profiles[j].exam1)
+                if (exams.indexOf('' + profiles[j].exam1) < 0) {
+                    exams.push('' + profiles[j].exam1)
                 }
 
-                if (exams.indexOf(profiles[j].exam2) < 0) {
-                    exams.push(profiles[j].exam2)
+                if (exams.indexOf('' + profiles[j].exam2) < 0) {
+                    exams.push('' + profiles[j].exam2)
                 }
             }
         }
