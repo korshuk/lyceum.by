@@ -320,7 +320,7 @@
                 } else {
                     var examPlaceId = pupil.profile && pupil.profile.examPlace,
                         results = [],
-                        examIds = [pupil.profile.exam1, pupil.profile.exam2],
+                        examIds = pupil.profile ? [pupil.profile.exam1, pupil.profile.exam2] : [],
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
                         };
@@ -328,7 +328,7 @@
                         //     data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
                         // }
                     app.subjectController.Collection.find({_id: {$in: examIds}}).exec(function(err, exams) {
-                        for(var i =0; i < 2; i++) {
+                        for(var i =0; i < exams.length; i++) {
                             if (''+exams[i]._id === ''+data.user.profile.exam1) {
                                 data.user.profile.exam1 = exams[i]
                             }
