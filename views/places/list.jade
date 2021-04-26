@@ -44,8 +44,7 @@ block content
                                 tr
                                     th.text-center #
                                     th Код
-                                    th Название / Адрес
-                                    th Аудитории
+                                    th Название / Адрес / Аудитории
                                     th.text-right Действия
                             tbody    
                                 each doc, index in docs
@@ -56,25 +55,20 @@ block content
                                     tr
                                         td.text-center= index+1
                                         td  #{doc.code}
-                                        td  
-                                            each name in doc.name.split('&')
-                                                p(style="margin-bottom:0") #{name}
-                                            br
-                                            p(style="margin-bottom:0") <b>Адрес:</b> 
-                                            each address in doc.address.split('&')
-                                                p(style="margin-bottom:0") #{address}
-                                        td
-                                            table.table
-                                                - each audience in doc.audience
-                                                    tr
-                                                        td #{audience.name}
-                                                        td #{audience.max}
-                                                        td #{audience.bel ? 'Бел' :'  '}
-                                                tr
-                                                    td 
-                                                        b Всего
-                                                    td(colspan=2) 
-                                                        b #{totalMax}
+                                        td 
+                                            -var adressArray = doc.address.split('&');
+                                            each name, index in doc.name.split('&')
+                                                p(style="margin-bottom:0") <b>#{name}</b> #{adressArray[index]} 
+                                                p(style="margin-bottom:0") Аудитории: 
+                                                p
+                                                    each audience in doc.audience
+                                                        -var code = +audience.name.split('_')[0]
+                                                        -var name = audience.name.split('_')[1]
+                                                        if (code == index)
+                                                            nobr(style="margin-right:10px") #{name}#{audience.bel ? ' Бел' :''} - <b>#{audience.max}</b>;
+                                            p()
+                                                b Всего #{totalMax}
+                                               
                                         td.text-right 
                                             a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/places/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
                                                 i.fa.fa-edit
@@ -104,18 +98,15 @@ block content
                                 tr
                                     th.text-center #
                                     th Название
-                                    th Апрув.
-                                    th Олимп.
                                     th Надо мест
                             tbody    
-                                each profile, index in profiles
+                                each subject, index in subjects
                                     tr
                                         td.text-center= index+1
-                                        td #{profile.name}
-                                        td #{profile.countArray[profile.countArray.length - 1].count}
-                                        td #{profile.olymp}
+                                        td #{subject.name}
                                         td
-                                            b #{profile.countArray[profile.countArray.length - 1].count - profile.olymp}
+                                            | #{JSON.stringify(lastStat.examsMap[subject.name])}
+                                            //- b #{subject.countArray[subject.countArray.length - 1].count - subject.olymp}
 
                                         
 

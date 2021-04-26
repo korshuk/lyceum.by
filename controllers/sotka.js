@@ -97,7 +97,7 @@ SotkaController = function(mongoose, app) {
                                     stat.examsMap = subjectsMap
                     
                                     stat.save(function(err, doc) {
-                                        next();
+                                        next(doc);
                                     })
                                 })
                         })

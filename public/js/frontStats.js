@@ -90,25 +90,29 @@ $(function(){
                 if ($('.stats-time').length > 0) {
                     $('.stats-time').remove();
                 }
-                $("<p class='stats-time'>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
+                var $newText = $("<div class='stats-time'></div>");
+                $("<p>Всего <b>" + commonStat.countTotal + "</b> " + GetNoun(commonStat.countTotal, "абитуриент", "абитуриента", "абитуриентов") + " подали заявления на поступление. Среди них <b>" + commonStat.countOlymp + "</b> " + GetNoun(commonStat.countOlymp, "победитель", "победителя", "победителей") + " республиканской олимпиады.</p>")
                     .css({
-                        'text-align': 'right',
+                        'text-align': 'left',
+                        'padding-top': '10px',
+                        'margin-bottom': '0'
                     })
-                    .insertAfter("#statsTable"); 
+                    .appendTo($newText); 
                 $("<p>Таким образом, общий конкурс в Лицей составляет <b>" +(( commonStat.countTotal - commonStat.countOlymp) / (commonStat.ammount - commonStat.countOlymp)).toFixed(2) +"</b> человек на место</p>")
                     .css({
                         'text-align': 'left',
                         'padding-top': '0',
                         
                     })
-                    .insertAfter("#statsTable"); 
-                $("<p>Всего <b>" + commonStat.countTotal + "</b> человек подали заявления на поступление. Среди них <b>" + commonStat.countOlymp + "<b> олимпиадников.</p>")
+                    .appendTo($newText);  
+                $("<p>Статистика последний раз обновлялась в " + updatedDate.dateFormat('H:i:s d.m.Y') + "</p>")
                     .css({
-                        'text-align': 'left',
-                        'padding-top': '10px',
-                        'margin-bottom': '0'
+                        'text-align': 'right',
                     })
-                    .insertAfter("#statsTable"); 
+                    .appendTo($newText); 
+                
+                
+                $newText.insertAfter("#statsTable"); 
                 
                 
                 
@@ -116,6 +120,22 @@ $(function(){
             .error(function (err) {
                 console.log(err);
             })
+    }
+
+    function GetNoun(number, one, two, five) {
+        number = Math.abs(number);
+        number %= 100;
+        if (number >= 5 && number <= 20) {
+            return five;
+        }
+        number %= 10;
+        if (number == 1) {
+            return one;
+        }
+        if (number >= 2 && number <= 4) {
+            return two;
+        }
+        return five;
     }
 
 });

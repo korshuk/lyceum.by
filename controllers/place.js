@@ -312,22 +312,23 @@ var PlacesController = function (mongoose, app) {
         this.Collection.find()
             .sort('-createdAt')
             .exec(function (err, docs) {
-                
-                app.profileController.Collection.find().exec(function (
-                    err,
-                    profiles
-                ) {
-                    var examDates = app.profileController.Collection.getExamDatesArray(
-                        profiles
-                    );
-
-                     
-                    res.render(self.viewPath + 'list.jade', {
-                        docs: docs,
-                        profiles: profiles,
-                        examDates: examDates,
-                        viewName: self.name.toLowerCase(),
-                        siteConfig: self.app ? self.app.siteConfig : {},
+                app.sotkaController.calculate(function(lastStat){
+                    app.subjectController.Collection.find().exec(function (
+                        err,
+                        subjects
+                    ) {
+                        var examDates = app.subjectController.Collection.getExamDatesArray(
+                            subjects
+                        );
+                        
+                        res.render(self.viewPath + 'list.jade', {
+                            docs: docs,
+                            subjects: subjects,
+                            examDates: examDates,
+                            viewName: self.name.toLowerCase(),
+                            lastStat: lastStat,
+                            siteConfig: self.app ? self.app.siteConfig : {},
+                        });
                     });
                 });
             });
