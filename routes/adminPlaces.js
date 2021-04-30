@@ -16,15 +16,42 @@ module.exports = function(app) {
         app.placesController.getDictionary(req, res);
     });
     router.get('/seedApp/api/corpses/:examNum', app.userController.Pass, function(req, res) {
-        app.placesController.getCorpses(req, res);
+        var exumNum = req.params.examNum;
+        app.placesController.getCorpses(exumNum, function(corpses) {
+            res.json(corpses);
+        });
     });
-    router.get('/seedApp/api/generateStatus', app.userController.Pass, function(req, res) {
+    router.get('/seedApp/api/generateStatus/:examNum', app.userController.Pass, function(req, res) {
         app.placesController.getGenerateStatus(req, res);
     });
-    router.get('/seedApp/api/generate', app.userController.Pass, function(req, res) {
+    router.get('/seedApp/api/generate/:examNum', app.userController.Pass, function(req, res) {
         app.placesController.generatePupilSeeds(req, res);
     });
+    router.get('/seedApp/api/pupils/:examNum', app.userController.Pass, function(req, res) {
+        var exumNum = req.params.examNum;
+        var query = req.query;
+        var corpsQuery = query.corps;
+        app.placesController.getPupilsForCorps(exumNum, corpsQuery, function(data) {
+            res.json(data)
+        });
+    })
     
+    router.get('/seedApp/api/enable/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.cnangeSeedVisibleState(req, res, true);
+    })
+
+    router.get('/seedApp/api/disable/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.cnangeSeedVisibleState(req, res, false);
+    })
+    
+
+    router.post('/seedApp/api/changeaudience/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.changeAudience(req, res);
+    });
+    
+    router.post('/seedApp/api/savecurrentseats/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.saveCurrentSeats(req, res);
+    });
     
 
     router.get('/create', app.userController.Pass, function(req, res) {

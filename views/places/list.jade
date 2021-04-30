@@ -17,64 +17,40 @@ block content
                             thead.text-primary
                                 tr
                                     th 
-                                    th Ready?
-                                    th Show?
+                                    th Generated
+                                    th Saved
                                     th
                             tbody   
                                 each examDate, index in examDates
                                     - var date = new Date(examDate)
                                     tr
                                         td #{index + 1} экзамен <b>(#{date.dayToString()}) #{date.format('dd.MM.yyyy')}</b>
-                                        td yes
-                                        td yes
                                         td 
-                                            a.btn.btn-primary.btn-magnify(href='/admin/pupils/examseeds/seedApp/' + index)
+                                            if (seedsMap[index])
+                                                | #{seedsMap[index].generatedDate}
+                                        td  
+                                            if (seedsMap[index])
+                                                | #{seedsMap[index].savedDate}
+                                        td 
+                                            a.btn.btn-primary.btn-magnify(href='/admin/pupils/examseeds/seedApp/' + index, style="margin-bottom: 5px")
                                                 span.btn-label
                                                     i.fa.fa-random
                                                 | #{'  '} Рассадить
+                                            if (seedsMap[index] && seedsMap[index].savedDate)
+                                                if (seedsMap[index].visible)
+                                                    a.btn.btn-danger.btn-magnify(href='/admin/pupils/examseeds/seedApp/api/disable/' + index)
+                                                        span.btn-label
+                                                            i.fa.fa-eye-slash
+                                                        | #{'  '} Выключить
+                                                else
+                                                    a.btn.btn-info.btn-magnify(href='/admin/pupils/examseeds/seedApp/api/enable/' + index)
+                                                        span.btn-label
+                                                            i.fa.fa-eye
+                                                        | #{'  '} Включить
 
 
                 
-                +simpleCard('Список мест', 12)
-                    .text-right
-                        +addNewDocBtn('Добавить место', '/admin/pupils/places/create')
-                    .table-responsive
-                        table.table.table-hover
-                            thead.text-primary
-                                tr
-                                    th.text-center #
-                                    th Код
-                                    th Название / Адрес / Аудитории
-                                    th.text-right Действия
-                            tbody    
-                                each doc, index in docs
-                                    - var totalMax = 0;
-                                    - for (var i = 0; i < doc.audience.length; i++) {
-                                    -   totalMax += doc.audience[i].max
-                                    - }
-                                    tr
-                                        td.text-center= index+1
-                                        td  #{doc.code}
-                                        td 
-                                            -var adressArray = doc.address.split('&');
-                                            each name, index in doc.name.split('&')
-                                                p(style="margin-bottom:0") <b>#{name}</b> #{adressArray[index]} 
-                                                p(style="margin-bottom:0") Аудитории: 
-                                                p
-                                                    each audience in doc.audience
-                                                        -var code = +audience.name.split('_')[0]
-                                                        -var name = audience.name.split('_')[1]
-                                                        if (code == index)
-                                                            nobr(style="margin-right:10px") #{name}#{audience.bel ? ' Бел' :''} - <b>#{audience.max}</b>;
-                                            p()
-                                                b Всего #{totalMax}
-                                               
-                                        td.text-right 
-                                            a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/places/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
-                                                i.fa.fa-edit
-                                            | #{' '}    
-                                            a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/places/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
-                                                i.fa.fa-times      
+                
         .col-xl-5
             .row
                 +simpleCard('Дополнительно', 12)
@@ -107,6 +83,51 @@ block content
                                         td
                                             | #{JSON.stringify(lastStat.examsMap[subject.name])}
                                             //- b #{subject.countArray[subject.countArray.length - 1].count - subject.olymp}
+    
+    .row
+        .col-xl-12
+            +simpleCard('Список мест', 12)
+                    .text-right
+                        +addNewDocBtn('Добавить место', '/admin/pupils/places/create')
+                    .table-responsive
+                        table.table.table-hover
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th Код
+                                    th(style="width: 60%") Название / Адрес / Аудитории
+                                    th Всего
+                                    th.text-right Действия
+                            tbody    
+                                each doc, index in docs
+                                    - var totalMax = 0;
+                                    - for (var i = 0; i < doc.audience.length; i++) {
+                                    -   totalMax += doc.audience[i].max
+                                    - }
+                                    tr
+                                        td.text-center= index+1
+                                        td  #{doc.code}
+                                        td 
+                                            -var adressArray = doc.address.split('&');
+                                            each name, index in doc.name.split('&')
+                                                p(style="margin-bottom:0") <b>#{name}</b> #{adressArray[index]} 
+                                                p(style="margin-bottom:0") Аудитории: 
+                                                p
+                                                    each audience in doc.audience
+                                                        -var code = +audience.name.split('_')[0]
+                                                        -var name = audience.name.split('_')[1]
+                                                        if (code == index)
+                                                            nobr(style="margin-right:10px") #{name}#{audience.bel ? ' Бел' :''} - <b>#{audience.max}</b>;
+                                        td 
+                                            b #{totalMax}
+                                               
+                                        td.text-right 
+                                            a.btn.btn-success.btn-icon.btn-sm(href="/admin/pupils/examseeds/edit/"+doc.id, type='button', rel='tooltip', data-original-title='Редактировать', title='Редактировать')
+                                                i.fa.fa-edit
+                                            | #{' '}    
+                                            a.delete-doc-btn.btn.btn-danger.btn-icon.btn-sm(href="/admin/pupils/examseeds/delete/"+doc.id, type='button', rel='tooltip', data-original-title='Удалить', title='Удалить')
+                                                i.fa.fa-times      
+        
 
                                         
 

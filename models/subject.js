@@ -30,6 +30,18 @@ function define(mongoose, fn) {
         });
     };
 
+    SubjectSchema.statics.findSubjectsForExamNumber = function(examNum, next) {
+        var self = this;
+        this.find().exec(function(err, subjects) {
+            var examDates = self.getExamDatesArray(subjects);
+            var examDate = examDates[examNum];
+            next(subjects.filter(function(subject){
+                var date = new Date(subject.date)
+                return date.getTime() === examDate
+            }))
+        })
+    }
+
     SubjectSchema.statics.getExamDatesArray = function (subjects) {
         var examDates = [];
         var doc;

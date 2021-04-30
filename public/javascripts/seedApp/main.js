@@ -12,7 +12,7 @@
     apiFactory.$inject = ['$http'];    
 
     seedController.$inject = ['api', '$ngConfirm'];
-    console.log('app start 14')
+
     function apiFactory($http) {
         var API_URL = '/admin/pupils/examseeds/seedApp'
         var EXAM_NUM = window.exumNum;
@@ -34,11 +34,11 @@
         return service;
 
         function generate () {
-            return $http.get(API_URL + '/api/generate')
+            return $http.get(API_URL + '/api/generate/' + EXAM_NUM)
         }
 
         function getGenerateStatus () {
-            return $http.get(API_URL + '/api/generateStatus')
+            return $http.get(API_URL + '/api/generateStatus/' + EXAM_NUM)
         }
 
         function saveSeats () {
@@ -47,7 +47,7 @@
 
         function saveCurrentSeats() {
             var timestemp = Date.now();
-            return $http.get('/api/savecurrentseats?time=' + timestemp)
+            return $http.post(API_URL + '/api/savecurrentseats/' + EXAM_NUM)
         }
 
         function getCorpses () {
@@ -60,7 +60,7 @@
 
         function getPupils(corps, place) {
             var placeId = place ? place._id : '';
-            var url = `/api/pupils?corps=${corps.alias}&place=${placeId}`;
+            var url = `${API_URL}/api/pupils/${EXAM_NUM}?corps=${corps.alias}&place=${placeId}`;
 
             return $http.get(url);
         }
@@ -77,7 +77,7 @@
 
         function changeAudience(pupilId, audienceId, corps, place) {
             var placeId = place ? place._id : '';
-            var url = `/api/changeaudience?corps=${corps.alias}&place=${placeId}`;
+            var url = `${API_URL}/api/changeaudience/${EXAM_NUM}?corps=${corps.alias}&place=${placeId}`;
             
             return $http.post(url, {
                 pupilId: pupilId, 
@@ -262,10 +262,10 @@
         function changeCorps() {
             vm.currentPlace = null;
             vm.currentAudience = null;
-            
-            fillAudiencesForCorps();
 
-            getPupils();
+            getPupils().then(function() {
+                fillAudiencesForCorps();
+            })
         }
 
         function changePlace() {        
@@ -277,7 +277,6 @@
                 fillAudiencesForCorps();
             }
 
-            getPupils();
         }
 
         function fillAudiencesForCorps() {
@@ -285,10 +284,17 @@
             for (var i = 0; i < vm.currentCorps.places.length; i++) {
                 vm.audiences = vm.audiences.concat(vm.currentCorps.places[i].audience);
             }
+
+            for (var i = 0; i < vm.audiences.length; i++) {
+                console.log(vm.audiences[i])
+                vm.audiences[i].count = vm.pupils.filter(function(pupil){
+                    return pupil.audience === vm.audiences[i]._id
+                }).length
+            }
         }
 
         function getPupils() {
-            api
+            return api
                 .getPupils(vm.currentCorps, vm.currentPlace)
                 .then(onPupilsGet);
         }
@@ -302,7 +308,7 @@
 
         function onCurrentSeatsSaved(res) {
             vm.seatsSaving = false;
-            vm.timestemp = timeConverter(res.data.timestemp)
+            vm.timestempSaved = timeConverter(res.data.timestemp)
         }
 
         function onCorpsesGet(res) {
@@ -321,6 +327,7 @@
         function onGenerateStatusGet(res) {
             vm.generated = res.data.generateStatus
             vm.timestemp = timeConverter(res.data.timestemp)
+            vm.timestempSaved = timeConverter(res.data.timestempSaved)
         }
 
         function pupilFilter(pupil) {

@@ -1,16 +1,21 @@
 var json2csv = require('json2csv').parse;
 var BaseController = require('./baseController').BaseController;
+var async = require('async');
 
 var PlacesController = function (mongoose, app) {
     var base = new BaseController('Places', '', mongoose, app, true);
+
+    var seedsModel = require('../models/seeds');
+    
+    seedsModel.define(mongoose, function(){
+        base.SeedsCollection = mongoose.model('Seed');
+    });
 
     var DataService = {
         generateDictionary: generateDictionary,
     };
 
-    var Seeder = {
-        seedPupilsInCorpse: seedPupilsInCorpse,
-    };
+    
 
     base.showSeats = showSeats;
 
@@ -24,7 +29,11 @@ var PlacesController = function (mongoose, app) {
     base.getCorpses = getCorpses;
     base.getGenerateStatus = getGenerateStatus;
     base.generatePupilSeeds = generatePupilSeeds;
-
+    base.getPupilsForCorps = getPupilsForCorps;
+    base.changeAudience = changeAudience;
+    base.saveCurrentSeats = saveCurrentSeats;
+    base.cnangeSeedVisibleState = cnangeSeedVisibleState;
+    
     base.create = function (req, res) {
         var self = this,
             doc;
@@ -130,128 +139,465 @@ var PlacesController = function (mongoose, app) {
 
     base.constructor = arguments.callee;
 
+    var Helpers = {
+        getPlacesIdsForSubjects: getPlacesIdsForSubjects,
+        populatePlacesArray: populatePlacesArray,
+        createCorpsesFn: createCorpsesFn,
+        createSabjectsMap: createSabjectsMap,
+        checkPlaces: checkPlaces,
+        audienceSort: audienceSort,
+        getPupilsToSeed: getPupilsToSeed,
+        getSubjectIds: getSubjectIds,
+        calculateCorpsesAmmount: calculateCorpsesAmmount,
+        saveGeneratedSeats: saveGeneratedSeats,
+        saveSeats: saveSeats
+    }
+
+    var Seeder = {
+        seedPupilsInCorpse: seedPupilsInCorpse,
+        seedPupilsInPlace: seedPupilsInPlace,
+        generatePupilPicks: generatePupilPicks,
+        generatePicksForAudience: generatePicksForAudience,
+        seedPupilsInAudiences: seedPupilsInAudiences,
+        seedPupilsInAudience: seedPupilsInAudience
+    };
+
     return base;
 
+    function cnangeSeedVisibleState(req, res, newState) {
+        var examNum = req.params.examNum;
+        var self = this;
+        base.SeedsCollection
+            .findOne({examNum: +examNum})
+            .exec(function(err, seed) {
+                seed.visible = newState;
+                seed.save(function(err, doc) {
+                    res.redirect(self.path);
+                })
+            })
+    }
+
+    function changeAudience(req, res) {
+        var exumNum = req.params.examNum;
+        var query = req.query;
+        var corpsQuery = query.corps;
+        var placeQuery = query.place;
+
+        var pupilId = req.body.pupilId;
+        var audienceId = req.body.audienceId;
+
+        app.pupilsController.Collection
+            .findOne({_id: pupilId})
+            .populate('profile')
+            .populate('additionalProfiles')
+            .exec(function(err, pupil) {
+
+                base.getCorpses(exumNum, function (corpses, subjects) {
+                    
+                    var subjectsIds = Helpers.getSubjectIds(subjects);
+                    var exams = app.pupilsController.Collection.getPupilExams(pupil)
+                    console.log('exams', exams)
+                    var exam;
+                    for(var j = 0; j < exams.length; j++) {
+                        if (subjectsIds.indexOf(exams[j]) > -1) {
+                            exam = exams[j]
+                        }
+                    }
+                    var pupilExamNum = exams.indexOf(exam)
+                    
+                    var corps;
+                    for (var k = 0; k < corpses.length; k++) {
+                        corps = corpses[k]
+                        for (var i = 0; i < corps.places.length; i++) {
+                            for (var j = 0; j < corps.places[i].audience.length; j++) {
+                                if (corps.places[i].audience[j]._id === audienceId) {
+                                    newPlace = corps.places[i]._id;
+                                    newAudience = corps.places[i].audience[j]._id;
+                                    newCorps = corps.alias
+                                }
+                            }
+                        }
+                    }
+
+                    pupil.places_generated[pupilExamNum].audience = newAudience;
+                    pupil.places_generated[pupilExamNum].corps = newCorps;
+                    pupil.places_generated[pupilExamNum].place = newPlace;
+                    
+                    pupil.save(function(err, doc) {
+                        console.log('pupil save', err, doc)
+                        base.getPupilsForCorps(exumNum, corpsQuery, function(pupils) {
+                            res.json({
+                                corpses: corpses,
+                                pupils: pupils
+                            });
+                        })
+                        
+                    })
+                    
+                    
+                })
+            })
+    }
+
+    function saveCurrentSeats(req, res) {
+        var examNum = req.params.examNum;
+
+        base.getCorpses(examNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+                                   
+            Helpers.getPupilsToSeed(subjectsIds, function (pupilsToSeed) {
+                Helpers.saveSeats(pupilsToSeed, function() {
+                    base.SeedsCollection.findOne({examNum: +examNum})
+                        .exec(function(err, seed) {
+                            if (!seed) {
+                                seed = new base.SeedsCollection();   
+                            } 
+                            seed.examNum = +examNum;
+                            seed.savedDate = new Date()
+                            seed.save(function(err, doc) {
+                                response = {
+                                    timestemp: seed.savedDate.getTime()
+                                };
+        
+                                res.json(response)
+                            })
+                        })
+                });
+            });
+        });
+    }
+
+    function getPupilsForCorps(exumNum, corpsQuery, next) {
+        
+        base.getCorpses(exumNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+            console.log(exumNum, corpsQuery, subjectsIds)
+            var sabjectsMap = Helpers.createSabjectsMap(subjects);
+
+            Helpers.getPupilsToSeed(subjectsIds, function (pupilsToSeed) {
+                console.log(pupilsToSeed.length)
+                var data = [];
+                var pupil;
+                var exam;
+                var exams;
+                var pupilExamNum;
+                for(var i = 0; i < pupilsToSeed.length; i++) {
+                    pupil = pupilsToSeed[i].pupil;
+                    exam = pupilsToSeed[i].exam;
+                    if (corpsQuery && corpsQuery.length > 0) {
+                        
+                        exams = app.pupilsController.Collection.getPupilExams(pupil)
+                        pupilExamNum = exams.indexOf(exam);
+                        
+                        // console.log(pupil.places_generated[pupilExamNum])
+                        if (pupil.places_generated && pupil.places_generated[pupilExamNum].corps === corpsQuery) {
+                            data.push({
+                                _id: pupil._id,
+                                firstName: pupil.firstName,
+                                lastName: pupil.lastName,
+                                parentName: pupil.parentName,
+                                audience: pupil.places_generated[pupilExamNum].audience,
+                                subject: exam,
+                                needBel: pupil.needBel
+                            })
+                        }
+                    }
+                    
+                }
+                next(data)
+            })
+        })
+    }
+
     function generatePupilSeeds(req, res) {
-        app.profileController.Collection.find().exec(function (err, profiles) {
-            base.Collection.find().exec(function (err, places) {
-                var profilesMap = createProfilesMap(profiles);
-                var corpses = createCorpsesFn(places);
+        var response;
+        var examNum = req.params.examNum;
 
+        base.getCorpses(examNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+            
+            var sabjectsMap = Helpers.createSabjectsMap(subjects);
+
+            console.log('subjectsIds', subjectsIds, subjects, sabjectsMap)
+                       
+            Helpers.getPupilsToSeed(subjectsIds, function (pupilsToSeed) {
+                console.log('pupilsToSeed', pupilsToSeed.length)
+                    
                 var responseErrors = [];
-                var responsePupils = [];
-                var response = {};
-
-                var i = 0,
-                    corps;
+                
                 var belErrors;
-                var seededPupils;
-                var corpsesLength = corpses.length;
 
-                for (i; i < corpsesLength; i++) {
-                    belErrors = checkPlaces(corpses[i], profilesMap);
+                for (var i = 0; i < corpses.length; i++) {
+                    belErrors = Helpers.checkPlaces(corpses[i], sabjectsMap, pupilsToSeed);
                     responseErrors = responseErrors.concat(belErrors);
                 }
-            });
-        });
 
-        
 
-        if (responseErrors.length > 0) {
-            console.log('responseErrors', responseErrors);
-            response = {
-                errors: responseErrors,
-            };
-        } else {
-            for (i = 0; i < corpsesLength; i++) {
-                seededPupils = Seeder.seedPupilsInCorpse(
-                    corpses[i],
-                    profilesMap
-                );
-                console.log(i);
-                responsePupils = responsePupils.concat(seededPupils);
-            }
+                if (responseErrors.length > 0) {
+                    response = {
+                        errors: responseErrors,
+                    };
 
-            response = {
-                corpses: corpses,
-            };
+                    res.json(response)
+                } else {
+                    var responsePupils = [];
+                    var seededPupils;
+                    for (i = 0; i < corpses.length; i++) {
+                        seededPupils = Seeder.seedPupilsInCorpse(
+                            corpses[i],
+                            sabjectsMap,
+                            pupilsToSeed
+                        );
+                        
+                        responsePupils = responsePupils.concat(seededPupils);
+                    }
 
-            //TODO remove with save
+                    Helpers.saveGeneratedSeats(responsePupils, function() {
+                        base.SeedsCollection.findOne({examNum: +examNum})
+                            .exec(function(err, seed) {
+                                if (!seed) {
+                                    seed = new base.SeedsCollection();   
+                                } 
+                                seed.examNum = +examNum;
+                                seed.generatedDate = new Date()
+                                seed.save(function(err, doc) {
+                                    response = {
+                                        corpses: corpses,
+                                        responsePupils: responsePupils
+                                    };
+            
+                                    res.json(response)
+                                })
+                            })
+                        
+                    })
 
-            DataService.db.pupilsG = JSON.parse(JSON.stringify(responsePupils));
-            DataService.db.corpsesG = JSON.parse(JSON.stringify(corpses));
+                }
 
-            generateStatus = true;
-            S3Service.updateDBFile();
-        }
+            })
+        })
     }
-
-    function seedPupilsInCorpse() {}
 
     function getGenerateStatus(req, res) {
-        res.json({
-            generateStatus: false,
-            timestemp: Date.now(),
-        });
+        var examNum = req.params.examNum;
+
+        base.SeedsCollection
+            .findOne({examNum: +examNum})
+            .exec(function (erroe, seed) {
+                if (!seed) {
+                    res.json({
+                        generateStatus: false,
+                    });
+                } else {
+                    console.log('###', seed)
+                    var date = new Date(seed.generatedDate);
+                    var dateSaved = new Date(seed.savedDate);
+                    res.json({
+                        generateStatus: true,
+                        timestemp: date.getTime(),
+                        timestempSaved: dateSaved.getTime()
+                    });
+                }
+            })
+        
     }
 
-    function getCorpses(req, res) {
-        var exumNum = req.params.examNum;
-        base.Collection.find().exec(function (err, places) {
-            var corpses = createCorpsesFn(places);
-            res.json(corpses);
-        });
-    }
+    function getCorpses(exumNum, next) {
+        app.subjectController.Collection.findSubjectsForExamNumber(exumNum, function (subjects) {
+            var placeIds = Helpers.getPlacesIdsForSubjects(subjects);            
 
-    function getDictionary(req, res) {
-        base.Collection.find().exec(function (err, places) {
-            app.profileController.Collection.find().exec(function (
-                err,
-                profiles
-            ) {
-                var corpses = createCorpsesFn(places);
-                var data = DataService.generateDictionary({
-                    corpses: corpses,
-                    profiles: profiles,
-                });
-                res.json(data);
+            base.Collection.find({_id: {$in: placeIds}}).exec(function (err, places) {
+                
+                var placesArray = Helpers.populatePlacesArray(places, subjects)
+                
+                var corpses = Helpers.createCorpsesFn(placesArray);
+
+                next(corpses, subjects)
+                
             });
-        });
+
+        })
     }
 
-    function generateDictionary(db) {
-        var data = {
-            corpses: {},
-            places: {},
-            audiences: {},
-            profiles: {},
-        };
+    /// Helpers start
 
-        for (var i = 0; i < db.corpses.length; i++) {
-            data.corpses[db.corpses[i].alias] = db.corpses[i].name;
+    function saveSeats(responsePupils, next) {
+        var exams;
+        var pupilExamNum;
+        var pupil;
+        var exam;
+        var updateObj;
+        var queries = [];
+        for(var i = 0; i < responsePupils.length; i++) {
+            pupil = responsePupils[i].pupil;
+            exam = responsePupils[i].exam;
 
-            for (var j = 0; j < db.corpses[i].places.length; j++) {
-                data.places[db.corpses[i].places[j]._id] = {
-                    code: db.corpses[i].places[j].code,
-                    name: db.corpses[i].places[j].name,
-                };
-
-                for (
-                    var k = 0;
-                    k < db.corpses[i].places[j].audience.length;
-                    k++
-                ) {
-                    data.audiences[db.corpses[i].places[j].audience[k]._id] =
-                        db.corpses[i].places[j].audience[k].name;
+            exams = app.pupilsController.Collection.getPupilExams(pupil)
+            pupilExamNum = exams.indexOf(exam);
+            
+            if (pupil.places_saved.length === 0) {
+                for(var j = 0; j < exams.length; j++) {
+                    pupil.places_saved[j] = {
+                        exam: exams[j]
+                    }
                 }
             }
+            pupil.places_saved[pupilExamNum].audience = pupil.places_generated[pupilExamNum].audience;
+            pupil.places_saved[pupilExamNum].corps = pupil.places_generated[pupilExamNum].corps;
+            pupil.places_saved[pupilExamNum].place = pupil.places_generated[pupilExamNum].place;
+            pupil.places_saved[pupilExamNum].exam = pupil.places_generated[pupilExamNum].exam;
+
+            updateObj = {};
+            updateObj.places_saved = pupil.places_saved;
+
+            queries.push(creatExecFunction(pupil._id, updateObj) );
+        }
+        async.parallel(queries, onDone);
+
+        function onDone (err, results) {
+            if (err) {
+                console.log('saveSeats Error', err)
+            } else {
+                console.log('results')
+                next()
+            }
+        }
+    }
+
+    function saveGeneratedSeats(responsePupils, next) {
+        var exams;
+        var pupilExamNum;
+        var pupil;
+        var exam;
+        var updateObj;
+        var queries = [];
+        for(var i = 0; i < responsePupils.length; i++) {
+            pupil = responsePupils[i].pupil;
+            exam = responsePupils[i].exam;
+
+            exams = app.pupilsController.Collection.getPupilExams(pupil)
+            pupilExamNum = exams.indexOf(exam);
+            
+            if (pupil.places_generated.length === 0) {
+                for(var j = 0; j < exams.length; j++) {
+                    pupil.places_generated[j] = {
+                        exam: exams[j]
+                    }
+                }
+            }
+            pupil.places_generated[pupilExamNum].audience = pupil.audience;
+            pupil.places_generated[pupilExamNum].corps = pupil.corps;
+            pupil.places_generated[pupilExamNum].place = pupil.place;
+            pupil.places_generated[pupilExamNum].exam = exam;
+
+            console.log(pupilExamNum, pupil.places_generated)
+            updateObj = {};
+            updateObj.places_generated = pupil.places_generated;
+
+            queries.push(creatExecFunction(pupil._id, updateObj) );
+        }
+        async.parallel(queries, onDone);
+
+        function onDone (err, results) {
+            if (err) {
+                console.log('saveGeneratedSeats Error', err)
+            } else {
+                console.log('results')
+                next()
+            }
+        }
+        
+
+    }
+
+    function creatExecFunction (id, obj) {
+        return function(callback) {
+            app.pupilsController.Collection
+                .findOneAndUpdate({ _id: id}, { '$set': obj }) 
+                .exec(function (err, data) {
+                    queryExecFn(err, data, callback);
+                });
+        }
+    }
+
+    function queryExecFn(err, data, callback) {
+        if (err) {
+            callback(err, null);
+        }
+        else {
+            callback(null, data);
+        }
+    }
+
+    function getSubjectIds(subjects) {
+        var subjectsIds = [];
+        for (var i = 0; i < subjects.length; i++) {
+            subjectsIds.push('' + subjects[i]._id)
+        }
+        return subjectsIds;
+    }
+
+    function getPupilsToSeed(subjectsIds, next) {
+        app.pupilsController.Collection
+                .find({status: 'approved'})
+                .populate('profile')
+                .populate('additionalProfiles')
+                .exec(function(err, pupils){
+                    var exams;
+                    var pupil;
+                    var pupilsToSeed = []
+                    for (var i = 0; i < pupils.length; i++) {
+                        pupil = pupils[i];
+                        exams = app.pupilsController.Collection.getPupilExams(pupil)
+                        if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+                            //console.log(exams)
+                            for(var j = 0; j < exams.length; j++) {
+                                if (subjectsIds.indexOf(exams[j]) > -1) {
+                                    pupilsToSeed.push({
+                                        pupil: pupil,
+                                        exam: exams[j]
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    next(pupilsToSeed)
+                })
+    }
+
+    function populatePlacesArray(places, subjects) {
+        var placesArray = [];
+        for (var i = 0; i < places.length; i++) {
+            placesArray.push(JSON.parse(JSON.stringify(places[i])))
+            var subject = subjects.filter(function(s){
+                return ''+ s.place === ''+ places[i]._id
+            })[0]
+            placesArray[i].subject = subject
+        }
+        return placesArray
+    }
+
+    function getPlacesIdsForSubjects(subjects) {
+        var placeIds = [];
+        for (var i = 0; i < subjects.length; i++) {
+            placeIds.push(subjects[i].place)
+        }
+        return placeIds
+    }
+
+    function createSabjectsMap(subjects) {
+        var map = {};
+        var i = 0;
+        var length = subjects.length;
+        var subject;
+
+        for (i; i < length; i++) {
+            subject = subjects[i];
+
+            map[subject.place] = subject;
         }
 
-        for (i = 0; i < db.profiles.length; i++) {
-            data.profiles[db.profiles[i]._id] = db.profiles[i].name;
-        }
-
-        return data;
+        return map;
     }
 
     function createCorpsesFn(places) {
@@ -291,19 +637,328 @@ var PlacesController = function (mongoose, app) {
         return corpses;
     }
 
+    function checkPlaces(corps, sabjectsMap, pupilsToSeed) {
+        var placesLength = corps.places.length;
+        var profiledPupils;
+        var belPupilsLength;
+        var audienceForBelLang;
+        var responseErrors = [];
+        var i = 0, place, subjectId, subject, max;
+    
+        for (i; i < placesLength; i++) {
+            place = corps.places[i]
+            subject = sabjectsMap[place._id];
+            subjectId = subject._id;
+
+            profiledPupils = pupilsToSeed.filter(function(pupilToSeed) {
+                return '' + subjectId === '' + pupilToSeed.exam
+            });
+            
+            belPupilsLength = profiledPupils.filter(function(pupilToSeed){
+                return pupilToSeed.pupil.needBel === true
+            }).length;
+    
+            audienceForBelLang = place.audience.filter(function(aud) {
+                return aud.bel === true
+            })[0];
+
+            max = 0;
+            if (audienceForBelLang) {
+                max = audienceForBelLang.max;
+            }
+            if (max < belPupilsLength) {
+                responseErrors.push({
+                    corpsName: corps.name,
+                    subjectName: subject.name,
+                    belPupilsLength: belPupilsLength,
+                    audienceForBelLang: audienceForBelLang
+                })
+            }
+        }
+    
+        return responseErrors;
+    }
+
+    function audienceSort(a, b){
+        var value = a.max - b.max;
+    
+        if (a.bel !== b.bel ) {
+            value = a.bel === true ? -1 : 1;
+        }
+    
+        return value;
+    }
+    
+    function calculateCorpsesAmmount(corpses) {
+        var ammount = {
+            total: 0,
+            bel: 0
+        }
+        for(var i = 0; i < corpses.length; i++) {
+            for(var j = 0; j < corpses[i].places.length; j++) {
+                for(var k = 0; k < corpses[i].places[j].audience.length; k++) {
+                    ammount.total = ammount.total + corpses[i].places[j].audience[k].max;
+                    if (corpses[i].places[j].audience[k].bel) {
+                        ammount.bel = ammount.bel + corpses[i].places[j].audience[k].max
+                    }
+                }
+            }
+        }
+
+        return ammount
+
+    }
+
+    /// Helpers end
+
+    // Seeder start
+    function seedPupilsInCorpse(corps, sabjectsMap, pupilsToSeed) {
+        var placesLength = corps.places.length;
+        var responsePupils = [];
+        var seededPupils;
+        var profiledPupils;
+        var place;
+        var sabjectId;
+        console.log('seedPupilsInCorpse', corps.name, placesLength);
+        for (var i = 0; i < placesLength; i++) {
+            place = corps.places[i];
+            sabjectId = sabjectsMap[place._id]._id;
+            
+            profiledPupils = pupilsToSeed.filter(function(pupilToSeed) {
+                return ('' + sabjectId) === ('' + pupilToSeed.exam)
+            });
+            
+            seededPupils = Seeder.seedPupilsInPlace(place, corps, profiledPupils);
+            responsePupils = responsePupils.concat(seededPupils);
+        }
+    
+        return responsePupils;
+    }
+    
+    function seedPupilsInPlace(place, corps, profiledPupils) {
+                
+        Seeder.generatePupilPicks(profiledPupils, place, corps);
+
+        console.log('corps', corps.count)
+    
+        Seeder.seedPupilsInAudiences(profiledPupils, {
+            audiences: place.audience,
+            placeId: place._id, 
+            corpsId: corps.alias
+        });
+
+        return profiledPupils;
+    }
+
+    function generatePupilPicks(profiledPupils, place, corps) {
+        var profiledPupilsLength = profiledPupils.length;
+        var belPupilsLength = profiledPupils.filter(function(profiledPupil){
+            return profiledPupil.pupil.needBel === true
+        }).length;
+        var numbersArr = [];
+        var audiences = place.audience.sort(Helpers.audienceSort); 
+        
+        var i = 0, picksArray;
+        var audiencesLength = audiences.length;
+    
+        if (!corps.count) {
+            corps.count = 0;
+        }
+        if (!place.count) {
+            place.count = 0;
+        }
+        if (!corps.max) {
+            corps.max = 0;
+        }
+        if (!place.max) {
+            place.max = 0;
+        }
+        
+        for (i; i < profiledPupilsLength; i++ ) { 
+            numbersArr.push(i);
+        }
+
+        for (i = 0; i < audiencesLength; i++) {
+            picksArray = Seeder.generatePicksForAudience(numbersArr, audiences[i], profiledPupils, belPupilsLength);
+            audiences[i].count = picksArray.length;
+            audiences[i].picks = picksArray;
+            console.log('generatePicksForAudience completed', audiences[i].name, audiences[i].count)
+            place.count = place.count + picksArray.length;  
+            place.max = place.max + audiences[i].max;        
+        }
+        corps.count = corps.count + place.count;
+        corps.max = corps.max + place.max;
+    }
+
+    function generatePicksForAudience(numbersArr, audience, profiledPupils, belPupilsLength) {
+        var audienceMax = audience.max;
+        var picksArray = [];
+        var randomIndex;
+        var belAudienceFlag = audience.bel === true;
+        var belPupilFlag;
+
+        if (numbersArr.length <= audienceMax) {
+            audienceMax = numbersArr.length
+        }
+        if (belAudienceFlag) {
+            if (belPupilsLength <= audienceMax) {
+                audienceMax = belPupilsLength
+            }
+        }
+        console.log(audience.name, belAudienceFlag, audience.max, '-', audienceMax,' * ' ,numbersArr.length)
+       
+        while (picksArray.length < audienceMax){
+            randomIndex = Math.floor(Math.random() * numbersArr.length);
+            belPupilFlag = profiledPupils[numbersArr[randomIndex]].pupil.needBel === true;
+            
+            if (belPupilFlag) {
+                console.log('belPupilsFlag detected', belAudienceFlag, belPupilFlag)
+            }
+            
+            if (belAudienceFlag === belPupilFlag) {
+                picksArray.push(numbersArr[randomIndex]);
+                numbersArr.splice(randomIndex, 1);
+                if (belPupilFlag === true) {
+                    
+                    belPupilsLength = belPupilsLength - 1;
+                }
+            }
+        }
+        return picksArray.filter(notEmptyPick);
+
+        function notEmptyPick(pick) {
+            return pick >= 0;
+        }
+    }
+    
+    function seedPupilsInAudiences(pupils, options) {
+        var audiences = options.audiences;
+        var audiencesLength = audiences.length;
+    
+        for(var i = 0; i < audiencesLength; i++) {
+            Seeder.seedPupilsInAudience(pupils, {
+                audience: audiences[i],
+                placeId: options.placeId,
+                corpsId: options.corpsId,
+            });
+               
+        }
+    }
+
+    function seedPupilsInAudience(pupils, options) {
+        var audienceId = options.audience._id;
+        var placeId = options.placeId;
+        var corpsId = options.corpsId;
+        var picks = options.audience.picks;
+        var picksLength = picks.length;
+        var i = 0, pick;
+    
+        for(i; i < picksLength; i++) {
+            pick = picks[i];
+            pupils[pick].pupil.audience = audienceId;
+            pupils[pick].pupil.place = placeId;
+            pupils[pick].pupil.corps = corpsId;
+        } 
+    }
+
+
+    // Seeder end
+
+    function getDictionary(req, res) {
+        base.Collection.find().exec(function (err, places) {
+            app.subjectController.Collection.find().exec(function (err, subjects) {
+                app.profileController.Collection.find().exec(function (
+                    err,
+                    profiles
+                ) {
+                    var corpses = createCorpsesFn(places);
+                    var data = DataService.generateDictionary({
+                        corpses: corpses,
+                        profiles: profiles,
+                        subjects: subjects
+                    });
+                    res.json(data);
+                });
+            });
+        });
+    }
+
+    function generateDictionary(db) {
+        var data = {
+            corpses: {},
+            places: {},
+            audiences: {},
+            profiles: {},
+            subjects: {}
+        };
+
+        for (var i = 0; i < db.corpses.length; i++) {
+            data.corpses[db.corpses[i].alias] = db.corpses[i].name;
+
+            for (var j = 0; j < db.corpses[i].places.length; j++) {
+                data.places[db.corpses[i].places[j]._id] = {
+                    code: db.corpses[i].places[j].code,
+                    name: db.corpses[i].places[j].name,
+                };
+
+                for (
+                    var k = 0;
+                    k < db.corpses[i].places[j].audience.length;
+                    k++
+                ) {
+                    data.audiences[db.corpses[i].places[j].audience[k]._id] =
+                        db.corpses[i].places[j].audience[k].name;
+                }
+            }
+        }
+
+        for (i = 0; i < db.profiles.length; i++) {
+            data.profiles[db.profiles[i]._id] = db.profiles[i].name;
+        }
+        for (i = 0; i < db.subjects.length; i++) {
+            data.subjects[db.subjects[i]._id] = db.subjects[i].name;
+        }
+
+        return data;
+    }
+
+
+
     function seedaAppPage(req, res) {
         var self = this;
         var exumNum = req.params.examNum;
+        
+        base.getCorpses(exumNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
 
-        app.profileController.Collection.find().exec(function (err, profiles) {
-            var examDates = app.profileController.Collection.getExamDatesArray(
-                profiles
-            );
+            var ammount = Helpers.calculateCorpsesAmmount(corpses);
+            
+            var placesIds = []
+            for(var i = 0; i < subjects.length; i++) {
+                placesIds.push(subjects[i].place)
+            }
 
-            res.render(self.viewPath + 'seedApp.jade', {
-                exumNum: exumNum,
-                examDate: examDates[exumNum],
-            });
+            base.Collection.find({_id: {$in: placesIds}})
+                .exec(function(err, places) {
+                    var placesMap = {};
+                    for(var i = 0; i < places.length; i++) {
+                        placesMap[places[i]._id] = places[i]
+                    }
+                    Helpers.getPupilsToSeed(subjectsIds, function(pupilsToSeed) {
+                        res.render(self.viewPath + 'seedApp.jade', {
+                            exumNum: exumNum,
+                            examDate: subjects[0].date,
+                            corpses: corpses,
+                            subjects: subjects,
+                            ammount: ammount,
+                            pupilsToSeed: pupilsToSeed,
+                            belPupilsLength: pupilsToSeed.filter(function(pupilToSeed){
+                                return pupilToSeed.pupil.needBel === true
+                            }).length,
+                            places: placesMap
+                        });
+                    })
+                })
         });
     }
 
@@ -313,22 +968,30 @@ var PlacesController = function (mongoose, app) {
             .sort('-createdAt')
             .exec(function (err, docs) {
                 app.sotkaController.calculate(function(lastStat){
-                    app.subjectController.Collection.find().exec(function (
+                    app.subjectController.Collection.find().sort('name').exec(function (
                         err,
                         subjects
                     ) {
                         var examDates = app.subjectController.Collection.getExamDatesArray(
                             subjects
                         );
-                        
-                        res.render(self.viewPath + 'list.jade', {
-                            docs: docs,
-                            subjects: subjects,
-                            examDates: examDates,
-                            viewName: self.name.toLowerCase(),
-                            lastStat: lastStat,
-                            siteConfig: self.app ? self.app.siteConfig : {},
-                        });
+                        base.SeedsCollection.find().exec(function(err, seeds) {
+                            var seedsMap = {}
+                            for (var index = 0; index < seeds.length; index++) {
+                                if (seeds[index].examNum) {
+                                    seedsMap[seeds[index].examNum] = seeds[index]
+                                }
+                            }
+                            res.render(self.viewPath + 'list.jade', {
+                                docs: docs,
+                                subjects: subjects,
+                                examDates: examDates,
+                                viewName: self.name.toLowerCase(),
+                                lastStat: lastStat,
+                                seedsMap: seedsMap,
+                                siteConfig: self.app ? self.app.siteConfig : {},
+                            });
+                        })
                     });
                 });
             });
@@ -519,58 +1182,9 @@ var PlacesController = function (mongoose, app) {
         return utf8.join('');
     }
 
-    function createProfilesMap(profiles) {
-        var map = {};
-        var i = 0;
-        var length = profiles.length;
-        var profile;
-
-        for (i; i < length; i++) {
-            profile = profiles[i];
-
-            map[profile.examPlace] = profile;
-        }
-
-        return map;
-    }
-
-    function checkPlaces(corps, profilesMap) {
-        var placesLength = corps.places.length;
-        var profiledPupils;
-        var belPupilsLength;
-        var audienceForBelLang;
-        var responseErrors = [];
-        var i = 0, place, profileId, profile, max;
     
-        for (i; i < placesLength; i++) {
-            place = corps.places[i]
-            profile = profilesMap[place._id];
-            profileId = profile._id;
-            profiledPupils = getProfiledPupils(profileId);
-            belPupilsLength = profiledPupils.filter(function(pupil){
-                return pupil.needBel === true
-            }).length;
-    
-            audienceForBelLang = place.audience.filter(function(aud) {
-                return aud.bel === true
-            })[0];
 
-            max = 0;
-            if (audienceForBelLang) {
-                max = audienceForBelLang.max;
-            }
-            if (max < belPupilsLength) {
-                responseErrors.push({
-                    corpsName: corps.name,
-                    profileName: profile.name,
-                    belPupilsLength: belPupilsLength,
-                    audienceForBelLang: audienceForBelLang
-                })
-            }
-        }
-    
-        return responseErrors;
-    }
+   
 };
 
 exports.PlacesController = PlacesController;

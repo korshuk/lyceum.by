@@ -7,7 +7,7 @@ append menuVars
   - var menuSection = 'exams';
 
 block content
-    form(method='post', action= method === 'put' ? '/admin/pupils/places/' + doc.id : '/admin/pupils/places' )
+    form(method='post', action= method === 'put' ? '/admin/pupils/examseeds/' + doc.id : '/admin/pupils/examseeds' )
         if method === 'put'
             input(type="hidden", name="_method", value="put")
         .row    
@@ -18,7 +18,7 @@ block content
                     | Новое место
                 
             .col-md-5.text-right
-                +buttonSet('/admin/pupils/places') 
+                +buttonSet('/admin/pupils/examseeds') 
         .row
             +simpleCard('Основное', 3)
                 +field('text', "code", 'Код')(value= doc.code || '')

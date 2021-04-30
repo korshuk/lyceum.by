@@ -329,7 +329,14 @@ $(document).ready(function () {
                 e.preventDefault();
                 $('.datepicker').each(function(i, input) {
                     var $input = $(input);
-                    var date = moment($input.val(), MOMENT_FORMAT ).tz("Etc/UTC").set('hour', 12).toISOString();
+                    // console.log(
+                    //     $input.val(),
+                    //     $input.val(), 
+                    //     moment($input.val() + ' +0000', MOMENT_FORMAT + ' Z' ).tz("Etc/UTC").set('hour', 12).toISOString(), 
+                    //     moment($input.val(), MOMENT_FORMAT ).tz("Etc/UTC").toISOString(), 
+                    //     moment($input.val(), MOMENT_FORMAT ).tz("Etc/UTC").set('hour', 12).toISOString()
+                    // );
+                    var date = moment($input.val() + ' +0000', MOMENT_FORMAT + ' Z' ).tz("Etc/UTC").set('hour', 12).toISOString();
                     $input.val(date)
                    // console.log(moment($(input).val(), MOMENT_FORMAT ).toDate())
                 })

@@ -7,99 +7,155 @@ append menuVars
   - var menuSection = 'exams';
 
 block content
+    style
+        .lvl-over {
+            box-shadow: inset 0px 0px 16px 0px rgba(50, 50, 50, 1);
+        }
+    
+        .lvl-target {
+            background-color: #ddd; 
+            opacity: .5;
+        }
+    
+        [draggable] {
+            cursor: move;
+        }
     .card
         .card-header
             - var date = new Date(examDate)
             h3.card-title Рассадка учеников на #{+exumNum + 1} экзамен (#{date.dayToString()}) #{date.format('dd.MM.yyyy')}
-        .card-body
-            div(ng-app="lyceum", ng-controller='seedController as vm')
-                .row
-                    .col-md-12(ng-if='!vm.cleanDataLoaded')
-                        .alert.alert-danger(role='alert')
-                            | Начальные данные не загружены!
-                            a(href='/admin/cleandata.html', title='загрузть начальные данные')
-                                | Загрузть начальные данные
-                .row
-                    .col-md-6
-                        .form-row
-                            .form-group
-                                button.btn.btn-primary.xc(type='button', ng-click='vm.generate()') &Gcy;&iecy;&ncy;&iecy;&rcy;&icy;&rcy;&ocy;&vcy;&acy;&tcy;&softcy;
-                                button.btn.btn-success(type='button', ng-click='vm.saveCurrentSeats()')
-                                    | {{vm.seatsSaving ? &apos;&Scy;&khcy;&ocy;&khcy;&rcy;&acy;&ncy;&yacy;&iecy;&mcy;...&apos; : &apos;&Scy;&ocy;&khcy;&rcy;&acy;&ncy;&icy;&tcy;&softcy; &icy;&zcy;&mcy;&iecy;&ncy;&iecy;&ncy;&icy;&yacy;&apos; }}
-                        p &Dcy;&acy;&tcy;&acy; &pcy;&ocy;&scy;&lcy;&iecy;&dcy;&ncy;&iecy;&gcy;&ocy; &scy;&ocy;&khcy;&rcy;&acy;&ncy;&iecy;&ncy;&icy;&yacy;: {{vm.timestemp}}
-                    .col-md-6.text-right
-                        form.form-inline.justify-content-sm-end
+            .alert.alert-info
+                h4(style="margin: 0") Экзамены по предметам:
+                ul
+                    each subject, index in subjects
+                        li(style="margin-bottom: 15px")
+                            p(style="margin: 0")
+                                b #{subject.name}
+                            -var place = places[subject.place];
+                            -var placeAmmount = 0;
+                            -var belAmmount = 0;
+                            -var pupilsCount = 0;
+                            -var belPupilsCount = 0
+                            - for(var i=0; i < place.audience.length; i++) {
+                                - placeAmmount = placeAmmount + place.audience[i].max
+                                - if (place.audience[i].bel) {
+                                    - belAmmount = belAmmount + place.audience[i].max
+                                - }
+                            -}
+                            - for(var i=0; i < pupilsToSeed.length; i++) {
+                                - if (''+pupilsToSeed[i].exam === ''+subject._id) {
+                                    - pupilsCount = pupilsCount + 1;
+                                    - if (pupilsToSeed[i].pupil.needBel) {
+                                        - belPupilsCount = belPupilsCount + 1
+                                    -}
+                                - }
+                            -}
+                            p(style="margin: 0")
+                                | Надо рассадить <b>#{pupilsCount}</b>, из них беларусов <b>#{belPupilsCount}</b>
+                            p(style="margin: 0") 
+                                | Пишут экзамен в <b>#{places[subject.place].name}</b> (Всего <b>#{placeAmmount}</b> мест, из них для беларусов <b>#{belAmmount}</b>)
+                            
+                h4(style="margin: 0")  Итого:
+                p(style="margin: 0")  Надо рассадить <b>#{pupilsToSeed.length}</b>. Из них <b>#{belPupilsLength}</b> беларусов
+                p(style="margin: 0")  Всего мест <b>#{ammount.total}</b>. Из них <b>#{ammount.bel}</b> мест для беларусов
+            if (pupilsToSeed.length > ammount.total)
+                .alert.alert-danger.alert-with-icon
+                    span(data-notify="icon").fas.fa-exclamation
+                    span(data-notify="message")
+                        h3(style="margin: 0") Все не влезут
+            if (belPupilsLength > ammount.bel)
+                .alert.alert-danger.alert-with-icon
+                    span(data-notify="icon").fas.fa-exclamation
+                    span(data-notify="message")
+                        h3(style="margin: 0") Беларусам нет места
+        if (pupilsToSeed.length <= ammount.total && belPupilsLength <= ammount.bel)
+            .card-body
+                div(ng-app="lyceum", ng-controller='seedController as vm')
+                    .row
+                        .col-md-12(ng-if='!vm.cleanDataLoaded')
+                            .alert.alert-danger(role='alert')
+                                | Начальные данные не загружены!
+                                a(href='/admin/cleandata.html', title='загрузть начальные данные')
+                                    | Загрузть начальные данные
+                    .row
+                        .col-md-6
                             .form-row
                                 .form-group
-                                    label
-                                        b &Zcy;&acy;&gcy;&rcy;&ucy;&zcy;&kcy;&acy; &rcy;&acy;&scy;&scy;&acy;&dcy;&kcy;&icy;: 
-                                    label(ng-if='vm.loading')
-                                        b &icy;&dcy;&iecy;&tcy; &zcy;&acy;&gcy;&rcy;&ucy;&zcy;&kcy;&acy;...
-                                    button.btn.btn-primary(type='button', ng-click='vm.loadSeats(1)') 1 &ecy;&kcy;&zcy;&acy;&mcy;&iecy;&ncy;
-                                    button.btn.btn-primary(type='button', ng-click='vm.loadSeats(2)') 2 &ecy;&kcy;&zcy;&acy;&mcy;&iecy;&ncy;
-                .row(style='position: sticky; top: 0; background: #fff; z-index: 2;')
-                    .col-md-12
-                        form
-                            .form-row
-                                .form-group.col-md-3
-                                    label(for='searchInp') &Pcy;&ocy;&icy;&scy;&kcy;
-                                    input#searchInp.form-control(type='text', ng-model='vm.searchQuery')
-                                .form-group.col-md-3
-                                    label(for='corpsSlct') &Kcy;&ocy;&rcy;&pcy;&ucy;&scy;
-                                    select#corpsSlct.form-control(ng-model='vm.currentCorps', ng-options='corps.name for corps in vm.corpses track by corps.alias', ng-change='vm.changeCorps()')
-                                .form-group.col-md-3
-                                    label(for='placeSlct') &Pcy;&rcy;&ocy;&fcy;&icy;&lcy;&softcy;
-                                    select#placeSlct.form-control(ng-model='vm.currentPlace', ng-options='place.code for place in vm.currentCorps.places track by place._id', ng-change='vm.changePlace()')
-                                        option(value='') &Vcy;&scy;&iecy;
-                                .form-group.col-md-3
-                                    label(for='audienceSlct') &Acy;&ucy;&dcy;&icy;&tcy;&ocy;&rcy;&icy;&yacy;
-                                    select#audienceSlct.form-control(ng-model='vm.currentAudience', ng-options='audience.name for audience in vm.audiences track by audience._id')
-                                        option(value='') &Vcy;&scy;&iecy;
-                .row
-                    .col-md-8
-                        table.table.table-hover
-                            thead
-                                tr
-                                    th #
-                                    th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'firstName' ? '-firstName' : 'firstName'")
-                                        | &Fcy;&Icy;&Ocy;
-                                        span.oi.oi-arrow-top(ng-if="vm.pupilOrder === 'firstName'")
-                                        span.oi.oi-arrow-bottom(ng-if="vm.pupilOrder === '-firstName'")
-                                    th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'audience' ? '-audience' : 'audience'")
-                                        | &Kcy;&acy;&bcy;.
-                                        span.oi.oi-arrow-top(ng-if="vm.pupilOrder === 'audience'")
-                                        span.oi.oi-arrow-bottom(ng-if="vm.pupilOrder === '-audience'")
-                                    th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'profile' ? '-profile' : 'profile'")
-                                        | &Pcy;&rcy;&ocy;&fcy;&icy;&lcy;&softcy;
-                                        span.oi.oi-arrow-top(ng-if="vm.pupilOrder === 'profile'")
-                                        span.oi.oi-arrow-bottom(ng-if="vm.pupilOrder === '-profile'")
-                                    th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'needBel' ? '-needBel' : 'needBel'")
-                                        | &Bcy;&iecy;&lcy;
-                                        span.oi.oi-arrow-top(ng-if="vm.pupilOrder === 'needBel'")
-                                        span.oi.oi-arrow-bottom(ng-if="vm.pupilOrder === '-needBel'")
-                            tbody
-                                tr(ng-repeat='pupil in vm.pupils | filter: vm.pupilFilter | orderBy: vm.pupilOrder  track by pupil._id', data-pupil='{{pupil._id}}', data-bel='{{pupil.needBel === true}}', x-lvl-draggable='true')
-                                    td {{$index + 1}}
-                                    td {{pupil.firstName}} {{pupil.lastName}} {{pupil.parentName}}
-                                    td {{vm.dictionary.audiences[pupil.audience]}}
-                                    td {{vm.dictionary.profiles[pupil.profile]}}
-                                    td
-                                        div(ng-if='pupil.needBel === true', style='background: repeating-linear-gradient(180deg, #ffffff, #ffffff 6px, #ed0909 0px, #ff0000 16px ); width: 36px; height: 24px; border: 1px solid;')
-                    .col-md-4
-                        table.table.table-hover(style='position: sticky;top: 90px;')
-                            thead
-                                tr
-                                    th(scope='col') #
-                                    th(scope='col') &Kcy;&ocy;&lcy;&icy;&chcy;&iecy;&scy;&tcy;&vcy;&ocy;
-                                    th(scope='col') Max
-                                    th(scope='col') &Bcy;&iecy;&lcy;
-                            tbody
-                                tr(ng-repeat='audience in vm.audiences track by audience._id', ng-class="audience.count > audience.max ? 'table-danger' : ''", x-lvl-drop-target='true', x-on-drop='vm.dropped(dragEl, dropEl)', data-bel='{{audience.bel === true}}', data-audience='{{audience._id}}')
-                                    th(scope='row') {{audience.name}}
-                                    td {{audience.count}}
-                                    td {{audience.max}}
-                                    td
-                                        div(ng-if='audience.bel === true', style='background: repeating-linear-gradient(   180deg,   #ffffff,   #ffffff 6px,   #ed0909 0px,   #ff0000 16px ); width: 36px; height: 24px; border: 1px solid;')
+                                    button.btn.btn-primary.xc(type='button', ng-click='vm.generate()') Генерировать
+                                    
+                            p(ng-if="vm.generated") Дата последнего генерирования: {{vm.timestemp}}
+                            p(ng-if="!vm.generated") Еще ни разу не генерировали рассадку
+                        .col-md-6.text-right
+                            .form-row(style="align-items: flex-end; justify-content: flex-end;")
+                                .form-group
+                                    button.btn.btn-success(type='button', ng-click='vm.saveCurrentSeats()')
+                                        | {{vm.seatsSaving ? &apos;&Scy;&khcy;&ocy;&khcy;&rcy;&acy;&ncy;&yacy;&iecy;&mcy;...&apos; : &apos;&Scy;&ocy;&khcy;&rcy;&acy;&ncy;&icy;&tcy;&softcy; &icy;&zcy;&mcy;&iecy;&ncy;&iecy;&ncy;&icy;&yacy;&apos; }}
+                            p(ng-if="vm.generated && vm.timestempSaved") Дата последнего сохранения: {{vm.timestempSaved}}
+                            p(ng-if="vm.generated && !vm.timestempSaved") Еще ни разу не сохраняли
+                        
+                    .row(style='position: sticky; top: 0; background: #fff; z-index: 2;')
+                        .col-md-12
+                            form
+                                .form-row
+                                    .form-group.col-md-3
+                                        label(for='searchInp') &Pcy;&ocy;&icy;&scy;&kcy;
+                                        input#searchInp.form-control(type='text', ng-model='vm.searchQuery')
+                                    .form-group.col-md-3
+                                        label(for='corpsSlct') &Kcy;&ocy;&rcy;&pcy;&ucy;&scy;
+                                        select#corpsSlct.form-control(ng-model='vm.currentCorps', ng-options='corps.name for corps in vm.corpses track by corps.alias', ng-change='vm.changeCorps()')
+                                    .form-group.col-md-3
+                                        label(for='placeSlct') Предметы
+                                        select#placeSlct.form-control(ng-model='vm.currentPlace', ng-options='place.subject.name for place in vm.currentCorps.places track by place._id', ng-change='vm.changePlace()')
+                                            option(value='') &Vcy;&scy;&iecy;
+                                    .form-group.col-md-3
+                                        label(for='audienceSlct') &Acy;&ucy;&dcy;&icy;&tcy;&ocy;&rcy;&icy;&yacy;
+                                        select#audienceSlct.form-control(ng-model='vm.currentAudience', ng-options='audience.name for audience in vm.audiences track by audience._id')
+                                            option(value='') &Vcy;&scy;&iecy;
+                    .row
+                        .col-md-8
+                            table.table.table-hover
+                                thead 
+                                    tr
+                                        th #
+                                        th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'firstName' ? '-firstName' : 'firstName'")
+                                            | &Fcy;&Icy;&Ocy;
+                                            span.fas.fa-arrow-up(ng-if="vm.pupilOrder === 'firstName'")
+                                            span.fas.fa-arrow-down(ng-if="vm.pupilOrder === '-firstName'")
+                                        th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'audience' ? '-audience' : 'audience'")
+                                            | &Kcy;&acy;&bcy;.
+                                            span.fas.fa-arrow-up(ng-if="vm.pupilOrder === 'audience'")
+                                            span.fas.fa-arrow-down(ng-if="vm.pupilOrder === '-audience'")
+                                        th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'subject' ? '-subject' : 'subject'")
+                                            | Предмет
+                                            span.fas.fa-arrow-up(ng-if="vm.pupilOrder === 'subject'")
+                                            span.fas.fa-arrow-down(ng-if="vm.pupilOrder === '-subject'")
+                                        th(scope='col', ng-click="vm.pupilOrder = vm.pupilOrder === 'needBel' ? '-needBel' : 'needBel'")
+                                            | &Bcy;&iecy;&lcy;
+                                            span.fas.fa-arrow-up(ng-if="vm.pupilOrder === 'needBel'")
+                                            span.fas.fa-arrow-down(ng-if="vm.pupilOrder === '-needBel'")
+                                tbody
+                                    tr(ng-repeat='pupil in vm.pupils | filter: vm.pupilFilter | orderBy: vm.pupilOrder  track by pupil._id', data-pupil='{{pupil._id}}', data-bel='{{pupil.needBel === true}}', x-lvl-draggable='true')
+                                        td {{$index + 1}}
+                                        td {{pupil.firstName}} {{pupil.lastName}} {{pupil.parentName}}
+                                        td {{vm.dictionary.audiences[pupil.audience]}}
+                                        td {{vm.dictionary.subjects[pupil.subject]}}
+                                        td
+                                            div(ng-if='pupil.needBel === true', style='background: repeating-linear-gradient(180deg, #ffffff, #ffffff 6px, #ed0909 0px, #ff0000 16px ); width: 36px; height: 24px; border: 1px solid;')
+                        .col-md-4
+                            table.table.table-hover(style='position: sticky;top: 90px;')
+                                thead
+                                    tr
+                                        th(scope='col') #
+                                        th(scope='col') &Kcy;&ocy;&lcy;&icy;&chcy;&iecy;&scy;&tcy;&vcy;&ocy;
+                                        th(scope='col') Max
+                                        th(scope='col') &Bcy;&iecy;&lcy;
+                                tbody
+                                    tr(ng-repeat='audience in vm.audiences track by audience._id', ng-class="audience.count > audience.max ? 'table-danger' : ''", x-lvl-drop-target='true', x-on-drop='vm.dropped(dragEl, dropEl)', data-bel='{{audience.bel === true}}', data-audience='{{audience._id}}')
+                                        th(scope='row') {{audience.name}}
+                                        td {{audience.count}}
+                                        td {{audience.max}}
+                                        td
+                                            div(ng-if='audience.bel === true', style='background: repeating-linear-gradient(   180deg,   #ffffff,   #ffffff 6px,   #ed0909 0px,   #ff0000 16px ); width: 36px; height: 24px; border: 1px solid;')
 
 block scripts
     script

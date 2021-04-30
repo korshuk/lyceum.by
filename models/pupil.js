@@ -75,9 +75,39 @@ function define(mongoose, fn) {
             ref: 'Profiles'
         }],
         place1: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Places'
+            place: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Places'
+            },
+            exam: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject'
+            }
         },
+        places_generated: [{
+            corps: String,
+            audience: String,
+            place: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Places'
+            },
+            exam: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject'
+            }
+        }],
+        places_saved: [{
+            corps: String,
+            audience: String,
+            place: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Places'
+            },
+            exam: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject'
+            }
+        }],
         place2: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Places'
@@ -250,7 +280,6 @@ function define(mongoose, fn) {
             } 
 
             profiles.push(pupil.profile)
-
             for (var j = 0; j < profiles.length; j++) {
                 if (exams.indexOf('' + profiles[j].exam1) < 0) {
                     exams.push('' + profiles[j].exam1)
