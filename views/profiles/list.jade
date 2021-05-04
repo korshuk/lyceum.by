@@ -30,10 +30,11 @@ block content
                             //- th III экзамен
                             //- th IV экзамен
                             each examDate, index in examDates
-                                - var date = new Date(examDate);
+                                - var date = new Date(examDate.date);
                                 th 
-                                    nobr
-                                        | #{date.dayToString()} - #{date.format('dd.MM.yyyy')}
+                                    | #{date.format('dd.MM.yyyy')}
+                                    br
+                                    | #{date.dayToString()} - #{examDate.time}
                             th Сумма
                     tbody
                         each doc, index in docs

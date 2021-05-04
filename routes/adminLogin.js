@@ -227,9 +227,8 @@ module.exports = function (app) {
 							withAdditional += 1;
 						}
 					}
-					
 					for(var i = 0; i < pupilsArrayOlymp.length; i++) {
-						if (pupilsArrayOlymp[i].additionalProfiles.length > 0 && pupilsArrayOlymp[i].isEnrolledToExams) {
+						if ((pupilsArrayOlymp[i].profile || pupilsArrayOlymp[i].additionalProfiles.length > 0) && pupilsArrayOlymp[i].isEnrolledToExams) {
 							olympWithAdditional += 1;
 						}
 					}
@@ -315,7 +314,6 @@ module.exports = function (app) {
 		var returnCodes = [];
 		var returnOlymp = [];
 		var returnAmmounts = [];
-		console.log('stats[0]', stats[stats.length - 1])
 		
 		var lastStat = stats[stats.length - 1]
 
@@ -323,7 +321,6 @@ module.exports = function (app) {
 			var countOlymp = 0;
 			var countAmmmounts = 0;
 			for (j = 0; j < lastStat.result.length; j++) {
-				console.log('lastStat.result[j].profile', lastStat.result[j].profile)
 				//returnPoints[i].push(stats[i].profiles[j].countTotal)
 				returnNames.push(profilesMap[ lastStat.result[j].profile ].name)
 				returnCodes.push(profilesMap[ lastStat.result[j].profile ].code)
@@ -344,7 +341,6 @@ module.exports = function (app) {
 
 			for (i=0; i < statsLength; i++) {
 				if (lastStat.result.length > 0) {
-					console.log('stats[i].result.length', i, stats[i].result.length, dateFormat( stats[i].date, DATE_FORMAT))
 					dates.push(dateFormat( stats[i].date, DATE_FORMAT) )
 					var sum = 0;
 					//returnPoints[i] = []
@@ -371,8 +367,6 @@ module.exports = function (app) {
 		// }
 		
 
-		console.log('profilesMap', profilesMap, returnNames)
-		
 		// for (i = 0; i < length; i++) {
 		// 	if (profiles[i].countArray.length > 0) {
 		// 		sum = sum + profiles[i].countArray[profiles[i].countArray.length - 1].count;

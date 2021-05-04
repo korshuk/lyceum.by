@@ -37,7 +37,7 @@ function define(mongoose, fn) {
             var examDate = examDates[examNum];
             next(subjects.filter(function(subject){
                 var date = new Date(subject.date)
-                return date.getTime() === examDate
+                return (date.getTime() === examDate.date && subject.startTime === examDate.time)
             }))
         })
     }
@@ -50,12 +50,22 @@ function define(mongoose, fn) {
             doc = subjects[i];
             date = new Date(doc.date);
             date = date.getTime();
-            if (examDates.indexOf(date) < 0) {
-                examDates.push(date);
+
+            if (searchInArray(examDates, date, doc.startTime) < 0) {
+                examDates.push({
+                    date: date,
+                    time: doc.startTime
+                });
             }
         }
 
-        examDates = examDates.sort();
+        examDates = examDates.sort(function(a,b) {
+            if (a.date !== b.date) {
+                return a.date - b.date
+            } else {
+                return +a.time.split(':')[0] > +b.time.split(':')[0]
+            }
+        });
 
         return examDates;
     };
@@ -70,7 +80,7 @@ function define(mongoose, fn) {
             date = new Date(doc.date);
             date = date.getTime();
 
-            if (examDates.indexOf(date) === j) {
+            if (examDates[j].date === date && examDates[j].time === doc.startTime) {
                 newExam = JSON.parse(JSON.stringify(doc));
             }
             exams.push(newExam);
@@ -82,6 +92,18 @@ function define(mongoose, fn) {
 
     mongoose.model('Subject', SubjectSchema);
     fn();
+
+    function searchInArray(array, examDate, startTime) {
+        var index = -1;
+        for(var i = 0, len = array.length; i < len; i++) {
+            if (array[i].date === examDate && array[i].time === startTime) {
+                index = i;
+                break;
+            }
+        }
+
+        return index
+    }
 }
 
 exports.define = define;

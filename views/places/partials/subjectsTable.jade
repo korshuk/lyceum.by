@@ -1,0 +1,16 @@
++simpleCard('Предметы', 12, true)
+    .table-responsive
+        table.table.table-hover
+            thead.text-primary
+                tr
+                    th.text-center #
+                    th Название
+                    th Надо мест
+            tbody    
+                each subject, index in subjects
+                    tr
+                        td.text-center= index+1
+                        td #{subject.name}
+                        td
+                            | #{JSON.stringify(lastStat.examsMap[subject.name])}
+                            //- b #{subject.countArray[subject.countArray.length - 1].count - subject.olymp}

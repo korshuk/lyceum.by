@@ -47,12 +47,18 @@ var PlacesController = function (mongoose, app) {
         if (req.query && req.query.id) {
             queryId = req.query.id;
         }
-        app.profileController.Collection.find().exec(function (err, profiles) {
-            res.render(self.viewPath + 'new.jade', {
-                doc: doc,
-                queryId: queryId,
-                profiles: profiles,
-                method: 'post',
+        app.sotkaController.calculate(function(lastStat){
+            app.subjectController.Collection
+                .find()
+                .sort('name')
+                .exec(function (err, subjects) {
+                    res.render(self.viewPath + 'new.jade', {
+                        doc: doc,
+                        queryId: queryId,
+                        subjects: subjects,
+                        lastStat: lastStat,
+                        method: 'post',
+                    });
             });
         });
     };
@@ -60,15 +66,18 @@ var PlacesController = function (mongoose, app) {
     base.edit = function (req, res) {
         var self = this;
         this.Collection.findByReq(req, res, function (doc) {
-            app.profileController.Collection.find().exec(function (
-                err,
-                profiles
-            ) {
-                res.render(self.viewPath + 'new.jade', {
-                    doc: doc,
-                    method: 'put',
-                    profiles: profiles,
-                });
+            app.sotkaController.calculate(function(lastStat) {
+                app.subjectController.Collection
+                    .find()
+                    .sort('name')
+                    .exec(function (err, subjects) {
+                        res.render(self.viewPath + 'new.jade', {
+                            doc: doc,
+                            method: 'put',
+                            subjects: subjects,
+                            lastStat: lastStat,
+                        });
+                    });
             });
         });
     };
@@ -947,7 +956,7 @@ var PlacesController = function (mongoose, app) {
                     Helpers.getPupilsToSeed(subjectsIds, function(pupilsToSeed) {
                         res.render(self.viewPath + 'seedApp.jade', {
                             exumNum: exumNum,
-                            examDate: subjects[0].date,
+                            examDate: subjects[0],
                             corpses: corpses,
                             subjects: subjects,
                             ammount: ammount,

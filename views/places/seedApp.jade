@@ -22,8 +22,8 @@ block content
         }
     .card
         .card-header
-            - var date = new Date(examDate)
-            h3.card-title Рассадка учеников на #{+exumNum + 1} экзамен (#{date.dayToString()}) #{date.format('dd.MM.yyyy')}
+            - var date = new Date(examDate.date)
+            h3.card-title Рассадка учеников на #{+exumNum + 1} экзамен (#{date.dayToString()}) #{date.format('dd.MM.yyyy')} / #{examDate.startTime}
             .alert.alert-info
                 h4(style="margin: 0") Экзамены по предметам:
                 ul

@@ -24,8 +24,10 @@ block content
                             th Название
                             th Место
                             each examDate, index in examDates
-                                - var date = new Date(examDate)
+                                - var date = new Date(examDate.date)
                                 th #{date.dayToString()} - #{date.format('dd.MM.yyyy')}
+                                    br
+                                    | #{examDate.time}
                             th.text-right Действия
                     tbody
                         each doc, index in docs

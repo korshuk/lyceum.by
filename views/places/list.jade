@@ -9,22 +9,27 @@ append menuVars
 block content
     +listHeader('Рассадка')
     .row
-        .col-xl-7
+        .col-xl-8
             .row
                 +simpleCard('Рассадка по экзаменам', 12)
                     .table-responsive
                         table.table.table-hover
                             thead.text-primary
                                 tr
-                                    th 
+                                    th #
+                                    th Дата
                                     th Generated
                                     th Saved
                                     th
                             tbody   
                                 each examDate, index in examDates
-                                    - var date = new Date(examDate)
+                                    - var date = new Date(examDate.date)
                                     tr
-                                        td #{index + 1} экзамен <b>(#{date.dayToString()}) #{date.format('dd.MM.yyyy')}</b>
+                                        td #{index + 1}
+                                        td <b>#{date.format('dd.MM.yyyy')}</b>
+                                            br
+                                            | #{date.dayToString()} - #{examDate.time}
+
                                         td 
                                             if (seedsMap[index])
                                                 | #{seedsMap[index].generatedDate}
@@ -51,44 +56,28 @@ block content
 
                 
                 
-        .col-xl-5
-            .row
-                +simpleCard('Дополнительно', 12)
-                    //.form-group.text-right
-                        a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
-                        &nbsp;
-                        a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
-                        &nbsp;
-                        a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
+        .col-xl-4
+            //- .row
+            //-     +simpleCard('Дополнительно', 12)
+            //-         //.form-group.text-right
+            //-             a.btn.btn-warning(href='/admin/pupils/places/showSeats/1', disabled=siteConfig.showExamSeats1) Включить рассадку 1 экзамена
+            //-             &nbsp;
+            //-             a.btn.btn-warning(href='/admin/pupils/places/showSeats/2', disabled=siteConfig.showExamSeats2) Включить рассадку 2 экзамена
+            //-             &nbsp;
+            //-             a.btn.btn-danger(href='/admin/pupils/places/hideSeats') Скрыть рассадку
                     
-                    h5 Данные для ручной массовой рассылки писем с аудиториями
-                    .form-group.text-right
-                        a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv') .csv для 1 экзамена 
-                        &nbsp;
-                        a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv') .csv для 2 экзамена 
+            //-         h5 Данные для ручной массовой рассылки писем с аудиториями
+            //-         .form-group.text-right
+            //-             a.btn.btn-info(href='/admin/pupils/places/1/seats-email-export.csv') .csv для 1 экзамена 
+            //-             &nbsp;
+            //-             a.btn.btn-info(href='/admin/pupils/places/2/seats-email-export.csv') .csv для 2 экзамена 
             .row
-                +simpleCard('Профили', 12, true)
-                    .table-responsive
-                        table.table.table-hover
-                            thead.text-primary
-                                tr
-                                    th.text-center #
-                                    th Название
-                                    th Надо мест
-                            tbody    
-                                each subject, index in subjects
-                                    tr
-                                        td.text-center= index+1
-                                        td #{subject.name}
-                                        td
-                                            | #{JSON.stringify(lastStat.examsMap[subject.name])}
-                                            //- b #{subject.countArray[subject.countArray.length - 1].count - subject.olymp}
+                include  ./partials/subjectsTable
     
     .row
-        .col-xl-12
             +simpleCard('Список мест', 12)
                     .text-right
-                        +addNewDocBtn('Добавить место', '/admin/pupils/places/create')
+                        +addNewDocBtn('Добавить место', '/admin/pupils/examseeds/create')
                     .table-responsive
                         table.table.table-hover
                             thead.text-primary

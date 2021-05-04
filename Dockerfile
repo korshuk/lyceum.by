@@ -4,8 +4,8 @@ FROM node:0.10
 
 WORKDIR /home/node/app
 
-RUN npm i nodemon@1.11.0 -g
-
+RUN npm i nodemon@1.2.1 -g
+RUN npm i concurrently@1.0.0 -g
 #COPY package*.json ./
 
 #USER node
@@ -19,5 +19,5 @@ EXPOSE 3000
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
 RUN chmod +x /wait
 
-CMD /wait && nodemon --legacy-watch app.js
+CMD /wait &&  concurrent --kill-others "nodemon --legacy-watch app.js" "nodemon --legacy-watch statsApp.js"
 #CMD [ "node", "app.js" ]

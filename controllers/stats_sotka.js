@@ -1,8 +1,9 @@
 var BaseController = require('./baseController').BaseController,
-    http = require('http');
     async = require('async');
 
 SotkaController = function(mongoose, app) {
+    var BASE_TIMEOUT = 30 * 60 * 1000;
+
     var base  = new BaseController('Sotka', 'sotka', mongoose, app);
 
     // base.Collection.remove({}, function (err) {
@@ -14,146 +15,128 @@ SotkaController = function(mongoose, app) {
     // })
 
     base.calculate = calculate;
+    base.calculateLoop = calculateLoop;
+
+    setTimeout(function() { 
+        base.calculateLoop() 
+    }, BASE_TIMEOUT);
+
+    function calculateLoop() {
+        base.calculate(function() {
+            setTimeout(function() { 
+                base.calculateLoop() 
+            }, BASE_TIMEOUT);
+        })
+    }
 
     function calculate(next) {
-        http.get("http://127.0.0.1:3030/calculate", function(response) {
-            console.log("Got response: " + response.statusCode);
-            
-            var data = '';
-            response.on('data', function (chunk) {
-                data += chunk;
-            });
-            
-            response.on('end', function () {
-                next(JSON.parse(data))
-            });
-        }).on('error', function(e) {
-            console.log("Got error: " + e.message);
-        });
+        var stat = new this.Collection();
+        var pupilsCollection = app.pupilsController.Collection;
+        var profileStatsCalculators = [];
+        stat.result = [];
         
-        
-        // var stat = new this.Collection();
-        // var pupilsCollection = app.pupilsController.Collection;
-        // var profileStatsCalculators = [];
-        // stat.result = [];
-        
-        // app.profileController.Collection.find().exec(function (err, profiles) { 
+        app.profileController.Collection.find().exec(function (err, profiles) { 
 
-        //     profiles.forEach(function(profile) {   
-        //         profileStatsCalculators.push(function(callback){
-        //             pupilsCollection.findApprovedPupilsForProfile(profile._id)
-        //                 .exec(function (err, pupils) {
-        //                     var pupilsCount = 0;
-        //                     var i = 0;
-        //                     var pupilsLength = pupils.length;
-        //                     var pupil;
-        //                     for (i; i < pupilsLength; i++) {
-        //                         pupil = pupils[i];
+            profiles.forEach(function(profile) {   
+                profileStatsCalculators.push(function(callback){
+                    pupilsCollection.findApprovedPupilsForProfile(profile._id)
+                        .exec(function (err, pupils) {
+                            var pupilsCount = 0;
+                            var i = 0;
+                            var pupilsLength = pupils.length;
+                            var pupil;
+                            for (i; i < pupilsLength; i++) {
+                                pupil = pupils[i];
                                 
-        //                         if (pupil.diplomProfile) {
+                                if (pupil.diplomProfile) {
                                     
-        //                             if ('' + pupil.diplomProfile === '' + profile._id) {
-        //                                 pupilsCount++
-        //                             } else if (pupil.isEnrolledToExams){
-        //                                 pupilsCount++
-        //                             }
-        //                         } else {
-        //                             pupilsCount++
-        //                         }
-        //                     } 
+                                    if ('' + pupil.diplomProfile === '' + profile._id) {
+                                        pupilsCount++
+                                    } else if (pupil.isEnrolledToExams){
+                                        pupilsCount++
+                                    }
+                                } else {
+                                    pupilsCount++
+                                }
+                            } 
 
-        //                     pupilsCollection.findApprovedOlympPupilsForProfile(profile._id)
-        //                         .exec(function (err, pupilsOlymp) {
-        //                             var profileStat = {
-        //                                 profile:profile._id,
-        //                                 countTotalBeta:pupils.length,
-        //                                 countOlymp:pupilsOlymp.length,
-        //                                 countTotal: pupilsCount
-        //                             }
-        //                             callback(null, profileStat);
-        //                         });
-        //                 });
-        //         })
-        //     });
-        //     app.pupilsController.Collection.calculateExamsCount(function(examsMap) {
-        //         app.subjectController.Collection
-        //             .find()
-        //             .exec(function(err, subjects) {
-        //                 var subjectsMap = {}
-        //                 var subject;
-        //                 for(var i = 0; i < subjects.length; i++) {
-        //                     subject = subjects[i];
-        //                     subjectsMap[subject.name] = examsMap[subject._id]
-        //                 }
+                            pupilsCollection.findApprovedOlympPupilsForProfile(profile._id)
+                                .exec(function (err, pupilsOlymp) {
+                                    var profileStat = {
+                                        profile:profile._id,
+                                        countTotalBeta:pupils.length,
+                                        countOlymp:pupilsOlymp.length,
+                                        countTotal: pupilsCount
+                                    }
+                                    callback(null, profileStat);
+                                });
+                        });
+                })
+            });
+            app.pupilsController.Collection.calculateExamsCount(function(examsMap) {
+                app.subjectController.Collection
+                    .find()
+                    .exec(function(err, subjects) {
+                        var subjectsMap = {}
+                        var subject;
+                        for(var i = 0; i < subjects.length; i++) {
+                            subject = subjects[i];
+                            subjectsMap[subject.name] = examsMap[subject._id]
+                        }
                         
-        //                 async.parallel(profileStatsCalculators, function(err, results) {
-        //                     pupilsCollection
-        //                         .find({status: 'approved'})
-        //                         .count()
-        //                         .exec(function(err, pupilsCount){
-        //                             stat.pupilsCount = pupilsCount;
-        //                             stat.result = results.sort(function(a, b) {
-        //                                 return a.profile > b.profile
-        //                             })
-        //                             stat.examsMap = subjectsMap
+                        async.parallel(profileStatsCalculators, function(err, results) {
+                            pupilsCollection
+                                .find({status: 'approved'})
+                                .count()
+                                .exec(function(err, pupilsCount){
+                                    stat.pupilsCount = pupilsCount;
+                                    stat.result = results.sort(function(a, b) {
+                                        return a.profile > b.profile
+                                    })
+                                    stat.examsMap = subjectsMap
                     
-        //                             stat.save(function(err, doc) {
-        //                                 next(doc);
-        //                             })
-        //                         })
-        //                 })
-        //             })
-        //     })
+                                    stat.save(function(err, doc) {
+                                        next(doc);
+                                    })
+                                })
+                        })
+                    })
+            })
             
-        // });
+        });
         //setTimeout(base.calculate, 10 * 60 * 60 * 1000);
     }
 
     base.restStats = function(req, res) {
-        http.get("http://127.0.0.1:3030/frontstats", function(response) {
-            console.log("Got response: " + response.statusCode, response);
-            var data = '';
-            response.on('data', function (chunk) {
-                data += chunk;
-            });
-            
-            response.on('end', function () {
-                res.json(JSON.parse(data))
-            });
-            
-        }).on('error', function(e) {
-            console.log("Got error: " + e.message);
-        });
+        var stats= function (callback) {
+            base.Collection
+                .find()
+                .sort('-date')
+                .exec(function (err, data) {
+                    queryExecFn(err, data[0], callback)
+                });
+        };
+        var profiles= function (callback) {
+            app.profileController.Collection
+                .find({}, "_id name ammount order guidePage")
+                .exec(function (err, profiles) {
+                    var profilesMap = {}
+                    for (var i= 0; i < profiles.length; i++) {
+                        profilesMap[profiles[i]._id] = profiles[i]
+                    }
+                    queryExecFn(err, profilesMap, callback)
+                });
+        };
 
-        // var stats= function (callback) {
-        //     base.Collection
-        //         .find()
-        //         .sort('-date')
-        //         .exec(function (err, data) {
-        //             queryExecFn(err, data[0], callback)
-        //         });
-        // };
-        // var profiles= function (callback) {
-        //     app.profileController.Collection
-        //         .find({}, "_id name ammount order guidePage")
-        //         .exec(function (err, profiles) {
-        //             var profilesMap = {}
-        //             for (var i= 0; i < profiles.length; i++) {
-        //                 profilesMap[profiles[i]._id] = profiles[i]
-        //             }
-        //             queryExecFn(err, profilesMap, callback)
-        //         });
-        // };
-
-        // async.parallel([
-        //     stats,
-        //     profiles
-        // ], function (err, results) {
-        //     res.json({
-        //         stats: results[0],
-        //         profiles: results[1]
-        //     })
-        // })
+        async.parallel([
+            stats,
+            profiles
+        ], function (err, results) {
+            res.json({
+                stats: results[0],
+                profiles: results[1]
+            })
+        })
     };
 
     base.calculateStats = function (req, res, isAjax) {
@@ -268,16 +251,6 @@ SotkaController = function(mongoose, app) {
         
     };
 
-    base.restList = function (req, res) {
-        var self = this;
-
-        app.profileController.Collection.find().sort('order').exec(function(err, docs) {
-                if (err) {
-                    res.send(err);
-                }
-                res.json(docs);
-            });
-    };
 
     base.constructor = arguments.callee;
 

@@ -134,17 +134,32 @@ function define(mongoose, fn) {
             date = new Date(doc.exam1.date);
             date = date.getTime();
 
-            if (examDates.indexOf(date) < 0) {
-                examDates.push(date);
+            if (searchInArray(examDates, date, doc.exam1.startTime) < 0) {
+                examDates.push({
+                    date: date,
+                    time: doc.exam1.startTime
+                });
             }
+
             var date = new Date(doc.exam2.date);
             date = date.getTime();
-            if (examDates.indexOf(date) < 0) {
-                examDates.push(date);
+            if (searchInArray(examDates, date, doc.exam2.startTime) < 0) {
+                examDates.push({
+                    date: date,
+                    time: doc.exam2.startTime
+                });
             }
         }
 
-        examDates = examDates.sort();
+        examDates = examDates.sort(function(a,b) {
+            if (a.date !== b.date) {
+                return a.date - b.date
+            } else {
+                return +a.time.split(':')[0] > +b.time.split(':')[0]
+            }
+            
+        });
+
 
         return examDates;
     };
@@ -159,13 +174,15 @@ function define(mongoose, fn) {
             date = new Date(doc.exam1.date);
             date = date.getTime();
 
-            if (examDates.indexOf(date) === j) {
+
+            if (examDates[j].date === date && examDates[j].time === doc.exam1.startTime) {
                 newExam = doc.exam1;
             }
+            
             date = new Date(doc.exam2.date);
             date = date.getTime();
             
-            if (examDates.indexOf(date) === j) {
+            if (examDates[j].date === date && examDates[j].time === doc.exam2.startTime) {
                 newExam = doc.exam2;
             }
             exams.push(newExam);
@@ -176,6 +193,19 @@ function define(mongoose, fn) {
 
     mongoose.model('Profiles', ProfilesSchema);
     fn();
+
+
+    function searchInArray(array, examDate, startTime) {
+        var index = -1;
+        for(var i = 0, len = array.length; i < len; i++) {
+            if (array[i].date === examDate && array[i].time === startTime) {
+                index = i;
+                break;
+            }
+        }
+
+        return index
+    }
 }
 
 exports.define = define;
