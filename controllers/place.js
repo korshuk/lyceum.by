@@ -1114,7 +1114,7 @@ var PlacesController = function (mongoose, app) {
                             var seedsMap = {}
                             console.log('examDates', examDates, seeds)
                             for (var index = 0; index < seeds.length; index++) {
-                                if (seeds[index].examNum) {
+                                if (seeds[index].examNum || seeds[index].examNum === 0) {
                                     console.log('seeds[index]', seeds[index])
                                     seedsMap[seeds[index].examNum] = seeds[index]
                                 }
