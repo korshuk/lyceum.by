@@ -114,7 +114,7 @@ var ResultScansController = function(mongoose, app) {
     function list(req, res) {
         var profileId = req.params.id;
         var examNumber = req.params.examNumber;
-        app.profileController.Collection.findByReq(req, res, function (profile) {
+        app.profileController.Collection.findByReq(req, res, function (err, profile) {
             base.Collection
                 .find({profile: profileId, examNum: examNumber})
                 .sort('-created')

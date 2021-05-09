@@ -11,6 +11,12 @@ module.exports = function(app) {
     router.get('/seedApp/:examNum', app.userController.Pass, function(req, res) {
         app.placesController.seedaAppPage(req, res);
     });
+    router.get('/seedApp/lists/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.seedList(req, res);
+    });
+    router.get('/seedApp/print/:examNum/:corpsAlias.html', app.userController.Pass, function(req, res) {
+        app.placesController.seedListPrint(req, res);
+    });
              //   /admin/pupils/examseeds/seedApp/api/dictionary
     router.get('/seedApp/api/dictionary', app.userController.Pass, function(req, res) {
         app.placesController.getDictionary(req, res);
@@ -42,6 +48,12 @@ module.exports = function(app) {
 
     router.get('/seedApp/api/disable/:examNum', app.userController.Pass, function(req, res) {
         app.placesController.cnangeSeedVisibleState(req, res, false);
+    })
+    router.get('/seedApp/api/enableAuditorium/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.cnangeSeedVisibleAuditoriumState(req, res, true);
+    })
+    router.get('/seedApp/api/disableAuditorium/:examNum', app.userController.Pass, function(req, res) {
+        app.placesController.cnangeSeedVisibleAuditoriumState(req, res, false);
     })
     
 

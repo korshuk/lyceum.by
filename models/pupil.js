@@ -15,8 +15,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'diplomExamName',
     'additionalProfiles',
     'isEnrolledToExams',
-    'place1', 
-    'place2', 
+    //'place1', 
+    //'place2', 
     // 'result1', 
     // 'result2',
     'region',
@@ -30,7 +30,8 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'message',
     'passOlymp',
     'requestImgNotApproved',
-    'diplomImgNotApproved'
+    'diplomImgNotApproved',
+    'places_saved',
     // 'examResults',
     // 'examSums'
 ].join(' ');
@@ -87,6 +88,10 @@ function define(mongoose, fn) {
         places_generated: [{
             corps: String,
             audience: String,
+            seedId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Seed'
+            },
             place: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Places'
@@ -99,6 +104,10 @@ function define(mongoose, fn) {
         places_saved: [{
             corps: String,
             audience: String,
+            seedId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Seed'
+            },
             place: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Places'
@@ -200,6 +209,7 @@ function define(mongoose, fn) {
             .populate('result1')
             .populate('result2')
             .populate('selectVariant')
+            .populate('places_saved.place')
             .exec(function(err, pupil) {
                 next(err, pupil)
             })

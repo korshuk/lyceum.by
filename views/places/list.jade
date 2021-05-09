@@ -20,6 +20,9 @@ block content
                                     th Дата
                                     th Generated
                                     th Saved
+                                    th Показать адрес
+                                    th Показать аудиторию
+                                    th
                                     th
                             tbody   
                                 each examDate, index in examDates
@@ -32,15 +35,11 @@ block content
 
                                         td 
                                             if (seedsMap[index])
-                                                | #{seedsMap[index].generatedDate}
+                                                | #{seedsMap[index].generatedDate.format('hh:mm dd.MM.yyyy')}
                                         td  
                                             if (seedsMap[index])
-                                                | #{seedsMap[index].savedDate}
-                                        td 
-                                            a.btn.btn-primary.btn-magnify(href='/admin/pupils/examseeds/seedApp/' + index, style="margin-bottom: 5px")
-                                                span.btn-label
-                                                    i.fa.fa-random
-                                                | #{'  '} Рассадить
+                                                | #{seedsMap[index].savedDate.format('hh:mm dd.MM.yyyy')}
+                                        td
                                             if (seedsMap[index] && seedsMap[index].savedDate)
                                                 if (seedsMap[index].visible)
                                                     a.btn.btn-danger.btn-magnify(href='/admin/pupils/examseeds/seedApp/api/disable/' + index)
@@ -52,6 +51,28 @@ block content
                                                         span.btn-label
                                                             i.fa.fa-eye
                                                         | #{'  '} Включить
+                                        td
+                                            if (seedsMap[index] && seedsMap[index].visible)
+                                                if (seedsMap[index].visibleAuditorium)
+                                                    a.btn.btn-danger.btn-magnify(href='/admin/pupils/examseeds/seedApp/api/disableAuditorium/' + index)
+                                                        span.btn-label
+                                                            i.fa.fa-eye-slash
+                                                        | #{'  '} Выключить
+                                                else
+                                                    a.btn.btn-info.btn-magnify(href='/admin/pupils/examseeds/seedApp/api/enableAuditorium/' + index)
+                                                        span.btn-label
+                                                            i.fa.fa-eye
+                                                        | #{'  '} Включить
+                                        td 
+                                            a.btn.btn-primary.btn-magnify(href='/admin/pupils/examseeds/seedApp/' + index)
+                                                span.btn-label
+                                                    i.fa.fa-random
+                                                | #{'  '} Рассадить
+                                        td
+                                            a.btn.btn-link.btn-magnify(href='/admin/pupils/examseeds/seedApp/lists/' + index)
+                                                span.btn-label
+                                                    i.fa.fa-list
+                                                | #{'  '} Списки
 
 
                 

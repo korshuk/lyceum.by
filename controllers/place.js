@@ -25,6 +25,8 @@ var PlacesController = function (mongoose, app) {
 
     base.list = list;
     base.seedaAppPage = seedaAppPage;
+    base.seedList = seedList;
+    base.seedListPrint = seedListPrint;
     base.getDictionary = getDictionary;
     base.getCorpses = getCorpses;
     base.getGenerateStatus = getGenerateStatus;
@@ -33,6 +35,7 @@ var PlacesController = function (mongoose, app) {
     base.changeAudience = changeAudience;
     base.saveCurrentSeats = saveCurrentSeats;
     base.cnangeSeedVisibleState = cnangeSeedVisibleState;
+    base.cnangeSeedVisibleAuditoriumState = cnangeSeedVisibleAuditoriumState;
     
     base.create = function (req, res) {
         var self = this,
@@ -159,7 +162,8 @@ var PlacesController = function (mongoose, app) {
         getSubjectIds: getSubjectIds,
         calculateCorpsesAmmount: calculateCorpsesAmmount,
         saveGeneratedSeats: saveGeneratedSeats,
-        saveSeats: saveSeats
+        saveSeats: saveSeats,
+        claculateCorpsesCounts: claculateCorpsesCounts
     }
 
     var Seeder = {
@@ -173,6 +177,19 @@ var PlacesController = function (mongoose, app) {
 
     return base;
 
+    function cnangeSeedVisibleAuditoriumState(req, res, newState) {
+        var examNum = req.params.examNum;
+        var self = this;
+        base.SeedsCollection
+            .findOne({examNum: +examNum})
+            .exec(function(err, seed) {
+                seed.visibleAuditorium = newState;
+                seed.save(function(err, doc) {
+                    res.redirect(self.path);
+                })
+            })
+    }
+
     function cnangeSeedVisibleState(req, res, newState) {
         var examNum = req.params.examNum;
         var self = this;
@@ -180,6 +197,9 @@ var PlacesController = function (mongoose, app) {
             .findOne({examNum: +examNum})
             .exec(function(err, seed) {
                 seed.visible = newState;
+                if (newState === false) {
+                    seed.visibleAuditorium = false;
+                }
                 seed.save(function(err, doc) {
                     res.redirect(self.path);
                 })
@@ -361,7 +381,6 @@ var PlacesController = function (mongoose, app) {
                         responsePupils = responsePupils.concat(seededPupils);
                     }
 
-                    Helpers.saveGeneratedSeats(responsePupils, function() {
                         base.SeedsCollection.findOne({examNum: +examNum})
                             .exec(function(err, seed) {
                                 if (!seed) {
@@ -370,16 +389,17 @@ var PlacesController = function (mongoose, app) {
                                 seed.examNum = +examNum;
                                 seed.generatedDate = new Date()
                                 seed.save(function(err, doc) {
-                                    response = {
-                                        corpses: corpses,
-                                        responsePupils: responsePupils
-                                    };
-            
-                                    res.json(response)
+
+                                    Helpers.saveGeneratedSeats(doc._id, responsePupils, function() {
+                                        response = {
+                                            corpses: corpses,
+                                            responsePupils: responsePupils
+                                        };
+
+                                        res.json(response)
+                                    })
                                 })
                             })
-                        
-                    })
 
                 }
 
@@ -430,6 +450,41 @@ var PlacesController = function (mongoose, app) {
 
     /// Helpers start
 
+    function claculateCorpsesCounts(corpses, pupils, subjectsIds) {
+        var corpsesMap = {};
+        var placesMap = {};
+        var audienceMap = {};
+        for(var i = 0; i < pupils.length; i++) {
+            var pupil = pupils[i].pupil;
+            var place;
+            for (var j = 0; j < pupil.places_saved.length; j++) {
+                if (pupil.places_saved[j].seedId && subjectsIds.indexOf(''+pupil.places_saved[j].exam) > -1) {
+                    place = pupil.places_saved[j]
+                }
+            }
+            if (!corpsesMap[place.corps]) {
+                corpsesMap[place.corps] = 0
+            }
+            corpsesMap[place.corps] = corpsesMap[place.corps] + 1;
+            
+            if (!placesMap[place.place]) {
+                placesMap[place.place] = 0
+            }
+            placesMap[place.place] = placesMap[place.place] + 1;
+
+            if (!audienceMap[place.audience]) {
+                audienceMap[place.audience] = 0
+            }
+            audienceMap[place.audience] = audienceMap[place.audience] + 1;
+        }
+
+        return {
+            corpsesMap: corpsesMap,
+            placesMap: placesMap,
+            audienceMap: audienceMap
+        }
+    }
+
     function saveSeats(responsePupils, next) {
         var exams;
         var pupilExamNum;
@@ -451,6 +506,7 @@ var PlacesController = function (mongoose, app) {
                     }
                 }
             }
+            pupil.places_saved[pupilExamNum].seedId = pupil.places_generated[pupilExamNum].seedId;
             pupil.places_saved[pupilExamNum].audience = pupil.places_generated[pupilExamNum].audience;
             pupil.places_saved[pupilExamNum].corps = pupil.places_generated[pupilExamNum].corps;
             pupil.places_saved[pupilExamNum].place = pupil.places_generated[pupilExamNum].place;
@@ -473,7 +529,7 @@ var PlacesController = function (mongoose, app) {
         }
     }
 
-    function saveGeneratedSeats(responsePupils, next) {
+    function saveGeneratedSeats(seedId, responsePupils, next) {
         var exams;
         var pupilExamNum;
         var pupil;
@@ -494,12 +550,12 @@ var PlacesController = function (mongoose, app) {
                     }
                 }
             }
+            pupil.places_generated[pupilExamNum].seedId = seedId;
             pupil.places_generated[pupilExamNum].audience = pupil.audience;
             pupil.places_generated[pupilExamNum].corps = pupil.corps;
             pupil.places_generated[pupilExamNum].place = pupil.place;
             pupil.places_generated[pupilExamNum].exam = exam;
 
-            console.log(pupilExamNum, pupil.places_generated)
             updateObj = {};
             updateObj.places_generated = pupil.places_generated;
 
@@ -728,7 +784,6 @@ var PlacesController = function (mongoose, app) {
         var profiledPupils;
         var place;
         var sabjectId;
-        console.log('seedPupilsInCorpse', corps.name, placesLength);
         for (var i = 0; i < placesLength; i++) {
             place = corps.places[i];
             sabjectId = sabjectsMap[place._id]._id;
@@ -748,7 +803,6 @@ var PlacesController = function (mongoose, app) {
                 
         Seeder.generatePupilPicks(profiledPupils, place, corps);
 
-        console.log('corps', corps.count)
     
         Seeder.seedPupilsInAudiences(profiledPupils, {
             audiences: place.audience,
@@ -791,7 +845,6 @@ var PlacesController = function (mongoose, app) {
             picksArray = Seeder.generatePicksForAudience(numbersArr, audiences[i], profiledPupils, belPupilsLength);
             audiences[i].count = picksArray.length;
             audiences[i].picks = picksArray;
-            console.log('generatePicksForAudience completed', audiences[i].name, audiences[i].count)
             place.count = place.count + picksArray.length;  
             place.max = place.max + audiences[i].max;        
         }
@@ -814,7 +867,6 @@ var PlacesController = function (mongoose, app) {
                 audienceMax = belPupilsLength
             }
         }
-        console.log(audience.name, belAudienceFlag, audience.max, '-', audienceMax,' * ' ,numbersArr.length)
        
         while (picksArray.length < audienceMax){
             randomIndex = Math.floor(Math.random() * numbersArr.length);
@@ -931,7 +983,81 @@ var PlacesController = function (mongoose, app) {
         return data;
     }
 
+    function seedListPrint(req, res) {
+        var self = this;
+        var exumNum = req.params.examNum;
+        var corpsIndex = req.query.index || -1;
+        var corpsAlias = req.params.corpsAlias;
+        base.getCorpses(exumNum, function (corpses, subjects) {
+            var corps;
+            for (var i = 0; i < corpses.length; i++) {
+                if (corpses[i].alias === corpsAlias) {
+                    corps = corpses[i];
+                }
+            }
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+            Helpers.getPupilsToSeed(subjectsIds, function(pupilsToSeed) {
+                app.profileController.Collection.find().exec(function (
+                    err,
+                    profiles
+                ) {
+                    var dictionary = DataService.generateDictionary({
+                        corpses: corpses,
+                        profiles: profiles,
+                        subjects: subjects
+                    });
 
+                    res.render(self.viewPath + 'seedListPrint.jade', {
+                        exumNum: exumNum,
+                        examDate: subjects[0],
+                        corpsIndex: corpsIndex,
+                        corps: corps,
+                        pupils: pupilsToSeed,
+                        subjects: subjects,
+                        dictionary: dictionary
+                    });
+                });
+            });
+        });
+    }
+
+
+    function seedList(req, res) {
+        var self = this;
+        var exumNum = req.params.examNum;
+        base.getCorpses(exumNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+
+            var placesIds = []
+            for(var i = 0; i < subjects.length; i++) {
+                placesIds.push(subjects[i].place)
+            }
+
+            base.Collection.find({_id: {$in: placesIds}})
+                .exec(function(err, places) {
+                    var placesMap = {};
+                    for(var i = 0; i < places.length; i++) {
+                        placesMap[places[i]._id] = places[i]
+                    }
+                    Helpers.getPupilsToSeed(subjectsIds, function(pupilsToSeed) {
+                        var calculatedCorpses = Helpers.claculateCorpsesCounts(corpses, pupilsToSeed, subjectsIds)
+                        res.render(self.viewPath + 'seedList.jade', {
+                            exumNum: exumNum,
+                            examDate: subjects[0],
+                            calculatedCorpses: calculatedCorpses,
+                            corpses: corpses,
+                            subjects: subjects,
+                            //ammount: ammount,
+                            pupilsToSeed: pupilsToSeed,
+                            belPupilsLength: pupilsToSeed.filter(function(pupilToSeed){
+                                return pupilToSeed.pupil.needBel === true
+                            }).length,
+                            places: placesMap
+                        });
+                    })
+                })
+        });
+    }
 
     function seedaAppPage(req, res) {
         var self = this;
@@ -986,8 +1112,10 @@ var PlacesController = function (mongoose, app) {
                         );
                         base.SeedsCollection.find().exec(function(err, seeds) {
                             var seedsMap = {}
+                            console.log('examDates', examDates, seeds)
                             for (var index = 0; index < seeds.length; index++) {
                                 if (seeds[index].examNum) {
+                                    console.log('seeds[index]', seeds[index])
                                     seedsMap[seeds[index].examNum] = seeds[index]
                                 }
                             }

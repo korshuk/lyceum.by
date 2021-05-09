@@ -17,6 +17,10 @@ function define(mongoose, fn) {
         visible: {
             type: Boolean,
             default: false
+        },
+        visibleAuditorium: {
+            type: Boolean,
+            default: false
         }
         
     });

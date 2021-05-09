@@ -1,0 +1,79 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'places';
+  - var menuSection = 'exams';
+
+block content
+    .row
+        - var date = new Date(examDate.date)
+        .col-xl-9 
+            h2
+                | Списки рассадки на #{+exumNum + 1} экзамен (#{date.dayToString()}) #{date.format('dd.MM.yyyy')} #{examDate.startTime}
+            
+        .col-md-3.text-right
+            .form-group
+                a.btn.btn-info.btn-move-left(href="/admin/pupils/examseeds")
+                    span.btn-label
+                        i.fa.fa-undo
+                    | #{'  '}Назад
+    .row
+        .col-xl-7 
+            .card
+                .card-body
+                    - var subjectsMap = {}
+                    - for (var i =0; i < subjects.length; i++) {
+                        - if (!subjectsMap[subjects[i].place]) {
+                            - subjectsMap[subjects[i].place] = subjects[i]
+                        - }
+                    - }
+                    each corpus in corpses
+
+                        - var subcorpses = [corpus]
+                        - if (corpus.name.indexOf('&') > -1) {
+                            - var names = corpus.name.split('&');
+                            - subcorpses = [];
+                            - names.forEach(function(name, index) {
+                            -    var newcorps = JSON.parse(JSON.stringify(corpus))
+                            -    newcorps.name = name;
+                            -    newcorps.index = index;
+                            -    subcorpses.push(newcorps);
+                            - })
+                        - }
+
+                        each corp in subcorpses
+                            table.table.table-striped
+                                thead 
+                                    tr
+                                        th.text-center(colspan="2")
+                                            b #{corp.name}
+                                        th.text-right
+                                            - var printUrl = '/admin/pupils/examseeds/seedApp/print/' + exumNum + '/' + corp.alias + '.html'
+                                            - if (+corp.index > -1) {
+                                            -   printUrl = '/admin/pupils/examseeds/seedApp/print/' + exumNum + '/' + corp.alias + '.html' + '?index=' + corp.index
+                                            - }
+                                            a(href="#{printUrl}", target="_blank") Печать
+                                tbody
+                                    each place in corp.places    
+                                        tr 
+                                            th(colspan="3") #{subjectsMap[place._id].name}                  
+                                        tr.table-dark
+                                            th аудитории
+                                            th всего
+                                            th max
+                                        each audience in place.audience
+                                            - var audienceIndex
+                                            - if (+corp.index > -1) {
+                                            -     audienceIndex = audience.name.split('_')[0];
+                                            - } else {
+                                            -     corp.index = -1
+                                            -     audienceIndex = -1
+                                            - }
+                                            if (+audienceIndex === +corp.index)                      
+                                                tr(class="#{+calculatedCorpses.audienceMap[audience._id] > +audience.max ? 'table-danger' : ''}")
+                                                    td #{audience.name} #{audience.bel === true ? ' (бел)' : ''}
+                                                    td #{calculatedCorpses.audienceMap[audience._id] || 0}
+                                                    td #{audience.max}
+

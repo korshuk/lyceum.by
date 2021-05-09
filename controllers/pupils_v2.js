@@ -318,8 +318,7 @@
                         message: 'user not found'
                     })
                 } else {
-                    var examPlaceId = pupil.profile && pupil.profile.examPlace,
-                        results = [],
+                    var results = [],
                         examIds = pupil.profile ? [pupil.profile.exam1, pupil.profile.exam2] : [],
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
@@ -337,37 +336,65 @@
                             }
                         }
 
-                        if (!examPlaceId) {
-                            app.passportController.sendCookiedRes(req, res, data)
-                            //res.json(data);
-                            return;
-                        } else {
-                            results = createResultsArray(pupil);
-    
-                            app.placesController.Collection
-                                .findByExamPlaceId(examPlaceId)
-                                .exec(function(err, examPlace) {
-                                    data.user.examPlace = examPlace;
-                                    if (results.length === 0) {
-                                        //res.json(data);
-                                        app.passportController.sendCookiedRes(req, res, data)
+                        results = createResultsArray(pupil);
+
+                        app.placesController.SeedsCollection
+                            .find()
+                            .exec(function(err, seeds) {
+                                data.user.places_saved = null;
+                                data.user.places = [];
+                                
+                                if (pupil.places_saved && pupil.places_saved.length > 0) {
+                                    var place;
+                                    var newPlace;
+                                    for( var i = 0; i < pupil.places_saved.length; i++) {
+                                        place = pupil.places_saved[i];
+                                        
+
+                                        if (place.seedId) {
+                                            
+                                            newPlace = {
+                                                seedId: place.seedId,
+                                                exam: place.exam,
+                                                place: place.place,
+                                            };
+
+                                            for (var j = 0; j < seeds.length; j++) {                                                
+                                                if ('' + seeds[j]._id === '' +place.seedId) {    
+                                                    if ( seeds[j].visible) {
+                                                        
+                                                        
+                                                        if (seeds[j].visibleAuditorium) {
+                                                            newPlace.audience = place.audience
+                                                        }
+                                                        data.user.places.push(newPlace)
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                     }
-                                    else {
-                                        app.resultScansController.Collection
-                                            .find({
-                                                profile: pupil.profile._id, 
-                                                code: { $in: results}
-                                            })
-                                            .exec(function (err, scans) {
-                                                
-                                                data.user.scans = scans;
-                                                
-                                                app.passportController.sendCookiedRes(req, res, data)
-                                                //res.json(data);
-                                            });
-                                    }
-                            });
-                        }
+                                }
+                                
+                                if (results.length === 0) {
+                                    //res.json(data);
+                                    app.passportController.sendCookiedRes(req, res, data)
+                                }
+                                else {
+                                    app.resultScansController.Collection
+                                        .find({
+                                            profile: pupil.profile._id,
+                                            code: { $in: results}
+                                        })
+                                        .exec(function (err, scans) {
+                                            
+                                            data.user.scans = scans;
+                                            
+                                            app.passportController.sendCookiedRes(req, res, data)
+                                            //res.json(data);
+                                        });
+                                }
+                        });
                     })  
                     
                     

@@ -1,0 +1,178 @@
+doctype 5
+html
+  head
+    - var date = new Date(examDate.date)
+    title  Списки рассадки на #{+exumNum + 1} экзамен #{date.format('dd.MM.yyyy')} (#{date.dayToString()}) #{examDate.startTime}
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no', name='viewport')
+    style
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: transparent;
+            border-collapse: collapse;
+        }
+        .table.table-large {
+            font-size: 1.5rem;
+        }
+        .table.table-small {
+            width: 60%;
+        }
+        .text-center {
+            text-align: center!important;
+        }
+        th {
+            text-align: inherit;
+        }
+        .table td, .table th {
+            padding: .75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table.table-large td, .table.table-large th {
+            padding: .5rem;
+        }
+        .table.table-small td, .table.table-small th {
+            padding: .25rem;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0,0,0,.05);
+        }
+        @media all {
+            .page-break { display: none; }
+            .table.table-large { 
+                font-size: 1.5rem;
+            }
+            .table.table-large td, .table.table-large th  {
+                padding: .5rem;
+            }
+            .table.table-small {
+                width: 60%;
+            }
+            .table.table-small td, .table.table-small th  {
+                padding: .25rem;
+            }
+        }
+
+        @media print {
+            .page-break { display: block; page-break-before: always; }
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+            @page {
+                margin: 2cm 2cm 2cm 1.5cm; /* Отступы для всех левых страниц */ 
+            }
+
+            .table td, .table th {
+                background-color: transparent !important;
+            }
+        }
+
+body
+    - var corpsName = corps.name
+    - if (corps.name.indexOf('&') > -1 && +corpsIndex > -1) {
+    -        corpsName = corps.name.split('&')[corpsIndex]
+    -    }
+    - var subjectsMap = {}
+    - for (var i =0; i < subjects.length; i++) {
+        - if (!subjectsMap[subjects[i]._id]) {
+            - subjectsMap[subjects[i]._id] = subjects[i]
+        - }
+    - }
+    //- -   corps.places.forEach(function(place) {
+    //- -       var counter = 1; 
+    //- -       var pupuilsArray = pupils
+    //- -           .filter(function(p){
+    //- -               return p.place === place._id    
+    //- -           })
+    //- -           .sort(function(a, b) {
+    //- -               return a.firstName == b.firstName ? 0 : +(a.firstName > b.firstName) || -1;
+    //- -           });
+    //- - })
+
+    each place in corps.places
+        - var pupuilsArray = pupils.filter(function(p) {
+        -    var flag = false;
+        -    for(var i = 0; i < p.pupil.places_saved.length; i++) {
+        -        if (p.pupil.places_saved[i].seedId && ''+p.pupil.places_saved[i].place === ''+place._id) {
+        -           flag = true
+        -           p.pupil.savedPlace = p.pupil.places_saved[i]
+        -        }
+        -    }
+        -    return flag;
+        - }).sort(function(a, b) {
+        -               return a.pupil.firstName == b.pupil.firstName ? 0 : +(a.pupil.firstName > b.pupil.firstName) || -1;
+        -           });
+
+        table.table.table-striped.table-large
+            thead
+                tr
+                    th.text-center(colspan="5")
+                        | #{corpsName} / #{subjectsMap[pupils[0].exam].name}  - #{place.code}
+                            
+                tr
+                    th(scope="col") #
+                    th(scope="col") Фамилия
+                    th(scope="col") Имя
+                    th(scope="col") Отчество
+                    th(scope="col") Ауд
+            tbody
+                each p, index in pupuilsArray
+                    - var aud = dictionary.audiences[p.pupil.savedPlace.audience];
+                    if ( (+corpsIndex === -1) || +aud.split('_')[0] === +corpsIndex)  
+                        tr
+                            td #{index+1}
+                            td #{p.pupil.firstName}
+                            td #{p.pupil.lastName}
+                            td #{p.pupil.parentName}
+                            td #{dictionary.audiences[p.pupil.savedPlace.audience]}
+    
+    each place in corps.places   
+        each audience in place.audience
+            - var aud = audience.name;
+            if ( (+corpsIndex === -1) || +aud.split('_')[0] === +corpsIndex)  
+                - var pupuilsArray = pupils.filter(function(p) {
+                -    var flag = false;
+                -    for(var i = 0; i < p.pupil.places_saved.length; i++) {
+                -        if (p.pupil.places_saved[i].seedId && ''+p.pupil.places_saved[i].place === ''+place._id) {
+                -           flag = true
+                -           p.pupil.savedPlace = p.pupil.places_saved[i]
+                -        }
+                -    }
+                -    return flag;
+                - }).filter(function(p) {
+                -      return  ''+p.pupil.savedPlace.audience === ''+audience._id
+                - }).sort(function(a, b) {
+                -               return a.pupil.firstName == b.pupil.firstName ? 0 : +(a.pupil.firstName > b.pupil.firstName) || -1;
+                -           });
+                div.page-break
+                
+                table.table.table-striped.table-small
+                    thead 
+                        tr 
+                            th.text-center(colspan="6")  
+                                | #{corpsName} / #{audience.name} #{audience.bel ? 'Бел' : ''}
+                        tr
+                            th(scope="col") #
+                            th(scope="col") Фамилия
+                            th(scope="col") Имя
+                            th(scope="col") Отчество
+                            th(scope="col") Ауд
+                            th(scope="col")
+                    tbody
+                        each pup, index in pupuilsArray
+                            
+                                tr
+                                    td #{index+1}
+                                    td #{pup.pupil.firstName}
+                                    td #{pup.pupil.lastName}
+                                    td #{pup.pupil.parentName}
+                                    td #{aud}
+                                    td 
+                                        | &nbsp;
+
+                

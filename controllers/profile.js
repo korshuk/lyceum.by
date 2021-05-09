@@ -52,7 +52,7 @@ var ProfileController = function (mongoose, app) {
     return base;
 
     function resultsAssign(req, res) {
-        base.Collection.findByReq(req, res, function (profile) {
+        base.Collection.findByReq(req, res, function (err, profile) {
             res.render(base.viewPath + 'resultsAssign.jade',{
                 id: req.params.id,
                 examNumber: req.params.examNumber,
@@ -72,7 +72,7 @@ var ProfileController = function (mongoose, app) {
     }
 
     function resultsList(req, res){
-        base.Collection.findByReq(req, res, function (profile) {
+        base.Collection.findByReq(req, res, function (err, profile) {
             base.ResultsCollection
                 .find({profile: req.params.id, examNumber: req.params.examNumber})
                 .sort('ID')
