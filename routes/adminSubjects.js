@@ -36,6 +36,10 @@ module.exports = function(app) {
     router.post('/results/:id', app.userController.Pass, function(req, res) {
 		app.subjectController.results.upload(req, res);
 	});
+    router.post('/results/addPoints/:subjectId', app.userController.Pass, function(req, res) {
+		app.subjectController.results.addPoints(req, res);
+	});
+    
     router.get('/results/assign/:id', app.userController.Pass, function(req, res) {
 		app.subjectController.results.assign(req, res);
 	});

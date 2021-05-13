@@ -25,9 +25,10 @@ var SubjectController = function(mongoose, app) {
         assign: resultsAssign,
         getPupilsForSubject: getPupilsForSubject,
         getResults: getResults,
+        addPoints: addPoints
         // uploadScans: scansUpload,
         // deleteScan: deleteScan,
-        // addPoints: addPoints
+        
     };
 
     function list(req, res) {
@@ -283,6 +284,37 @@ var SubjectController = function(mongoose, app) {
                 res.json(docs);
             });
     }
+
+    function addPoints(req, res) {
+        var addPoinsArray = req.body.addpoints; 
+        // var examNumber = req.params.examNumber;
+        async.forEachOf(addPoinsArray, function(additionalPoints, id, asymcdone) {
+            base.ResultsCollection
+                .findOne({_id: id, subject: req.params.subjectId})
+                .exec(function(err, result) {
+                    var adPointsNum;
+                    if (!isNaN(parseInt(additionalPoints))) {
+                        adPointsNum = parseInt(additionalPoints);
+                    } else {
+                        adPointsNum = undefined;
+                    }
+                    result.AdditionalPoints = adPointsNum;
+                    result.save(asymcdone)
+                })
+         }, function(err) {
+            onAddPointsComplete(req, res, err)
+         })
+    }
+
+    function onAddPointsComplete(req, res, err) {
+        if (err) {
+            req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+        } else {
+            req.session.success = 'Всё хорошо. Дополнительные баллы сохранились';
+        }
+        res.redirect('/admin/pupils/subjects/results/' + req.params.subjectId );
+    }
+    
 
 };
 

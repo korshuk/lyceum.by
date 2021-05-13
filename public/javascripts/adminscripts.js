@@ -119,7 +119,7 @@ $(document).ready(function () {
 
     function calculateStats(e) {
         e.preventDefault()
-        $.get('/admin/settings/api/calculateStats')
+        $.get('/admin/sotka/subjects/renew')
             .done(() => {
                 window.location.reload()
             })

@@ -70,7 +70,7 @@
         }
 
         function calculate() {
-            $http.get('/admin/settings/api/calculateStats')
+            $http.get('/admin/sotka/subjects/renew')
                 .then(function() {
                     getProfiles()
                         .then(function (resp) {
