@@ -17,6 +17,10 @@ module.exports = function(app) {
     router.get('/seedApp/print/:examNum/:corpsAlias.html', app.userController.Pass, function(req, res) {
         app.placesController.seedListPrint(req, res);
     });
+    router.get('/seedApp/csvexport/:examNum/:filename.csv', app.userController.Pass, function(req, res) {
+        app.placesController.csvExport(req, res);
+    });
+    
              //   /admin/pupils/examseeds/seedApp/api/dictionary
     router.get('/seedApp/api/dictionary', app.userController.Pass, function(req, res) {
         app.placesController.getDictionary(req, res);

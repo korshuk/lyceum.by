@@ -14,6 +14,42 @@ SotkaController = function(mongoose, app) {
     // })
 
     base.calculate = calculate;
+    base.calculateSubjects = calculateSubjects;
+    base.getSubjectStats = getSubjectStats;
+
+    function getSubjectStats(subjectId, next) {
+        http.get("http://127.0.0.1:3030/getSubjectStats/" + subjectId, function(response) {
+            console.log("Got response: " + response.statusCode);
+            
+            var data = '';
+            response.on('data', function (chunk) {
+                data += chunk;
+            });
+            
+            response.on('end', function () {
+                next(JSON.parse(data))
+            });
+        }).on('error', function(e) {
+            console.log("Got error: " + e.message);
+        });
+    }
+
+    function calculateSubjects(next) {
+        http.get("http://127.0.0.1:3030/calculateSubjects", function(response) {
+            console.log("Got response: " + response.statusCode);
+            
+            var data = '';
+            response.on('data', function (chunk) {
+                data += chunk;
+            });
+            
+            response.on('end', function () {
+                next(JSON.parse(data))
+            });
+        }).on('error', function(e) {
+            console.log("Got error: " + e.message);
+        });
+    }
 
     function calculate(next) {
         http.get("http://127.0.0.1:3030/calculate", function(response) {

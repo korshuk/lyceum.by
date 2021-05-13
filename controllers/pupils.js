@@ -483,7 +483,7 @@ var PupilsController = function (mongoose, app) {
 
     
     function saveExamsNew(req, res) {
-        var examNum = req.params.examNum;
+        var subjectId = req.params.subjectId;
         var reqUser;
         var i;
         var userIds = [];
@@ -493,59 +493,138 @@ var PupilsController = function (mongoose, app) {
         for (i in req.body) {
             reqUser = req.body[i];
             if (reqUser._id) {
-                userIds.push(new mongoose.Types.ObjectId(reqUser._id));
+                userIds.push(reqUser._id);
                 reqUsers[reqUser._id] = reqUser;
             }
             if (reqUser.result) {
-                resultIds.push(new mongoose.Types.ObjectId(reqUser.result));
+                resultIds.push(reqUser.result);
             }
         }
         base.Collection
             .find({_id: {$in: userIds}})
-            .exec(function (err, users) {
-                if (err) res.status(500).send(err);
+            .exec(function (err, pupils) {
+                if (err) {
+                    res.status(500).send(err);
+                }
                 else {
-                    app.profileController.ResultsCollection
+                    app.subjectController.ResultsCollection
                         .find({_id: {$in: resultIds}})
                         .exec(function (err, results) {
-                            if (err) res.status(500).send(err);
-                            else {
+                            if (err) {
+                                res.status(500).send(err);
+                            } else {
                                 var resultsObj = {};
                                 for (var i = 0; i < results.length; i++) {
                                     resultsObj[results[i]._id] = results[i];
                                 }
-                                async.eachSeries(users, function (user, asyncdone) {
-                                    reqUser = reqUsers[user._id];
-                                    if (reqUser['exam' + examNum] == undefined) {
-                                        user['exam' + examNum] = undefined;
+                                async.eachSeries(pupils, function (pupil, asyncdone) {
+                                    reqUser = reqUsers[pupil._id];
+                                    if (pupil.results.length === 0) {
+                                        pupil.results = [{
+                                            exam: subjectId
+                                        }];
                                     }
-                                    if (reqUser.result) {       
-                                        user['result' + examNum] = reqUser.result;
-                                        user['exam' + examNum] = resultsObj[reqUser.result].Points
-                                        if (resultsObj[reqUser.result].AdditionalPoints) {
-                                            user['exam' + examNum] = user['exam' + examNum] + resultsObj[reqUser.result].AdditionalPoints;
+                                    var resultExists = false;
+                                    var existingResultIndex = pupil.results.length;
+                                    for(var j = 0; j < pupil.results.length; j++) {
+                                        if (''+ pupil.results[j].exam === subjectId) {
+                                            resultExists = true;
+                                            existingResultIndex = j;
                                         }
                                     }
-                                    if (reqUser.result == undefined) {
-                                        user['result' + examNum] = undefined;
-                                        user['exam' + examNum] = undefined;
+                                    if (!resultExists) {
+                                        existingResultIndex = 0;
+                                        pupil.results[0].exam = subjectId
                                     }
-                                    if (reqUser['exam' + examNum] === -2) {
-                                        user['exam' + examNum] = -2;
+                                    if (reqUser.resultExamStatus &&  reqUser.resultExamStatus === 1) {
+                                        pupil.results[existingResultIndex].examStatus = '1'
+                                    } else {
+                                        pupil.results[existingResultIndex].examStatus = '0'
                                     }
-                                    if (reqUser['exam' + examNum] === -1) {
-                                        user['exam' + examNum] = -1;
-                                    }
-
+                                    // if (reqUser.resultExamStatus) {
+                                    //     console.log('if (reqUser.resultExamStatus)', reqUser.resultExamStatus)
+                                    //     pupil.results[existingResultIndex].examStatus = reqUser.resultExamStatus
+                                    // }
                                     
-                                    user.sum = (user.exam1 || 0) + (user.exam2 || 0);
-                                    user.save(asyncdone);
+                                    if (reqUser.result) {
+                                        pupil.results[existingResultIndex].examStatus = '0'
+                                        pupil.results[existingResultIndex].result = new mongoose.Types.ObjectId(reqUser.result)
+                                    }
+                                    if (reqUser.result === undefined && pupil.results[existingResultIndex].result) {
+
+                                       // pupil.results[existingResultIndex].examStatus = '0'
+                                        pupil.results[existingResultIndex].result = undefined
+                                    }
+                                    
+                                    pupil.save(function(err, doc) {
+                                        //  console.log('pupil.save', err, doc)
+                                          asyncdone(err)
+                                      }); 
+                                    // if (reqUser.result || reqUser.resultExamStatus) { 
+                                    //     console.log('reqUser.result', reqUser)
+                                        
+                                    //     if (reqUser.result) {
+                                    //         pupil.results[existingResultIndex].examStatus = '0'
+                                    //         pupil.results[existingResultIndex].result = new mongoose.Types.ObjectId(reqUser.result)
+                                    //     } else if (reqUser.resultExamStatus && reqUser.resultExamStatus !== 0) {
+                                    //         console.log('if (reqUser.resultExamStatus !== 0)', reqUser.resultExamStatus)
+                                    //         pupil.results[existingResultIndex].examStatus = reqUser.resultExamStatus
+                                    //     }
+                                    //     console.log('pupil.results', pupil.results, subjectId)
+                                    //     pupil.save(function(err, doc) {
+                                    //       //  console.log('pupil.save', err, doc)
+                                    //         asyncdone(err)
+                                    //     });  
+                                    // } else {
+                                    //     asyncdone()
+                                    // }
                                 }, function (err) {
                                     if (err) return res.status(500).send(err);
                                     res.status(200).send('ok');
-                                });
+                                })
                             }
                         });
+                //     app.profileController.ResultsCollection
+                //         .find({_id: {$in: resultIds}})
+                //         .exec(function (err, results) {
+                //             if (err) res.status(500).send(err);
+                //             else {
+                //                 var resultsObj = {};
+                //                 for (var i = 0; i < results.length; i++) {
+                //                     resultsObj[results[i]._id] = results[i];
+                //                 }
+                //                 async.eachSeries(users, function (user, asyncdone) {
+                //                     reqUser = reqUsers[user._id];
+                //                     if (reqUser['exam' + examNum] == undefined) {
+                //                         user['exam' + examNum] = undefined;
+                //                     }
+                //                     if (reqUser.result) {       
+                //                         user['result' + examNum] = reqUser.result;
+                //                         user['exam' + examNum] = resultsObj[reqUser.result].Points
+                //                         if (resultsObj[reqUser.result].AdditionalPoints) {
+                //                             user['exam' + examNum] = user['exam' + examNum] + resultsObj[reqUser.result].AdditionalPoints;
+                //                         }
+                //                     }
+                //                     if (reqUser.result == undefined) {
+                //                         user['result' + examNum] = undefined;
+                //                         user['exam' + examNum] = undefined;
+                //                     }
+                //                     if (reqUser['exam' + examNum] === -2) {
+                //                         user['exam' + examNum] = -2;
+                //                     }
+                //                     if (reqUser['exam' + examNum] === -1) {
+                //                         user['exam' + examNum] = -1;
+                //                     }
+
+                                    
+                //                     user.sum = (user.exam1 || 0) + (user.exam2 || 0);
+                //                     user.save(asyncdone);
+                //                 }, function (err) {
+                //                     if (err) return res.status(500).send(err);
+                //                     res.status(200).send('ok');
+                //                 });
+                //             }
+                //         });
                 }
             });
 

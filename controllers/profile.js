@@ -9,13 +9,13 @@ var BaseController = require('./baseController').BaseController;
 var ProfileController = function (mongoose, app) {
 
     var base = new BaseController('Profiles', '', mongoose, app, true);
-    var resultsModel = require('../models/examResults');
+    // var resultsModel = require('../models/examResults');
     var clustersModel = require('../models/profilescluster');
     
-    resultsModel.define(mongoose, function(){
-        base.ResultsCollection = mongoose.model('ExamResults');
-        base.ExamFilesCollection = mongoose.model('ExamFiles');
-    });
+    // resultsModel.define(mongoose, function(){
+    //     base.ResultsCollection = mongoose.model('ExamResults');
+    //     base.ExamFilesCollection = mongoose.model('ExamFiles');
+    // });
 
     clustersModel.define(mongoose, function () {
         base.ClustersCollection = mongoose.model('ProfilesCluster');

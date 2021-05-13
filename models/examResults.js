@@ -4,10 +4,9 @@ function define(mongoose, fn) {
   var ExamResultSchema;
 
   ExamResultSchema = new Schema({
-    'examNumber': Number,
-    'profile': {
+    'subject': {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Profiles'
+      ref: 'Subject'
     },
     'image': {
       type: mongoose.Schema.Types.ObjectId,
@@ -43,18 +42,16 @@ function define(mongoose, fn) {
     });
   };
 
-  ExamResultSchema.statics.findByGreatCamID = function (ID, examNumber, profileId, next) {
+  ExamResultSchema.statics.findByGreatCamID = function (ID, subjectId, next) {
     this.findOne({
       ID: +ID, 
-      examNumber: +examNumber,
-      profile: profileId
+      subject: subjectId
     }, next);
   };
 
-  ExamResultSchema.statics.saveNewResult = function (record, profile, examNumber, next) {
+  ExamResultSchema.statics.saveNewResult = function (record, subjectId, next) {
     var result;
-    record.examNumber = examNumber;
-    record.profile = profile;
+    record.subject = subjectId;
 
     result = new this(record);
     result.save(next);

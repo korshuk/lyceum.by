@@ -43,11 +43,11 @@
 
 
         function addAbsence(pupil) {
-            pupil[`exam${EXUM_NUMBER}`] = -2;
+            pupil.resultExamStatus = 1;
         }
 
         function removeAbsence(pupil) {
-            pupil[`exam${EXUM_NUMBER}`] = undefined;
+            pupil.resultExamStatus = 0;
         }
 
         function clearResult(result) {
@@ -88,7 +88,7 @@
         }
 
         function calculate() {
-            $http.get('/admin/settings/api/calculateStats')
+            $http.get('/admin/sotka/subjects/renew')
                 .then(getProfile)
                 .catch(function(err){
                     console.log(err);
@@ -104,14 +104,15 @@
             var obj = {}
             obj._id = pupil._id;
             obj.result = pupil.result;
-            obj[`exam${EXUM_NUMBER}`] = pupil[`exam${EXUM_NUMBER}`];
+            obj.resultExamStatus = pupil.resultExamStatus;
+            // obj[`exam${EXUM_NUMBER}`] = pupil[`exam${EXUM_NUMBER}`];
             return obj;
         }
 
         function saveData(data) {
             console.log('save', data)
             $http
-                .post(`/admin/pupils/api/listNew/${EXUM_NUMBER}`, data)
+                .post(`/admin/pupils/api/listNew/${SUBJECT_ID}`, data)
                 .then(function (response) {
                     alert('Всё сохранилось!!!');
                     getResultsData().then(getPupilsData);
@@ -123,29 +124,36 @@
         }
 
         function getPupilsData() {
-            var params = `?page=1&itemsPerPage=1000&sort=firstName-asc&profile=${PROFILE_ID}&status=approved`;
-            
             return $http
-                .get('/admin/pupils/api/list' + params)
+                .get('/admin/pupils/subjects/results/api/pupils/' + SUBJECT_ID)
                 .then(function (response) {
                     var data = response.data;
-                    vm.pupils = data.pupils;
                     vm.pupilsCount = 0;
-                    vm.pupils.forEach(pupil => {
-                        pupil.fio = `${pupil.firstName} ${pupil.lastName} ${pupil.parentName}`
-                        for (var i = 0; i < vm.results.length; i++) {
-                            if (pupil[`result${EXUM_NUMBER}`] && vm.results[i]._id === pupil[`result${EXUM_NUMBER}`]._id) {
-                                pupil.result = vm.results[i]._id;
-                                vm.results[i].selectedPupil = pupil;
-                                break;
+                    vm.pupils = []
+                    data.pupils.forEach(p => {
+                        var pupil = p.pupil;
+                        var result;
+                        pupil.fio = `${pupil.firstName} ${pupil.lastName} ${pupil.parentName}`;
+                        for(var k = 0; k < pupil.results.length; k++) {
+                            if (pupil.results[k].exam && pupil.results[k].exam === SUBJECT_ID) {
+                                result = pupil.results[k];
+                                
+                                for (var i = 0; i < vm.results.length; i++) {
+                                    if (vm.results[i]._id === result.result) { 
+                                        pupil.result = result.result;
+                                        vm.results[i].selectedPupil = pupil;
+                                    }
+                                }
                             }
                         }
+                        pupil.resultExamStatus = +result.examStatus || 0;
+
+                        vm.pupils.push(pupil)
                         if (pupil.passOlymp) {
                             vm.olympPupilsCoumt += 1;
                         }
                     })
-                    console.log(vm.pupils)
-                    vm.pupilsCount = data.count;
+                    // vm.pupilsCount = data.count;
                     return data
                 })
                 .catch(function (err) {
@@ -155,7 +163,7 @@
 
         function getResultsData() {
             return $http
-                .get(`/admin/pupils/profiles/results/api/assign/${PROFILE_ID}/${EXUM_NUMBER}`)
+                .get(`/admin/pupils/subjects/results/api/assign/${SUBJECT_ID}`)
                 .then(function (response) {
                     var data = response.data;
                     vm.results = data;
@@ -169,17 +177,17 @@
 
         function getProfile() {
             return $http
-                .get('/front/rest/sotka')
+                .get(`/admin/sotka/getSubjectStats/${SUBJECT_ID}`)
                 .then(function(res) {
-                    var profiles = res.data;
-                    var profile;
-                    for (var i = 0; i < profiles.length; i++) {
-                        if (profiles[i]._id === PROFILE_ID) {
-                            profile = profiles[i];
-                            break;
-                        }
-                    }
-                    vm.profile = profile;
+                    var subjectStat = res.data.subjectStat;
+                    // var profile;
+                    // for (var i = 0; i < profiles.length; i++) {
+                    //     if (profiles[i]._id === SUBJECT_ID) {
+                    //         profile = profiles[i];
+                    //         break;
+                    //     }
+                    // }
+                    vm.subjectStat = subjectStat;
                 });
         }
         
@@ -198,7 +206,7 @@
 
     function pupilsFilter() {
         return function(pupils) {
-            return pupils.filter(pupil => !pupil.passOlymp && pupil[`exam${EXUM_NUMBER}`] !== -2)
+            return pupils.filter(pupil => !pupil.passOlymp && pupil.resultExamStatus === 0)
         }
     }
 

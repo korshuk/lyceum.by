@@ -1,12 +1,34 @@
+var fs = require('fs');
+var async = require('async');
+var csvParse = require('csv-parse');
+
 var BaseController = require('./baseController').BaseController;
 
 var SubjectController = function(mongoose, app) {
 
     var base = new BaseController('Subject', '', mongoose, app, true);
 
+    var resultsModel = require('../models/examResults');
+
+    resultsModel.define(mongoose, function(){
+        base.ResultsCollection = mongoose.model('ExamResults');
+        base.ExamFilesCollection = mongoose.model('ExamFiles');
+    });
+
     base.create = create;
     base.edit = edit;
     base.list = list;
+
+    base.results = {
+        resultsList: resultsList,
+        upload: resultsUpload,
+        assign: resultsAssign,
+        getPupilsForSubject: getPupilsForSubject,
+        getResults: getResults,
+        // uploadScans: scansUpload,
+        // deleteScan: deleteScan,
+        // addPoints: addPoints
+    };
 
     function list(req, res) {
         var self = this;
@@ -145,6 +167,123 @@ var SubjectController = function(mongoose, app) {
             }
         });
     }
+
+    function resultsList(req, res){
+        base.Collection.findByReq(req, res, function (subject) {
+            app.sotkaController.calculate(function(lastStat){
+                base.ResultsCollection
+                    .find({subject: req.params.id})
+                    .sort('ID')
+                    .exec(function(err, docs){
+                        async.eachSeries(docs, function (doc, asyncdone) { 
+                            app.resultScansController.Collection
+                                .find({subject: req.params.id, code: doc.ID})
+                                .exec(function (err, scans) {
+                                    doc.scans = scans;
+                                    asyncdone();
+                                })          
+                        }, function (err) {
+                            res.render(base.viewPath + 'resultsList.jade',{
+                                id: req.params.id,
+                                docs: docs,
+                                subject: subject,
+                                lastStat:lastStat
+                            });
+                        })  
+                    });
+            })
+        }); 
+    }
+
+    function resultsUpload(req, res){
+        var fileData = '';
+            
+        fs.createReadStream(req.files.csvfile.path)
+            .on('data', function(data){ 
+                fileData += data;
+            })
+            .on('end', function(){
+                fs.unlinkSync(req.files.csvfile.path);
+
+                csvParse(fileData, {columns: true}, function(err, records) {
+                    saveResults(req, res, records)
+                })
+            });
+    }
+    function saveResults(req, res, records, next) {
+        var subjectId = req.params.id;
+        async.eachSeries(records, function (record, asyncdone) {
+            base.ResultsCollection.findByGreatCamID(record.ID, subjectId, function(err, result) {
+                if (result) {
+                    record.AdditionalPoints = result.AdditionalPoints;
+                    updateExistingResult(result, record, subjectId, asyncdone)
+                } else {
+                    base.ResultsCollection.saveNewResult(record, subjectId, asyncdone)  
+                }
+            })
+        }, function(err) {
+            onAsignResultsComplete(req, res, err)
+        });
+    }
+    function updateExistingResult(result, record, subjectId, next){
+        app.pupilsController.Collection.findByResultAsigned(result._id, function(err, pupil){
+            if (err) {
+                next(err, pupil);
+                return;
+            }
+            if (pupil) {
+                app.pupilsController.updatePupilResults(pupil, record, function(err, doc){
+                    if (err) {
+                        next(err, doc)
+                    } else {
+                        base.ResultsCollection.updateResult(result, record, subjectId, next)
+                    }
+                })
+            } else {
+                base.ResultsCollection.updateResult(result, record, subjectId, next)
+            }
+       })
+    }
+
+    function onAsignResultsComplete(req, res, err) {
+        if (err) {
+            req.session.error = 'Не получилось сохраниться(( Возникли следующие ошибки: <p>' + err + '</p>';
+        } else {
+            req.session.success = 'Всё хорошо. Данные загрузились и сохранились';
+        }
+        res.redirect('/admin/pupils/subjects/results/' + req.params.id);
+    }
+
+    function getPupilsForSubject(req, res) {
+        var subjectId = req.params.subjectId;
+        app.pupilsController.Collection
+            .findPupilsForSubject(subjectId, function(pupils) {
+                console.log(pupils.length)
+                res.json({
+                    pupils: pupils
+                })
+            })
+    }
+
+    function resultsAssign(req, res) {
+        base.Collection.findByReq(req, res, function (subject) {
+                res.render(base.viewPath + 'resultsAssign.jade',{
+                    id: req.params.id,
+                    subject: subject,
+                    viewName: 'resultsAssign'
+                });
+        });
+    }
+
+    function getResults(req, res) {
+        base.ResultsCollection
+            .find({subject: req.params.subjectId})
+            .sort('ID')
+            .exec(function(err, docs){
+                res.json(docs);
+            });
+    }
+
 };
 
 

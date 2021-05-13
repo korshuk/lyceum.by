@@ -1,4 +1,4 @@
-var json2csv = require('json2csv').parse;
+var json2csv = require('json2csv');
 var BaseController = require('./baseController').BaseController;
 var async = require('async');
 
@@ -24,6 +24,7 @@ var PlacesController = function (mongoose, app) {
     base.seatsEmailExport = seatsEmailExport;
 
     base.list = list;
+    base.csvExport = csvExport;
     base.seedaAppPage = seedaAppPage;
     base.seedList = seedList;
     base.seedListPrint = seedListPrint;
@@ -163,7 +164,8 @@ var PlacesController = function (mongoose, app) {
         calculateCorpsesAmmount: calculateCorpsesAmmount,
         saveGeneratedSeats: saveGeneratedSeats,
         saveSeats: saveSeats,
-        claculateCorpsesCounts: claculateCorpsesCounts
+        claculateCorpsesCounts: claculateCorpsesCounts,
+        createExportData: createExportData
     }
 
     var Seeder = {
@@ -774,6 +776,49 @@ var PlacesController = function (mongoose, app) {
 
     }
 
+    function createExportData(p, examNum, subjectsMap, placesMap) {
+        var i = 0;
+        var place;
+        var audience = '';
+        var pupil = p.pupil;
+
+        var savedPlace = {};
+        if (pupil.places_saved.length > 0) {
+            for (var i = 0; i < pupil.places_saved.length; i++) {
+                if (''+pupil.places_saved[i].exam === ''+p.exam) {
+                    savedPlace = pupil.places_saved[i]
+                }
+            }
+        }
+
+        place = JSON.parse(JSON.stringify(placesMap[savedPlace.place]));
+        for(var i = 0; i < place.audience.length; i++) {
+            if (''+place.audience[i]._id === ''+savedPlace.audience) {
+                audience = place.audience[i].name;
+            }
+        }
+        if (place.name.indexOf('&') > -1) {
+            var index = audience.split('_')[0];            
+            place.name = place.name.split('&')[index],
+            place.address = place.address.split('&')[index]
+        }
+
+        if (audience.indexOf('_') > -1) {
+            audience = audience.split('_')[1];
+        }
+        return {
+            email: pupil.email,
+            firstName: pupil.firstName,
+            lastName: pupil.lastName,
+            subject: subjectsMap[p.exam].name,
+            date: prettyDate(subjectsMap[p.exam].date),
+            startTime: subjectsMap[p.exam].startTime,
+            placeName: place.name,
+            placeAddress: place.address,
+            audience: audience,
+        };
+    }
+
     /// Helpers end
 
     // Seeder start
@@ -1027,11 +1072,19 @@ var PlacesController = function (mongoose, app) {
         var exumNum = req.params.examNum;
         base.getCorpses(exumNum, function (corpses, subjects) {
             var subjectsIds = Helpers.getSubjectIds(subjects);
-
+            var placesMap = {};
+            var audienceMap = {};
+            var subjectsMap = {};
             var placesIds = []
-            for(var i = 0; i < subjects.length; i++) {
-                placesIds.push(subjects[i].place)
-            }
+            
+            //fo
+            // if (!placesMap[place.place]) {
+            //     placesMap[place.place] = 0
+            // }
+
+            // if (!audienceMap[place.audience]) {
+            //     audienceMap[place.audience] = 0
+            // }
 
             base.Collection.find({_id: {$in: placesIds}})
                 .exec(function(err, places) {
@@ -1134,6 +1187,106 @@ var PlacesController = function (mongoose, app) {
             });
     }
 
+    function csvExport(req, res) {
+        var examNum = req.params.examNum;
+        var filename = req.params.filename;
+        var self = this;
+        base.getCorpses(examNum, function (corpses, subjects) {
+            var subjectsIds = Helpers.getSubjectIds(subjects);
+            var subjectsMap = {};
+            var placesMap = {};
+
+            for(var i = 0; i < subjects.length; i++) {
+                if (!subjectsMap[subjects[i]._id]) {
+                    subjectsMap[subjects[i]._id] = subjects[i]
+                }
+            }
+            
+            base.Collection.find().exec(function(err, places) {
+                for(var i = 0; i < places.length; i++) {
+                    if (!placesMap[places[i]._id]) {
+                        placesMap[places[i]._id] = places[i]
+                    }
+                }
+                Helpers.getPupilsToSeed(subjectsIds, function(pupilsToSeed) {
+                    var fields = [
+                        'email',
+                        'firstName',
+                        'lastName',
+                        'subject',
+                        'date',
+                        'startTime',
+                        'placeName',
+                        'placeAddress',
+                        'audience',
+                    ];
+                    var exportData = [];
+
+                    var i = 0,
+                        length = pupilsToSeed.length,
+                        pupil;
+            
+                    for (i; i < length; i++) {
+                        pupil = pupilsToSeed[i];
+                        exportData.push(Helpers.createExportData(pupil, examNum, subjectsMap, placesMap));
+                    }
+            //console.log('exportData', exportData)
+
+                    json2csv({ data: exportData, fields: fields }, function(err, csvData) {
+                       // console.log(csvData);
+                        res.attachment('exam-seats-' + filename + '.csv');
+                        res.status(200).send(csvData);
+                    });
+                // csvData = json2csv(exportData, opts);
+                    
+                });
+            })
+        });    
+        
+        // base.SeedsCollection
+        //     .findOne({examNum: +examNum})
+        //     .exec(function(err, seed) {
+                
+                
+        //             app.pupilsController.Collection.find({ status: 'approved' })
+        //             .populate('profile')
+        //             .exec(onPupilsFound);
+        
+        //         function onPupilsFound(err, data) {
+        //             var fields = [
+        //                 'email',
+        //                 'firstName',
+        //                 'lastName',
+        //                 'profile',
+        //                 'date',
+        //                 'placeName',
+        //                 'placeAddress',
+        //                 'audience',
+        //             ];
+        //             var opts = { fields: fields };
+        //             var exportData = [];
+        //             var csvData;
+        
+        //             var pupils = data.filter(function (pupil) {
+        //                 return pupil.passOlymp !== true;
+        //             });
+        
+        //             var i = 0,
+        //                 length = pupils.length,
+        //                 pupil;
+        
+        //             for (i; i < length; i++) {
+        //                 pupil = pupils[i];
+        //                 exportData.push(Helpers.createExportData(pupil, examNum));
+        //             }
+        
+        //             csvData = json2csv(exportData, opts);
+        //             res.attachment('exam-seats-' + filename + '.csv');
+        //             res.status(200).send(csvData);
+        //         }
+        //     })
+    }
+
     function seatsEmailExport(req, res) {
         var examNum = req.params.examNum;
 
@@ -1158,10 +1311,6 @@ var PlacesController = function (mongoose, app) {
             var exportData = [];
             var csvData;
 
-            var pupils = data.filter(function (pupil) {
-                return pupil.passOlymp !== true;
-            });
-
             var i = 0,
                 length = pupils.length,
                 pupil;
@@ -1170,35 +1319,11 @@ var PlacesController = function (mongoose, app) {
                 pupil = pupils[i];
                 exportData.push(createExportData(pupil, examNum));
             }
-
             csvData = json2csv(exportData, opts);
             res.attachment('exam-seats-' + examNum + '.csv');
             res.status(200).send(csvData);
         }
 
-        function createExportData(pupil, examNum) {
-            var examName = examNum === '1' ? 'firstExamDate' : 'secondExamDate';
-            var i = 0;
-            var audience = '';
-            var pupilAudience = pupil['audience' + examNum];
-            var place = pupil['place' + examNum];
-            var audienceLength = place.audience.length;
-            for (i; i < audienceLength; i++) {
-                if ('' + place.audience[i]._id === pupilAudience) {
-                    audience = place.audience[i].name;
-                }
-            }
-            return {
-                email: pupil.email,
-                firstName: pupil.firstName,
-                lastName: pupil.lastName,
-                profile: pupil.profile.name,
-                date: prettyDate(pupil.profile[examName]),
-                placeName: place.name,
-                placeAddress: place.address,
-                audience: audience,
-            };
-        }
     }
 
     function showSeats(req, res) {

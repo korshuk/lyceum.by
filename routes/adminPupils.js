@@ -71,7 +71,7 @@ module.exports = function(app) {
         app.pupilsController.saveExams(req, res);
     });
 
-    router.post('/api/listNew/:examNum', app.userController.Pass, function(req, res) {
+    router.post('/api/listNew/:subjectId', app.userController.Pass, function(req, res) {
         app.pupilsController.saveExamsNew(req, res);
     });
 

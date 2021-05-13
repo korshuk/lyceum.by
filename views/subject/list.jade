@@ -34,8 +34,15 @@ block content
                             tr
                                 td.text-center #{index + 1}
                                 td #{doc.name}
+                                    .form-group
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/subjects/results/"+doc.id) 
+                                            span.btn-label
+                                                i.fas.fa-poll
+                                            | #{'  '}На проверку
                                 td    
                                     if(doc.place)
+                                        b
+                                            | #{doc.place.code}
                                         each place, index in doc.place.name.split('&')
                                             p(style="margin:0") -#{place}
                                         br

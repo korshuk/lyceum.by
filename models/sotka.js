@@ -29,4 +29,30 @@ function define(mongoose, fn) {
     fn();
 }
 
+var mongoose = require('mongoose')
+
+var SubjectStatsSchema = new mongoose.Schema({
+        result: [{
+            subject: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject'
+            },
+            profileNames: [String],
+            results: [Number],
+            subjectAmmount: Number,
+            subjectOlymp: Number,
+            countTotal: Number,
+            min: Number,
+            max: Number,
+            pass: Number,
+            absentCount: Number,
+            presentCount: Number
+        }],
+        date: {
+            type: Date,
+            default: Date.now
+        }
+        
+});
 exports.define = define;
+exports.SubjectStatsModel = mongoose.model('SubjectStatsSchema', SubjectStatsSchema)

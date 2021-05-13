@@ -5,11 +5,10 @@ function define(mongoose, fn) {
 
     ResultScanSchema = new Schema({
         'filename' : String,
-        'profile': {
+        'subject': {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Profiles'
+            ref: 'Subject'
         },
-        'examNum': Number,
         'code': String,
         'text': String,
         created: {

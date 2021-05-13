@@ -30,5 +30,21 @@ module.exports = function(app) {
         app.subjectController.update(req, res);
     });
 
+    router.get('/results/:id', app.userController.Pass, function(req, res) {
+		app.subjectController.results.resultsList(req, res);
+	});
+    router.post('/results/:id', app.userController.Pass, function(req, res) {
+		app.subjectController.results.upload(req, res);
+	});
+    router.get('/results/assign/:id', app.userController.Pass, function(req, res) {
+		app.subjectController.results.assign(req, res);
+	});
+    router.get('/results/api/pupils/:subjectId', app.userController.Pass, function(req, res) {
+		app.subjectController.results.getPupilsForSubject(req, res);
+	});
+    router.get('/results/api/assign/:subjectId', app.userController.Pass, function(req, res) {
+		app.subjectController.results.getResults(req, res);
+	});
+    
     app.use('/admin/pupils/subjects', router);
 }

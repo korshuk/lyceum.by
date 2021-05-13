@@ -8,6 +8,17 @@ module.exports = function (app) {
             res.redirect('/admin')
         });
     });
+    app.get('/admin/sotka/getSubjectStats/:subjectId', app.userController.Pass, function(req, res) {
+        var subjectId = req.params.subjectId;
+		app.sotkaController.getSubjectStats(subjectId, function(data) {
+            res.json(data)
+        });
+	});
+    app.get('/admin/sotka/subjects/renew', app.userController.Pass, function (req, res) {
+        app.sotkaController.calculateSubjects(function(data) {
+            res.json(data)
+        });
+    });
 
     app.get('/admin/rest/sotka', app.userController.Pass, function (req, res) {
         app.sotkaController.restList(req, res);

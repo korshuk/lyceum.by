@@ -7,11 +7,12 @@ var ResultScansController = function(mongoose, app) {
     var base = new BaseController('ResultScan', '', mongoose, app, true);
     base.path = '/admin/pupils/resultScans';
     
-    base.getScanFile = getScanFile;
-    base.addScanFile = addScanFile;
     base.list = list;
-    base.remove = remove;
+    base.addScanFile = addScanFile;
     base.update = update;
+    base.remove = remove;
+    base.getScanFile = getScanFile;
+
     base.updateAll = updateAll;
     base.deleteAll = deleteAll;
     
@@ -49,10 +50,9 @@ var ResultScansController = function(mongoose, app) {
         })
     }
     function deleteAll(req, res) {
-        var profileId = req.params.id;
-        var examNumber = req.params.examNumber;
+        var subjectId = req.params.id;
         base.Collection
-                .find({profile: profileId, examNum: examNumber})
+                .find({subject: subjectId})
                 .exec(function(err, docs){
                     async.eachSeries(docs, function (doc, asyncdone) {
                         doc.remove(asyncdone)
@@ -61,7 +61,7 @@ var ResultScansController = function(mongoose, app) {
                             req.session.error = 'Сканы не удалились( Что-то пошло не так.';
                         }
                         req.session.success = 'Сканы удалены';
-                        res.redirect('/admin/pupils/resultScans/' + profileId + '/' + examNumber);
+                        res.redirect('/admin/pupils/resultScans/list/' + subjectId );
                     })
                 })
         
@@ -72,19 +72,17 @@ var ResultScansController = function(mongoose, app) {
         base.Collection.findByReq(req, res, function(doc) {
             var filename = doc.filename;
             var code = doc.code;
-            var examNum = doc.examNum;
-            var profile = doc.profile;
+            var subjectId = doc.subject;
             /*TODO: delete from s3 */
             doc.remove(function() {
                 req.session.success = 'Скан <strong>' + filename + '</strong> с кодом <strong>' + code + '</strong> успешно удалёно';
-                res.redirect('/admin/pupils/resultScans/' + profile + '/' + examNum);
+                res.redirect('/admin/pupils/resultScans/list/' + subjectId);
             });
         })
     }
 
     function addScanFile(req, res) {
-        var profileId = req.params.id;
-        var examNumber = req.params.examNumber;
+        var subjectId = req.params.id;
         var scanFile = req.files.resultScan
 
         app.s3filesController.sendExamScan(scanFile, function(data){
@@ -92,8 +90,7 @@ var ResultScansController = function(mongoose, app) {
 
             var resultScan = new base.Collection({
                 'filename' : data.fileName,
-                'profile': profileId,
-                'examNum': examNumber,
+                'subject': subjectId,
                 'code': data.result && data.result.number,
                 'text': data.result && data.result.firstLine
             });
@@ -112,11 +109,11 @@ var ResultScansController = function(mongoose, app) {
     }
 
     function list(req, res) {
-        var profileId = req.params.id;
-        var examNumber = req.params.examNumber;
-        app.profileController.Collection.findByReq(req, res, function (err, profile) {
+        var subjectId = req.params.id;
+
+        app.subjectController.Collection.findByReq(req, res, function (subject) {
             base.Collection
-                .find({profile: profileId, examNum: examNumber})
+                .find({subject: subjectId})
                 .sort('-created')
                 .exec(function(err, images){
                     var notNumbers = [];
@@ -139,11 +136,10 @@ var ResultScansController = function(mongoose, app) {
                                 doubleCheckObject[image.code] = doubleCheckObject[image.code] + 1;
                             }
                         }  
-                        app.profileController.ResultsCollection
+                        app.subjectController.ResultsCollection
                             .findOne({
                                 'ID': image.code,
-                                'examNumber': examNumber,
-                                'profile': profile._id 
+                                'subject': subject._id 
                             }, function(err, result){
                                 if (!result) {
                                     nodVithResult.push(image.code)
@@ -159,10 +155,10 @@ var ResultScansController = function(mongoose, app) {
                             }
                         }
                         res.render(base.viewPath + 'tempImagesList.jade',{
-                            id: profileId,
-                            examNumber: examNumber,
+                            id: subjectId,
+                            // examNumber: examNumber,
                             docs: images,
-                            profile: profile,
+                            subject: subject,
                             notFilled: notFilled,
                             notNumbers: notNumbers,
                             nodVithResult: nodVithResult,

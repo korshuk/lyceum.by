@@ -61,7 +61,6 @@ function define(mongoose, fn) {
         resetPasswordToken: String,
         resetPasswordExpires: Date,
         confirmMailToken: String,
-        examStatus: String,
 
         profile: {
             type: mongoose.Schema.Types.ObjectId,
@@ -75,16 +74,6 @@ function define(mongoose, fn) {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Profiles'
         }],
-        place1: {
-            place: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Places'
-            },
-            exam: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Subject'
-            }
-        },
         places_generated: [{
             corps: String,
             audience: String,
@@ -117,20 +106,17 @@ function define(mongoose, fn) {
                 ref: 'Subject'
             }
         }],
-        place2: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Places'
-        },
-        result1: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'ExamResults'
-        },
-        result2: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'ExamResults'
-        },
-        audience1: String,
-        audience2: String,
+        results: [{
+            exam: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Subject'
+            },
+            examStatus: String,
+            result: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'ExamResults'
+            }
+        }],
         needBel: Boolean,
         firstName: String,
         lastName: String,
@@ -239,6 +225,37 @@ function define(mongoose, fn) {
 
         return query
     };
+
+    PupilSchema.statics.findPupilsForSubject = function(subjectId, next) {
+        var self = this;
+        this.find({status: 'approved'})
+            .populate('profile')
+            .populate('additionalProfiles')
+            .exec(function(err, pupils){
+                var exams;
+                var pupil;
+                var pupilsToSeed = []
+                var subjectsIds = [subjectId]
+                for (var i = 0; i < pupils.length; i++) {
+                    pupil = pupils[i];
+                    exams = self.getPupilExams(pupil)
+                    if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+                        //console.log(exams)
+                        for(var j = 0; j < exams.length; j++) {
+                            if (subjectsIds.indexOf(exams[j]) > -1) {
+                                pupilsToSeed.push({
+                                    pupil: pupil,
+                                    exam: exams[j]
+                                })
+                            }
+                        }
+                    }
+                }
+                next(pupilsToSeed)
+            })
+    };
+
+    
 
     PupilSchema.statics.findApprovedOlympPupilsForProfile = function(profileId) {
         return this.find({diplomProfile: profileId, status: 'approved', passOlymp: true})

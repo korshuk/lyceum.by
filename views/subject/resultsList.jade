@@ -1,0 +1,133 @@
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+extends ../adminLayout
+append menuVars
+	- var menuPage = 'subjects';
+	- var menuSection = 'exams';
+
+block content
+	+resultsMainBtnsBlock(id)
+	.row
+		+pageHeader()
+			| Расшифровка и заполнение результатов экзаменов
+	.row
+		.col
+			h3 Предмет: #{subject.name}
+	.row.results-wizard.card-wizard.active
+		.col-xl-12
+				.wizard-navigation
+					ul.nav.nav-pills
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link.active(href="/admin/pupils/subjects/results/#{id}")
+								span.results-wizard-number 1
+								i.fas.fa-poll
+								| Загрузка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/subjects/results/assign/#{id}")
+								span.results-wizard-number 2
+								i.fas.fa-table
+								| Расшифровка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/resultScans/list/#{id}")
+								span.results-wizard-number 3
+								i.fas.fa-images
+								| Загрузка сканов работ
+	.row
+		.col
+			h4 бланков: #{docs.length || 0}, экзамен писали: #{lastStat.examsMap[subject.name]}
+	.row	
+		+simpleCard('Загрузка файлов', 12)
+			form(action="/admin/pupils/subjects/results/"+id, method="post", enctype="multipart/form-data")
+				.row
+					.col-sm-12
+						label(for="resultsList") Загрузка csv файла с результатами
+						input(type="file", name="csvfile")
+					.col-sm-12
+						.form-group
+							button(type="submit").btn.btn-primary Загрузить
+			hr
+			- var doubleScans = [];
+			- var noScans = [];
+			- var doc;
+			- for(var i = 0; i < docs.length; i++) {
+			-	doc = docs[i];
+			-	if(doc.scans && doc.scans.length > 1) {
+			-		doubleScans.push(doc.ID)
+			-	}
+			-	if (!doc.scans || doc.scans.length === 0) {
+			-		noScans.push(doc.ID)
+			-	}
+			-}
+			
+			form(action="/admin/pupils/profiles/results/addPoints/"+id, method="post", enctype="multipart/form-data")
+				.row
+					.col-sm-8
+						if (doubleScans.length > 0)
+							.alert.alert-danger.alert-with-icon
+								span.fas.fa-exclamation(data-notify="icon")
+								span
+									| Есть результаты, которым соответсвуют <b>несколько</b> сканов: <b>#{doubleScans.join(', ')}</b>
+						if (noScans.length > 0)
+							.alert.alert-danger.alert-with-icon
+								span.fas.fa-exclamation(data-notify="icon")
+								span
+									| Есть результаты, <b>без</b> сканов: <b>#{noScans.join(', ')}</b>		
+					.col-sm-4.text-right
+						.form-group
+							button.btn.btn-success.btn-magnify(type="submit")
+								span.btn-label
+									i.far.fa-save
+								| #{'  '}Сохранить дополнительный баллы	
+							//-a.btn.btn-danger.delete-doc-btn.btn-magnify(href="/admin/pupils/profiles/results/deleteResults/"+id+"/"+examNumber, type='button', rel='tooltip', data-original-title='Очистить результаты', title='Очистить результаты')
+								span.btn-label
+									i.fas.fa-times
+								| #{'  '}Удалить		
+				
+				.table-responsive
+					table.table.table-hover
+						thead.text-primary
+							tr
+								th Student
+								th ID
+								th(style="width: 300px") Missed
+								th Points
+								th Add points
+								th Всего
+								th Image
+						tbody		
+							each doc, index in docs
+								tr
+									td #{doc.Class}	
+									td 
+										h3 #{doc.ID}
+									td #{doc.Missed}
+									td
+										span(style="font-size: 1.5em") 
+											nobr #{doc.Points} / #{doc.Possible}
+									td 
+										.form-group
+											input.form-control(
+												type="number",
+												value="#{doc.AdditionalPoints}"
+												name="addpoints[#{doc._id}]")
+									td 
+										span(style="font-size: 1.7em")
+											| #{doc.Points + (doc.AdditionalPoints || 0)}
+									
+									td
+										if(doc.scans && doc.scans.length > 0)
+											a.resultScanImgContainer(href='/admin/pupils/resultScans/#{doc.scans[doc.scans.length - 1].filename}', target="_blank")
+												img.resultScanImg(src='/admin/pupils/resultScans/small_#{doc.scans[doc.scans.length - 1].filename}')
+											if (doc.scans.length > 1)
+												.alert.alert-danger
+													span
+														b Сканов с таким ID - #{doc.scans.length}
+
+										else
+											.alert.alert-warning
+												span
+													b Нет картинки
+
+block scripts
+	script(src='/javascripts/Luminous.min.js')

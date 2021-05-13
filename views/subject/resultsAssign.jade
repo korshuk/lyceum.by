@@ -1,0 +1,171 @@
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+extends ../adminLayout
+append menuVars
+	- var menuPage = 'subjects';
+	- var menuSection = 'exams';
+
+block content
+	div(ng-app="assignApp", ng-controller="assignController as app")
+		+resultsMainBtnsBlock(id)
+		.row
+			+pageHeader()
+				| Расшифровка и заполнение результатов экзаменов 
+			
+		.row
+			.col	
+				h3 Предмет: #{subject.name}
+		.row.results-wizard.card-wizard.active
+			.col-xl-12
+				.wizard-navigation
+					ul.nav.nav-pills
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/subjects/results/#{id}")
+								span.results-wizard-number 1
+								i.fas.fa-poll
+								| Загрузка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link.active(href="/admin/pupils/subjects/results/assign/#{id}")
+								span.results-wizard-number 2
+								i.fas.fa-table
+								| Расшифровка результатов
+						li.nav-item(style="width: 33.3333%;")
+							a.nav-link(href="/admin/pupils/resultScans/list/#{id}")
+								span.results-wizard-number 3
+								i.fas.fa-images
+								| Загрузка сканов работ
+		.row
+			.col
+				h4 бланков: {{app.resultsCount}}, абитуриентов: {{app.subjectStat.countTotal}}
+		.row
+			+simpleCard('Cтатистика', 6)
+				.table-responsive
+					table.table.table-hover
+						tbody
+							tr
+								td(width="50%")
+									| Минимальный балл: <b>{{app.subjectStat.min}}</b>
+									br
+									| Максимальный балл: <b>{{app.subjectStat.max}}</b>
+									br
+									| Назначено результатов: <b>{{app.subjectStat.presentCount}}</b>
+									br
+									| Отсутсвующих: <b>{{app.subjectStat.absentCount}}</b>
+								td(width="50%") 
+									| Это экзамен для профилей: 
+									span(ng-repeat="name in app.subjectStat.profileNames") <b>{{name}}</b>
+									br
+									| Всего мест: <b>{{app.subjectStat.subjectAmmount}}</b>
+									br
+									| Из них олимпиадников: <b>{{app.subjectStat.subjectOlymp}}</b>
+									br
+									| "Проходной" балл: <b>{{app.subjectStat.pass}}</b>
+				
+				.form-group.text-right
+					a.btn.btn-primary.btn-move-left(href="#", ng-click="app.calculate()")
+						span.btn-label
+							i.fas.fa-chart-bar
+						| #{'  '} Пересчитать статистику
+		.row
+			+simpleCard('Результаты', 7)
+				.row
+					.col-sm-8	
+						.alert.alert-danger.alert-with-icon
+							span(data-notify="icon").fas.fa-exclamation
+							span(data-notify="message")
+								| В списке селекта отсутвуют олимпиадники и те, кому мы поставили "Отсутсвовал (Н)"
+					.col-sm-4.text-right
+						a.btn.btn-default(href="/admin/pupils/subjects/results/assign/#{id}") Отмена
+						| #{' '}
+						button.btn.btn-success(ng-click="app.saveChanges()") Сохранить
+				.table-responsive	
+					table#resultsTable.table.table-hover
+						tr
+							th ID
+							th(style="width: 460px;") Абитуриент
+							th Class
+							th Points
+						tr(ng-repeat="result in app.results")
+							td 
+								h4 {{result.ID}}
+							td
+								.input-group(ng-show="!result.isEditable")
+									input.form-control(type="text", style="width: 416px;",ng-click="app.showresultInput(result)", ng-disabled="result.selectedPupil && result.selectedPupil._id", ng-if="!result.isEditable", ng-model="result.selectedPupil.fio")
+									a.select-delete.btn.btn-danger.btn-icon.btn-sm.form-control(
+									href="#", 
+									title="очистить результат"
+									ng-click="app.clearResult(result); $event.preventDefault();", 
+									ng-if="!result.isEditable && result.selectedPupil && result.selectedPupil._id"
+									) 
+										i.fa.fa-times
+								oi-select(
+									ng-if="result.isEditable"
+									auto-focus="{{ result.isEditable }}"
+									oi-options="pupil.fio for pupil in app.pupils | pupilsFilter | limitTo: 10 track by pupil._id ",
+									ng-model="app.tempPupil",
+									ng-change="app.onResultInputChange(result, app.tempPupil)",
+									placeholder="Select")
+							td {{result.Class}} 
+							td {{result.Points}} {{result.AdditionalPoints >= 0 ? ' +' + result.AdditionalPoints : result.AdditionalPoints}} 
+								br
+								| <b>{{result.Points + result.AdditionalPoints}}</b>
+			+simpleCard('Абитуриенты', 5)
+				.alert.alert-success.alert-with-icon
+					span(data-notify="icon").far.fa-star
+					span(data-notify="message")
+						|  - олимпиадников в этом списке нет
+				.alert.alert-danger.alert-with-icon
+					span(data-notify="icon").fas.fa-exclamation
+					span(data-notify="message")
+						| Статус экзамена имеет информативный характер	
+				.alert.alert-info
+					span(data-notify="message")
+						| Статус экзамена поставлен только у тех абитуриентов, которым во время экзамена присвоен статус в приложении
+				.alert.alert-danger.alert-with-icon
+					span(data-notify="icon").fas.fa-exclamation
+					span(data-notify="message")
+						| Даже, если статус экзамена "неявка", всё равно нужно отметить отсутвие
+				.table-responsive
+					table#pupilsTable.table.results-pupils-table
+						tr
+							th ФИО
+							th Экз-статус&nbsp;
+							th
+						tr(ng-repeat="pupil in app.pupils track by pupil._id", ng-if="!pupil.result", ng-class="{'alert alert-success': pupil.passOlymp, 'alert alert-danger': pupil.examEpsond === -2}")
+							td  
+								nobr
+									| <b>{{pupil.firstName}}</b> {{pupil.lastName}} {{pupil.parentName}}
+									span.label.label-info(ng-if="pupil.passOlymp")
+										span.far.fa-star
+								
+							td 
+								span(ng-if="pupil.examStatus !== 0")
+									| {{app.examStatuses[pupil.examStatus]}}
+							td 
+								
+									div(ng-if="!pupil.passOlymp")
+										.input-group(ng-if="pupil.resultExamStatus && pupil.resultExamStatus !== 0")
+											input.form-control(
+												type="text", 
+												ng-disabled="true"
+												value="Отсутсвовал")
+											.input-group-append	
+												a.btn.btn-info(
+													href="#", 
+													title="очистить результат"
+													ng-click="app.removeAbsence(pupil); $event.preventDefault();"
+												)
+													i.fas.fa-times
+										.input-group( ng-if="!pupil.resultExamStatus || pupil.resultExamStatus === 0")	
+											button.btn.btn-danger.btn-link(ng-click="app.addAbsence(pupil)") Поставить "Н"
+	block scripts
+	script
+		var SUBJECT_ID = '#{id}'
+		var EXUM_NUMBER = '1'
+	script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js')
+	script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js')
+	script(src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js")
+	script(src='/javascripts/data-grid/loading-bar.min.js')
+	script(src='/javascripts/select.js')		
+	script(src='/javascripts/resultsAssign.js')						

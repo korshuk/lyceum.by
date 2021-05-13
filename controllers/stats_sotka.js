@@ -6,6 +6,10 @@ SotkaController = function(mongoose, app) {
 
     var base  = new BaseController('Sotka', 'sotka', mongoose, app);
 
+    base.SubjectStatsCollection = require('../models/sotka').SubjectStatsModel;
+   // this.model.SubjectStatsModel(mongoose, function () {
+     //   base.SubjectStatsSchema = mongoose.model('SubjectStatsSchema');
+    //});
     // base.Collection.remove({}, function (err) {
     //     if (err) {
     //         console.log(err)
@@ -15,6 +19,7 @@ SotkaController = function(mongoose, app) {
     // })
 
     base.calculate = calculate;
+    base.calculateSubjects = calculateSubjects;
     base.calculateLoop = calculateLoop;
 
     setTimeout(function() { 
@@ -27,6 +32,160 @@ SotkaController = function(mongoose, app) {
                 base.calculateLoop() 
             }, BASE_TIMEOUT);
         })
+    }
+
+    function calculateSubjects(next) {
+
+        var pupilsCollection = app.pupilsController.Collection;
+        var subjectsCollection = app.subjectController.Collection;
+        var subjectsStatsCalculators = [];
+        
+        pupilsCollection.find({status: 'approved'})
+            .populate('profile')
+            .populate('additionalProfiles')
+            .populate('results.result')
+            .exec(function(err, pupils){
+                app.profileController.Collection
+                    .find()
+                    .exec(function(err, profiles) {
+                        var subjectToProfilesMap = {};
+                        var profile;
+                        for (var i = 0; i < profiles.length; i++) {
+                            profile = profiles[i];
+                            if (!subjectToProfilesMap[profile.exam1]) {
+                                subjectToProfilesMap[profile.exam1] = []
+                            }
+                            if (!subjectToProfilesMap[profile.exam2]) {
+                                subjectToProfilesMap[profile.exam2] = []
+                            }
+                            if (subjectToProfilesMap[profile.exam1]) {
+                                subjectToProfilesMap[profile.exam1].push(profile)
+                            }
+                            if (subjectToProfilesMap[profile.exam2]) {
+                                subjectToProfilesMap[profile.exam2].push(profile)
+                            }
+                        }
+                        //console.log('subjectToProfilesMap', subjectToProfilesMap)
+
+                        base.Collection
+                            .find()
+                            .sort('-date')
+                            .exec(function(err, stats) {
+                                var lastStat = stats[0];
+                                subjectsCollection.find()
+                                    .exec(function(err, subjects) {
+                                        subjects.forEach(function(subject) {
+                                            var subjectProfiles = subjectToProfilesMap[subject._id]
+                                            var profileNames = [];
+                                            var subjectAmmount = 0;
+                                            var subjectOlymp = 0;
+                                            var countTotal = 0;
+                                            for (var i = 0; i < subjectProfiles.length; i++) {
+                                                profileNames.push(subjectProfiles[i].name)
+                                                subjectAmmount = subjectAmmount + +subjectProfiles[i].ammount;
+                                                
+                                                for (var j = 0; j < lastStat.result.length; j++) {
+                                                    if (''+lastStat.result[j].profile === ''+subjectProfiles[i]._id) {
+                                                        subjectOlymp = subjectOlymp + lastStat.result[j].countOlymp
+                                                        countTotal = countTotal + +lastStat.result[j].countTotal;
+                                                    }
+                                                }
+                                            }
+
+                                            subjectsStatsCalculators.push(function(callback){
+                                                var pupil;
+                                                var results;
+                                                var resultsCalculate = []
+                                                for (var i = 0; i < pupils.length; i++) {
+                                                    pupil = pupils[i];
+                                                    results = pupil.results;
+                                                    if (results.length > 0) {
+                                                        for (var j = 0; j < results.length; j++) {
+                                                            if (''+results[j].exam === ''+subject._id) {
+                                                                resultsCalculate.push(results[j])
+                                                            }
+                                                        }
+                                                        
+                                                    }
+                                                }
+                                                
+                                                var min = 10000000000;
+                                                var max = 0;
+                                                var presentCount = 0;
+                                                var absentCount = 0;
+                                                var examResults = [];
+                                                resultsCalculate.forEach(function (r) {
+                                                    var sum = 0;
+                                                    var result = r.result;
+                                                    if (r.examStatus === '0') {
+                                                        if (result) {
+                                                            presentCount = presentCount + 1;
+                                                            if (result.Points) {
+                                                                sum += +result.Points
+                                                            }
+                                                            if (result.AdditionalPoints) {
+                                                                sum += +result.AdditionalPoints
+                                                            }
+                                                            if (sum < min) {
+                                                                min = sum;
+                                                            }
+                                                            if (sum > max) {
+                                                                max = sum
+                                                            }
+                                                            examResults.push(sum)
+                                                        }
+                                                    } 
+                                                    if (r.examStatus && r.examStatus !== '0') {
+                                                        absentCount = absentCount +1;
+                                                    }
+                                                    
+                                                    
+                                                });
+                                                examResults = examResults.sort(function(a, b) {
+                                                    return a - b
+                                                });
+                                                
+                                                var availablePlaces = subjectAmmount - subjectOlymp;
+                                                var pass = min;
+                                                if (availablePlaces < 0) {
+                                                    availablePlaces = 0;
+                                                }
+                                                if (examResults.length >= availablePlaces) {
+                                                    pass = examResults[examResults.length - availablePlaces];
+                                                }
+                                                callback(null, {
+                                                    subject: subject,
+                                                    profileNames:profileNames,
+                                                    subjectAmmount: subjectAmmount,
+                                                    subjectOlymp: subjectOlymp,
+                                                    countTotal: countTotal,
+                                                    results: examResults,
+                                                    min: min,
+                                                    max: max,
+                                                    pass: pass,
+                                                    absentCount: absentCount,
+                                                    presentCount: presentCount
+                                                });
+                                                
+                                            })
+                                        });
+
+                                        async.parallel(subjectsStatsCalculators, function(err, results) {
+                                            var newSubjectStat = new base.SubjectStatsCollection();
+                                            newSubjectStat.result = results;
+                                            newSubjectStat.save(function(err, doc) {
+                                            //  console.log('newSubjectStat.save', err, doc)
+                                                next('Ok')
+                                            })
+                                            // next({
+                                            //     results: results,
+                                            //     lastStat: lastStat
+                                            // });
+                                        })
+                                    })
+                            })
+                    })
+            });
     }
 
     function calculate(next) {
@@ -139,6 +298,31 @@ SotkaController = function(mongoose, app) {
         })
     };
 
+    base.getSubjectStats = function(subjectId, next) {
+        base.Collection
+            .find()
+            .sort('-date')
+            .exec(function(err, stats) {
+                var lastStat = stats[0]
+                base.SubjectStatsCollection
+                    .find()
+                    .sort('-date')
+                    .exec(function(err, subjectStats) {
+                        var lastSubjectsStat = subjectStats[0];
+                        var subjectStat = {};
+                        for (var i = 0; i < lastSubjectsStat.result.length; i++) {
+                            if(''+lastSubjectsStat.result[i].subject === subjectId) {
+                                subjectStat = lastSubjectsStat.result[i]
+                            }
+                        }
+                        
+                        next({
+                            subjectStat: subjectStat,
+                            totalStat: lastStat
+                        })
+                    })
+            })
+    }
     base.calculateStats = function (req, res, isAjax) {
         app.profileController.Collection.find().exec(function (err, profiles) {
             profiles

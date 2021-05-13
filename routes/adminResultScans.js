@@ -15,13 +15,13 @@ module.exports = function(app) {
 	router.get('/:fileName', app.userController.Pass, function(req, res) {
 		app.resultScansController.getScanFile(req, res);
 	});
-	router.get('/:id/:examNumber', app.userController.Pass, function(req, res) {
+	router.get('/list/:id', app.userController.Pass, function(req, res) {
 		app.resultScansController.list(req, res);
 	});
-	router.post('/:id/:examNumber/upload', app.userController.Pass, function(req, res) {
+	router.post('/:id/upload', app.userController.Pass, function(req, res) {
 		app.resultScansController.addScanFile(req, res);
 	});
-	router.get('/:id/:examNumber/delete-all', app.userController.Pass, function(req, res) {
+	router.get('/:id/delete-all', app.userController.Pass, function(req, res) {
 		app.resultScansController.deleteAll(req, res);
 	});
 	

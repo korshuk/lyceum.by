@@ -31,35 +31,35 @@ block content
 			padding: 5px;
 			color: black;
 		}
-	+resultsMainBtnsBlock(profile.id)	
+	+resultsMainBtnsBlock(id)	
 	.row
 		+pageHeader()
 			| Расшифровка и заполнение результатов экзаменов 
 	.row
 		.col
-			h3 Профиль: #{profile.name}, номер экзамена: #{examNumber}, предмет: #{examNumber === '1' ? profile.firstExamName : profile.secondExamName }	
+			h3 Профиль: #{subject.name}	
 	.row.results-wizard.card-wizard.active
 			.col-xl-12
 				.wizard-navigation
 					ul.nav.nav-pills
 						li.nav-item(style="width: 33.3333%;")
-							a.nav-link(href="/admin/pupils/profiles/results/#{profile._id}/#{examNumber}")
+							a.nav-link(href="/admin/pupils/subjects/results/#{id}")
 								span.results-wizard-number 1
 								i.fas.fa-poll
 								| Загрузка результатов
 						li.nav-item(style="width: 33.3333%;")
-							a.nav-link(href="/admin/pupils/profiles/results/assign/#{id}/#{examNumber}")
+							a.nav-link(href="/admin/pupils/subjects/results/assign/#{id}")
 								span.results-wizard-number 2
 								i.fas.fa-table
 								| Расшифровка результатов
 						li.nav-item(style="width: 33.3333%;")
-							a.nav-link.active(href="/admin/pupils/resultScans/#{id}/#{examNumber}")
+							a.nav-link.active(href="/admin/pupils/resultScans/list/#{id}")
 								span.results-wizard-number 3
 								i.fas.fa-images
 								| Загрузка сканов работ
 	.row
 		.col
-			h4 бланков: #{docs.length || 0}, абитуриентов: #{profile.countArray[profile.countArray.length - 1].count}, олимпиадников: #{profile.olymp}
+			h4 бланков: #{docs.length || 0}, экзамен писали: 
 	.row
 		+simpleCard('Загруженные сканы (всего ' + docs.length + ')', 7)
 			.table-responsive
@@ -119,7 +119,7 @@ block content
 						span.fileinput-new.btn-label
 							i.fa.fa-plus
 							| #{'  '} Загрузить ещё
-						input#fileupload(type="file", name="resultScan", data-url="/admin/pupils/resultScans/"+id+"/"+examNumber + "/upload", multiple, style="display: none")		
+						input#fileupload(type="file", name="resultScan", data-url="/admin/pupils/resultScans/"+id+"/upload", multiple, style="display: none")		
 			hr
 			.row
 				.col-xl-6
@@ -128,7 +128,7 @@ block content
 							i.fa.fa-save
 						| #{'  '} Обновить все	
 				.col-xl-6.text-right	
-					a.delete-doc-btn.btn.btn-danger.btn-magnify(href="/admin/pupils/resultScans/"+id+"/"+examNumber + "/delete-all") 
+					a.delete-doc-btn.btn.btn-danger.btn-magnify(href="/admin/pupils/resultScans/"+id+"/delete-all") 
 						span.btn-label
 							i.fa.fa-trash-alt
 						| #{'  '} Удалить все

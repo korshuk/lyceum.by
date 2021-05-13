@@ -69,10 +69,17 @@ block content
                                                     i.fa.fa-random
                                                 | #{'  '} Рассадить
                                         td
-                                            a.btn.btn-link.btn-magnify(href='/admin/pupils/examseeds/seedApp/lists/' + index)
-                                                span.btn-label
-                                                    i.fa.fa-list
-                                                | #{'  '} Списки
+                                            if (seedsMap[index])
+                                                a.btn.btn-link.btn-magnify(href='/admin/pupils/examseeds/seedApp/lists/' + index)
+                                                    span.btn-label
+                                                        i.fa.fa-list
+                                                    | #{'  '} Списки
+                                                br
+                                                a.btn.btn-link.btn-magnify(href='/admin/pupils/examseeds/seedApp/csvexport/' + index + '/' + date.format('dd.MM.yyyy') + '-' + examDate.time + '.csv' )
+                                                    span.btn-label
+                                                        i.fas.fa-file-csv
+                                                    | #{'  '} .csv
+                                                
 
 
                 

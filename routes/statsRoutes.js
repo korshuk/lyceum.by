@@ -6,6 +6,20 @@ module.exports = function (app) {
             res.json(doc)
         });
     });
+    
+    app.get('/calculateSubjects', function (req, res) {
+        app.sotkaController.calculateSubjects(function(doc) {
+            res.json(doc)
+        });
+    });
+
+    app.get('/getSubjectStats/:subjectId', function (req, res) {
+        var subjectId = req.params.subjectId;
+        app.sotkaController.getSubjectStats(subjectId, function(doc) {
+            res.json(doc)
+        });
+    });
+    
     app.get('/frontstats', function (req, res) {
         app.sotkaController.restStats(req, res);
     });
