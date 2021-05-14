@@ -112,7 +112,16 @@ body
             thead
                 tr
                     th.text-center(colspan="5")
-                        | #{corpsName} / #{subjectsMap[pupils[0].exam].name}  - #{place.code}
+                        - var sabjectName = ''
+                        - var aud;
+                        - for (var i = 0; i  < pupils.length; i++) {
+                            - aud = dictionary.audiences[pupils[i].pupil.savedPlace.audience];
+                            - if ( (+corpsIndex === -1) || +aud.split('_')[0] === +corpsIndex)  {
+                                - sabjectName = subjectsMap[pupils[i].exam].name;
+                                break
+                            - }
+                        - }
+                        | #{corpsName} / #{sabjectName} - #{place.code}
                             
                 tr
                     th(scope="col") #
@@ -121,15 +130,17 @@ body
                     th(scope="col") Отчество
                     th(scope="col") Ауд
             tbody
-                each p, index in pupuilsArray
+                - var index = 1;
+                each p in pupuilsArray
                     - var aud = dictionary.audiences[p.pupil.savedPlace.audience];
                     if ( (+corpsIndex === -1) || +aud.split('_')[0] === +corpsIndex)  
                         tr
-                            td #{index+1}
+                            td #{index}
                             td #{p.pupil.firstName}
                             td #{p.pupil.lastName}
                             td #{p.pupil.parentName}
                             td #{dictionary.audiences[p.pupil.savedPlace.audience]}
+                        - index++
     
     each place in corps.places   
         each audience in place.audience
