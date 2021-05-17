@@ -14,8 +14,14 @@ module.exports = function(app) {
         app.pupilsController.examresults(req, res);
     });
 
+    router.get('/examresults/subject/:subjectId', app.userController.Pass, function(req, res) {
+		app.subjectController.examresults(req, res);
+	});
     router.get('/api/list', app.userController.Pass, function(req, res) {
         app.pupilsController.apiList(req, res);
+    });
+    router.get('/api/list/subject/:subjectId', app.userController.Pass, function(req, res) {
+        app.pupilsController.apiListForSubject(req, res);
     });
     
     router.get('/api/list-export.json', app.userController.Pass, function(req, res) {

@@ -18,6 +18,8 @@ var SubjectController = function(mongoose, app) {
     base.create = create;
     base.edit = edit;
     base.list = list;
+    base.examresults = examresults
+
 
     base.results = {
         resultsList: resultsList,
@@ -30,6 +32,23 @@ var SubjectController = function(mongoose, app) {
         // deleteScan: deleteScan,
         
     };
+
+    function examresults(req, res) {
+        var self = this;
+        var subjectId = req.params.subjectId;
+        
+        this.Collection.findOne({_id: subjectId}).exec(function (err, subject) {
+            app.sotkaController.getSubjectStats(subjectId, function(stat) {
+                res.render(self.viewPath + 'examresults.jade', {
+                    stat: stat.subjectStat,
+                    subject: subject,
+                    siteConfig: self.app ? self.app.siteConfig : {}
+                });
+            })
+            
+        });
+
+    }
 
     function list(req, res) {
         var self = this;

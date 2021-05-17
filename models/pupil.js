@@ -320,6 +320,109 @@ function define(mongoose, fn) {
         return exams
     }
 
+    PupilSchema.statics.subjectSearch = function(req, res, next) {
+        var self = this;
+        var subjectId = req.params.subjectId;
+        var query = this.find({"status": "approved"});
+        
+        generateQueryParams(req);
+
+        if (req.queryParams.firstName) {
+            query.find({"firstName": new RegExp(req.queryParams.firstName, 'i')});
+        }
+        if (req.queryParams.email) {
+            query.find({"email": new RegExp(req.queryParams.email, 'i')});
+        }
+
+        query
+            // .sort(req.queryParams.sortDirection + req.queryParams.sortField)
+            .populate('diplomProfile')
+            .populate('profile')
+            .populate('additionalProfiles')
+            .populate('results.exam')
+            .populate('results.result')
+
+        query.exec(function(err, pupils){
+                var exams;
+                var pupil;
+                var result;
+                var pupilsToSeed = []
+                var subjectsIds = [subjectId]
+                for (var i = 0; i < pupils.length; i++) {
+                    pupil = pupils[i];
+                    exams = self.getPupilExams(pupil)
+                    if (!pupil.passOlymp || pupil.isEnrolledToExams) {
+                        //console.log(exams)
+                        for(var j = 0; j < exams.length; j++) {
+                            if (subjectsIds.indexOf(exams[j]) > -1) {
+                                pupilsToSeed.push({
+                                    pupil: pupil,
+                                    exam: exams[j]
+                                })
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < pupilsToSeed.length; i++) {
+                    pupil = pupilsToSeed[i].pupil;
+                    pupilsToSeed[i].result = {
+                        sum: 0
+                    };
+                    for (var j = 0; j < pupil.results.length; j++) {
+                        
+                        if (''+pupil.results[j].exam._id === ''+subjectId) {
+                            pupilsToSeed[i].result = JSON.parse(JSON.stringify(pupil.results[j]))
+                            pupilsToSeed[i].result.sum = 0;
+                            if (pupilsToSeed[i].result.result) {
+                                console.log(pupilsToSeed[i].result.result)
+                                pupilsToSeed[i].result.sum = pupilsToSeed[i].result.result.Points;
+                                if (pupilsToSeed[i].result.result.AdditionalPoints > 0) {
+                                    pupilsToSeed[i].result.sum + pupilsToSeed[i].result.result.AdditionalPoints;
+                                }
+                            }
+                        }
+                    }
+                }
+                var sortParam = 1;
+                if (req.queryParams.sortDirection === '-') {
+                    sortParam = -1
+                }
+                var sortField = req.queryParams.sortField;
+                var firstPart = sortField.split('.')[0];
+                var lastPart = sortField.split('.')[1];
+                if (firstPart && lastPart ) {
+                    pupilsToSeed = pupilsToSeed.sort(function(a, b) {
+                        if ( a[firstPart][lastPart] < b[firstPart][lastPart] ){
+                            return -1 * sortParam;
+                        }
+                        if ( a[firstPart][lastPart] > b[firstPart][lastPart] ){
+                            return sortParam;
+                        }
+                        return 0;
+                        
+                        
+                    })
+                }
+                var count = pupilsToSeed.length;
+                
+                var pupilsToSend = [];
+                var itemNum;
+                var skip = req.queryParams.itemsPerPage * (req.queryParams.page - 1)
+                for (var i = 0; i < req.queryParams.itemsPerPage; i++) {
+                    itemNum = i + skip;
+                    if (pupilsToSeed[itemNum]) {
+                        pupilsToSend.push(pupilsToSeed[itemNum])
+                    }
+                    
+                }
+                next({
+                    data: pupilsToSend,
+                    count: count
+                })
+            })
+    }
+    
+
     PupilSchema.statics.simpleSearch = function(req, res, next) {
         var query = this.find();
         generateQueryParams(req);
@@ -418,8 +521,7 @@ function define(mongoose, fn) {
             .populate('diplomProfile')
             .populate('profile')
             .populate('additionalProfiles')
-            .populate('result1')
-            .populate('result2')
+            .populate('results.exam')
 
         var firstQ = function (callback) {
             query

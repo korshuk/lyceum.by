@@ -1,0 +1,154 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'examresults';
+  - var menuSection = 'exams';
+
+block content
+    .row
+        .col.text-right
+            a.btn.btn-default.btn-magnify(href="/admin/pupils/profiles/examresults")
+                span.btn-label
+                    i.fa.fa-undo
+                | #{'  '}К списку результатов
+    +listHeader('Результаты экзамена по предмету ' + subject.name);
+    .row
+        +simpleCard('Список абитуриентов', 12)
+            div(ng-app="pupilApp", ng-controller="pupilController as app")
+                div(grid-data, grid-options="app.gridOptions", grid-actions="app.gridActions", server-pagination="true")
+                    .row(style="margin-bottom: 20px")
+                        .col.col-md-6
+                            p(style="margin-bottom: 0")
+                                | Проходной:&nbsp;<b>#{stat.pass}</b> Min:&nbsp;<b>#{stat.min}</b> Max:&nbsp;<b>#{stat.max}</b>
+                            p(style="margin-bottom: 0") Всего зарегистрировано:&nbsp;#{stat.countTotal} Олимпиадников: #{stat.subjectOlymp} Отсутсвующих: #{stat.absentCount} Расщифровано работ: #{stat.presentCount}
+                            p(style="margin-bottom: 0") Профили: #{stat.profileNames.join(', ')}
+                        .col.col-md-6.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                .col
+                                div
+                                    label.items.col-form-label {{paginationOptions.totalItems}} всего
+                                div
+                                    .form-group
+                                        grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                div     
+                                    .row
+                                        label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                            nobr Items per page:
+                                        .col-sm-6
+                                            .form-group    
+                                                select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                    option 2
+                                                    option 30
+                                                    option 50
+                                                    option 100
+                                                    option 500
+                                                    option 1000
+                                                    option 2000
+                                                    option 3000
+                                        .col-sm-1
+
+                    .row
+                        .col-md-3
+                            .form-group
+                                label Поиск по фамилии
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по фамилии"
+                                                                    ng-change="filter()"
+                                                                    ng-model="firstName"
+                                                                    filter-by="firstName"
+                                                                    filter-type="text")
+                        .col-md-3
+                            .form-group
+                                label Поиск по email
+                                input.form-control.order-search-box(type="text",
+                                                                    placeholder="Поиск по email"
+                                                                    ng-change="filter()"
+                                                                    ng-model="email"
+                                                                    filter-by="email"
+                                                                    filter-type="text")
+                        //- .col-md-3
+                        //-     .form-group
+                        //-         label Фильтр профиля
+                        //-         select.form-control.order-search-box(placeholder="Фильтр профиля",
+                        //-                                             ng-change="filter()",
+                        //-                                             ng-model="profile",
+                        //-                                             filter-by="profile",
+                        //-                                             filter-type="select")
+                        //-             option(value="") Все профили
+                        //-             option(ng-repeat="option in app.profileOptions track by $index",
+                        //-                 value="{{option._id}}") {{option.name}}
+                        .col-md-3
+                            .form-group
+                                label Статус экзамена
+                                select.form-control.order-search-box(placeholder="Статус экзамена",
+                                                                        ng-change="filter()",
+                                                                        ng-model="examStatus",
+                                                                        filter-by="examStatus",
+                                                                        filter-type="select")
+                                    option(value="") Все статусы
+                                    option(ng-repeat="(key, value) in app.examStatuses track by $index",
+                                            value="{{key}}") {{value}}                    
+
+                    .table-responsive
+                        table.table.table-hover.table-striped.table-bordered.dtr-inline.dataTable
+                            thead.text-primary
+                                tr
+                                    th.text-center #
+                                    th.sortable(sortable="pupil.firstName") Фамилия&nbsp;
+                                    th.sortable(sortable="pupil.lastName") Имя&nbsp;
+                                    th.sortable(sortable="pupil.parentName") Отчество&nbsp;
+                                    th.sortable(sortable="profile") Профиль&nbsp;
+                                    th.sortable(sortable="result.sum") Результат&nbsp;
+                                    th.sortable(sortable="result.examStatus") Экз-статус&nbsp;
+                            tbody
+                                tr(grid-item)
+                                    td.text-center {{$index + 1}}
+                                    td {{item.pupil.firstName}}
+                                    td {{item.pupil.lastName}}
+                                    td {{item.pupil.parentName}}
+                                    td 
+                                        p(ng-if="item.pupil.diplomProfile && item.passOlymp", style="margin-bottom:0;font-weight:bold") 
+                                            | {{item.pupil.diplomProfile.code | uppercase}} 
+                                        div(ng-if="!item.pupil.passOlymp || (item.pupil.passOlymp && item.pupil.isEnrolledToExams)")
+                                            p(style="margin-bottom:0") 
+                                                | {{item.pupil.profile.code | uppercase}}
+                                            p(style="margin-bottom:0", ng-repeat="profile in item.pupil.additionalProfiles track by $index") 
+                                                | {{profile.code | uppercase}}
+                                    td 
+                                        span(ng-if="item.result.result.ID")
+                                            | {{item.result.result.Points}} {{item.result.result.AdditionalPoints > 0 ? '+' + item.result.result.AdditionalPoints : item.result.result.AdditionalPoints}} = {{item.result.result.Points + item.result.result.AdditionalPoints}}
+                                    td {{app.examStatuses[item.result.examStatus || '0']}}
+
+                    .row
+                        .col.col-md-12.text-right
+                            form.form-horisontal.margin-bottom-basic.row
+                                
+                                    .col
+                                    div
+                                        label.items.col-form-label {{paginationOptions.totalItems}} items total #{'   '}
+                                    div
+                                        .form-group.items-per-page
+                                            grid-pagination.pagination-sm(max-size="5", boundary-links="true", total-items="paginationOptions.totalItems", ng-model="paginationOptions.currentPage", ng-change="reloadGrid()", items-per-page="paginationOptions.itemsPerPage")
+                                    div     
+                                        .row
+                                            label.col-sm-5.col-form-label(for="itemsOnPageSelect1") 
+                                                nobr Items per page:
+                                            .col-sm-6
+                                                .form-group
+                                                    select#itemsOnPageSelect1.form-control.input-sm(ng-init="paginationOptions.itemsPerPage = '10'", ng-model="paginationOptions.itemsPerPage", ng-change="reloadGrid()")
+                                                        option 2
+                                                        option 30
+                                                        option 50
+                                                        option 100
+                                                        option 500
+                                                        option 1000
+                                                        option 2000
+                                                        option 3000
+                                            .col-sm-1   
+block scripts
+    script 
+        var SUBJECT_ID = '#{subject._id}'
+    //include ../stuff/adminPupilScriptBlock
+    include subjectResultsApp

@@ -114,10 +114,10 @@ body
                     th.text-center(colspan="5")
                         - var sabjectName = ''
                         - var aud;
-                        - for (var i = 0; i  < pupils.length; i++) {
-                            - aud = dictionary.audiences[pupils[i].pupil.savedPlace.audience];
+                        - for (var i = 0; i  < pupuilsArray.length; i++) {
+                            - aud = dictionary.audiences[pupuilsArray[i].pupil.savedPlace.audience];
                             - if ( (+corpsIndex === -1) || +aud.split('_')[0] === +corpsIndex)  {
-                                - sabjectName = subjectsMap[pupils[i].exam].name;
+                                - sabjectName = subjectsMap[pupuilsArray[i].exam].name;
                                 break
                             - }
                         - }

@@ -14,44 +14,54 @@ block content
         .col-xl-12
             .row
                 .col-sm-8
-                    h2 Расшифровка и заполнение результатов экзаменов   
+                    h2 Результаты экзаменов
     .row
-        +simpleCard('Профили', 12) 
+        +simpleCard('По предметам', 6)
+            
+            - var subjectStatMap = {} 
+            - for (var i = 0; i < subjectStats.result.length; i++) {
+            -    subjectStatMap['' + subjectStats.result[i].subject] = subjectStats.result[i]
+            -}
             .table-responsive
                 table.table.table-hover
                     tbody
-                        each doc, index in docs
+                        each doc, index in subjects
                             tr
                                 td  
                                     p
                                         span.h6 #{doc.name}
+                                    if (doc.totalUploaded)
+                                        p
+                                            strong Зачисление готово
+
+                                    - var stat = subjectStatMap[''+doc._id]
+
+                                    p(style="margin-bottom: 0")
+                                        | Проходной:&nbsp;<b>#{stat.pass}</b> Min:&nbsp;<b>#{stat.min}</b> Max:&nbsp;<b>#{stat.max}</b>
+                                    p(style="margin-bottom: 0") Всего зарегистрировано:&nbsp;#{stat.countTotal} Олимпиадников: #{stat.subjectOlymp} Отсутсвующих: #{stat.subjectOlymp}
+                                    p(style="margin-bottom: 0") Профили: #{stat.profileNames.join(', ')}
                                 td
-                                    p <b>#{doc.firstExamName}</b>
                                     .form-group
-                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/1") 
+                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/subjects/results/"+doc.id) 
                                             span.btn-label
                                                 i.fas.fa-poll
-                                            | #{'  '}На проверку 1 экзамена
-                                    if (doc.firstUploaded)
-                                        p
-                                            strong 1 экзамен готов
-                                        
-                                    p pass:#{doc.passF} min:#{doc.minF} max:#{doc.maxF}
-     
-                                td
-                                    p <b>#{doc.secondExamName}</b>
+                                            | #{'  '}На проверку
                                     .form-group
-                                        a.btn.btn-info.btn-magnify(href="/admin/pupils/profiles/results/"+doc.id + "/2")
+                                        a.btn.btn-primary.btn-magnify(href="/admin/pupils/examresults/subject/#{doc.id}", target="_blank") 
                                             span.btn-label
-                                                i.fas.fa-poll
-                                            | #{'  '}На проверку 2 экзамена
-                                    if (doc.secondUploaded)    
-                                        p
-                                            strong 2 экзамен готов
+                                                i.far.fa-list-alt
+                                            | #{'  '}Посмотреть результаты
                                     
-                                    p pass:#{doc.passS} min:#{doc.minS} max:#{doc.maxS}
-                                    
-                                    
+
+        +simpleCard('По профилям', 6) 
+            .table-responsive
+                table.table.table-hover
+                    tbody
+                        each doc, index in profiles
+                            tr
+                                td  
+                                    p
+                                        span.h6 #{doc.name}
                                 td
                                     .form-group
                                         a.btn.btn-primary.btn-magnify(href="/admin/pupils/examresults#/page=1&itemsPerPage=30&sort=firstName-asc&profile=#{doc.id}", target="_blank") 
@@ -70,5 +80,5 @@ block content
                                         br
                                     | Дельта:&nbsp;#{doc.halfDelta}
                                     p pass:#{doc.passT} min:#{doc.minT} max:#{doc.maxT}
-                                    
+                                     
                                     

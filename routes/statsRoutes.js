@@ -20,6 +20,12 @@ module.exports = function (app) {
         });
     });
     
+    app.get('/getAllSubjectStats', function (req, res) {
+        app.sotkaController.getAllSubjectStats(function(doc) {
+            res.json(doc)
+        });
+    });
+
     app.get('/frontstats', function (req, res) {
         app.sotkaController.restStats(req, res);
     });

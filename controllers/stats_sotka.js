@@ -298,6 +298,29 @@ SotkaController = function(mongoose, app) {
         })
     };
 
+    base.getAllSubjectStats = function (next) {
+        base.Collection
+            .find()
+            .sort('-date')
+            .exec(function(err, stats) {
+                var lastStat = stats[0]
+                base.SubjectStatsCollection
+                    .find()
+                    .sort('-date')
+                    .exec(function(err, subjectStats) {
+                        var lastSubjectsStat = subjectStats[0];
+                        // var subjectStat = {};
+                        // for (var i = 0; i < lastSubjectsStat.result.length; i++) {
+                        //     if(''+lastSubjectsStat.result[i].subject === subjectId) {
+                        //         subjectStat = lastSubjectsStat.result[i]
+                        //     }
+                        // }
+                        
+                        next(lastSubjectsStat)
+                    })
+            })
+    }
+
     base.getSubjectStats = function(subjectId, next) {
         base.Collection
             .find()

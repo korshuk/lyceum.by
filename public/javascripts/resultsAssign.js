@@ -132,7 +132,7 @@
                     vm.pupils = []
                     data.pupils.forEach(p => {
                         var pupil = p.pupil;
-                        var result;
+                        var result = {};
                         pupil.fio = `${pupil.firstName} ${pupil.lastName} ${pupil.parentName}`;
                         for(var k = 0; k < pupil.results.length; k++) {
                             if (pupil.results[k].exam && pupil.results[k].exam === SUBJECT_ID) {

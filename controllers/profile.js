@@ -358,12 +358,20 @@ var ProfileController = function (mongoose, app) {
         this.Collection
             .find()
             .sort('order')
-            .populate('examPlace')
-            .exec(function (err, docs) {
-                res.render(self.viewPath + 'examresultsList.jade', {
-                    docs: docs,
-                    viewName: self.name.toLowerCase()
-                });
+            .exec(function (err, profiles) {
+                app.subjectController.Collection
+                    .find()
+                    .sort('name')
+                    .exec(function (err, subjects) {
+                        app.sotkaController.getAllSubjectStats(function(subjectStats) {
+                            res.render(self.viewPath + 'examresultsList.jade', {
+                                profiles: profiles,
+                                subjects: subjects,
+                                subjectStats: subjectStats,
+                                viewName: self.name.toLowerCase()
+                            });
+                        })
+                    })
             });
     };
 

@@ -25,6 +25,7 @@ var PupilsController = function (mongoose, app) {
 
     base.examresults = examresults;
     base.apiList = apiList;
+    base.apiListForSubject = apiListForSubject;
 
     base.apiListExport = apiListExport;
 
@@ -794,6 +795,16 @@ var PupilsController = function (mongoose, app) {
             });
         });
 
+    }
+
+    function apiListForSubject(req, res) {
+        var searchMethodName = 'subjectSearch';
+        
+        base.Collection[searchMethodName](req, res, sendResult);
+
+        function sendResult(results) {
+            res.json({pupils: results.data, count: results.count});
+        }
     }
 
     function apiList(req, res) {
