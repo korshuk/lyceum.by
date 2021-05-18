@@ -34,6 +34,12 @@ block content
                             tr
                                 td.text-center #{index + 1}
                                 td #{doc.name}
+                                    if doc.isEnabled
+                                        br
+                                        b Результаты видны
+                                    
+                                    br
+                                    br
                                     .form-group
                                         a.btn.btn-info.btn-magnify(href="/admin/pupils/subjects/results/"+doc.id) 
                                             span.btn-label

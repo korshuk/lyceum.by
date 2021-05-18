@@ -72,6 +72,15 @@ module.exports = function (app) {
         }
     )
     
+    router.get('/pupils/getScan/:fileName', 
+        app.passportController.authenticate, 
+        function(req, res) { app.pupilsController.v2.getScanFile(req, res) }
+    );
+
+    router.get('/pupils/keyFile/files/:fileName', 
+        app.passportController.authenticate, 
+        function(req, res) { app.pupilsController.v2.keyFile(req, res) }
+    );
 
     router.get('/pupils/current',
         app.passportController.authenticate,

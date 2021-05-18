@@ -28,5 +28,7 @@ block content
                 +field('date', "appelationDate", 'Дата ознакомления')(value=(doc && doc.appelationDate))#appelationDate
                 +field('text', "examKey", 'Ключ первого экзамена')(value= doc.examKey || '')
                 +field('select', "place", 'Место проведение', places, doc.place)(value= doc.place || '')
-
+                +field('text', "feedBackForm", 'URL на форму с вопросами')(value= doc.feedBackForm || '')
+                hr
+                +field('checkbox', 'isEnabled', 'Показывать результат', '', '', 'Видимость результатов для абитуриента')(checked= doc.isEnabled || false)
 block scripts

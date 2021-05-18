@@ -13,6 +13,8 @@ function define(mongoose, fn) {
             'uploaded': Boolean,
             'noStats': Boolean,
             'examKey': String,
+            'isEnabled': Boolean,
+            'feedBackForm': String,
         });
 
     SubjectSchema.virtual('id').get(function() {

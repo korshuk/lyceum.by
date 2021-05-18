@@ -148,7 +148,8 @@ var SubjectController = function(mongoose, app) {
             doc.uploaded = req.body.uploaded || false;
             doc.noStats = req.body.noStats || false ;
             doc.examKey = req.body.examKey ;
-
+            doc.isEnabled = req.body.isEnabled || false
+            doc.feedBackForm = req.body.feedBackForm
             doc.save(function(err) {
                 if (err) {
                     req.session.error = 'Не получилось обновить предмет(( Возникли следующие ошибки: <p>' + err + '</p>';

@@ -206,7 +206,7 @@
 
     function pupilsFilter() {
         return function(pupils) {
-            return pupils.filter(pupil => !pupil.passOlymp && pupil.resultExamStatus === 0)
+            return pupils.filter(pupil => pupil.resultExamStatus === 0)
         }
     }
 

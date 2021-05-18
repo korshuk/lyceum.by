@@ -6,7 +6,9 @@ var VISIBLE_FOR_CABINET = [
     'rulesOlympPoint',
     'rulesLink',
     'rulesHTML',
-    'logRocket'
+    'logRocket',
+    'reservedDayDate',
+    'absentDocumentsDate'
 ]
 
 var SettingsController = function(mongoose, app) {

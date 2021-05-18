@@ -132,7 +132,7 @@ block content
 							th ФИО
 							th Экз-статус&nbsp;
 							th
-						tr(ng-repeat="pupil in app.pupils track by pupil._id", ng-if="!pupil.result", ng-class="{'alert alert-success': pupil.passOlymp, 'alert alert-danger': pupil.examEpsond === -2}")
+						tr(ng-repeat="pupil in app.pupils track by pupil._id", ng-if="!pupil.result", ng-class="{'alert alert-danger': pupil.examEpsond === -2}")
 							td  
 								nobr
 									| <b>{{pupil.firstName}}</b> {{pupil.lastName}} {{pupil.parentName}}
@@ -144,7 +144,7 @@ block content
 									| {{app.examStatuses[pupil.examStatus]}}
 							td 
 								
-									div(ng-if="!pupil.passOlymp")
+									div
 										.input-group(ng-if="pupil.resultExamStatus && pupil.resultExamStatus !== 0")
 											input.form-control(
 												type="text", 

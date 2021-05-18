@@ -32,6 +32,7 @@ var PUPIL_FIELDS_TO_BE_VISIBLE = [
     'requestImgNotApproved',
     'diplomImgNotApproved',
     'places_saved',
+    'results'
     // 'examResults',
     // 'examSums'
 ].join(' ');
@@ -196,6 +197,7 @@ function define(mongoose, fn) {
             .populate('result2')
             .populate('selectVariant')
             .populate('places_saved.place')
+            .populate('results.result')
             .exec(function(err, pupil) {
                 next(err, pupil)
             })

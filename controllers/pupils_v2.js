@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 (function (exports, require) {
     'use strict';
     
@@ -21,6 +23,8 @@
         api.getRequestPhoto = getRequestPhoto;
         api.sendSMS = sendSMS;
         api.checkSMSCode = checkSMSCode;
+        api.getScanFile = getScanFile;
+        api.keyFile = keyFile;
 
         var pupilUpdater = {
             'profile': updateProfile,
@@ -42,6 +46,17 @@
 
         function userLogout(req, res) {
             app.passportController.clearCookies(req, res);
+        }
+
+        function getScanFile(req, res) {
+            app.s3filesController.getScanFile(req, res)
+        }
+
+        function keyFile(req, res) {
+            console.log(req.params.fileName)
+            fs.readFile('./public/files/' + filename, function(err, file) {
+                res.send(file)
+            })
         }
 
         function emailAuthorization(req, res, next) {
@@ -323,9 +338,6 @@
                         data = {
                             user: JSON.parse(JSON.stringify(pupil))
                         };
-                        // if (pupil.status === 'approved') {
-                        //     data.user.pupilViewName = createApprovedPupilView(pupil, pupil.profile)
-                        // }
                     app.subjectController.Collection.find({_id: {$in: examIds}}).exec(function(err, exams) {
                         for(var i =0; i < exams.length; i++) {
                             if (''+exams[i]._id === ''+data.user.profile.exam1) {
@@ -336,64 +348,72 @@
                             }
                         }
 
-                        results = createResultsArray(pupil);
+                        app.sotkaController.getAllSubjectStats(function(subjectStats) {
+                            results = createResultsArray(pupil, exams, subjectStats);
 
-                        app.placesController.SeedsCollection
-                            .find()
-                            .exec(function(err, seeds) {
-                                data.user.places_saved = null;
-                                data.user.places = [];
+                            app.placesController.SeedsCollection
+                                .find()
+                                .exec(function(err, seeds) {
+                                    data.user.places_saved = null;
+                                    data.user.places = [];
                                 
-                                if (pupil.places_saved && pupil.places_saved.length > 0) {
-                                    var place;
-                                    var newPlace;
-                                    for( var i = 0; i < pupil.places_saved.length; i++) {
-                                        place = pupil.places_saved[i];
-                                        
+                                    if (pupil.places_saved && pupil.places_saved.length > 0) {
+                                        var place;
+                                        var newPlace;
+                                        for( var i = 0; i < pupil.places_saved.length; i++) {
+                                            place = pupil.places_saved[i];
 
-                                        if (place.seedId) {
+                                            if (place.seedId) {
                                             
-                                            newPlace = {
-                                                seedId: place.seedId,
-                                                exam: place.exam,
-                                                place: place.place,
-                                            };
+                                                newPlace = {
+                                                    seedId: place.seedId,
+                                                    exam: place.exam,
+                                                    place: place.place,
+                                                };
 
-                                            for (var j = 0; j < seeds.length; j++) {                                                
-                                                if ('' + seeds[j]._id === '' +place.seedId) {    
-                                                    if ( seeds[j].visible) {
-                                                        
-                                                        
-                                                        if (seeds[j].visibleAuditorium) {
-                                                            newPlace.audience = place.audience
+                                                for (var j = 0; j < seeds.length; j++) {                                                
+                                                    if ('' + seeds[j]._id === '' +place.seedId) {    
+                                                        if ( seeds[j].visible) {
+                                                            
+                                                            
+                                                            if (seeds[j].visibleAuditorium) {
+                                                                newPlace.audience = place.audience
+                                                            }
+                                                            data.user.places.push(newPlace)
                                                         }
-                                                        data.user.places.push(newPlace)
                                                     }
                                                 }
                                             }
-                                        }
 
+                                        }
                                     }
-                                }
-                                
-                                if (results.length === 0) {
-                                    //res.json(data);
-                                    app.passportController.sendCookiedRes(req, res, data)
-                                }
-                                else {
-                                    app.resultScansController.Collection
-                                        .find({
-                                            profile: pupil.profile._id,
-                                            code: { $in: results}
-                                        })
-                                        .exec(function (err, scans) {
-                                            
-                                            data.user.scans = scans;
-                                            
-                                            app.passportController.sendCookiedRes(req, res, data)
-                                            //res.json(data);
-                                        });
-                                }
+                                    
+                                    if (results.length === 0) {
+                                        //res.json(data);
+                                        app.passportController.sendCookiedRes(req, res, data)
+                                    }
+                                    else {
+                                        data.user.results = results
+                                        var resulltIds = [];
+                                        for (var i = 0; i < results.length; i++) {
+                                            resulltIds.push('' + results[i].ID)
+                                        }
+                                       
+                                        app.resultScansController.Collection
+                                            .find({
+                                                subject: {$in: examIds}
+                                            })
+                                            .find({
+                                                code: { $in: resulltIds}
+                                            })
+                                            .exec(function (err, scans) {
+                                                data.user.scans = scans;
+                                                
+                                                app.passportController.sendCookiedRes(req, res, data)
+                                                //res.json(data);
+                                            });
+                                    }
+                            });
                         });
                     })  
                     
@@ -480,14 +500,46 @@
                 });
         }
 
-        function createResultsArray(pupil) {
+        function createResultsArray(pupil, exams, subjectStats) {
             var results = [];
-            if (pupil.result1 && pupil.result1.ID) {
-                results.push(pupil.result1.ID)
+            var result;
+            var points;
+            
+            if (pupil.results && pupil.results.length > 0) {
+                var examsMap = {}
+                for (var i = 0; i < exams.length; i++) {
+                    examsMap[''+exams[i]._id] = exams[i]
+                }
+                var subjectStatsMap = {};
+                for (var i = 0; i < subjectStats.result.length; i++) {
+                    subjectStatsMap[''+subjectStats.result[i].subject] = subjectStats.result[i]
+                }
+                for (var i = 0; i < pupil.results.length; i++) {
+                    if (examsMap[''+pupil.results[i].exam].isEnabled) {
+                        result = JSON.parse(JSON.stringify(pupil.results[i]));
+                        points = 0;
+                        if (result.result) {
+                            points = +result.result.Points
+                            if (result.result.AdditionalPoints) {
+                                points = points + +result.result.AdditionalPoints
+                            }
+                        }
+                        
+                        results.push({
+                            ID: result.result ? result.result.ID : undefined,
+                            Missed: result.result ? result.result.Missed : undefined,
+                            Points: points,
+                            examStatus: result.examStatus,
+                            exam: result.exam,
+                            feedBackForm: examsMap[''+pupil.results[i].exam].feedBackForm,
+                            examKey: examsMap[''+pupil.results[i].exam].examKey,
+                            stats: subjectStatsMap[result.exam]
+                        })
+                    }
+                    
+                }
             }
-            if (pupil.result2 && pupil.result2.ID) {
-                results.push(pupil.result2.ID)
-            } 
+           
             return results
             
             
