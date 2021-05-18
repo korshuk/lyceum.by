@@ -1,4 +1,16 @@
-var fs = require('fs');
+var fs = require('fs'),
+    http = require('http');
+
+var GET_USER_DATA_REQUEST_OPTIONS = {
+    hostname: '127.0.0.1',
+    port: 3060,
+    path: '/getUserObject',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        //'Content-Length': Buffer.byteLength(JSON.stringify(pupil)) 
+    }
+};    
 
 (function (exports, require) {
     'use strict';
@@ -79,7 +91,6 @@ var fs = require('fs');
                         message: 'Wrong password'
                     });
                 }
-                console.log('!!!!USER', user)
                 res.locals.user = user;
                 next(req, res);
             });
@@ -333,89 +344,117 @@ var fs = require('fs');
                         message: 'user not found'
                     })
                 } else {
-                    var results = [],
-                        examIds = pupil.profile ? [pupil.profile.exam1, pupil.profile.exam2] : [],
-                        data = {
-                            user: JSON.parse(JSON.stringify(pupil))
-                        };
-                    app.subjectController.Collection.find({_id: {$in: examIds}}).exec(function(err, exams) {
-                        for(var i =0; i < exams.length; i++) {
-                            if (''+exams[i]._id === ''+data.user.profile.exam1) {
-                                data.user.profile.exam1 = exams[i]
-                            }
-                            if (''+exams[i]._id === ''+data.user.profile.exam2) {
-                                data.user.profile.exam2 = exams[i]
-                            }
-                        }
-
-                        app.sotkaController.getAllSubjectStats(function(subjectStats) {
-                            results = createResultsArray(pupil, exams, subjectStats);
-
-                            app.placesController.SeedsCollection
-                                .find()
-                                .exec(function(err, seeds) {
-                                    data.user.places_saved = null;
-                                    data.user.places = [];
-                                
-                                    if (pupil.places_saved && pupil.places_saved.length > 0) {
-                                        var place;
-                                        var newPlace;
-                                        for( var i = 0; i < pupil.places_saved.length; i++) {
-                                            place = pupil.places_saved[i];
-
-                                            if (place.seedId) {
-                                            
-                                                newPlace = {
-                                                    seedId: place.seedId,
-                                                    exam: place.exam,
-                                                    place: place.place,
-                                                };
-
-                                                for (var j = 0; j < seeds.length; j++) {                                                
-                                                    if ('' + seeds[j]._id === '' +place.seedId) {    
-                                                        if ( seeds[j].visible) {
-                                                            
-                                                            
-                                                            if (seeds[j].visibleAuditorium) {
-                                                                newPlace.audience = place.audience
-                                                            }
-                                                            data.user.places.push(newPlace)
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                    
-                                    if (results.length === 0) {
-                                        //res.json(data);
-                                        app.passportController.sendCookiedRes(req, res, data)
-                                    }
-                                    else {
-                                        data.user.results = results
-                                        var resulltIds = [];
-                                        for (var i = 0; i < results.length; i++) {
-                                            resulltIds.push('' + results[i].ID)
-                                        }
-                                       
-                                        app.resultScansController.Collection
-                                            .find({
-                                                subject: {$in: examIds}
-                                            })
-                                            .find({
-                                                code: { $in: resulltIds}
-                                            })
-                                            .exec(function (err, scans) {
-                                                data.user.scans = scans;
-                                                
-                                                app.passportController.sendCookiedRes(req, res, data)
-                                                //res.json(data);
-                                            });
-                                    }
-                            });
+                    var options = GET_USER_DATA_REQUEST_OPTIONS;
+                    options.headers['Content-Length'] = Buffer.byteLength(JSON.stringify(pupil))
+                    
+                    var request = http.request(options, function(response) {
+                        console.log("Got response: " + response.statusCode);
+                        
+                        var data = '';
+                        response.on('data', function (chunk) {
+                            data += chunk;
                         });
-                    })  
+                        
+                        response.on('end', function () {
+                           // next(JSON.parse(data))
+                            console.log("response.on('end'")
+                            res.json(JSON.parse(data))
+                        });
+                    })
+                    
+                    request.on('error', function(e) {
+                        res.status(500).send({
+                            message: e.message
+                        })
+                        console.log("Got error: " + e.message);
+                    });
+                    request.write(JSON.stringify(pupil))
+                    request.end()
+
+                    // var results = [],
+                    //     examIds = pupil.profile ? [pupil.profile.exam1, pupil.profile.exam2] : [],
+                    //     data = {
+                    //         user: JSON.parse(JSON.stringify(pupil))
+                    //     };
+                    // app.subjectController.Collection.find({_id: {$in: examIds}}).exec(function(err, exams) {
+                    //     for(var i =0; i < exams.length; i++) {
+                    //         if (''+exams[i]._id === ''+data.user.profile.exam1) {
+                    //             data.user.profile.exam1 = exams[i]
+                    //         }
+                    //         if (''+exams[i]._id === ''+data.user.profile.exam2) {
+                    //             data.user.profile.exam2 = exams[i]
+                    //         }
+                    //     }
+
+                    //     app.sotkaController.getAllSubjectStats(function(subjectStats) {
+                    //         results = createResultsArray(pupil, exams, subjectStats);
+
+                    //         app.placesController.SeedsCollection
+                    //             .find()
+                    //             .exec(function(err, seeds) {
+                    //                 data.user.places_saved = null;
+                    //                 data.user.places = [];
+                                
+                    //                 if (pupil.places_saved && pupil.places_saved.length > 0) {
+                    //                     var place;
+                    //                     var newPlace;
+                    //                     for( var i = 0; i < pupil.places_saved.length; i++) {
+                    //                         place = pupil.places_saved[i];
+
+                    //                         if (place.seedId) {
+                                            
+                    //                             newPlace = {
+                    //                                 seedId: place.seedId,
+                    //                                 exam: place.exam,
+                    //                                 place: place.place,
+                    //                             };
+
+                    //                             for (var j = 0; j < seeds.length; j++) {                                                
+                    //                                 if ('' + seeds[j]._id === '' +place.seedId) {    
+                    //                                     if ( seeds[j].visible) {
+                                                            
+                                                            
+                    //                                         if (seeds[j].visibleAuditorium) {
+                    //                                             newPlace.audience = place.audience
+                    //                                         }
+                    //                                         data.user.places.push(newPlace)
+                    //                                     }
+                    //                                 }
+                    //                             }
+                    //                         }
+
+                    //                     }
+                    //                 }
+                                    
+                    //                 if (results.length === 0) {
+                    //                     //res.json(data);
+                    //                     data.user.results = [];
+                    //                     app.passportController.sendCookiedRes(req, res, data)
+                    //                 }
+                    //                 else {
+                    //                     data.user.results = results
+                    //                     var resulltIds = [];
+                    //                     for (var i = 0; i < results.length; i++) {
+                    //                         resulltIds.push('' + results[i].ID)
+                    //                     }
+                                       
+                    //                     app.resultScansController.Collection
+                    //                         .find({
+                    //                             subject: {$in: examIds}
+                    //                         })
+                    //                         .find({
+                    //                             code: { $in: resulltIds}
+                    //                         })
+                    //                         .exec(function (err, scans) {
+                    //                             data.user.scans = scans;
+                                                
+                    //                             app.passportController.sendCookiedRes(req, res, data)
+                    //                             //res.json(data);
+                    //                         });
+                    //                 }
+                    //         });
+                    //     });
+                    // })  
                     
                     
                 }
@@ -515,7 +554,8 @@ var fs = require('fs');
                     subjectStatsMap[''+subjectStats.result[i].subject] = subjectStats.result[i]
                 }
                 for (var i = 0; i < pupil.results.length; i++) {
-                    if (examsMap[''+pupil.results[i].exam].isEnabled) {
+                    console.log()
+                    if (examsMap[''+pupil.results[i].exam] && !!examsMap[''+pupil.results[i].exam].isEnabled) {
                         result = JSON.parse(JSON.stringify(pupil.results[i]));
                         points = 0;
                         if (result.result) {

@@ -15,6 +15,13 @@ var SettingsController = function(mongoose, app) {
 
     var base = new BaseController('Settings', 'settings', mongoose, app);
 
+    var CACHE = {
+        profiles: {
+            list: [],
+            counter: 0,
+            limit: 3
+        }
+    }
     base.v2 = {
         getCurrent: getCurrent_v2,
         getCommon: getCommon_v2
@@ -131,11 +138,34 @@ var SettingsController = function(mongoose, app) {
         var data = {};
         data.dateNow = new Date();
         fillConfigForAjax(data);
-        app.profileController.Collection
-            .findAllForAjax(req, res, function(profiles){
-                data.profiles = profiles;
-                res.json({config: data});
-            })
+        
+        if (CACHE.profiles.list && CACHE.profiles.list.length > 0) {
+            data.profiles = CACHE.profiles.list;
+            CACHE.profiles.counter = CACHE.profiles.counter + 1;
+            
+            res.json({config: data});
+            
+            console.log('CACHE.profiles.counter', CACHE.profiles.counter, CACHE.profiles.limit)
+            
+            if (CACHE.profiles.counter >= CACHE.profiles.limit) {
+                app.profileController.Collection
+                    .findAllForAjax(req, res, function(profiles){
+                        console.log('CACHE.profiles.counter findAllForAjax')
+                        CACHE.profiles.list = profiles;
+                        CACHE.profiles.counter = 0;
+                    })
+            }
+        } else {
+            app.profileController.Collection
+                .findAllForAjax(req, res, function(profiles){
+                    CACHE.profiles.list = profiles
+                    data.profiles = CACHE.profiles.list;
+                    res.json({config: data});
+                })
+        }
+        
+        
+        
     }
 
     function fillConfigForAjax(config) {

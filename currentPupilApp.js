@@ -6,9 +6,9 @@
     
     global.rootDir = path.resolve(__dirname);
     
-    app = require('./application/stats_config.js').configure(app);
+    app = require('./application/pupil_config.js').configure(app);
 
-    app = require('./application/stats_routsConfig.js').configure(app);
+    app = require('./application/pupil_routsConfig.js').configure(app);
 
     setTimeout(function () {
         app.use(function (err, req, res, next) {
@@ -18,6 +18,6 @@
         if (!module.parent) {
             app.listen(app.portNum);
         }
-        console.log('stats app started at port', app.portNum);
-    }, 2000);
+        console.log('current pupil app started at port', app.portNum);
+    }, 6000);
 }());
