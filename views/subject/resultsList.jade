@@ -59,7 +59,13 @@ block content
 			-		noScans.push(doc.ID)
 			-	}
 			-}
-			
+			form(action="/admin/pupils/subjects/results/delete/"+id, method="post", enctype="multipart/form-data")
+				.row
+					.col-sm-8
+					.col-sm-4.text-right
+						.form-group
+							input#idstodelete(type="hidden", name="idstodelete")
+							button.btn.btn-danger(type="submit") Удалить выбранные
 			form(action="/admin/pupils/subjects/results/addPoints/"+id, method="post", enctype="multipart/form-data")
 				.row
 					.col-sm-8
@@ -95,6 +101,7 @@ block content
 								th Add points
 								th Всего
 								th Image
+								th Выбрать
 						tbody		
 							each doc, index in docs
 								tr
@@ -128,6 +135,35 @@ block content
 											.alert.alert-warning
 												span
 													b Нет картинки
+									td	
+										+field('checkboxSimple', '', '', '', '', '')(checked= false, class="selectResultCheckbox", data-result="#{doc._id}")
+
 
 block scripts
 	script(src='/javascripts/Luminous.min.js')
+	script
+		var $resultsToDeleteInput = $('#idstodelete')
+		$(document).on('click', '.selectResultCheckbox', function(e) {
+			var isChecked = $(e.target).prop("checked");
+			console.log('value', $resultsToDeleteInput.val())
+			var ids = $resultsToDeleteInput.val().trim();
+			if (ids.length > 0) {
+				ids = ids.split(';');
+			} else {
+				ids = []
+			}
+			var id = $(e.target).data('result')
+
+			if (isChecked) {
+				ids.push(id)
+				$resultsToDeleteInput.val(ids.join(';'))
+				console.log(ids.join(';'))
+			} else {
+				if (ids.indexOf(id) > -1) {
+					ids.splice(ids.indexOf(id), 1); 
+					$resultsToDeleteInput.val(ids.join(';'))
+					console.log('ww ', ids.join(';'))
+				}
+			}
+
+		})

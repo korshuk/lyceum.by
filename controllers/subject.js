@@ -27,7 +27,8 @@ var SubjectController = function(mongoose, app) {
         assign: resultsAssign,
         getPupilsForSubject: getPupilsForSubject,
         getResults: getResults,
-        addPoints: addPoints
+        addPoints: addPoints,
+        deleteResults: deleteResults
         // uploadScans: scansUpload,
         // deleteScan: deleteScan,
         
@@ -297,6 +298,31 @@ var SubjectController = function(mongoose, app) {
             });
     }
 
+    function deleteResults(req, res) {
+        var idstodelete = req.body.idstodelete
+        if (idstodelete.length > 0) {
+            idstodelete = idstodelete.split(';')
+            console.log('idstodelete', idstodelete)
+            
+            async.forEachOf(idstodelete, function(idtodelete, id, asymcdone) {
+                console.log('id', id, idtodelete)
+                base.ResultsCollection
+                    .findOne({_id: idtodelete, subject: req.params.subjectId})
+                    .exec(function(err, result) {
+                        if (result) {
+                            result.remove(function (err) {
+                                asymcdone(err)
+                            })
+                        } else {
+                            asymcdone()
+                        }
+                    })
+            }, function(err) {
+                onResultsDeleted(req, res, err)
+            })
+        }
+    }
+
     function addPoints(req, res) {
         var addPoinsArray = req.body.addpoints; 
         // var examNumber = req.params.examNumber;
@@ -326,6 +352,16 @@ var SubjectController = function(mongoose, app) {
         }
         res.redirect('/admin/pupils/subjects/results/' + req.params.subjectId );
     }
+
+    function onResultsDeleted(req, res, err) {
+        if (err) {
+            req.session.error = 'Не получилось удалить(( Возникли следующие ошибки: <p>' + err + '</p>';
+        } else {
+            req.session.success = 'Всё хорошо. Поудалялось';
+        }
+        res.redirect('/admin/pupils/subjects/results/' + req.params.subjectId );
+    }
+    
     
 
 };

@@ -139,7 +139,8 @@
                                 result = pupil.results[k];
                                 
                                 for (var i = 0; i < vm.results.length; i++) {
-                                    if (vm.results[i]._id === result.result) { 
+                                    
+                                    if (result.result && vm.results[i]._id === result.result._id) { 
                                         pupil.result = result.result;
                                         vm.results[i].selectedPupil = pupil;
                                     }

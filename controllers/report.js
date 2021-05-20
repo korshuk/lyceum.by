@@ -60,6 +60,17 @@
                         }
                         pupils.push(pupil)
                     })
+                    pupils= pupils.sort(function(a, b) {
+                        if(a.firstName > b.firstName) {
+                            return 1
+                        }
+                        if(a.firstName < b.firstName) {
+                            return -1
+                        }
+                        if(a.firstName === b.firstName) {
+                            return 0
+                        }
+                    })
                     self.app.subjectController.Collection
                         .findOne({_id: data.subjectId})
                         .exec(function(err, subject) {

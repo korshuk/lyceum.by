@@ -36,6 +36,9 @@ module.exports = function(app) {
     router.post('/results/:id', app.userController.Pass, function(req, res) {
 		app.subjectController.results.upload(req, res);
 	});
+    router.post('/results/delete/:subjectId', app.userController.Pass, function(req, res) {
+		app.subjectController.results.deleteResults(req, res);
+	});
     router.post('/results/addPoints/:subjectId', app.userController.Pass, function(req, res) {
 		app.subjectController.results.addPoints(req, res);
 	});
