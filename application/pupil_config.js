@@ -24,7 +24,7 @@
               )
               app.use(express.json())
             app.set('db-uri', 'mongodb://'+mongoUrl+':27017/lyceum');
-            db = mongoose.connect(app.set('db-uri'));
+            db = mongoose.connect(app.set('db-uri'), { server: { poolSize: 50 }});
         });
 
         app.configure('development', function () {

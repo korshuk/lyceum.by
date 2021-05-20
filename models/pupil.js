@@ -233,6 +233,7 @@ function define(mongoose, fn) {
         this.find({status: 'approved'})
             .populate('profile')
             .populate('additionalProfiles')
+            .populate('results.result')
             .exec(function(err, pupils){
                 var exams;
                 var pupil;

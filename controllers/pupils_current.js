@@ -23,6 +23,7 @@ PupilsController = function(mongoose, app) {
     var base = new BaseController('Pupil', '', mongoose, app, true);
     
     base.getUserObject = getUserObject;
+    base.resetCache = resetCache;
 
     base.constructor = arguments.callee;
 
@@ -42,6 +43,19 @@ PupilsController = function(mongoose, app) {
     })
 
     return base;
+
+    function resetCache(req, res, next) {
+        app.subjectController.Collection.find().exec(function(err, subjects) {
+            createCacheMapSubjects(subjects)
+        })
+        app.placesController.SeedsCollection.find().exec(function(err, seeds) {
+            createCacheMapSeeds(seeds)
+        })
+        app.sotkaController.getAllSubjectStats(function(subjectStats) {
+            createCacheMapSubjectStats(subjectStats)
+        })
+        next('Ok')
+    }
 
     function getUserObject(req, res, next) {
         var pupil = req.body;

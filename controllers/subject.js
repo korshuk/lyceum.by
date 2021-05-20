@@ -233,11 +233,22 @@ var SubjectController = function(mongoose, app) {
     }
     function saveResults(req, res, records, next) {
         var subjectId = req.params.id;
+
         async.eachSeries(records, function (record, asyncdone) {
             base.ResultsCollection.findByGreatCamID(record.ID, subjectId, function(err, result) {
                 if (result) {
-                    record.AdditionalPoints = result.AdditionalPoints;
-                    updateExistingResult(result, record, subjectId, asyncdone)
+
+                    result.Class = record.Class
+                    result.Version = record.Version
+                    result.Missed = record.Missed
+                    result.Points = record.Points
+                    result.Possible = record.Possible
+                    result.Score = record.Score
+                    
+                    result.save(function(err, doc) {
+                        asyncdone(err)
+                    })
+
                 } else {
                     base.ResultsCollection.saveNewResult(record, subjectId, asyncdone)  
                 }
@@ -245,25 +256,6 @@ var SubjectController = function(mongoose, app) {
         }, function(err) {
             onAsignResultsComplete(req, res, err)
         });
-    }
-    function updateExistingResult(result, record, subjectId, next){
-        app.pupilsController.Collection.findByResultAsigned(result._id, function(err, pupil){
-            if (err) {
-                next(err, pupil);
-                return;
-            }
-            if (pupil) {
-                app.pupilsController.updatePupilResults(pupil, record, function(err, doc){
-                    if (err) {
-                        next(err, doc)
-                    } else {
-                        base.ResultsCollection.updateResult(result, record, subjectId, next)
-                    }
-                })
-            } else {
-                base.ResultsCollection.updateResult(result, record, subjectId, next)
-            }
-       })
     }
 
     function onAsignResultsComplete(req, res, err) {

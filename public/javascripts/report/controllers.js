@@ -48,7 +48,7 @@ function template1Controller(dataService, $filter) {
     vm.openDatePopup = openDatePopup;
 
     setDefaultTimes();
-    dataService.getProfiles().then(getProfilesToSubjectMap)
+    dataService.getStats().then(onSubjectsSuccess)
 
     function setDefaultTimes() {
         var startD = new Date();
@@ -74,21 +74,16 @@ function template1Controller(dataService, $filter) {
         if (vm.entranceTestForm.$valid) {
             var url = `/admin/report/show/${vm.data.type}?`;
             var props = {};
-            var currentProfile;
-            var examNumber = 2;
-            for (var i = 0; i < vm.profiles.length; i++) {
-                if (vm.profiles[i].name == vm.data.profile) {
-                    currentProfile = vm.profiles[i];
+            var currentSubject;
+
+            for (var i = 0; i < vm.subjects.length; i++) {
+                if (vm.subjects[i]._id == vm.data.subject) {
+                    currentSubject = vm.subjects[i];
                 }
             }
-            if (currentProfile.firstExamName == vm.data.subject) {
-                examNumber = 1;
-            } 
-            props.examNumber = examNumber;
-            props.subject = vm.data.subject;
-            props.profile = currentProfile.name;
-            props.profileId = currentProfile._id;
-            props.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
+            props.subjectId = vm.data.subject;
+            props.subjectName = currentSubject.name;
+            props.date = currentSubject.date;
             props.startTimeString =  $filter('date')(vm.data.startTime, "HH часов mm минут");
             props.endTimeString =  $filter('date')(vm.data.endTime, "HH часов mm минут");
             props.testVariant = vm.data.testVariant;
@@ -108,12 +103,8 @@ function template1Controller(dataService, $filter) {
         }
     }
 
-    function getProfilesToSubjectMap(resp) {
-        vm.map = {};
-        vm.profiles = resp.data;
-        for (var i = 0; i < vm.profiles.length; i++) {
-            vm.map[vm.profiles[i].name] = [vm.profiles[i].firstExamName, vm.profiles[i].secondExamName]
-        };
+    function onSubjectsSuccess(resp) {
+        vm.subjects = resp.data;
     }
 }
 
@@ -142,7 +133,7 @@ function template2Controller(dataService, $filter) {
     vm.onFormSubmit = onFormSubmit;
     vm.openDatePopup = openDatePopup;
 
-    dataService.getProfiles().then(getProfilesToSubjectMap)
+    dataService.getStats().then(getProfilesToSubjectMap)
 
     function openDatePopup() {
         vm.datePopup.opened = true;
@@ -220,7 +211,7 @@ function template3Controller(dataService, $filter) {
     vm.onFormSubmit = onFormSubmit;
     vm.openDatePopup = openDatePopup;
 
-    dataService.getProfiles().then(getProfilesToSubjectMap)
+    dataService.getStats().then(getProfilesToSubjectMap)
 
     function openDatePopup() {
         vm.datePopup.opened = true;
@@ -274,15 +265,15 @@ function listController() {
 function dataService($http) {
     return {
         postData: postData,
-        getProfiles: getProfiles
+        getStats: getStats
     }
 
     function postData(data) {
         return $http.post(`/admin/report/generate/${data.type}`, data);
     }
 
-    function getProfiles() {
-        return $http.get('/front/rest/sotka');
+    function getStats() {
+        return $http.get('/admin/rest/reports/subjects');
     }
 }
 

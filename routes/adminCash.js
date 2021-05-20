@@ -1,5 +1,6 @@
 //var usage = require('usage');
 var fs = require('fs');
+var http = require('http');
 
 module.exports = function (app) {
     'use strict';
@@ -37,6 +38,24 @@ module.exports = function (app) {
         app.superCash = {};
         res.redirect('/admin/cash');
     });
+    app.get('/admin/cash/resetPupilApp', app.userController.Pass, function (req, res) {
+        
+        http.get("http://127.0.0.1:3060/resetCache", function(response) {
+            console.log("Got response: " + response.statusCode);
+            
+            var data = '';
+            response.on('data', function (chunk) {
+                data += chunk;
+            });
+            
+            response.on('end', function () {
+                res.redirect('/admin/cash');
+            });
+        }).on('error', function(e) {
+            console.log("Got error: " + e.message);
+        });
+    });
+    
     app.get('/admin/cash/:name/delete', app.userController.Pass, function (req, res) {
         delete app.superCash[req.params.name];
         res.redirect('/admin/cash');

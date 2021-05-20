@@ -3,29 +3,20 @@
 
     <form name="app.entranceTestForm" action="" ng-submit="$event.preventDefault()">
       <div class="row">
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label>Профиль</label>
-          <select name="profile" class="form-control" ng-change="app.onProfileChange(app.data.profile)"
-            ng-model="app.data.profile" required>
-            <option ng-repeat="x in app.profiles" ng-value="x.name">{{x.name}}</option>
-          </select>
-          <span style="color: red"
-            ng-show="app.entranceTestForm.profile.$error.required && app.entranceTestForm.$submitted">Выберите
-            профиль</span>
-        </div>
+      
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label>Предмет</label>
+              <select name="subject" class="form-control" ng-model="app.data.subject" required>
+                <option ng-repeat="x in app.subjects" ng-value="x._id">{{x.name}}</option>
+              </select>
+              <span style="color: red"
+                ng-show="app.entranceTestForm.subject.$error.required && app.entranceTestForm.$submitted">Выберите
+                предмет</span>
+            </div>
+          </div>
       </div>
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label>Предмет</label>
-          <select name="subject" class="form-control" ng-model="app.data.subject" required>
-            <option ng-repeat="x in app.subjects" ng-value="x">{{x}}</option>
-          </select>
-          <span style="color: red"
-            ng-show="app.entranceTestForm.subject.$error.required && app.entranceTestForm.$submitted">Выберите
-            предмет</span>
-        </div>
-      </div>
+      <div class="row">
       <div class="col-sm-4">
         <div class="form-group">
           <label>Начало испытания</label>
@@ -44,13 +35,8 @@
             <div class="form-group">
               <label>Дата внесения оценок в протокол</label>
               <div class="input-group">
-                <input type="text" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="app.data.entryDate"
-                  is-open="app.datePopup.opened" datepicker-options="app.dateOptions" ng-required="true"
-                  close-text="Close" />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="app.openDatePopup()"><i
-                      class="glyphicon glyphicon-calendar"></i></button>
-                </span>
+                <input type="date" class="form-control" ng-model="app.data.entryDate"
+                   ng-required="true"/>
               </div>
             </div>
           </div>

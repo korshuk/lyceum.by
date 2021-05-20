@@ -37,7 +37,7 @@
             app.use(express.static('./public'));
 
             app.set('db-uri', 'mongodb://'+mongoUrl+':27017/lyceum');
-            db = mongoose.connect(app.set('db-uri'));
+            db = mongoose.connect(app.set('db-uri'), { server: { poolSize: 50 }});
 
             app.use('/admin', express.cookieParser('shhhh, very secret'));
             app.use('/admin', express.session({

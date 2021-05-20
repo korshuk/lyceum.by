@@ -23,6 +23,14 @@ module.exports = function (app) {
     app.get('/admin/rest/sotka', app.userController.Pass, function (req, res) {
         app.sotkaController.restList(req, res);
     });
+    
+    app.get('/admin/rest/reports/subjects', app.userController.Pass, function (req, res) {
+        app.subjectController.Collection
+            .find()
+            .exec(function(err, subjects) {
+                res.json(subjects)
+            })
+    });
 
     app.get('/front/rest/sotka', function (req, res) {
         res.header(

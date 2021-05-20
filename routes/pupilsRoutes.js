@@ -13,4 +13,18 @@ module.exports = function (app) {
         //     res.json(doc)
         // });
     });
+    app.get('/resetCache', function (req, res) {
+        console.log('resetCache!@!@!@!@!@!@!!!!!!!!')
+        
+        app.currentPupilController.resetCache(req, res, function(doc) {
+            res.json(doc)
+        });
+        
+
+        // app.sotkaController.calculate(function(doc) {
+        //     res.json(doc)
+        // });
+    });
+
+    
 }

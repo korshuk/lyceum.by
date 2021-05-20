@@ -48,24 +48,65 @@
        // var doc = new this.Collection(req.body);
         
         if (type === '1') {
-            var examNum = 'exam'+data.examNumber;
-            self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
-                self.app.subjectController.Collection.findOne({name: data.subject}).exec(function(err, subject) {
-                    self.app.committeesController.Collection.findOne({subject: subject.id}).exec(function(err, committee) {
-                        data.committee = committee;
-                        data.list = list.filter(function(pupil) { return true });         
-                        data.absentList = list.filter(function(pupil) { return pupil[examNum]===-2}); 
-                        data.withoutExams = list.filter(function(pupil) { return pupil[examNum]===-1}); 
-                        data.num = 0;
-                        data.committee.staffArr = data.committee.staff.split(';')
-                        data.dateStr = moment(data.date).format('LL');
-                        data.entryDateStr = moment(data.entryDate).format('LL');//DateFormat(data.entryDate, '"DD" MMMM YYYY г.', ruLocale);
-                        console.log('render 1')
-                        res.render('reports/generatedReport1.jade', data);    
+            self.app.pupilsController.Collection
+                .findPupilsForSubject(data.subjectId, function (pupilsToSeed) {
+                    var pupils = [];
+                    pupilsToSeed.forEach(function(p) {
+                        var pupil = JSON.parse(JSON.stringify(p.pupil))
+                        for (var i = 0; i < pupil.results.length; i++) {
+                            if (''+pupil.results[i].exam === data.subjectId) {
+                                pupil.examResult = pupil.results[i]
+                            }
+                        }
+                        pupils.push(pupil)
                     })
-                })
-                
-                
+                    self.app.subjectController.Collection
+                        .findOne({_id: data.subjectId})
+                        .exec(function(err, subject) {
+                            self.app.profileController.Collection
+                                .find()
+                                .exec(function(err, profiles) {
+                                    var subjectToProfilesMap = {};
+                                    var profile;
+                                    for (var i = 0; i < profiles.length; i++) {
+                                        profile = profiles[i];
+                                        if (!subjectToProfilesMap[profile.exam1]) {
+                                            subjectToProfilesMap[profile.exam1] = []
+                                        }
+                                        if (!subjectToProfilesMap[profile.exam2]) {
+                                            subjectToProfilesMap[profile.exam2] = []
+                                        }
+                                        if (subjectToProfilesMap[profile.exam1]) {
+                                            subjectToProfilesMap[profile.exam1].push(profile)
+                                        }
+                                        if (subjectToProfilesMap[profile.exam2]) {
+                                            subjectToProfilesMap[profile.exam2].push(profile)
+                                        }
+                                    }
+                                    var subjectProfiles = subjectToProfilesMap[subject._id];
+                                    var profileNames = [];
+                                    for (var i = 0; i < subjectProfiles.length; i++) {
+                                        profileNames.push(subjectProfiles[i].name)
+                                    }
+                                    self.app.committeesController.Collection
+                                        .findOne({subject: data.subjectId})
+                                        .exec(function(err, committee) {
+                                            data.profiles = profileNames
+                                            data.committee = committee;
+                                            data.list = JSON.parse(JSON.stringify(pupils))
+                                            data.absentList = pupils.filter(function(pupil) { 
+                                                return pupil.examResult.examStatus!=='0'
+                                            }); 
+                                            data.num = 0;
+                                            data.committee.staffArr = data.committee.staff.split(';')
+                                            data.dateStr = moment(data.date).format('LL');
+                                            data.entryDateStr = moment(data.entryDate).format('LL');//DateFormat(data.entryDate, '"DD" MMMM YYYY г.', ruLocale);
+                                            console.log('render 1')
+                                            res.render('reports/generatedReport1.jade', data);    
+                                        })
+                                    })
+                        })
+
             });
         }
         if (type === '2') {
