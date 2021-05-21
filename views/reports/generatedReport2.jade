@@ -13,13 +13,12 @@ html
       @page { size: A3 }
   body.A3
     - var profilesAmmount = 0;
-    - var profilesCountTotal = 0;
+    - var profilesCountTotal = countTotal;
     - var profileOlympTotal = 0
     - for (var i = 0; i < profiles.length; i++) {
       - profilesAmmount = profilesAmmount + profiles[i].ammount
       - for (var j = 0; j < totalStat.length; j++) {
         - if (''+profiles[i]._id === ''+totalStat[j].profile) {
-          - profilesCountTotal = profilesCountTotal + totalStat[j].countTotal;
           - profileOlympTotal = profileOlympTotal + totalStat[j].countOlymp;
         - }
       - }
@@ -97,9 +96,9 @@ html
             p(style="font-size: 14px; margin-bottom: 0")
               | * "Проходной балл" - служит для примерной оценки вашего результата. Не относитесь к этому значению слишком серьезно! Поступление определяется по итогам двух экзаменов.
             p(style="font-size: 14px; margin: 0")
-              | Это значение было рассчитано следующим образом: экзамен сдается для поступления на #{profileNames.length} #{GetNoun(profileNames.length, 'профиль', 'профиля', 'профилей')}, которые содержат #{profilesCountTotal - profileOlympTotal} #{GetNoun(profilesCountTotal - profileOlympTotal, 'место', 'места', 'мест')} с учетом победителей республиканских олимпиад, поступающих без экзаменов, и проходному баллу соответствует #{profilesCountTotal - profileOlympTotal} -й результат в общем рейтинге абитуриентов.
+              | Это значение было рассчитано следующим образом: экзамен сдается для поступления на #{profileNames.length} #{GetNoun(profileNames.length, 'профиль', 'профиля', 'профилей')}, которые содержат #{profilesAmmount - profileOlympTotal} #{GetNoun(profilesAmmount - profileOlympTotal, 'место', 'места', 'мест')} с учетом победителей республиканских олимпиад, поступающих без экзаменов, и проходному баллу соответствует #{profilesAmmount - profileOlympTotal}-й результат в общем рейтинге абитуриентов.
       main#main-content.main
-        h3 Распределение результатов экзамена по баллам #{division} #{gistogramMax}
+        h3 Распределение результатов экзамена по баллам
         .content
           .diagram
             .grid
