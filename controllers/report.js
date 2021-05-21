@@ -205,7 +205,7 @@
                                         // subjectAmmount: 22,
                                         // lyceum_nodejs    | [0]      subjectOlymp: 0,
                                         // lyceum_nodejs    | [0]      countTotal: 69,
-                                        data.countTotal = stat.subjectStat.countTotal;
+                                        data.countTotal = stat.totalStat.examsMap[subject.name];
                                         data.min = stat.subjectStat.min;
                                         data.max = stat.subjectStat.max;
                                         data.pass = stat.subjectStat.pass;
