@@ -393,9 +393,11 @@ header h1 {
     color: #ff3e0b;
     text-align: center;
     border-top: 4px solid #7b7b7b;
-    font-size: 140px;
-    margin: 20px;
-    font-weight: 300;
+    font-size: 50px;
+    margin: 0 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: 700;
 }
 
 .smallh1 {

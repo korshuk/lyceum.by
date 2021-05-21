@@ -4,7 +4,7 @@ html
   head
     meta(charset='utf-8')
     meta(http-equiv='x-ua-compatible', content='ie=edge')
-    title Статистика экзамена по предмету #{subject} на #{profile.name} профиль
+    title Статистика экзамена по предмету #{subject.name}
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=PT+Sans")
     link(rel='stylesheet', href='/stylesheets/report2Print.css')
@@ -12,6 +12,18 @@ html
     style
       @page { size: A3 }
   body.A3
+    - var profilesAmmount = 0;
+    - var profilesCountTotal = 0;
+    - var profileOlympTotal = 0
+    - for (var i = 0; i < profiles.length; i++) {
+      - profilesAmmount = profilesAmmount + profiles[i].ammount
+      - for (var j = 0; j < totalStat.length; j++) {
+        - if (''+profiles[i]._id === ''+totalStat[j].profile) {
+          - profilesCountTotal = profilesCountTotal + totalStat[j].countTotal;
+          - profileOlympTotal = profileOlympTotal + totalStat[j].countOlymp;
+        - }
+      - }
+    - }
     section.sheet
       header
         .info
@@ -20,7 +32,7 @@ html
         if subject.length > 12 
           h1.smallh1 #{subject}
         else
-          h1 #{subject}
+          h1 #{subject.name}
         nav
           p Общая информация
           p.centered Явка
@@ -30,21 +42,37 @@ html
           .subsection
             h2 Информация
             p
-              | Для поступления на <b>#{profile.name}</b> профиль необходимо сдать два
-              | экзамена: <b>#{profile.firstExamName}</b> (<b>#{profile.firstExamDateStr}</b>) и <b>#{profile.secondExamName}</b> (<b>#{profile.secondExamDateStr}</b>).
+              | #{' '}Экзамен проходил: <b>#{examDateStr}</b>.
             p
-              | На <b>#{profile.ammount}</b> места было подано <b>#{profile.countArray[profile.countArray.length-1].count}</b> заявлений из них <b>#{profile.olymp}</b> заявлений от призеров
+              | Экзамен по предмету <b>#{subject.name}</b> необходимо сдавать для поступления на 
+              span 
+                if profileNames.length === 1
+                  | <b>#{profileNames[0]}</b> профиль.
+                if profileNames.length > 1
+                  | <b>#{profileNames.join(', ')}</b> профили.
+              
+            p
+              | На <b>#{profilesAmmount}</b> #{GetNoun(profilesAmmount, 'место', 'места', 'мест')} 
+              span 
+                if profileNames.length === 1
+                  | этого профиля
+                if profileNames.length > 1
+                  | этих профилей.
+              | #{' '}было подано <b>#{profilesCountTotal}</b> #{GetNoun(profilesCountTotal, 'заявление', 'заявления', 'заявлений')} из них <b>#{profileOlympTotal}</b> от призеров
               | заключительного этапа республиканской предметной олимпиады, которые
-              | рекомендуются к зачислению без экзаменов. Таким образом по итогам
-              | подачи документов конкурс составил <b>#{((profile.countArray[profile.countArray.length - 1].count - profile.olymp) / (profile.ammount - profile.olymp)).toFixed(2)}</b> человека на место.
+              | рекомендуются к зачислению без экзаменов. 
+            p  
+              - var concourse = ((profilesCountTotal - profileOlympTotal) / (profilesAmmount - profileOlympTotal)).toFixed(2)
+              | Таким образом по итогам
+              | подачи документов конкурс составил <b>#{concourse}</b> #{GetNoun(concourse * 100, 'человек', 'человек', 'человек')} на место.
           .subsection
-            h2 Явка на экзамен
+            h2 Явка на экзамен #{profilesAmmount}
             .result
               p Допущено
-              p <b>#{profile.countArray[profile.countArray.length-1].count - profile.olymp}</b>
+              p <b>#{countTotal - profileOlympTotal}</b>
             .result
               p Приняли участие
-              p <b>#{list.length - profile.olymp - absentList.length}</b>  
+              p <b>#{list.length - absentList.length}</b>  
             .result
               p Не явились
               p <b>#{absentList.length}</b>  
@@ -64,10 +92,14 @@ html
               p Медианный балл
               p <b>#{mediana}</b>
             .result
-              p Текущий проходной
+              p "Проходной"*
               p <b>#{pass}</b>
+            p(style="font-size: 14px; margin-bottom: 0")
+              | * "Проходной балл" - служит для примерной оценки вашего результата. Не относитесь к этому значению слишком серьезно! Поступление определяется по итогам двух экзаменов.
+            p(style="font-size: 14px; margin: 0")
+              | Это значение было рассчитано следующим образом: экзамен сдается для поступления на #{profileNames.length} #{GetNoun(profileNames.length, 'профиль', 'профиля', 'профилей')}, которые содержат #{profilesCountTotal - profileOlympTotal} #{GetNoun(profilesCountTotal - profileOlympTotal, 'место', 'места', 'мест')} с учетом победителей республиканских олимпиад, поступающих без экзаменов, и проходному баллу соответствует #{profilesCountTotal - profileOlympTotal} -й результат в общем рейтинге абитуриентов.
       main#main-content.main
-        h3 Распределение результатов экзамена по баллам
+        h3 Распределение результатов экзамена по баллам #{division} #{gistogramMax}
         .content
           .diagram
             .grid

@@ -133,7 +133,7 @@ function template2Controller(dataService, $filter) {
     vm.onFormSubmit = onFormSubmit;
     vm.openDatePopup = openDatePopup;
 
-    dataService.getStats().then(getProfilesToSubjectMap)
+    dataService.getStats().then(onSubjectsSuccess)
 
     function openDatePopup() {
         vm.datePopup.opened = true;
@@ -148,23 +148,21 @@ function template2Controller(dataService, $filter) {
         if (vm.statsForm.$valid) {
             var url = `/admin/report/show/${vm.data.type}?`;
             var props = {};
-            var currentProfile;
-            var examNumber = 2;
-            for (var i = 0; i < vm.profiles.length; i++) {
-                if (vm.profiles[i].name == vm.data.profile) {
-                    currentProfile = vm.profiles[i];
+
+            var currentSubject;
+
+            for (var i = 0; i < vm.subjects.length; i++) {
+                if (vm.subjects[i]._id == vm.data.subject) {
+                    currentSubject = vm.subjects[i];
                 }
             }
-            if (currentProfile.firstExamName == vm.data.subject) {
-                examNumber = 1;
-            } 
+            
+            props.subjectId = vm.data.subject;
+            props.subjectName = currentSubject.name;
+            props.date = currentSubject.date;
             props.barNum = vm.data.barNum;
             props.barToEndNum = vm.data.barToEndNum;
-            props.examNumber = examNumber;
             props.subject = vm.data.subject;
-            props.profile = currentProfile.name;
-            props.profileId = currentProfile._id;
-            props.date = currentProfile[`${EXAM_NUMBER_NAMES[examNumber]}ExamDate`];
             props.entryDate = vm.data.entryDate;
 
             openInNewTab(url + queryStringFromObj(props))
@@ -178,12 +176,8 @@ function template2Controller(dataService, $filter) {
         }
     }
 
-    function getProfilesToSubjectMap(resp) {
-        vm.map = {};
-        vm.profiles = resp.data;
-        for (var i = 0; i < vm.profiles.length; i++) {
-            vm.map[vm.profiles[i].name] = [vm.profiles[i].firstExamName, vm.profiles[i].secondExamName]
-        };
+    function onSubjectsSuccess(resp) {
+        vm.subjects = resp.data;
     }
 
 }

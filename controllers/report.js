@@ -121,53 +121,111 @@
             });
         }
         if (type === '2') {
-            var examNum = 'exam'+data.examNumber;
             var pupil;
             var i = 0;
             var results = [];
             var average = 0;
             var medianaPlace;
-            var examName = data.examNumber === '1' ? 'F': 'S';
-            var gistogram = [0,0,0,0,0,0,0,0,0,0];
-            self.app.pupilsController.pupilsList(data.profileId).exec(function (err, list) {
-                self.app.profileController.Collection.findOne({_id: data.profileId}).exec(function(err, profile) {
-                    data.list = list.filter(function(pupil) { return true });         
-                    data.absentList = list.filter(function(pupil) { return pupil[examNum]===-2}); 
-                    for (i ; i < list.length; i++) {
-                        pupil = list[i];
-                        if (pupil[examNum] > -1) {
-                            results.push(+pupil[examNum]);
-                            average = average + +pupil[examNum];
-                        }
-                    }
 
-                    results.sort(function(a, b) {
-                        return a - b;
-                    });
-                    results.map(function(points) {
-                        var place = Math.floor((points-1) * 0.1);
-                        if(place === -1){place=0};
-                        gistogram[place] = gistogram[place] + 1;
+            var gistogram = [0,0,0,0,0,0,0,0,0,0];
+            self.app.pupilsController.Collection
+                .findPupilsForSubject(data.subjectId, function (pupilsToSeed) {
+                    var pupils = [];
+                    pupilsToSeed.forEach(function(p) {
+                        var pupil = JSON.parse(JSON.stringify(p.pupil))
+                        for (var i = 0; i < pupil.results.length; i++) {
+                            if (''+pupil.results[i].exam === data.subjectId) {
+                                pupil.examResult = pupil.results[i]
+                            }
+                        }
+                        pupils.push(pupil)
                     })
 
-                    medianaPlace = Math.floor(results.length * 0.5);
-                    data.average = Math.round(average / results.length);
-                    data.mediana =  Math.round((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
-                    data.min = profile['min'+examName];
-                    data.max = profile['max'+examName];
-                    data.pass = profile['pass'+examName];
-                    data.results = results;
-                    data.gistogramMax = Math.max.apply(null, gistogram);                    
-                    data.division = Math.ceil(data.gistogramMax/5);
-                    data.gistogramMax = data.division * 5;
-                    data.gistogram = gistogram;
-                    data.profile = profile;
-                    data.profile.firstExamDateStr = moment(profile.firstExamDate).format('D MMMM');
-                    data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
-                    data.entryDateStr = moment(data.entryDate).format('LL');
-                    res.render('reports/generatedReport2.jade', data);    
+                    self.app.subjectController.Collection
+                        .findOne({_id: data.subjectId})
+                        .exec(function(err, subject) {
+                            data.list = JSON.parse(JSON.stringify(pupils));
+                            data.absentList = pupils.filter(function(pupil) { 
+                                return pupil.examResult.examStatus!=='0'
+                            });
+                            for (i ; i < pupils.length; i++) {
+                                pupil = pupils[i];
+                                var points;
+                                var AdditionalPoints;
+                                if (pupil.examResult.result && pupil.examResult.examStatus ==='0') {
+                                    points = +pupil.examResult.result.Points 
+                                    AdditionalPoints = pupil.examResult.result.AdditionalPoints || 0;
+                                    results.push(+points + +AdditionalPoints);
+                                    average = average + +points + +AdditionalPoints;
+                                }
+                            }
+                            results.sort(function(a, b) {
+                                return a - b;
+                            });
+
+                            results.map(function(points) {
+                                console.log('points', points)
+                                var place = Math.floor((points-1) * 0.1);
+                                if(place === -1){place=0};
+                                if (place > 9) {place = 9};
+                                gistogram[place] = gistogram[place] + 1;
+                            })
+                            medianaPlace = Math.floor(results.length * 0.5);
+                            data.average = Math.round(average / results.length);
+                            data.mediana =  Math.round((results[medianaPlace - 1] + results[medianaPlace]) * 0.5);
+                            self.app.profileController.Collection
+                                .find()
+                                .exec(function(err, profiles) {
+                                    var subjectToProfilesMap = {};
+                                    var profile;
+                                    for (var i = 0; i < profiles.length; i++) {
+                                        profile = profiles[i];
+                                        if (!subjectToProfilesMap[profile.exam1]) {
+                                            subjectToProfilesMap[profile.exam1] = []
+                                        }
+                                        if (!subjectToProfilesMap[profile.exam2]) {
+                                            subjectToProfilesMap[profile.exam2] = []
+                                        }
+                                        if (subjectToProfilesMap[profile.exam1]) {
+                                            subjectToProfilesMap[profile.exam1].push(profile)
+                                        }
+                                        if (subjectToProfilesMap[profile.exam2]) {
+                                            subjectToProfilesMap[profile.exam2].push(profile)
+                                        }
+                                    }
+                                    var subjectProfiles = subjectToProfilesMap[subject._id];
+                                    var profileNames = [];
+                                    for (var i = 0; i < subjectProfiles.length; i++) {
+                                        profileNames.push(subjectProfiles[i].name)
+                                    }
+
+
+                                    self.app.sotkaController.getSubjectStats(data.subjectId, function(stat) {
+                                        console.log('$$$$$$$$$', stat)
+                                        // subjectAmmount: 22,
+                                        // lyceum_nodejs    | [0]      subjectOlymp: 0,
+                                        // lyceum_nodejs    | [0]      countTotal: 69,
+                                        data.countTotal = stat.subjectStat.countTotal;
+                                        data.min = stat.subjectStat.min;
+                                        data.max = stat.subjectStat.max;
+                                        data.pass = stat.subjectStat.pass;
+                                        data.results = results;
+                                        data.gistogramMax = Math.max.apply(null, gistogram);
+                                        data.division = Math.ceil(data.gistogramMax/5);
+                                        data.gistogramMax = data.division * 5;
+                                        data.gistogram = gistogram;
+                                        data.subject = subject;
+                                        data.profileNames = profileNames;
+                                        data.profiles = subjectProfiles;
+                                        data.totalStat = stat.totalStat.result;
+                                        data.examDateStr = moment(subject.date).format('D MMMM');
+                            // data.profile.secondExamDateStr = moment(profile.secondExamDate).format('D MMMM');
+                                        data.entryDateStr = moment(data.entryDate).format('LL');
+                                        res.render('reports/generatedReport2.jade', data);
+                                    });
+                                });
+                        });
                 });
-            });
                     
         }
         if (type === '3') {
