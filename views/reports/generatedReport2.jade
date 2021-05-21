@@ -56,19 +56,19 @@ html
                 if profileNames.length === 1
                   | этого профиля
                 if profileNames.length > 1
-                  | этих профилей.
-              | #{' '}было подано <b>#{profilesCountTotal}</b> #{GetNoun(profilesCountTotal, 'заявление', 'заявления', 'заявлений')} из них <b>#{profileOlympTotal}</b> от призеров
+                  | этих профилей
+              | #{' '}было подано <b>#{profilesCountTotal + profileOlympTotal}</b> #{GetNoun(profilesCountTotal + profileOlympTotal, 'заявление', 'заявления', 'заявлений')} из них <b>#{profileOlympTotal}</b> от призеров
               | заключительного этапа республиканской предметной олимпиады, которые
               | рекомендуются к зачислению без экзаменов. 
             p  
-              - var concourse = ((profilesCountTotal - profileOlympTotal) / (profilesAmmount - profileOlympTotal)).toFixed(2)
+              - var concourse = ((profilesCountTotal) / (profilesAmmount - profileOlympTotal)).toFixed(2)
               | Таким образом по итогам
               | подачи документов конкурс составил <b>#{concourse}</b> #{GetNoun(concourse * 100, 'человек', 'человек', 'человек')} на место.
           .subsection
             h2 Явка на экзамен
             .result
               p Допущено
-              p <b>#{countTotal - profileOlympTotal}</b>
+              p <b>#{countTotal}</b>
             .result
               p Приняли участие
               p <b>#{list.length - absentList.length}</b>  
