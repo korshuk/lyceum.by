@@ -141,7 +141,7 @@
                                 for (var i = 0; i < vm.results.length; i++) {
                                     
                                     if (result.result && vm.results[i]._id === result.result._id) { 
-                                        pupil.result = result.result;
+                                        pupil.result = result.result._id;
                                         vm.results[i].selectedPupil = pupil;
                                     }
                                 }

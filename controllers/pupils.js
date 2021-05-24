@@ -521,9 +521,7 @@ var PupilsController = function (mongoose, app) {
                                 async.eachSeries(pupils, function (pupil, asyncdone) {
                                     reqUser = reqUsers[pupil._id];
                                     if (pupil.results.length === 0) {
-                                        pupil.results = [{
-                                            exam: subjectId
-                                        }];
+                                        pupil.results = [];
                                     }
                                     var resultExists = false;
                                     var existingResultIndex = pupil.results.length;
@@ -534,8 +532,11 @@ var PupilsController = function (mongoose, app) {
                                         }
                                     }
                                     if (!resultExists) {
-                                        existingResultIndex = 0;
-                                        pupil.results[0].exam = subjectId
+                                        var newResult = {
+                                            exam: subjectId
+                                        }
+                                        existingResultIndex = pupil.results.length;
+                                        pupil.results = pupil.results.concat([newResult]);
                                     }
                                     if (reqUser.resultExamStatus &&  reqUser.resultExamStatus === 1) {
                                         pupil.results[existingResultIndex].examStatus = '1'
@@ -558,7 +559,6 @@ var PupilsController = function (mongoose, app) {
                                     }
                                     
                                     pupil.save(function(err, doc) {
-                                        //  console.log('pupil.save', err, doc)
                                           asyncdone(err)
                                       }); 
                                     // if (reqUser.result || reqUser.resultExamStatus) { 

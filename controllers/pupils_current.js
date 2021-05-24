@@ -217,6 +217,15 @@ PupilsController = function(mongoose, app) {
                             points = points + +result.result.AdditionalPoints
                         }
                     }
+                    var stats = JSON.parse(JSON.stringify(CACHE.subjectStats.map[result.exam]))
+                    var examResultsArray = JSON.parse(JSON.stringify(stats.results));
+                    stats.results = []
+                    // var myRaiting = examResultsArray.reverse().indexOf(33)
+                    stats.raitingAmmount = examResultsArray.length;
+                    stats.myRaiting = examResultsArray.reverse().map(function (p, i) {
+                        return p === points ? i+1 : ''    
+                    }).filter(String);
+
                     
                     results.push({
                         ID: result.result ? result.result.ID : undefined,
@@ -226,7 +235,7 @@ PupilsController = function(mongoose, app) {
                         exam: result.exam,
                         feedBackForm: CACHE.subjects.map[result.exam].feedBackForm,
                         examKey: CACHE.subjects.map[result.exam].examKey,
-                        stats: CACHE.subjectStats.map[result.exam]
+                        stats: stats
                     })
                 }
                 
