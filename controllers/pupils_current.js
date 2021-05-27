@@ -288,10 +288,10 @@ PupilsController = function(mongoose, app) {
             pupilResults[i].raiting = results.reverse().map(function (p, i) {
                 return p === x ? i+1 : ''    
             }).filter(String);
-            pupilResults[i].result = null;
+            // pupilResults[i].result = null;
             // pupilResults[i].results = results;
         }
-        // console.log('profileExamsMap', pupilResults)
+        //console.log('profileExamsMap', pupilResults)
         return pupilResults
     }
 
