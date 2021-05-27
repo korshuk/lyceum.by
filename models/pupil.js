@@ -228,6 +228,21 @@ function define(mongoose, fn) {
         return query
     };
 
+    PupilSchema.statics.findApprovedPupilsForProfileWithResults = function(profileId) {
+        var query = this
+            .find({status: 'approved'})
+            .find({
+                $or: [
+                    { "profile": profileId }, 
+                    { "diplomProfile": profileId, passOlymp: true },
+                    { "additionalProfiles": { _id: profileId } }
+                ]
+            })
+            .populate('results.result')
+
+        return query
+    };
+
     PupilSchema.statics.findPupilsForSubject = function(subjectId, next) {
         var self = this;
         this.find({status: 'approved'})

@@ -16,10 +16,28 @@ SotkaController = function(mongoose, app) {
     base.calculate = calculate;
     base.calculateSubjects = calculateSubjects;
     base.getSubjectStats = getSubjectStats;
-    base.getAllSubjectStats = getAllSubjectStats
+    base.getAllSubjectStats = getAllSubjectStats;
+    base.getAllProfileStats = getAllProfileStats;
 
     function getAllSubjectStats(next) {
         http.get("http://127.0.0.1:3030/getAllSubjectStats", function(response) {
+            console.log("Got response: " + response.statusCode);
+            
+            var data = '';
+            response.on('data', function (chunk) {
+                data += chunk;
+            });
+            
+            response.on('end', function () {
+                next(JSON.parse(data))
+            });
+        }).on('error', function(e) {
+            console.log("Got error: " + e.message);
+        });
+    }
+
+    function getAllProfileStats(next) {
+        http.get("http://127.0.0.1:3030/getAllProfileStats", function(response) {
             console.log("Got response: " + response.statusCode);
             
             var data = '';

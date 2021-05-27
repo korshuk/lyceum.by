@@ -37,7 +37,7 @@ block content
                                             if (seedsMap[index])
                                                 | #{seedsMap[index].generatedDate.format('hh:mm dd.MM.yyyy')}
                                         td  
-                                            if (seedsMap[index])
+                                            if (seedsMap[index] && seedsMap[index].savedDate)
                                                 | #{seedsMap[index].savedDate.format('hh:mm dd.MM.yyyy')}
                                         td
                                             if (seedsMap[index] && seedsMap[index].savedDate)

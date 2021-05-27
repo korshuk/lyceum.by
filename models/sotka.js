@@ -54,5 +54,23 @@ var SubjectStatsSchema = new mongoose.Schema({
         }
         
 });
+
+var ProfileStatsSchema = new mongoose.Schema({
+    result: [{
+        profile: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Profiles'
+        },
+        results: [Number],
+        exams: [String]
+    }],
+    date: {
+        type: Date,
+        default: Date.now
+    }
+    
+});
+
 exports.define = define;
-exports.SubjectStatsModel = mongoose.model('SubjectStatsSchema', SubjectStatsSchema)
+exports.SubjectStatsModel = mongoose.model('SubjectStatsSchema', SubjectStatsSchema);
+exports.ProfileStatsModel = mongoose.model('ProfileStatsSchema', ProfileStatsSchema)

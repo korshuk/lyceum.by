@@ -7,6 +7,11 @@ var CACHE = {
         counter: 0,
         limit: 61
     },
+    profileStats: {
+        map: {},
+        counter: 0,
+        limit: 47
+    },
     subjectStats: {
         map: {},
         counter: 37,
@@ -33,8 +38,10 @@ PupilsController = function(mongoose, app) {
     setTimeout(function() {
         console.log('app.sotkaController.getAllSubjectStats')
         app.sotkaController.getAllSubjectStats(function(subjectStats) {
-            console.log('############ app.sotkaController.getAllSubjectStats', subjectStats)
             createCacheMapSubjectStats(subjectStats)
+        })
+        app.sotkaController.getAllProfileStats(function(profileStats) {
+            createCacheMapProfileStats(profileStats)
         })
     }, 6000)
     
@@ -54,6 +61,10 @@ PupilsController = function(mongoose, app) {
         app.sotkaController.getAllSubjectStats(function(subjectStats) {
             createCacheMapSubjectStats(subjectStats)
         })
+        app.sotkaController.getAllProfileStats(function(profileStats) {
+            createCacheMapProfileStats(profileStats)
+        })
+
         next('Ok')
     }
 
@@ -67,6 +78,7 @@ PupilsController = function(mongoose, app) {
         
         evaluateCacheSubjects();
         evaluateCacheSubjectStats();
+        evaluateCacheProfileStats();
         evaluateCacheSeeds();
 
         if (data.user.profile) {
@@ -85,6 +97,7 @@ PupilsController = function(mongoose, app) {
             next(data)
         } else {
             data.user.results = results
+            data.user.profileResults = createProfileResults(data.user)
             var resulltIds = [];
             var examSeedIds = []
             // ('data.user.results', data.user.results)
@@ -161,6 +174,20 @@ PupilsController = function(mongoose, app) {
         }
     }
 
+    function evaluateCacheProfileStats() {
+        CACHE.profileStats.counter = CACHE.profileStats.counter + 1;
+        // console.log(CACHE.subjectStats.counter, CACHE.subjectStats.limit)
+        if (CACHE.profileStats.counter >= CACHE.profileStats.limit) {
+            
+            app.sotkaController.getAllProfileStats(function(profileStats) {
+                // console.log(subjectStats)
+                // console.log('SubjectStats cache recalculate', subjectStats)
+                createCacheMapProfileStats(profileStats)
+                CACHE.profileStats.counter = 0;
+            })
+        }
+    }
+
     function evaluateCacheSubjects() {
         CACHE.subjects.counter = CACHE.subjects.counter + 1;
         // console.log(CACHE.subjects.counter, CACHE.subjects.limit)
@@ -190,12 +217,82 @@ PupilsController = function(mongoose, app) {
         // console.log('%%%%%%%createCacheMapSubjectStats%%%%%%%%%', CACHE.subjectStats.map)
     }
 
+    function createCacheMapProfileStats(profileStats) {
+        CACHE.profileStats.map = {};
+        for (var i = profileStats.result.length - 1; i >= 0 ; i--)  {
+            CACHE.profileStats.map[profileStats.result[i].profile] = profileStats.result[i]
+        }
+       // console.log('%%%%%%%createCacheMapSubjectStats%%%%%%%%%', CACHE.profileStats.map)
+    }
+
     function createCacheMapSeeds(seeds) {
         CACHE.seeds.map = {};
         for (var i = seeds.length - 1; i >= 0 ; i--)  {
             // console.log('createCacheMapSeeds 123',i, seeds.length, seeds[i])
             CACHE.seeds.map[seeds[i]._id] = seeds[i]
         }
+    }
+
+    function createProfileResults(pupil) {
+        var pupilProfiles = [];
+        var result;
+        var exams;
+        var profileResult;
+        var points;
+        var pupilResults = [];
+        if (pupil.profile) {
+            pupilProfiles.push(pupil.profile._id)
+        }
+        if (pupil.additionalProfiles && pupil.additionalProfiles.length > 0) {
+            for (var i = 0; i < pupil.additionalProfiles.length; i++) {
+                pupilProfiles.push(pupil.additionalProfiles[i])
+            }
+        }
+
+        
+        if (pupil.results && pupil.results.length > 0) {
+            for(var i = 0; i < pupilProfiles.length; i++) {
+               // console.log('CACHE.profileStats.map[pupilProfiles[i]]', pupilProfiles[i], CACHE.profileStats.map[pupilProfiles[i]])
+                if (CACHE.profileStats.map[pupilProfiles[i]] && CACHE.profileStats.map[pupilProfiles[i]].exams) {
+                    exams = CACHE.profileStats.map[pupilProfiles[i]].exams;
+                    profileResult = {
+                        profile: pupilProfiles[i],
+                        result: 0,
+                        examStatus: ''
+                    }
+                    for (var j = 0; j < pupil.results.length; j++) {
+                        if (exams.indexOf(''+ pupil.results[j].exam) > -1) {
+                            points = 0;
+                            result = pupil.results[j];
+                            if (result && result.Points) {
+                                points = +result.Points
+                                if (result.AdditionalPoints) {
+                                    points = points + +result.AdditionalPoints
+                                }
+                            }
+                            if (result.examStatus === '1') {
+                                profileResult.examStatus += '1'
+                            }
+                            profileResult.result = profileResult.result + points
+                        }
+                    }
+                    pupilResults.push(profileResult)
+                }
+            }
+        }
+        var results;
+        var x;
+        for (var i = 0; i < pupilResults.length; i++) { 
+            results = JSON.parse(JSON.stringify(CACHE.profileStats.map[pupilResults[i].profile].results))
+            x = pupilResults[i].result;
+            pupilResults[i].raiting = results.reverse().map(function (p, i) {
+                return p === x ? i+1 : ''    
+            }).filter(String);
+            pupilResults[i].result = null;
+            // pupilResults[i].results = results;
+        }
+        // console.log('profileExamsMap', pupilResults)
+        return pupilResults
     }
 
     function createResultsArray(pupil) {

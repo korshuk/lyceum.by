@@ -26,6 +26,14 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/getAllProfileStats', function (req, res) {
+        app.sotkaController.getAllProfileStats(function(doc) {
+            res.json(doc)
+        });
+    });
+
+    
+
     app.get('/frontstats', function (req, res) {
         app.sotkaController.restStats(req, res);
     });

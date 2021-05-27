@@ -7,6 +7,8 @@ SotkaController = function(mongoose, app) {
     var base  = new BaseController('Sotka', 'sotka', mongoose, app);
 
     base.SubjectStatsCollection = require('../models/sotka').SubjectStatsModel;
+    base.ProfileStatsCollection = require('../models/sotka').ProfileStatsModel;
+    
    // this.model.SubjectStatsModel(mongoose, function () {
      //   base.SubjectStatsSchema = mongoose.model('SubjectStatsSchema');
     //});
@@ -38,7 +40,9 @@ SotkaController = function(mongoose, app) {
 
         var pupilsCollection = app.pupilsController.Collection;
         var subjectsCollection = app.subjectController.Collection;
+        var profilesCollection = app.profileController.Collection;
         var subjectsStatsCalculators = [];
+        var profilesStatsCalculators = [];
         
         pupilsCollection.find({status: 'approved'})
             .populate('profile')
@@ -170,17 +174,67 @@ SotkaController = function(mongoose, app) {
                                             })
                                         });
 
+                                        profilesCollection.find()
+                                            .exec(function(err, profiles) {
+                                                
+                                                profiles.forEach(function(profile) {
+                                                    var profileExams = [''+profile.exam1, ''+profile.exam2];
+                                                    profilesStatsCalculators.push(function(callback) {
+                                                        
+                                                        pupilsCollection.findApprovedPupilsForProfileWithResults(profile._id)
+                                                            .exec(function (err, pupils) {
+                                                                var pupilsCount = 0;
+                                                                var i = 0;
+                                                                var pupilsLength = pupils.length;
+                                                                var pupil;
+                                                                var profileResults = [];
+                                                                var pupilResult;
+                                                                for (i; i < pupilsLength; i++) {
+                                                                    pupil = pupils[i];
+                                                                    pupilResult = -1;
+                                                                    if (pupil.diplomProfile) {
+                                                                        if ('' + pupil.diplomProfile === '' + profile._id) {
+                                                                            // pupilsCount++
+                                                                        } else if (pupil.isEnrolledToExams){
+                                                                            pupilResult = getPupilResultsForProfile(pupil.results, profileExams)
+                                                                            //pupilsCount++
+                                                                        }
+                                                                    } else {
+                                                                        pupilResult = getPupilResultsForProfile(pupil.results, profileExams)
+                                                                    }
+                                                                    if (pupilResult > -1) {
+                                                                        profileResults.push(pupilResult)
+                                                                    }
+                                                                    
+                                                                } 
+                                                                callback(null, {
+                                                                    profile: profile,
+                                                                    exams: profileExams,
+                                                                    results: profileResults.sort(function(a,b){
+                                                                                return a - b;
+                                                                            })
+                                                                });
+                                                        });
+                                                        
+                                                    })
+                                                })
+                                            });
+                                        
                                         async.parallel(subjectsStatsCalculators, function(err, results) {
                                             var newSubjectStat = new base.SubjectStatsCollection();
                                             newSubjectStat.result = results;
                                             newSubjectStat.save(function(err, doc) {
-                                            //  console.log('newSubjectStat.save', err, doc)
-                                                next('Ok')
+                                            
+                                                async.parallel(profilesStatsCalculators, function(err, results) {
+                                                    var newProfileStat = new base.ProfileStatsCollection();
+                                                    newProfileStat.result = results;
+                                                    newProfileStat.save(function(err, doc) {
+                                                        console.log(err, doc)
+                                                        next('Ok')
+                                                    })
+                                                })
+                                                
                                             })
-                                            // next({
-                                            //     results: results,
-                                            //     lastStat: lastStat
-                                            // });
                                         })
                                     })
                             })
@@ -317,6 +371,29 @@ SotkaController = function(mongoose, app) {
                         // }
                         
                         next(lastSubjectsStat)
+                    })
+            })
+    }
+
+    base.getAllProfileStats = function (next) {
+        base.Collection
+            .find()
+            .sort('-date')
+            .exec(function(err, stats) {
+                var lastStat = stats[0]
+                base.ProfileStatsCollection
+                    .find()
+                    .sort('-date')
+                    .exec(function(err, profileStats) {
+                        var lastProfilesStat = profileStats[0];
+                        // var subjectStat = {};
+                        // for (var i = 0; i < lastSubjectsStat.result.length; i++) {
+                        //     if(''+lastSubjectsStat.result[i].subject === subjectId) {
+                        //         subjectStat = lastSubjectsStat.result[i]
+                        //     }
+                        // }
+                        
+                        next(lastProfilesStat)
                     })
             })
     }
@@ -462,6 +539,33 @@ SotkaController = function(mongoose, app) {
     base.constructor = arguments.callee;
 
     return base;
+
+    function getPupilResultsForProfile(results, profileExams) {
+        var result;
+        var totalResult = 0;
+        for (var i = 0; i < results.length; i++) {
+            result = results[i];
+            
+            if ( profileExams.indexOf(''+result.exam) > -1){
+                
+                if (result.examStatus && result.examStatus === '0') {
+                    if (result.result) {
+                        if (result.result.Points) {
+                            totalResult += +result.result.Points
+                        }
+                        if (result.result.AdditionalPoints) {
+                            totalResult += +result.result.AdditionalPoints
+                        }
+                    }
+                } 
+                if (result.examStatus && result.examStatus !== '0') {
+                    totalResult = -10000;
+                }
+            }
+
+        }
+        return totalResult
+    }
 
     function queryExecFn(err, data, callback) {
         if (err) {
