@@ -518,7 +518,7 @@ var PupilsController = function (mongoose, app) {
                                 for (var i = 0; i < results.length; i++) {
                                     resultsObj[results[i]._id] = results[i];
                                 }
-                                async.eachSeries(pupils, function (pupil, asyncdone) {
+                                async.each(pupils, function (pupil, asyncdone) {
                                     reqUser = reqUsers[pupil._id];
                                     if (pupil.results.length === 0) {
                                         pupil.results = [];
@@ -557,9 +557,10 @@ var PupilsController = function (mongoose, app) {
                                        // pupil.results[existingResultIndex].examStatus = '0'
                                         pupil.results[existingResultIndex].result = undefined
                                     }
-                                    
                                     pupil.save(function(err, doc) {
-                                          asyncdone(err)
+                                    //   setImmediate(function() {
+                                           asyncdone(err)
+                                    //   })
                                       }); 
                                     // if (reqUser.result || reqUser.resultExamStatus) { 
                                     //     console.log('reqUser.result', reqUser)

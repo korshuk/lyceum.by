@@ -38,6 +38,9 @@ var GET_USER_DATA_REQUEST_OPTIONS = {
         api.getScanFile = getScanFile;
         api.keyFile = keyFile;
 
+        api.showAdmissionPage = showAdmissionPage;
+        api.getApprovedForAdmission = getApprovedForAdmission;
+
         var pupilUpdater = {
             'profile': updateProfile,
             'enrollChange': updateEnroll,
@@ -589,6 +592,28 @@ var GET_USER_DATA_REQUEST_OPTIONS = {
         }
         function uploadPhoto(req, res) {            
             app.s3filesController.uploadRequestPhoto(req, res)
+        }
+
+        function showAdmissionPage(req, res) {
+            res.render('pupil/admissionPage.jade', {});
+        }
+
+        function getApprovedForAdmission(req, res) {
+            app.pupilsController.Collection
+                .find({ status: 'approved' }, '_id firstName lastName parentName status profile diplomProfile additionalProfiles isEnrolledToExams results')
+                .populate('results.result')
+                .exec(function(err, data) {
+                    var pupils = JSON.parse(JSON.stringify(data))
+                    pupils.forEach(function(pupil) {
+                        var resultsMap = {}
+                        pupil.results.forEach(function(result) {
+                            resultsMap[''+result.exam] = result
+                        })
+                        pupil.resultsMap = resultsMap;
+                        pupil.results = null
+                    })
+                    res.json(pupils)
+                })
         }
     }
 

@@ -97,7 +97,13 @@ module.exports = function(app) {
         app.pupilsController.v2.getRequestPhoto(req, res) 
     });
 
-    
+    router.get('/admission', app.userController.Pass, function(req, res) {
+        app.pupilsController.v2.showAdmissionPage(req, res)
+    });
+
+    router.get('/getApprovedForAdmission', app.userController.Pass, function(req, res) {
+        app.pupilsController.v2.getApprovedForAdmission(req, res)
+    });
 
     //Emails Sender
     
@@ -118,6 +124,7 @@ module.exports = function(app) {
     mailRouter.post('/invitation/:profileId/:examNumber', app.userController.Pass, function(req, res) {
         app.mailController.sendInvites(req, res);
     });
+
     
 
 

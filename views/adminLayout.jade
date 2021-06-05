@@ -111,7 +111,11 @@ html
                           span.sidebar-mini-icon
                             i.fas.fa-hotel
                           span.sidebar-normal Рассадка
-                      
+                      li(class="#{menuPage === 'admission' ? 'active' : ''}")
+                        a(href="/admin/pupils/admission")
+                          span.sidebar-mini-icon
+                            i.fas.fa-american-sign-language-interpreting
+                          span.sidebar-normal Поступление
                       li(class="#{menuPage === 'committees' ? 'active' : ''}")
                         a(href="/admin/pupils/committees")
                           span.sidebar-mini-icon

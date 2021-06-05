@@ -28,6 +28,7 @@ var ProfileController = function (mongoose, app) {
     base.save = save;
     base.update = update;
     base.remove = remove;
+    base.admissionList = admissionList;
     
     base.results = {
         resultsList: resultsList,
@@ -94,6 +95,14 @@ var ProfileController = function (mongoose, app) {
                     })  
                 });
         }); 
+    }
+
+    function admissionList(req, res) {
+        base.Collection
+            .find()
+            .exec(function(err, profiles) {
+                res.json(profiles)
+            })
     }
 
     function deleteScan(req, res) {

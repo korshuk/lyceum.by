@@ -6,15 +6,70 @@ module.exports = function (app) {
 
     //console.log('####################', messages)  
     router.get('/', app.userController.Pass, function(req, res) {
+        updateRadoshko()
         //updateNews();
         //updatePages();
-        updateProfiles();
+        //updateProfiles();
         //setMessages(messages);
         res.status(200).send({message: 'ok'})
         
     });
 
     app.use('/admin/migrate', router);
+
+    function updateRadoshko() {
+        app.pupilsController.Collection
+            .findOne({_id: '606da5cf131b8c8c66000042'})
+            .exec(function(err, radoshko) {
+                console.log('redoshko: ', radoshko)
+                var additionalProfiles = radoshko.additionalProfiles;
+                console.log('redoshko additionalProfiles: ', additionalProfiles)
+                radoshko.additionalProfiles = [additionalProfiles[0], additionalProfiles[1], additionalProfiles[2]]
+                console.log('new readoshko', radoshko)
+                radoshko.save(function(err, doc) {
+                    console.log('radoshko.save', err, doc)
+                })
+            })
+        app.pupilsController.Collection
+            .findOne({_id: '6082d75a01a355e32c0001db'})
+            .exec(function(err, pavlechko) {
+                console.log('pavlechko: ', pavlechko)
+                var additionalProfiles = pavlechko.additionalProfiles;
+                console.log('pavlechko additionalProfiles: ', additionalProfiles)
+                pavlechko.additionalProfiles = [additionalProfiles[0]]
+                console.log('new pavlechko', pavlechko)
+                pavlechko.save(function(err, doc) {
+                    console.log('pavlechko.save', err, doc)
+                })
+            })
+        app.pupilsController.Collection
+            .findOne({_id: '605b4825ee289df70d0000a2'})
+            .exec(function(err, korneychuk) {
+                console.log('korneychuk: ', korneychuk)
+                var additionalProfiles = korneychuk.additionalProfiles;
+                console.log('korneychuk additionalProfiles: ', additionalProfiles)
+                korneychuk.additionalProfiles = [additionalProfiles[0], additionalProfiles[1], additionalProfiles[2]]
+                console.log('new korneychuk', korneychuk)
+                korneychuk.save(function(err, doc) {
+                    console.log('korneychuk.save', err, doc)
+                })
+            })
+        app.pupilsController.Collection
+            .findOne({_id: '605f7fb07563c16d32000070'})
+            .exec(function(err, anikiy) {
+                console.log('anikiy: ', anikiy)
+                var additionalProfiles = anikiy.additionalProfiles;
+                console.log('anikiy additionalProfiles: ', additionalProfiles)
+                anikiy.additionalProfiles = [additionalProfiles[0], additionalProfiles[1], additionalProfiles[2]]
+                console.log('new anikiy', anikiy)
+                anikiy.save(function(err, doc) {
+                    console.log('korneychuk.save', err, doc)
+                })
+            })
+
+            
+            
+    }
 
     function updateProfiles() {
       var subject;

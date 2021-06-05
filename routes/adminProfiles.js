@@ -78,5 +78,9 @@ module.exports = function(app) {
 		app.profileController.update(req, res);
 	});
 
+	router.get('/admission-list', app.userController.Pass, function(req, res) {
+		app.profileController.admissionList(req, res);
+	});
+	
 	app.use('/admin/pupils/profiles', router);
 };

@@ -1,0 +1,72 @@
+extends ../adminLayout
+include ../stuff/mixins/form-helper
+include ../stuff/adminIntarface/cards
+
+append menuVars
+  - var menuPage = 'admission';
+  - var menuSection = 'exams';
+
+
+
+block content
+    style
+        .passLine {
+            width: 100%;
+            background: red;
+            height: 2px
+        }
+        .ammountLine {
+            width: 100%;
+            background: grey;
+            height: 2px
+        }
+        .halfPassedPupil {
+            background: lightGrey
+        }
+        .pupilCell {
+            white-space: nowrap;
+        }  
+        .activePupil {
+            box-shadow: 0px 0px 8px 4px rgb(0 0 0 / 50%)
+        }
+        .currentPupil {
+            color: white;
+            background: red
+        }
+        .leavedPupil {
+            color: white;
+            background: blue
+        }
+        .btn.btn-icon.btn-sm   {
+            margin: 5px 0 5px 10px;
+            height: 20px;
+            width: 20px;
+            min-width: 20px;
+        }
+    
+    div(ng-app="admissionApp", ng-controller="admissionController as app")
+        h1 Зачисление
+        div(v-if="app.profiles.length > 0 && app.profiles[0].pupils.length > 0")
+            button.btn.btn-primary(ng-if="!app.started", ng-click="app.start()") Начать
+            button.btn.btn-primary(ng-if="app.started && !app.end", ng-click="app.play()", ng-disabled="!app.paused") Дальше
+            span(ng-if="app.started && !app.end") #{'  '} {{app.row + 1}} {{app.profiles[app.col].code}} 
+            p(ng-if="app.end") Закончили
+        div(style="display: flex")
+            div(ng-repeat="profile in app.profiles track by profile._id", style="border-right: 1px solid #ccc; padding: 5px")
+                strong {{profile.code}} 
+                p pass:{{profile.pass}} halfpass:{{profile.halfpass}} 
+                //- halfDelta:{{profile.halfDelta}} halfPupils:{{profile.halfPupils}}
+                div(ng-repeat="pupil in profile.pupils track by pupil._id", ng-class="pupil.examResult === profile.halfpass ? 'halfPassedPupil' :''")
+                    div.pupilCell(ng-class="{'activePupil': pupil.isActive, 'leavedPupil': pupil.leave, 'currentPupil': pupil.isCurrent}") 
+                        small
+                            | {{$index + 1}}.</small> {{pupil.examResult | floor}}<sup ng-if="pupil.hasAdditional">{{pupil.priority}}</sup> <small>{{pupil.firstName}} {{pupil.lastName[0]}}.{{pupil.parentName[0]}}.
+                            button.btn.btn-success.btn-icon.btn-sm(ng-if="pupil.examResult === profile.halfpass", ng-click="app.assignHalfPassed(pupil, profile)")
+                                i.fa.fa-plus
+                            button.btn.btn-danger.btn-icon.btn-sm(ng-if="pupil.examResult * 10 % 10 === 5", ng-click="app.unassignHalfPassed(pupil, profile)")
+                                i.fa.fa-minus
+
+                    div.passLine(ng-if="$index === profile.indexOfPass")
+                    div.ammountLine(ng-if="$index === profile.ammount - 1")
+
+block scripts
+    include admissionApp
