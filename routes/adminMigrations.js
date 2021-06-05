@@ -66,8 +66,58 @@ module.exports = function (app) {
                     console.log('korneychuk.save', err, doc)
                 })
             })
+        
+        app.pupilsController.Collection
+            .findOne({_id: '607145599b28cc0039000023'})
+            .exec(function(err, anikiy) {
+                console.log('Бицан: ', anikiy)
+                var additionalProfiles = anikiy.additionalProfiles;
+                console.log('Бицан additionalProfiles: ', additionalProfiles)
+                anikiy.additionalProfiles = [additionalProfiles[0], additionalProfiles[1]]
+                console.log('new Бицан', anikiy)
+                anikiy.save(function(err, doc) {
+                    console.log('Бицан.save', err, doc)
+                })
+            })
+        
+        app.pupilsController.Collection
+            .findOne({_id: '6079e543fcef6f140b000014'})
+            .exec(function(err, anikiy) {
+                console.log('Азява: ', anikiy)
+                var additionalProfiles = anikiy.additionalProfiles;
+                console.log('Азява additionalProfiles: ', additionalProfiles)
+                anikiy.additionalProfiles = [additionalProfiles[0], additionalProfiles[1], additionalProfiles[2]]
+                console.log('new Азява', anikiy)
+                anikiy.save(function(err, doc) {
+                    console.log('Азява.save', err, doc)
+                })
+            })
+        
+        app.pupilsController.Collection
+            .findOne({_id: '605b87b52946ee2274000018'})
+            .exec(function(err, anikiy) {
+                console.log('Ковалёв: ', anikiy)
+                var additionalProfiles = anikiy.additionalProfiles;
+                console.log('Ковалёв additionalProfiles: ', additionalProfiles)
+                anikiy.additionalProfiles = [additionalProfiles[0], additionalProfiles[1], additionalProfiles[2]]
+                console.log('new Ковалёв', anikiy)
+                anikiy.save(function(err, doc) {
+                    console.log('Ковалёв.save', err, doc)
+                })
+            })
 
-            
+        app.pupilsController.Collection
+            .findOne({_id: '607f09ffee5db84c1f00003d'})
+            .exec(function(err, anikiy) {
+                console.log('Косандрович: ', anikiy)
+                var additionalProfiles = anikiy.additionalProfiles;
+                console.log('Косандрович additionalProfiles: ', additionalProfiles)
+                anikiy.additionalProfiles = [additionalProfiles[0]]
+                console.log('new Косандрович', anikiy)
+                anikiy.save(function(err, doc) {
+                    console.log('Косандрович.save', err, doc)
+                })
+            })    
             
     }
 
