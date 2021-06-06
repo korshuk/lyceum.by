@@ -600,7 +600,7 @@ var GET_USER_DATA_REQUEST_OPTIONS = {
 
         function getApprovedForAdmission(req, res) {
             app.pupilsController.Collection
-                .find({ status: 'approved' }, '_id firstName lastName parentName status profile diplomProfile additionalProfiles isEnrolledToExams results')
+                .find({ status: 'approved' }, '_id firstName lastName parentName status profile diplomProfile additionalProfiles isEnrolledToExams results passOlymp')
                 .populate('results.result')
                 .exec(function(err, data) {
                     var pupils = JSON.parse(JSON.stringify(data))

@@ -30,7 +30,7 @@
         getProfiles().then(getPupils).then(onData)
         
         function unassignHalfPassed(pupil, profile) {
-            pupil.examResult = pupil.examResult - 0.5;
+            pupil.examResult = pupil.examResult - 0.001;
             profile.pupils = profile.pupils.sort(function(a,b){
                 return b.examResult - a.examResult
             })
@@ -38,7 +38,7 @@
         }
 
         function assignHalfPassed(pupil, profile) {
-            pupil.examResult = pupil.examResult + 0.5;
+            pupil.examResult = pupil.examResult + 0.001;
             profile.pupils = profile.pupils.sort(function(a,b){
                 return b.examResult - a.examResult
             })
@@ -459,7 +459,10 @@
 
     function floorFilter(){
         return function(n){
-            return Math.floor(n);
+            let value = n * 10
+            value = Math.floor(value / 10)
+            return value
+            //return Math.floor(n);
         };
     }
 
