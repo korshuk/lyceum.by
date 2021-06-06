@@ -46,27 +46,35 @@ block content
     
     div(ng-app="admissionApp", ng-controller="admissionController as app")
         h1 Зачисление
-        div(v-if="app.profiles.length > 0 && app.profiles[0].pupils.length > 0")
-            button.btn.btn-primary(ng-if="!app.started", ng-click="app.start()") Начать
-            button.btn.btn-primary(ng-if="app.started && !app.end", ng-click="app.play()", ng-disabled="!app.paused") Дальше
-            span(ng-if="app.started && !app.end") #{'  '} {{app.row + 1}} {{app.profiles[app.col].code}} 
-            p(ng-if="app.end") Закончили
-        div(style="display: flex")
-            div(ng-repeat="profile in app.profiles track by profile._id", style="border-right: 1px solid #ccc; padding: 5px")
-                strong {{profile.code}} 
-                p pass:{{profile.pass | floor}} halfpass:{{profile.halfpass}} 
-                //- halfDelta:{{profile.halfDelta}} halfPupils:{{profile.halfPupils}}
-                div(ng-repeat="pupil in profile.pupils track by pupil._id", ng-class="pupil.examResult === profile.halfpass ? 'halfPassedPupil' :''")
-                    div.pupilCell(ng-class="{'activePupil': pupil.isActive, 'leavedPupil': pupil.leave, 'currentPupil': pupil.isCurrent}") 
-                        small
-                            | {{$index + 1}}.</small> {{pupil.examResult | floor}}<sup ng-if="pupil.hasAdditional">{{pupil.priority}}</sup> <small>{{pupil.firstName}} {{pupil.lastName[0]}}.{{pupil.parentName[0]}}. {{pupil.examResult * 1000 % 10}}
-                            button.btn.btn-success.btn-icon.btn-sm(ng-if="pupil.examResult === profile.halfpass", ng-click="app.assignHalfPassed(pupil, profile)")
-                                i.fa.fa-plus
-                            button.btn.btn-danger.btn-icon.btn-sm(ng-if="pupil.examResult * 1000 % 10 === 1", ng-click="app.unassignHalfPassed(pupil, profile)")
-                                i.fa.fa-minus
+        div.row(v-if="app.profiles.length > 0 && app.profiles[0].pupils.length > 0")
+            .col
+                button.btn.btn-primary(ng-if="!app.started", ng-click="app.start()") Начать
+                
+                button.btn.btn-primary(ng-if="!app.started", ng-click="app.start(true)") Начать по шагам
+                
+                button.btn.btn-primary(ng-if="app.started && !app.end", ng-click="app.play()", ng-disabled="!app.paused") Дальше
+                span(ng-if="app.started && !app.end") #{'  '} {{app.row + 1}} {{app.profiles[app.col].code}} 
+                p(ng-if="app.end") Закончили
+            .col.text-right(ng-if="app.started")
+                input(type="number", ng-model="app.newRow")
+                button.btn.btn-primary(ng-click="app.reset()") Перейти
+        div.row
+            .col.col-xs-12(style="display: flex")
+                div(ng-repeat="profile in app.profiles track by profile._id", style="border-right: 1px solid #ccc; padding: 5px")
+                    strong {{profile.code}} 
+                    p pass:{{profile.pass | floor}} halfpass:{{profile.halfpass}} 
+                    //- halfDelta:{{profile.halfDelta}} halfPupils:{{profile.halfPupils}}
+                    div(ng-repeat="pupil in profile.pupils track by pupil._id", ng-class="pupil.examResult === profile.halfpass ? 'halfPassedPupil' :''")
+                        div.pupilCell(ng-class="{'activePupil': pupil.isActive, 'leavedPupil': pupil.leave, 'currentPupil': pupil.isCurrent}") 
+                            small
+                                | {{$index + 1}}.</small> {{pupil.examResult | floor}}<sup ng-if="pupil.hasAdditional">{{pupil.priority}}</sup> <small>{{pupil.firstName}} {{pupil.lastName[0]}}.{{pupil.parentName[0]}}.
+                                button.btn.btn-success.btn-icon.btn-sm(ng-if="pupil.examResult === profile.halfpass", ng-click="app.assignHalfPassed(pupil, profile)")
+                                    i.fa.fa-plus
+                                button.btn.btn-danger.btn-icon.btn-sm(ng-if="pupil.examResult * 1000 % 10 === 1", ng-click="app.unassignHalfPassed(pupil, profile)")
+                                    i.fa.fa-minus
 
-                    div.passLine(ng-if="$index === profile.indexOfPass")
-                    div.ammountLine(ng-if="$index === profile.ammount - 1")
+                        div.passLine(ng-if="$index === profile.indexOfPass")
+                        div.ammountLine(ng-if="$index === profile.ammount - 1")
 
 block scripts
     include admissionApp

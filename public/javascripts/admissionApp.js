@@ -18,12 +18,16 @@
         vm.paused = false;
         vm.end = false;
 
+        vm.byStep = false;
+
         vm.start = start;
         vm.play = play;
+        vm.reset = reset;
 
         vm.assignHalfPassed = assignHalfPassed;
         vm.unassignHalfPassed = unassignHalfPassed;
         vm.row = 0;
+        vm.newRow = 1;
         vm.col = 0;
         vm.maxAmmount = 100;
 
@@ -45,11 +49,32 @@
             calculateProfilesStats()
         }
 
-        function start() {
+        function reset() {
+            var profile = vm.profiles[vm.col];
+            profile.pupils[vm.row].isActive = false;
+            vm.col = 0;
+            vm.row = vm.newRow - 1;
+            vm.started = true;
+            vm.end = false;
+            vm.paused = false;
+            vm.byStep = true;
+            var record;
+            
+            for(var i =0; i < vm.currentPupilRecords.length; i++) {
+                record = vm.currentPupilRecords[i]
+                vm.profiles[record.profileIndex].pupils[record.pupilIndex].isCurrent = false;
+                vm.profiles[record.profileIndex].pupils[record.pupilIndex].leave = false
+                   
+            }
+            vm.currentPupilRecords = []
+            algorithmStep();
+        }
+
+        function start(byStep) {
             vm.row = 0;
             vm.col = 0;
             vm.started = true;
-
+            vm.byStep = byStep
             algorithmStep();
         }
 
@@ -102,6 +127,10 @@
                         vm.profiles[record.profileIndex].pupils[record.pupilIndex].leave = vm.currentPupilRecords[i].leave
                     }
 
+                    if (!vm.byStep) {
+                        vm.play();
+                    }
+
                 } else {
                     increaseCounters()
                     
@@ -109,6 +138,7 @@
                 }
             } else {
                 vm.end = true
+                console.log('exit')
             }
         }
 
@@ -128,6 +158,27 @@
             
             for(var i = 0; i < pupils.length; i++) {
                 pupil = pupils[i]
+
+                pupil.profiles = [];
+                if (pupil.diplomProfile && pupil.passOlymp) {
+                    pupil.profiles.push(pupil.diplomProfile)
+                    if (pupil.isEnrolledToExams) {
+                        pupil.profiles.push(pupil.profile);
+                        if (pupil.additionalProfiles && pupil.additionalProfiles.length > 0) {
+                            for (var j = 0; j < pupil.additionalProfiles.length; j++) {
+                                pupil.profiles.push(pupil.additionalProfiles[j]);
+                            }
+                        }
+                    }
+                } else {
+                    pupil.profiles.push(pupil.profile);
+                    if (pupil.additionalProfiles && pupil.additionalProfiles.length > 0) {
+                        for (var j = 0; j < pupil.additionalProfiles.length; j++) {
+                            pupil.profiles.push(pupil.additionalProfiles[j]);
+                        }
+                    }
+                }
+
                 if (pupil.diplomProfile && pupil.passOlymp) {
                     
                     if (pupil.isEnrolledToExams) {
@@ -211,6 +262,9 @@
             vm.profiles.forEach(function(profile) {
                 // console.log(profile.name, profile.ammount, profile.pupils[profile.ammount].examResult)
                 //profile.resultPass = 
+                profile.pupils = profile.pupils.sort(function(a,b){
+                    return b.examResult - a.examResult
+                })
                 var results = profile.pupils.map(function(pupil) {
                     return pupil.examResult;
                 })
@@ -279,7 +333,7 @@
             const pupilRecords = [];
     
             vm.profiles.forEach(function(profile, index) {
-                const pupilIndex = binaryPupilSearch(profile, pupil)
+                const pupilIndex = binaryPupilSearch(profile, pupil);
                 if (pupilIndex > -1) {
                     pupilRecords.push({
                         profileId: profile._id,
@@ -353,48 +407,60 @@
 
         function binaryPupilSearch(profile, pupil) {
             const pupils = profile.pupils;
-            let pupilsResultForProfile = calculateExamResult(pupil.resultsMap, profile, pupil)
-            if (pupil.diplomProfile && pupil.diplomProfile === profile._id && pupil.passOlymp) {
-                pupilsResultForProfile = 500;
-            }
-
-            var foundIndex = _binarySearch(pupils, pupilsResultForProfile)
-
-            if (foundIndex > -1) {
-                var indexes = [];
-                var index = foundIndex;
-                var loopFlag = true;
-                while (loopFlag) {
-                    if (pupils[index] && pupils[index].examResult === pupilsResultForProfile) {
-                        indexes.push(index)
-                        index = index + 1;
-                    } else {
-                        loopFlag = false;
-                    }
-                }
-                loopFlag = true;
-                index = foundIndex - 1;
-                while (loopFlag) {
-                    if (pupils[index] && pupils[index].examResult === pupilsResultForProfile) {
-                        indexes.push(index)
-                        index = index - 1;
-                    } else {
-                        loopFlag = false;
-                    }
-                }
-                var returnIndex = -1;
-                for (let i = 0; i < indexes.length; i++) {
-                    var currentIndex = indexes[i]
-                    if (pupils[currentIndex]._id === pupil._id) {
-                        returnIndex = currentIndex;
+            let foundIndex = -1;
+            //console.log(profile, pupil, pupil.profiles.indexOf(profile._id))
+            if (pupil.profiles.indexOf(profile._id) > -1) {
+                for(var i =0 ; i < pupils.length; i++) {
+                    if (pupils[i]._id === pupil._id) {
+                        foundIndex = i;
                         break;
                     }
-                    
                 }
-                return returnIndex
-            } else {
-                return -1;
             }
+            
+            return foundIndex
+            // let pupilsResultForProfile = calculateExamResult(pupil.resultsMap, profile, pupil)
+            // if (pupil.diplomProfile && pupil.diplomProfile === profile._id && pupil.passOlymp) {
+            //     pupilsResultForProfile = 500;
+            // }
+
+            // var foundIndex = _binarySearch(pupils, pupilsResultForProfile)
+
+            // if (foundIndex > -1) {
+            //     var indexes = [];
+            //     var index = foundIndex;
+            //     var loopFlag = true;
+            //     while (loopFlag) {
+            //         if (pupils[index] && pupils[index].examResult === pupilsResultForProfile) {
+            //             indexes.push(index)
+            //             index = index + 1;
+            //         } else {
+            //             loopFlag = false;
+            //         }
+            //     }
+            //     loopFlag = true;
+            //     index = foundIndex - 1;
+            //     while (loopFlag) {
+            //         if (pupils[index] && pupils[index].examResult === pupilsResultForProfile) {
+            //             indexes.push(index)
+            //             index = index - 1;
+            //         } else {
+            //             loopFlag = false;
+            //         }
+            //     }
+            //     var returnIndex = -1;
+            //     for (let i = 0; i < indexes.length; i++) {
+            //         var currentIndex = indexes[i]
+            //         if (pupils[currentIndex]._id === pupil._id) {
+            //             returnIndex = currentIndex;
+            //             break;
+            //         }
+                    
+            //     }
+            //     return returnIndex
+            // } else {
+            //     return -1;
+            // }
         }
 
         function _binarySearch(pupils, pupilsResultForProfile) {
@@ -460,7 +526,7 @@
     function floorFilter(){
         return function(n){
             let value = n * 10
-            value = Math.floor(value / 10)
+            value = Math.floor(value) / 10
             return value
             //return Math.floor(n);
         };
