@@ -23,6 +23,7 @@
         vm.start = start;
         vm.play = play;
         vm.reset = reset;
+        vm.save = save;
 
         vm.assignHalfPassed = assignHalfPassed;
         vm.unassignHalfPassed = unassignHalfPassed;
@@ -33,6 +34,54 @@
 
         getProfiles().then(getPupils).then(onData)
         
+        function save() {
+            var assignedPupils = {}
+            vm.profiles.forEach(function(profile) {
+                profile.pupils.forEach(function(pupil){
+                    if (!assignedPupils[pupil._id]) {
+                        assignedPupils[pupil._id] = [];
+                    }
+                    var result = {
+                        profile: profile._id,
+                        firstName: pupil.firstName,
+                        priority: pupil.priority,
+                        pass: false,
+                        halfpass: false,                  
+                    }
+                    if (pupil.examResult >= profile.pass) {
+                        result.pass = true
+                    }
+                    if (pupil.examResult === profile.halfpass) {
+                        result.halfpass = true
+                    }
+                    assignedPupils[pupil._id].push(result)
+                })
+            })
+            
+            saveAssignedResults(assignedPupils).then(onSave)
+
+            // for (var key in assignedPupils) {
+                
+            //     var isPassed = false;
+
+            //     for (var i = 0; i < assignedPupils[key].length; i++ ) {
+            //         if (assignedPupils[key][i].pass === true) {
+            //             isPassed = true;
+            //             break
+            //         }
+            //     }
+
+            //     if (assignedPupils[key][0].firstName === 'Головина' ) {
+            //         console.log(assignedPupils[key])
+            //     }
+            // }
+        }
+
+        function onSave() {
+            console.log(arguments)
+            alert(res.data)
+        }
+
         function unassignHalfPassed(pupil, profile) {
             pupil.examResult = pupil.examResult - 0.001;
             profile.pupils = profile.pupils.sort(function(a,b){
@@ -512,6 +561,11 @@
 
                     return profiles
                 });
+        }
+
+        function saveAssignedResults(assignedPupils) {
+            return $http
+                .post('/admin/pupils/profiles/admission-results', assignedPupils)
         }
         
     }

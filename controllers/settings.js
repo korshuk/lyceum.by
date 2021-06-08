@@ -4,11 +4,15 @@ var VISIBLE_FOR_CABINET = [
     'registrationEndDate',
     'confirmationEndDate',
     'rulesOlympPoint',
+    'rulesHalfPassPoint',
     'rulesLink',
     'rulesHTML',
     'logRocket',
     'reservedDayDate',
-    'absentDocumentsDate'
+    'absentDocumentsDate',
+    'endDocumentsDate',
+    'anketaLink',
+    'helloMessage'
 ]
 
 var SettingsController = function(mongoose, app) {

@@ -54,7 +54,9 @@ block content
                 
                 button.btn.btn-primary(ng-if="app.started && !app.end", ng-click="app.play()", ng-disabled="!app.paused") Дальше
                 span(ng-if="app.started && !app.end") #{'  '} {{app.row + 1}} {{app.profiles[app.col].code}} 
-                p(ng-if="app.end") Закончили
+                span(ng-if="app.end") Закончили
+                button.btn.btn-success(ng-if="app.end", ng-click="app.save()") Сохранить
+
             .col.text-right(ng-if="app.started")
                 input(type="number", ng-model="app.newRow")
                 button.btn.btn-primary(ng-click="app.reset()") Перейти

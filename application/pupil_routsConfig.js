@@ -5,7 +5,7 @@
     var mongoose = require('mongoose'),
         CurrentPupilController = require('../controllers/pupils_current').PupilsController,
         SubjectController = require('../controllers/subject').SubjectController,
-        // ProfileController = require('../controllers/profile').ProfileController,
+        ProfileController = require('../controllers/profile').ProfileController,
         PlacesController = require('../controllers/place').PlacesController,
         ResultScansController = require('../controllers/resultScans').ResultScansController,
         // PupilsController = require('../controllers/pupils').PupilsController,
@@ -14,7 +14,7 @@
     exports.configure = function (app) {
         
         app.subjectController = new SubjectController(mongoose, app);
-        // app.profileController = new ProfileController(mongoose, app);
+        app.profileController = new ProfileController(mongoose, app);
         app.placesController = new PlacesController(mongoose, app);
         app.sotkaController = new SotkaController(mongoose, app);
         app.resultScansController = new ResultScansController(mongoose, app);

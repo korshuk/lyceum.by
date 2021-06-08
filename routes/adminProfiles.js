@@ -81,6 +81,9 @@ module.exports = function(app) {
 	router.get('/admission-list', app.userController.Pass, function(req, res) {
 		app.profileController.admissionList(req, res);
 	});
+	router.post('/admission-results', app.userController.Pass, function(req, res) {
+		app.profileController.saveAdmission(req, res);
+	});
 	
 	app.use('/admin/pupils/profiles', router);
 };

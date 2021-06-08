@@ -17,6 +17,11 @@ var CACHE = {
         counter: 37,
         limit: 37
     },
+    admission: {
+        map: {},
+        counter: 59,
+        limit: 59
+    },
     seeds: {
         map: {},
         counter: 0,
@@ -43,6 +48,9 @@ PupilsController = function(mongoose, app) {
         app.sotkaController.getAllProfileStats(function(profileStats) {
             createCacheMapProfileStats(profileStats)
         })
+        app.profileController.getAdmission(function(admissionMap) {
+            CACHE.admission.map = admissionMap;
+        })
     }, 6000)
     
     app.placesController.SeedsCollection.find().exec(function(err, seeds) {
@@ -63,6 +71,9 @@ PupilsController = function(mongoose, app) {
         })
         app.sotkaController.getAllProfileStats(function(profileStats) {
             createCacheMapProfileStats(profileStats)
+        })
+        app.profileController.getAdmission(function(admissionMap) {
+            CACHE.admission.map = admissionMap;
         })
 
         next('Ok')
@@ -105,6 +116,8 @@ PupilsController = function(mongoose, app) {
                 resulltIds.push('' + results[i].ID)
                 examSeedIds.push('' + results[i].exam)
             }
+            data.user.admission = createPupilAdmission(data.user)
+
             app.resultScansController.Collection
                 .find({
                     subject: {$in: examSeedIds}
@@ -119,6 +132,15 @@ PupilsController = function(mongoose, app) {
         }
         // console.log('CACHE_SUBJECTS_LIST', results)
         // next([])
+    }
+
+    function createPupilAdmission(pupil) {
+        if(CACHE.admission.map[pupil._id]) {
+            return CACHE.admission.map[pupil._id]
+        } else {
+            return []
+        }
+        
     }
 
     function calculatePupilPlaces(places_saved) {

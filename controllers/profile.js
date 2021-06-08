@@ -20,6 +20,8 @@ var ProfileController = function (mongoose, app) {
     clustersModel.define(mongoose, function () {
         base.ClustersCollection = mongoose.model('ProfilesCluster');
     });
+
+    base.AdmissionResultsCollection = require('../models/sotka').AdmissionResultsModel;
     
     base.list = list;
     base.examresultsList = examresultsList;
@@ -29,7 +31,9 @@ var ProfileController = function (mongoose, app) {
     base.update = update;
     base.remove = remove;
     base.admissionList = admissionList;
-    
+    base.saveAdmission = saveAdmission;
+    base.getAdmission = getAdmission;
+
     base.results = {
         resultsList: resultsList,
         upload: resultsUpload,
@@ -103,6 +107,28 @@ var ProfileController = function (mongoose, app) {
             .exec(function(err, profiles) {
                 res.json(profiles)
             })
+    }
+
+    function getAdmission(next) {
+        base.AdmissionResultsCollection
+            .find()
+            .sort('-date')
+            .exec(function(err, data) {
+                console.log('%%%%%%%%%%%', data[0].date)
+                next(data[0].results)
+            })
+    }
+
+    function saveAdmission(req, res) {
+        var newAdmission = new base.AdmissionResultsCollection({
+            results: req.body
+        });
+
+        newAdmission.save(function(err, doc) {
+            console.log('##### saved', err)
+            res.send('ok')
+        })
+        
     }
 
     function deleteScan(req, res) {

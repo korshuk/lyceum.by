@@ -71,6 +71,17 @@ var ProfileStatsSchema = new mongoose.Schema({
     
 });
 
+var AdmissionResultsShema = new mongoose.Schema({
+    results: {
+        type: mongoose.Schema.Types.Mixed
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
+})
+
 exports.define = define;
 exports.SubjectStatsModel = mongoose.model('SubjectStatsSchema', SubjectStatsSchema);
-exports.ProfileStatsModel = mongoose.model('ProfileStatsSchema', ProfileStatsSchema)
+exports.ProfileStatsModel = mongoose.model('ProfileStatsSchema', ProfileStatsSchema);
+exports.AdmissionResultsModel = mongoose.model('AdmissionResultsShema', AdmissionResultsShema)
