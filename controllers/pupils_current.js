@@ -103,6 +103,8 @@ PupilsController = function(mongoose, app) {
             data.user.places = calculatePupilPlaces( JSON.parse(JSON.stringify(data.user.places_saved)) )
             data.user.places_saved = null;
         }
+
+        data.user.admission = createPupilAdmission(data.user)
         if (results.length === 0) {
             data.user.results = [];
             next(data)
@@ -116,7 +118,6 @@ PupilsController = function(mongoose, app) {
                 resulltIds.push('' + results[i].ID)
                 examSeedIds.push('' + results[i].exam)
             }
-            data.user.admission = createPupilAdmission(data.user)
 
             app.resultScansController.Collection
                 .find({
