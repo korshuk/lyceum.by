@@ -192,7 +192,7 @@ SotkaController = function(mongoose, app) {
                                                                 for (i; i < pupilsLength; i++) {
                                                                     pupil = pupils[i];
                                                                     pupilResult = -1;
-                                                                    if (pupil.diplomProfile) {
+                                                                    if (pupil.diplomProfile && pupil.passOlymp) {
                                                                         if ('' + pupil.diplomProfile === '' + profile._id) {
                                                                             // pupilsCount++
                                                                         } else if (pupil.isEnrolledToExams){
